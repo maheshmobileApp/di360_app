@@ -116,11 +116,14 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             needFeedViewModel,
                             addNeedFeedViewModel,
                             directoryVM,
-                            newsfeeds?.dentalSupplier?.directories
+                            newsfeeds?.communityOwner?.directories
                                         ?.isNotEmpty ==
                                     true
                                 ? newsfeeds
-                                    ?.dentalSupplier?.directories?.first.id
+                                    ?.communityOwner?.directories?.first.id
+                                : "",
+                            newsfeeds?.dentalProfessional != null
+                                ? newsfeeds?.dentalProfessional?.id ?? ""
                                 : "",
                             isLogoAvailable),
                         addVertical(10),
@@ -458,107 +461,122 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       AddNewsFeedViewModel addNewsVM,
       DirectoryViewModel directoryVM,
       String? id,
+      String? userId,
       bool logoAvailable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        GestureDetector(
-          onTap: () async {
-            Loaders.circularShowLoader(context);
-            await directoryVM.GetDirectorDetails(id ?? "");
-            await directoryVM.getDirectory(id ?? "");
-            Loaders.circularHideLoader(context);
-
-            navigationService.navigateTo(RouteList.directoryDetailsScreen);
-          },
-          child: Row(
-            children: [
-              Stack(alignment: Alignment.center, children: [
-                CircleAvatar(
-                  backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
-                      ? AppColors.greyLight
-                      : AppColors.primaryColor,
-                  radius: 26.5,
-                  child: (imageUrl != null && imageUrl.isNotEmpty)
-                      ? SizedBox(
-                          height: 52,
-                          width: 52,
-                          child: ClipOval(
-                              child: CachedNetworkImageWidget(
-                                  imageUrl: logoAvailable
-                                      ? newsfeeds?.communityOwner?.logo?.url ??
-                                          ''
-                                      : imageUrl,
-                                  fit: BoxFit.contain,
-                                  errorWidget:
-                                      Image.asset(ImageConst.directorProfile))),
-                        )
-                      : Text(
-                          name!
-                              .split('')
-                              .firstWhere(
-                                (char) => char.trim().isNotEmpty,
-                                orElse: () => '',
-                              )
-                              .toUpperCase(),
-                          style: TextStyles.bold5(color: AppColors.whiteColor),
-                        ),
-                ),
-                if (logoAvailable)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: CircleAvatar(
-                      backgroundColor: AppColors.greyLight,
-                      radius: 16,
-                      child: (newsfeeds
-                                  ?.communityOwner?.logo?.url?.isNotEmpty ==
-                              true)
-                          ? SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: ClipOval(
-                                  child: CachedNetworkImageWidget(
-                                      imageUrl: imageUrl ?? '',
-                                      fit: BoxFit.contain,
-                                      errorWidget: Image.asset(
-                                          ImageConst.directorProfile))),
+        Row(
+          children: [
+            Stack(alignment: Alignment.center, children: [
+              CircleAvatar(
+                backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
+                    ? AppColors.greyLight
+                    : AppColors.primaryColor,
+                radius: 26.5,
+                child: (imageUrl != null && imageUrl.isNotEmpty)
+                    ? SizedBox(
+                        height: 52,
+                        width: 52,
+                        child: ClipOval(
+                            child: CachedNetworkImageWidget(
+                                imageUrl: logoAvailable
+                                    ? newsfeeds?.communityOwner?.logo?.url ?? ''
+                                    : imageUrl,
+                                fit: BoxFit.contain,
+                                errorWidget:
+                                    Image.asset(ImageConst.directorProfile))),
+                      )
+                    : Text(
+                        name!
+                            .split('')
+                            .firstWhere(
+                              (char) => char.trim().isNotEmpty,
+                              orElse: () => '',
                             )
-                          : Text(
-                              "D",
-                              style:
-                                  TextStyles.bold5(color: AppColors.whiteColor),
-                            ),
-                    ),
+                            .toUpperCase(),
+                        style: TextStyles.bold5(color: AppColors.whiteColor),
+                      ),
+              ),
+              if (logoAvailable)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.greyLight,
+                    radius: 16,
+                    child: (newsfeeds?.communityOwner?.logo?.url?.isNotEmpty ==
+                            true)
+                        ? SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: ClipOval(
+                                child: CachedNetworkImageWidget(
+                                    imageUrl: imageUrl ?? '',
+                                    fit: BoxFit.contain,
+                                    errorWidget: Image.asset(
+                                        ImageConst.directorProfile))),
+                          )
+                        : Text(
+                            "D",
+                            style:
+                                TextStyles.bold5(color: AppColors.whiteColor),
+                          ),
                   ),
-              ]),
-              addHorizontal(10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
+                ),
+            ]),
+            addHorizontal(10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    Loaders.circularShowLoader(context);
+
+                    await directoryVM.GetDirectorDetails(id ?? "");
+                    await directoryVM.getDirectory(id ?? "");
+
+                    Loaders.circularHideLoader(context);
+
+                    navigationService
+                        .navigateTo(RouteList.directoryDetailsScreen);
+                  },
+                  child: Text(
                       logoAvailable
                           ? newsfeeds?.communityOwner?.businessName ?? ""
                           : name ?? 'Dental Interface',
                       style: TextStyles.clashMedium(
                           fontSize: 16, color: AppColors.black)),
-                  Row(
-                    children: [
-                      logoAvailable
-                          ? Text("$name ",
-                              style: TextStyles.regular1(
-                                  color: Colors.black, fontSize: 14))
-                          : SizedBox.shrink(),
-                      Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
-                          style: TextStyles.regular1(
-                              color: AppColors.lightGeryColor)),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                Row(
+                  children: [
+                    logoAvailable
+                        ? GestureDetector(
+                            onTap: () async {
+                              /*Loaders.circularShowLoader(context);
+
+                              await directoryVM.GetDirectorDetails(userId ?? "");
+                              await directoryVM.getDirectory(userId ?? "");
+
+                              Loaders.circularHideLoader(context);
+
+                              navigationService
+                                  .navigateTo(RouteList.directoryDetailsScreen);*/
+                            },
+                            child: Text("$name ",
+                                style: TextStyles.regular1(
+                                    color: Colors.black, fontSize: 14)),
+                          )
+                        : SizedBox.shrink(),
+                    Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
+                        style: TextStyles.regular1(
+                            color: AppColors.lightGeryColor)),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
         NewsMenuWidget(newsfeeds: newsfeeds)
       ],

@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
@@ -14,6 +15,7 @@ import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_c
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -55,6 +57,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final int index;
   final String communityLogo;
   final String userName;
+  final String communityUserId;
 
   NewsFeedCommunityCard({
     super.key,
@@ -85,12 +88,15 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     required this.index,
     required this.communityLogo,
     required this.userName,
+    required this.communityUserId,
   }) {}
 
   @override
   Widget build(BuildContext context) {
     final feedTypeEnum = feedType;
     final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
+    final directoryVM = Provider.of<DirectoryViewModel>(context);
+
     final newsFeedCommunityViewModel =
         Provider.of<NewsFeedCommunityViewModel>(context);
     final String shareId = _fetchId(newsfeeds);
@@ -134,8 +140,16 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _logoWithTitle(logoUrl, companyName, createdAt,
-                              communityLogo, userName, logoAvailable),
+                          child: _logoWithTitle(
+                              logoUrl,
+                              companyName,
+                              createdAt,
+                              communityLogo,
+                              userName,
+                              logoAvailable,
+                              communityUserId,
+                              directoryVM,
+                              context),
                         ),
                         /*if (type == UserRole.supplier.value ||
                             (type == UserRole.professional.value &&
@@ -463,90 +477,105 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _logoWithTitle(
-    String logo,
-    String company,
-    String createdAt,
-    String communityLogo,
-    String userName,
-    bool logoAvailable,
-  ) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            CircleAvatar(
-              // ignore: unnecessary_null_comparison
-              backgroundColor: (logo != null && logo.isNotEmpty)
-                  ? AppColors.greyLight
-                  : AppColors.primaryColor,
-              radius: 26.5,
-              // ignore: unnecessary_null_comparison
-              child: (logo != null && logo.isNotEmpty)
-                  ? SizedBox(
-                      height: 52,
-                      width: 52,
-                      child: ClipOval(
-                          child: CachedNetworkImageWidget(
-                              imageUrl: communityLogo,
-                              fit: BoxFit.contain,
-                              errorWidget:
-                                  Image.asset(ImageConst.directorProfile))),
-                    )
-                  : Text(
-                      company[0].toUpperCase(),
-                      style: TextStyles.bold5(color: AppColors.whiteColor),
-                    ),
-            ),
-            if (logoAvailable)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: CircleAvatar(
-                  backgroundColor: AppColors.greyLight,
-                  radius: 16,
-                  child: (communityLogo.isNotEmpty)
-                      ? SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: ClipOval(
-                              child: CachedNetworkImageWidget(
-                                  imageUrl: logo,
-                                  fit: BoxFit.contain,
-                                  errorWidget:
-                                      Image.asset(ImageConst.directorProfile))),
-                        )
-                      : Text(
-                          company[0].toUpperCase(),
-                          style: TextStyles.bold5(color: AppColors.whiteColor),
-                        ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      String logo,
+      String company,
+      String createdAt,
+      String communityLogo,
+      String userName,
+      bool logoAvailable,
+      String communityUserId,
+      DirectoryViewModel directoryVM,
+      BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        Loaders.circularShowLoader(context);
+
+        await directoryVM.GetDirectorDetails(communityUserId);
+        await directoryVM.getDirectory(communityUserId);
+
+        Loaders.circularHideLoader(context);
+
+        navigationService.navigateTo(RouteList.directoryDetailsScreen);
+      },
+      child: Row(
+        children: [
+          Stack(
+            alignment: Alignment.center,
             children: [
-              Text(company, style: TextStyles.bold3(color: AppColors.black)),
-              const SizedBox(height: 2),
-              Row(
-                children: [
-                  if (userName.isNotEmpty)
-                    Text("$userName ",
-                        style: TextStyles.regular1(
-                            color: Colors.black, fontSize: 14)),
-                  Flexible(
-                    child: Text(DateFormatUtils.formatDateTime(createdAt),
-                        style: TextStyles.regular1(color: Colors.grey)),
-                  ),
-                ],
+              CircleAvatar(
+                // ignore: unnecessary_null_comparison
+                backgroundColor: (logo != null && logo.isNotEmpty)
+                    ? AppColors.greyLight
+                    : AppColors.primaryColor,
+                radius: 26.5,
+                // ignore: unnecessary_null_comparison
+                child: (logo != null && logo.isNotEmpty)
+                    ? SizedBox(
+                        height: 52,
+                        width: 52,
+                        child: ClipOval(
+                            child: CachedNetworkImageWidget(
+                                imageUrl: communityLogo,
+                                fit: BoxFit.contain,
+                                errorWidget:
+                                    Image.asset(ImageConst.directorProfile))),
+                      )
+                    : Text(
+                        company[0].toUpperCase(),
+                        style: TextStyles.bold5(color: AppColors.whiteColor),
+                      ),
               ),
+              if (logoAvailable)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.greyLight,
+                    radius: 16,
+                    child: (communityLogo.isNotEmpty)
+                        ? SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: ClipOval(
+                                child: CachedNetworkImageWidget(
+                                    imageUrl: logo,
+                                    fit: BoxFit.contain,
+                                    errorWidget: Image.asset(
+                                        ImageConst.directorProfile))),
+                          )
+                        : Text(
+                            company[0].toUpperCase(),
+                            style:
+                                TextStyles.bold5(color: AppColors.whiteColor),
+                          ),
+                  ),
+                ),
             ],
           ),
-        ),
-      ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(company, style: TextStyles.bold3(color: AppColors.black)),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    if (userName.isNotEmpty)
+                      Text("$userName ",
+                          style: TextStyles.regular1(
+                              color: Colors.black, fontSize: 14)),
+                    Flexible(
+                      child: Text(DateFormatUtils.formatDateTime(createdAt),
+                          style: TextStyles.regular1(color: Colors.grey)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

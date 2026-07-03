@@ -9,7 +9,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
-import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
@@ -18,6 +17,7 @@ import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_c
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/show_report_popup.dart';
+import 'package:di360_flutter/feature/news_feed_community/widgets/upcoming_course_card.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_screen.dart';
 import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -203,7 +203,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                 body: (viewModel.communityStatus)
                     ? SingleChildScrollView(
                         child: Column(
-                        
                           children: [
                             CommunityHeaderCard(
                               imageUrl:
@@ -262,339 +261,339 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                     child: communityStatusWidget(viewModel),
                                   ),
                             if (viewModel.upComingCoursesList.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Upcomming Courses",
-                                      style: TextStyles.regular3(
-                                          color: AppColors.primaryColor)),
-                                  SizedBox(
-                                    height: 380,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount:
-                                          viewModel.upComingCoursesList.length,
-                                      itemBuilder: (context, index) {
-                                        final course =
-                                            viewModel.upComingCoursesList[index];
-                              
-                                        return SizedBox(
-                                          width: 300,
-                                          child: ListingHubMasterCard(
-                                              feedId: course.id ?? "",
-                                              afterWardsPrice:
-                                                  course.afterwardsPrice,
-                                              presenterName: course.presenters?.isNotEmpty == true
-                                                  ? course.presenters?.first.presentedByName ??
-                                                      ""
-                                                  : "",
-                                              profilePic: course.presenters?.isNotEmpty == true
-                                                  ? course
-                                                          .presenters
-                                                          ?.first
-                                                          .presentedByImage
-                                                          ?.url ??
-                                                      ""
-                                                  : "",
-                                              imageUrl: (course.courseBannerImage!.isNotEmpty)
-                                                  ? course.courseBannerImage?.first.url ??
-                                                      ''
-                                                  : '',
-                                              companyName:
-                                                  course.courseName ?? '',
-                                              description:
-                                                  course.description ?? '',
-                                              date: "",
-                                              cpdHours: (course.cpdPoints ?? 0) % 1 == 0
-                                                  ? (course.cpdPoints ?? 0)
-                                                      .toInt()
-                                                      .toString()
-                                                  : (course.cpdPoints ?? 0)
-                                                      .toString(),
-                                              location: course.address != null && course.address?.isNotEmpty == true
-                                                  ? (course.address?.first.formattedAddress ??
-                                                      course.address?.first.city ??
-                                                      "")
-                                                  : "",
-                                              courseStatus: course.courseRegisteredUsers?.firstOrNull?.status,
-                                              onTap: () async {
-                                                await courseListingVM
-                                                    .getCourseDetails(context,
-                                                        course.id ?? "");
-                                                await courseListingVM
-                                                    .getProfile();
-                                                navigationService.navigateTo(
-                                                    RouteList
-                                                        .courseDetailScreen);
-                                              },
-                                              registerTap: () {},
-                                              isRegistered: false),
-                                        );
-                                      },
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Upcomming Courses :",
+                                        style: TextStyles.bold3(
+                                            color: AppColors.primaryColor)),
+                                    SizedBox(height: 10),
+                                    SizedBox(
+                                      height: 170,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: viewModel
+                                            .upComingCoursesList.length,
+                                        itemBuilder: (context, index) {
+                                          final course = viewModel
+                                              .upComingCoursesList[index];
+
+                                          return SizedBox(
+                                            width: 300,
+                                            child: UpcomingCourseCard(
+                                                feedId: course.id ?? "",
+                                                afterWardsPrice:
+                                                    course.afterwardsPrice,
+                                                presenterName: course.presenters?.isNotEmpty == true
+                                                    ? course.presenters?.first.presentedByName ??
+                                                        ""
+                                                    : "",
+                                                profilePic:
+                                                    course.presenters?.isNotEmpty == true
+                                                        ? course
+                                                                .presenters
+                                                                ?.first
+                                                                .presentedByImage
+                                                                ?.url ??
+                                                            ""
+                                                        : "",
+                                                imageUrl: (course.courseBannerImage!.isNotEmpty)
+                                                    ? course.courseBannerImage?.first.url ??
+                                                        ''
+                                                    : '',
+                                                companyName:
+                                                    course.courseName ?? '',
+                                                description:
+                                                    course.description ?? '',
+                                                date: "",
+                                                cpdHours: (course.cpdPoints ?? 0) % 1 == 0
+                                                    ? (course.cpdPoints ?? 0)
+                                                        .toInt()
+                                                        .toString()
+                                                    : (course.cpdPoints ?? 0)
+                                                        .toString(),
+                                                location: course.address != null && course.address?.isNotEmpty == true
+                                                    ? (course.address?.first.formattedAddress ?? course.address?.first.city ?? "")
+                                                    : "",
+                                                courseStatus: course.courseRegisteredUsers?.firstOrNull?.status,
+                                                onTap: () async {
+                                                  await courseListingVM
+                                                      .getCourseDetails(context,
+                                                          course.id ?? "");
+                                                  await courseListingVM
+                                                      .getProfile();
+                                                  navigationService.navigateTo(
+                                                      RouteList
+                                                          .courseDetailScreen);
+                                                },
+                                                registerTap: () {},
+                                                isRegistered: false),
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            (joinRequests?.length != 0 && joinRequests != null)
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    padding: EdgeInsets.all(10),
-                                    itemCount: joinRequests.length +
-                                        (viewModel.hasMoreNewsFeeds &&
-                                                viewModel.isLoadingMore
-                                            ? 1
-                                            : 0),
-                                    itemBuilder: (context, index) {
-                                      if (index == joinRequests.length) {
-                                        return const Padding(
-                                          padding: EdgeInsets.all(16),
-                                          child: Center(
-                                              child: CircularProgressIndicator(
-                                                  color:
-                                                      AppColors.primaryColor)),
-                                        );
-                                      }
-                                      final newsItem = joinRequests[index];
-                                      return NewsFeedCommunityCard(
-                                          index: index,
-                                          newsfeeds: newsItem,
-                                          course: newsItem.courses ?? [],
-                                          feedType: newsItem.feedType ?? "",
-                                          createdAt: newsItem.createdAt ?? "",
-                                          feedUserRole: newsItem.userRole ?? "",
-                                          imageUrls: newsItem.imageUrl ??
-                                              newsItem.postImage,
-                                          id: newsItem.id ?? '',
-                                          logoUrl: (newsItem.userRole ==
-                                                  UserRole.professional.value)
-                                              ? newsItem.dentalProfessional
-                                                      ?.profileImage?.url ??
-                                                  ''
-                                              : newsItem.dentalSupplier?.logo?.url ??
-                                                  "",
-                                          communityLogo: newsItem
-                                                  .communityOwner?.logo?.url ??
-                                              "",
-                                          companyName: newsItem
-                                                  .communityOwner?.businessName ??
-                                              "",
-                                          userName: (newsItem.userRole ==
-                                                  UserRole.professional.value)
-                                              ? newsItem.dentalProfessional
-                                                      ?.name ??
-                                                  ''
-                                              : "",
-                                          courseTitle:
-                                              newsItem.description ?? '',
-                                          status: newsItem.status ?? '',
-                                          description:
-                                              newsItem.description ?? '',
-                                          types: [],
-                                          registeredCount: 0,
-                                          chipTitle: newsItem.categoryType ?? '',
-                                          comments: newsItem.newsFeedsComments?.length ?? 0,
-                                          likes: newsItem.newsfeedsLikesAggregate?.aggregate?.count ?? 0,
-                                          isLiked: newsItem.myLike?.isNotEmpty ?? false,
-                                          onCommentTap: () {
-                                            navigationService.push(
-                                                CommunityCommentScreen(
-                                                    newsfeeds: newsItem));
-                                          },
-                                          onLikeTap: () {
-                                            (newsItem.myLike?.isNotEmpty ??
-                                                    false)
-                                                ? viewModel.communityUnLike(
-                                                    context,
-                                                    newsItem.myLike?.first.id ??
-                                                        '')
-                                                : viewModel.communityLike(
-                                                    context, newsItem.id ?? '');
-                                          },
-                                          onDetailView: () async {
-                                            final feedTypeEnum =
-                                                FeedType.fromString(
-                                                    newsItem.feedType);
-                                            switch (feedTypeEnum) {
-                                              case FeedType.learnhub:
-                                                await courseListingVM
-                                                    .getCourseDetails(
-                                                  context,
-                                                  newsItem.payloadId ?? "",
-                                                );
-                                                navigationService.navigateTo(
-                                                    RouteList
-                                                        .courseDetailScreen);
-                                                break;
-                                              case FeedType.jobs:
-                                                await newsFeedVM
-                                                    .getJobDetailsByIds(
-                                                        context,
-                                                        newsItem.payloadId ??
-                                                            "");
-                                                break;
-                                              default:
-                                                // Handle default case or other feed types if necessary
-                                                break;
-                                            }
-                                            /*if (newsItem.feedType == "LEARNHUB") {
-                                    await courseListingVM.getCourseDetails(
-                                      context,
-                                      newsItem.courses?.first.id ?? "",
-                                    );
-                                    navigationService.navigateTo(
-                                        RouteList.courseDetailScreen);
-                                  } else if (newsItem.feedType == "JOBS") {
-                                    await jobListingsViewModel
-                                        .getJobListingById(context,newsItem.jobs?.first.id??"");
-                                    navigationService.navigateToWithParams(
-                                      RouteList.jobdetailsScreen,
-                                      params: jobListingsViewModel.jobListingData?.first??Jobs(),
-                                    );
-                                  }*/
-                                          },
-                                          onMenuAction: (action, id) async {
-                                            switch (action) {
-                                              case "Publish":
-                                                viewModel.updateNewsFeedStatus(
-                                                    context,
-                                                    newsItem.id ?? '',
-                                                    "PUBLISHED");
+                             (joinRequests?.length != 0 && joinRequests != null)
+                                 ? ListView.builder(
+                                     shrinkWrap: true,
+                                     physics:
+                                         const NeverScrollableScrollPhysics(),
+                                     padding: EdgeInsets.all(10),
+                                     itemCount: joinRequests.length +
+                                         (viewModel.hasMoreNewsFeeds &&
+                                                 viewModel.isLoadingMore
+                                             ? 1
+                                             : 0),
+                                     itemBuilder: (context, index) {
+                                       if (index == joinRequests.length) {
+                                         return const Padding(
+                                           padding: EdgeInsets.all(16),
+                                           child: Center(
+                                               child: CircularProgressIndicator(
+                                                   color:
+                                                       AppColors.primaryColor)),
+                                         );
+                                       }
+                                       final newsItem = joinRequests[index];
+                                       return NewsFeedCommunityCard(
+                                           communityUserId: newsItem.communityOwner?.directories?.isNotEmpty == true ? newsItem.communityOwner?.directories?.first.id ?? "" : "",
+                                           index: index,
+                                           newsfeeds: newsItem,
+                                           course: newsItem.courses ?? [],
+                                           feedType: newsItem.feedType ?? "",
+                                           createdAt: newsItem.createdAt ?? "",
+                                           feedUserRole: newsItem.userRole ?? "",
+                                           imageUrls: newsItem.imageUrl ??
+                                               newsItem.postImage,
+                                           id: newsItem.id ?? '',
+                                           logoUrl: (newsItem.userRole ==
+                                                   UserRole.professional.value)
+                                               ? newsItem.dentalProfessional
+                                                       ?.profileImage?.url ??
+                                                   ''
+                                               : newsItem.dentalSupplier?.logo?.url ??
+                                                   "",
+                                           communityLogo: newsItem
+                                                   .communityOwner?.logo?.url ??
+                                               "",
+                                           companyName: newsItem
+                                                   .communityOwner?.businessName ??
+                                               "",
+                                           userName: (newsItem.userRole ==
+                                                   UserRole.professional.value)
+                                               ? newsItem.dentalProfessional
+                                                       ?.name ??
+                                                   ''
+                                               : "",
+                                           courseTitle:
+                                               newsItem.description ?? '',
+                                           status: newsItem.status ?? '',
+                                           description:
+                                               newsItem.description ?? '',
+                                           types: [],
+                                           registeredCount: 0,
+                                           chipTitle: newsItem.categoryType ?? '',
+                                           comments: newsItem.newsFeedsComments?.length ?? 0,
+                                           likes: newsItem.newsfeedsLikesAggregate?.aggregate?.count ?? 0,
+                                           isLiked: newsItem.myLike?.isNotEmpty ?? false,
+                                           onCommentTap: () {
+                                             navigationService.push(
+                                                 CommunityCommentScreen(
+                                                     newsfeeds: newsItem));
+                                           },
+                                           onLikeTap: () {
+                                             (newsItem.myLike?.isNotEmpty ??
+                                                     false)
+                                                 ? viewModel.communityUnLike(
+                                                     context,
+                                                     newsItem.myLike?.first.id ??
+                                                         '')
+                                                 : viewModel.communityLike(
+                                                     context, newsItem.id ?? '');
+                                           },
+                                           onDetailView: () async {
+                                             final feedTypeEnum =
+                                                 FeedType.fromString(
+                                                     newsItem.feedType);
+                                             switch (feedTypeEnum) {
+                                               case FeedType.learnhub:
+                                                 await courseListingVM
+                                                     .getCourseDetails(
+                                                   context,
+                                                   newsItem.payloadId ?? "",
+                                                 );
+                                                 navigationService.navigateTo(
+                                                     RouteList
+                                                         .courseDetailScreen);
+                                                 break;
+                                               case FeedType.jobs:
+                                                 await newsFeedVM
+                                                     .getJobDetailsByIds(
+                                                         context,
+                                                         newsItem.payloadId ??
+                                                               "");
+                                                 break;
+                                               default:
+                                                 // Handle default case or other feed types if necessary
+                                                 break;
+                                             }
+                                             /*if (newsItem.feedType == "LEARNHUB") {
+                                             await courseListingVM.getCourseDetails(
+                                               context,
+                                               newsItem.courses?.first.id ?? "",
+                                             );
+                                             navigationService.navigateTo(
+                                                   RouteList.courseDetailScreen);
+                                         } else if (newsItem.feedType == "JOBS") {
+                                           await jobListingsViewModel
+                                               .getJobListingById(context,newsItem.jobs?.first.id??"");
+                                           navigationService.navigateToWithParams(
+                                             RouteList.jobdetailsScreen,
+                                             params: jobListingsViewModel.jobListingData?.first??Jobs(),
+                                           );
+                                         }*/
+                                           },
+                                           onMenuAction: (action, id) async {
+                                             switch (action) {
+                                               case "Publish":
+                                                 viewModel.updateNewsFeedStatus(
+                                                     context,
+                                                     newsItem.id ?? '',
+                                                     "PUBLISHED");
 
-                                                break;
-                                              case "Unpublish":
-                                                viewModel.updateNewsFeedStatus(
-                                                    context,
-                                                    newsItem.id ?? '',
-                                                    "UNPUBLISHED");
+                                                 break;
+                                               case "Unpublish":
+                                                 viewModel.updateNewsFeedStatus(
+                                                     context,
+                                                     newsItem.id ?? '',
+                                                     "UNPUBLISHED");
 
-                                                break;
-                                              case "Edit":
-                                                viewModel.setEditNewsFeed(true);
-                                                viewModel.setEditNewsFeedId(
-                                                    newsItem.id ?? "");
-                                                viewModel.descriptionController
-                                                    .text = htmlParser
-                                                        .parse(newsItem
-                                                            .description)
-                                                        .body
-                                                        ?.text ??
-                                                    '';
-                                                viewModel.videoLinkController
-                                                        .text =
-                                                    newsItem.videoUrl ?? "";
-                                                viewModel.websiteLinkController
-                                                        .text =
-                                                    newsItem.webUrl ?? "";
-                                                viewModel.setEnableComments(
-                                                    newsItem.commentsEnabled ??
-                                                        false);
-                                                await viewModel
-                                                    .fetchAddNewsfeedCommunityCategories();
-                                                viewModel
-                                                    .editSelectCategoryAssigned(
-                                                        newsItem.categoryType ??
-                                                            '');
+                                                 break;
+                                               case "Edit":
+                                                 viewModel.setEditNewsFeed(true);
+                                                 viewModel.setEditNewsFeedId(
+                                                     newsItem.id ?? "");
+                                                 viewModel.descriptionController
+                                                     .text = htmlParser
+                                                         .parse(newsItem
+                                                             .description)
+                                                         .body
+                                                         ?.text ??
+                                                     '';
+                                                 viewModel.videoLinkController
+                                                         .text =
+                                                     newsItem.videoUrl ?? "";
+                                                 viewModel.websiteLinkController
+                                                         .text =
+                                                     newsItem.webUrl ?? "";
+                                                 viewModel.setEnableComments(
+                                                     newsItem.commentsEnabled ??
+                                                         false);
+                                                 await viewModel
+                                                     .fetchAddNewsfeedCommunityCategories();
+                                                 viewModel
+                                                     .editSelectCategoryAssigned(
+                                                         newsItem.categoryType ??
+                                                             '');
 
-                                                /*viewModel.setSelectedCourseCategoryName(
-                                          newsItem.categoryType ?? "");*/
+                                                 /*viewModel.setSelectedCourseCategoryName(
+                                                   newsItem.categoryType ?? "");*/
 
-                                                /*viewModel.newsFeedCategory = communityVM
-                                              .newsFeedCategoriesData
-                                              ?.newsfeedCategories
-                                              ?.map(
-                                                  (e) => e.categoryName ?? "")
-                                              .toList() ??
-                                          [];*/
-                                                viewModel
-                                                        .serverNewsFeedGallery =
-                                                    (newsItem.postImage ?? [])
-                                                        .map((item) =>
-                                                            item.url ?? "")
-                                                        .where((url) =>
-                                                            url.isNotEmpty)
-                                                        .toList();
-                                                viewModel.existingImages =
-                                                    newsItem.postImage ?? [];
-                                                navigationService.navigateTo(
-                                                    RouteList
-                                                        .addNewsFeedCommunityView);
+                                                 /*viewModel.newsFeedCategory = communityVM
+                                                     .newsFeedCategoriesData
+                                                     ?.newsfeedCategories
+                                                     ?.map(
+                                                         (e) => e.categoryName ?? "")
+                                                     .toList() ??
+                                               [];*/
+                                                 viewModel
+                                                         .serverNewsFeedGallery =
+                                                     (newsItem.postImage ?? [])
+                                                         .map((item) =>
+                                                             item.url ?? "")
+                                                         .where((url) =>
+                                                             url.isNotEmpty)
+                                                         .toList();
+                                                 viewModel.existingImages =
+                                                     newsItem.postImage ?? [];
+                                                 navigationService.navigateTo(
+                                                     RouteList
+                                                         .addNewsFeedCommunityView);
 
-                                                break;
-                                              case "Delete":
-                                                showAlertMessage(context,
-                                                    'Are you sure you want to delete this news feed post?',
-                                                    onBack: () async {
-                                                  await viewModel
-                                                      .deleteNewsFeedCommunity(
-                                                          context,
-                                                          newsItem.id ?? "");
-                                                  navigationService.goBack();
-                                                });
+                                                 break;
+                                               case "Delete":
+                                                 showAlertMessage(context,
+                                                     'Are you sure you want to delete this news feed post?',
+                                                     onBack: () async {
+                                                   await viewModel
+                                                       .deleteNewsFeedCommunity(
+                                                           context,
+                                                           newsItem.id ?? "");
+                                                   navigationService.goBack();
+                                                 });
 
-                                                break;
-                                              case "Save Media":
-                                                final mediaList =
-                                                    newsItem.postImage ?? [];
-                                                downloadAllFiles(
-                                                    context, mediaList);
+                                                 break;
+                                               case "Save Media":
+                                                 final mediaList =
+                                                     newsItem.postImage ?? [];
+                                                 downloadAllFiles(
+                                                     context, mediaList);
 
-                                                break;
-                                              case "Hide Post":
-                                                await viewModel
-                                                    .newsFeedCommunityAction(
-                                                        context,
-                                                        newsItem.id ?? "",
-                                                        "HIDE");
-                                                showReportSuccessPopup(context);
-                                                break;
-                                              case "Report Post":
-                                                showAdminReportBottomSheet(
-                                                    context, () async {
-                                                  navigationService.goBack();
-                                                  await viewModel
-                                                      .newsFeedCommunityAction(
-                                                          context,
-                                                          newsItem.id ?? "",
-                                                          "REPORT");
-                                                  scaffoldMessenger(
-                                                      "Post Reported Successfully");
-                                                }, viewModel.reportText);
-                                                break;
-                                              case "Block Profile":
-                                                await viewModel
-                                                    .newsFeedCommunityAction(
-                                                        context,
-                                                        newsItem.id ?? "",
-                                                        "BLOCK");
-                                                showReportSuccessPopup(context);
-                                                break;
-                                            }
-                                          });
-                                    },
-                                  )
-                                : Expanded(
-                                    child: Center(
-                                      child: Text("No Data",
-                                          style: TextStyles.medium3(
-                                              color: AppColors.black,
-                                              fontSize: 16)),
-                                    ),
-                                  ),
-                          ],
-                        ),
-                      )
-                    : Center(
-                        child: Text(
-                          "No Community",
-                          style: TextStyles.medium3(
-                              color: AppColors.black, fontSize: 16),
-                        ),
-                      ),
+                                                 break;
+                                               case "Hide Post":
+                                                 await viewModel
+                                                     .newsFeedCommunityAction(
+                                                         context,
+                                                         newsItem.id ?? "",
+                                                         "HIDE");
+                                                 showReportSuccessPopup(context);
+                                                 break;
+                                               case "Report Post":
+                                                 showAdminReportBottomSheet(
+                                                     context, () async {
+                                                   navigationService.goBack();
+                                                   await viewModel
+                                                       .newsFeedCommunityAction(
+                                                           context,
+                                                           newsItem.id ?? "",
+                                                           "REPORT");
+                                                   scaffoldMessenger(
+                                                       "Post Reported Successfully");
+                                                 }, viewModel.reportText);
+                                                 break;
+                                               case "Block Profile":
+                                                 await viewModel
+                                                     .newsFeedCommunityAction(
+                                                         context,
+                                                         newsItem.id ?? "",
+                                                         "BLOCK");
+                                                 showReportSuccessPopup(context);
+                                                 break;
+                                             }
+                                           });
+                                           },
+                                         )
+                                     : Center(
+                                         child: Text("No Data",
+                                             style: TextStyles.medium3(
+                                                 color: AppColors.black,
+                                                 fontSize: 16)),
+                                       ),
+                           ],
+                         ),
+                       )
+                     : Center(
+                         child: Text(
+                           "No Community",
+                           style: TextStyles.medium3(
+                               color: AppColors.black, fontSize: 16),
+                         ),
+                       ),
                 floatingActionButton: (viewModel.communityStatus)
                     ? GestureDetector(
                         onTap: () async {

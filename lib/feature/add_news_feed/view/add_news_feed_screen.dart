@@ -1,14 +1,18 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/upload_file_preview.dart';
 import 'package:di360_flutter/feature/add_news_feed/widget/enable_comment_widget.dart';
+import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +28,7 @@ class AddNewsFeedScreen extends StatelessWidget
   Widget build(BuildContext context) {
     final viewModel = Provider.of<AddNewsFeedViewModel>(context);
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
+    final loginVM = Provider.of<LoginViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(
@@ -116,6 +121,7 @@ class AddNewsFeedScreen extends StatelessWidget
                         ? validateOptionalUrl
                         : null),
                 addVertical(10),
+                if (loginVM.isSupplier)
                 EnableCommentsWidget(
                   value: viewModel.enableComments,
                   onChanged: (value) {

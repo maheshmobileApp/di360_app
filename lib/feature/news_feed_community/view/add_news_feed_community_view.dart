@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.d
 import 'package:di360_flutter/feature/add_news_feed/widget/enable_comment_widget.dart';
 
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/upload_file_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -25,6 +26,8 @@ class AddNewsFeedCommunityView extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<NewsFeedCommunityViewModel>(context);
+    final loginVM = Provider.of<LoginViewModel>(context);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(
@@ -83,6 +86,7 @@ class AddNewsFeedCommunityView extends StatelessWidget
                       : null,
                 ),
                 addVertical(10),
+                if (loginVM.isSupplier)
                 EnableCommentsWidget(
                   value: viewModel.enableComments,
                   onChanged: (value) {

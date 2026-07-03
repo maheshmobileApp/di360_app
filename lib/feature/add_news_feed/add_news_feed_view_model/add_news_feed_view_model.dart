@@ -67,7 +67,6 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   Future<void> fetchNewsfeedCategories() async {
     final professionTypeId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
-    print("**************$professionTypeId");
     const String query = r'''
     query getAllNewsfeedCategories($where: newsfeed_categories_bool_exp!) {
   newsfeed_categories(where: $where, order_by: {created_at: desc}) {
