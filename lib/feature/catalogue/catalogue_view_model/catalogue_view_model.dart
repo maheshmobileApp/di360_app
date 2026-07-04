@@ -115,7 +115,7 @@ void toggleExpanded(String categoryName) {
         0,
         CatalogueCategories(
           id: "",
-          name: "Add",
+          name: "All",
         ),
       );
       getCataloguesList("");
