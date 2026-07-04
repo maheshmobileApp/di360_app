@@ -303,8 +303,8 @@ class CatalogueViewModel extends ChangeNotifier {
   CatalougesListData? catalougesListData;
   Future<void> getCataloguesList(String categoryId) async {
     print("***********getCataloguesList $categoryId *");
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final myCommunityIds =
+        await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final variables = {
@@ -334,7 +334,7 @@ class CatalogueViewModel extends ChangeNotifier {
               if (UserRole.professional.value == userType)
                 {
                   "community_id": {
-                    "_in": ["$communityId"]
+                    "_in": ["${myCommunityIds.first}"]
                   }
                 }
             ]
