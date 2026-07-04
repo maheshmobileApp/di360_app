@@ -46,7 +46,6 @@ class LoginViewModel extends ChangeNotifier {
   List<Modules>? modulePermissions = [];
   List<CommunityMembers> communityMembers = [];
 
-
   Future<void> submit(BuildContext context) async {
     _variables['details']['emailOrPhone'] = emailController.text.toLowerCase();
     _variables['details']['password'] = passController.text;
@@ -131,7 +130,7 @@ class LoginViewModel extends ChangeNotifier {
                     LocalStorageConst.emailId, loginData?.email ?? ''),
                 LocalStorage.setStringVal(
                     LocalStorageConst.type, loginData?.type ?? ''),
-                
+
                 LocalStorage.setStringVal(LocalStorageConst.professionType,
                     loginData?.professiontype?.name ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.professionId,
@@ -305,6 +304,8 @@ class LoginViewModel extends ChangeNotifier {
           communityMembers.map((e) => e.communityId ?? '').toList();
       await LocalStorage.setStringList(
           LocalStorageConst.myCommunityIds, communityIds);
+      await LocalStorage.setStringVal(LocalStorageConst.communityId,
+          communityMembers.isNotEmpty ? communityMembers.first.communityId ?? '' : '');
     }
     notifyListeners();
   }

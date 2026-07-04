@@ -71,22 +71,22 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   bool isExpanded(String categoryName) {
-  return expandedCategories[categoryName] ?? false;
-}
-
-void toggleExpanded(String categoryName) {
-  final isCurrentlyExpanded = expandedCategories[categoryName] ?? false;
-
-  // Collapse all categories
-  expandedCategories.updateAll((key, value) => false);
-
-  // If it wasn't already expanded, expand it
-  if (!isCurrentlyExpanded) {
-    expandedCategories[categoryName] = true;
+    return expandedCategories[categoryName] ?? false;
   }
 
-  notifyListeners();
-}
+  void toggleExpanded(String categoryName) {
+    final isCurrentlyExpanded = expandedCategories[categoryName] ?? false;
+
+    // Collapse all categories
+    expandedCategories.updateAll((key, value) => false);
+
+    // If it wasn't already expanded, expand it
+    if (!isCurrentlyExpanded) {
+      expandedCategories[categoryName] = true;
+    }
+
+    notifyListeners();
+  }
 
   final PageController pageController = PageController();
   int currentPage = 0;
@@ -328,27 +328,15 @@ void toggleExpanded(String categoryName) {
               {
                 "community_user_type": {"_is_null": true}
               },
-              if (UserRole.supplier.value == userType)
-                {
-                  "dental_supplier_id": {"_eq": userId}
-                },
+              {
+                "dental_supplier_id": {"_eq": userId}
+              },
               if (UserRole.professional.value == userType)
                 {
-                  "dental_professional_id": {"_eq": userId}
-                },
-              if (UserRole.practice.value == userType)
-                {
-                  "dental_practice_id": {"_eq": userId}
-                },
-              if (UserRole.admin.value == userType)
-                {
-                  "dental_admin_id": {"_eq": userId}
-                },
-              {
-                "community_id": {
-                  "_in": ["$communityId"]
+                  "community_id": {
+                    "_in": ["$communityId"]
+                  }
                 }
-              }
             ]
           }
         ]
@@ -356,6 +344,7 @@ void toggleExpanded(String categoryName) {
       "limit": 20,
       "offset": 0
     };
+    print("************variables $variables");
     final res = await repo.getCatalougesList(variables);
     if (res != null) {
       catalougesListData = res;
