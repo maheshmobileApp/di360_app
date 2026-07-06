@@ -89,14 +89,9 @@ class UpcomingCourseCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20)),
                     child: Text(
                         noOfSeats != null
-                            ? noOfSeats <= registerCount
-                                ? "SOLD OUT"
-                                : noOfSeats > 10
-                                    ? " FILLING FAST !"
-                                    : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
-                            : afterWardsPrice == 0.0
-                                ? "FREE MASTERCLASS"
-                                : "PAID",
+                            ? "FILLING FAST !"
+                                    
+                            : "SOLD OUT",
                         style: const TextStyle(
                             color: Color.fromARGB(255, 0, 0, 0),
                             fontSize: 12,

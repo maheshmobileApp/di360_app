@@ -106,7 +106,7 @@ class ListingHubMasterCard extends StatelessWidget {
                               ? noOfSeats <= registerCount
                                   ? "SOLD OUT"
                                   : noOfSeats > 10
-                                      ? " FILLING FAST !"
+                                      ? "FILLING FAST !"
                                       : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
                               : afterWardsPrice == 0.0
                                   ? "FREE MASTERCLASS"
@@ -274,6 +274,7 @@ class ListingHubMasterCard extends StatelessWidget {
                 ),
               ),
               //Spacer(),
+              //if (!(noOfSeats?? 0 <= registerCount) )
               RegisterButton(
                 courseStatus: courseStatus ?? "",
                   text: isRegistered && courseStatus != "EXPIRED"

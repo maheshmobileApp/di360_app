@@ -151,7 +151,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "feed_type": "NEWSFEED",
           "community_id": null,
           "community_type": "BOTH",
-          "comments_enabled": enableComments,
+           if (type == UserRole.supplier.value) "comments_enabled": enableComments,
         }
       };
 
@@ -177,7 +177,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
 
   updateTheNewsFeeds(BuildContext context) async {
     // final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    // final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
       uploadedFiles.clear();
@@ -206,7 +206,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "video_url": videoController.text,
           "post_image": uploadedFiles,
           "web_url": websiteController.text,
-          "comments_enabled": enableComments,
+          if (type == UserRole.supplier.value)  "comments_enabled": enableComments,
         }
       });
 

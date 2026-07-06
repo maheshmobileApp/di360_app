@@ -506,7 +506,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
-      "comments_enabled": enableComments,
+      if (type == UserRole.supplier.value) "comments_enabled": enableComments,
     };
 
     if (type == UserRole.professional.value) {
@@ -656,7 +656,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
-      "comments_enabled": enableComments,
+      if (type == UserRole.supplier.value) "comments_enabled": enableComments,
     };
 
     if (type == UserRole.professional.value) {

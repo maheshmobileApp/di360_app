@@ -284,6 +284,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                           return SizedBox(
                                             width: 300,
                                             child: UpcomingCourseCard(
+                                              noOfSeats: course.numberOfSeats,
                                                 feedId: course.id ?? "",
                                                 afterWardsPrice:
                                                     course.afterwardsPrice,
