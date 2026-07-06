@@ -562,6 +562,19 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     return user.first.courseValidTill;
   }
 
+  String? getCourseStatus(List<CourseRegisteredUsers> users) {
+    print("************************$currentUserId");
+    final user = users
+        ?.where(
+          (e) => e.fromId == currentUserId,
+        )
+        .toList();
+
+    if (user == null || user.isEmpty) return null;
+
+    return user.first.status;
+  }
+
   clearAll() {
     userFirstNameController.text = "";
     userLastNameController.text = "";

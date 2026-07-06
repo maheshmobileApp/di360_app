@@ -275,9 +275,12 @@ class ListingHubMasterCard extends StatelessWidget {
               ),
               //Spacer(),
               RegisterButton(
+                courseStatus: courseStatus ?? "",
                   text: isRegistered && courseStatus != "EXPIRED"
                       ? (type == "Online Academy")
-                          ? "View Course Details"
+                          ? courseStatus == "PENDING"
+                              ? "Awaiting Approval"
+                              : "View Course Details"
                           : "Already Registered"
                       : 'Register Now',
                   onTap: registerTap,

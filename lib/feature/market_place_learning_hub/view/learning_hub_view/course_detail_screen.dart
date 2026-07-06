@@ -75,9 +75,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     final isRegistered = courseListingVM
         .isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
-final bool seats =
-    (courseDetails?.numberOfSeats ?? 0) <=
-    (courseDetails?.courseRegisteredUsersAggregate?.aggregate?.count ?? 0);
+    final bool seats = (courseDetails?.numberOfSeats ?? 0) <=
+        (courseDetails?.courseRegisteredUsersAggregate?.aggregate?.count ?? 0);
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
       bottomNavigationBar: (courseDetails?.status == "APPROVE" &&

@@ -176,8 +176,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                     "")
                                 : "",
                             expiryDateCount: remainingDays,
-                            courseStatus: course
-                                .courseRegisteredUsers?.firstOrNull?.status,
+                            courseStatus: courseListingVM.getCourseStatus(course.courseRegisteredUsers??[]),
                             onTap: () async {
                               await courseListingVM.getCourseDetails(
                                   context, course.id ?? "");
@@ -194,9 +193,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                   context, course.id ?? "");
                               await courseListingVM.getProfile();
                               if (isRegistered &&
-                                  course.courseRegisteredUsers?.firstOrNull
-                                          ?.status !=
-                                      "EXPIRED" &&
+                                  courseListingVM.getCourseStatus(course.courseRegisteredUsers??[]) !=
+                                      "EXPIRED" && courseListingVM.getCourseStatus(course.courseRegisteredUsers??[]) != "PENDING" &&
                                   course.type == "Online Academy") {
                                 navigationService.push(CourseDetailsView());
                               } else {
