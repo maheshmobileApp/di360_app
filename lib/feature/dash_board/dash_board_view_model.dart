@@ -135,6 +135,7 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<CommunityViewModel>().changeProfessionalMode(true);
           context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
           context.read<NewsFeedCommunityViewModel>().initialStateData();
+          context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
 
           break;
         case 4: // Catalogue
@@ -180,6 +181,7 @@ class DashBoardViewModel extends ChangeNotifier {
               .read<CommunityViewModel>()
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
+          context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
           break;
         case 4: // Catalogue
           context

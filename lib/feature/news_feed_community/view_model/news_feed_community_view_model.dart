@@ -53,6 +53,12 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   bool enableComments = true;
   List<CoursesListingDetails> upComingCoursesList = [];
   String? userType;
+  String? newsfeedCommunityId = "";
+
+  void setNewsFeedCommunityId(String value) {
+    newsfeedCommunityId = value;
+    notifyListeners();
+  }
 
   void setEnableComments(bool value) {
     enableComments = value;
@@ -230,8 +236,12 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     // final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
-    // final professionId =
-    //     await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    // final professionId = await LocalStorage.getStringVal(LocalStorageConst.professionId);
+
+    String? selectedCommunity = (newsfeedCommunityId != null &&
+            newsfeedCommunityId?.isNotEmpty == true)
+        ? newsfeedCommunityId
+        : (type == UserRole.professional.value ? profCommunityId : communityId);
 
     final variables = {
       "limit": _newsFeedLimit,
@@ -242,11 +252,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
             "status": {"_eq": listingStatus}
           },
           {
-            "community_id": {
-              "_eq": (type == UserRole.professional.value)
-                  ? profCommunityId
-                  : communityId
-            }
+            "community_id": {"_eq": selectedCommunity}
           },
           {
             "community_type": {
@@ -350,6 +356,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   Future<void> getAllStatusCounts(
       {String? categoryType, String? feedType}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
@@ -357,7 +364,11 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "where": {
         "_and": [
           {
-            "community_id": {"_eq": communityId}
+            "community_id": {
+              "_eq": (type == UserRole.professional.value)
+                  ? profCommunityId
+                  : communityId
+            }
           },
           {
             "community_type": {
@@ -720,8 +731,14 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     print("**************getCommunityMemberDirectorIds Calling");
     final userCommunityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+        String? selectedCommunity = (newsfeedCommunityId != null &&
+            newsfeedCommunityId?.isNotEmpty == true)
+        ? newsfeedCommunityId
+        : (type == UserRole.professional.value ? profCommunityId : userCommunityId);
     final res =
-        await repo.getCommunityMemberCountData(communityId ?? userCommunityId);
+        await repo.getCommunityMemberCountData(communityId ?? selectedCommunity??"");
     if (res.dentalSuppliers != null) {
       communityMembersCountData = res;
       communityMemberDirectorId =
@@ -810,6 +827,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   List<NewsfeedCategories>? addNewsFeedCommunityCategories;
   Future<void> fetchAddNewsfeedCommunityCategories() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     const String query = r'''
     query getNewsfeedCategoriesByCommunity($communityId: uuid!) {
   newsfeed_categories(
@@ -828,7 +846,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 }''';
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
-    final variables = {"communityId": communityId};
+    final variables = {
+      "communityId":
+          (type == UserRole.professional.value) ? profCommunityId : communityId
+    };
     try {
       final response = await _http.query(query, variables: variables);
       if (response != null) {
@@ -862,11 +883,21 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     print("**************getUpcomingCourses Calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+       String? selectedCommunity = (newsfeedCommunityId != null &&
+            newsfeedCommunityId?.isNotEmpty == true)
+        ? newsfeedCommunityId
+        : (type == UserRole.professional.value ? profCommunityId : communityId);
+
+
     final variables = {
       "where": {
         "_and": [
           {
-            "community_id": {"_eq": communityId}
+            "community_id": {
+              "_eq": selectedCommunity
+            }
           },
           {
             "community_status": {"_eq": "YES"}

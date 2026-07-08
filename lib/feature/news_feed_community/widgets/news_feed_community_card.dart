@@ -169,6 +169,12 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
                     const SizedBox(height: 8),
+                    if (newsfeeds?.feedType == FeedType.learnhub.value)
+                      Text(
+                        "Course Description :",
+                        style: TextStyles.semiBold(
+                            fontSize: 14, color: AppColors.black),
+                      ),
                     ExpandableHtmlText(
                       htmlData: description,
                       index: index,
@@ -308,7 +314,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
           .push(ImageViewerScreen(postImage: allMedia as List<PostImage>?)),
       child: Container(
         width: double.infinity,
-        height: 200,
+        height: 160,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.grey[100],
@@ -534,8 +540,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                     radius: 16,
                     child: (communityLogo.isNotEmpty)
                         ? SizedBox(
-                            height: 24,
-                            width: 24,
+                            height: 30,
+                            width: 30,
                             child: ClipOval(
                                 child: CachedNetworkImageWidget(
                                     imageUrl: logo,

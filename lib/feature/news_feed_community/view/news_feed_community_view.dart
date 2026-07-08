@@ -54,7 +54,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         final communityVM =
             Provider.of<CommunityViewModel>(context, listen: false);
         Future.wait([
-          communityVM.getNewsFeedCategories(context, type: "Community"),
+          //communityVM.getNewsFeedCategories(context, type: "Community"),
           viewModel.getCommunityMemberDirectorIds(),
           viewModel.getUpcomingCourses(context),
         ]);
@@ -267,7 +267,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Upcomming Courses :",
+                                    Text("Upcoming Courses :",
                                         style: TextStyles.bold3(
                                             color: AppColors.primaryColor)),
                                     SizedBox(height: 10),

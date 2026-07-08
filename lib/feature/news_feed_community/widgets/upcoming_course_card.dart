@@ -71,7 +71,7 @@ class UpcomingCourseCard extends StatelessWidget {
                     imageUrl: imageUrl,
                     width: double.infinity,
                     height: 120,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                     errorWidget: const Icon(Icons.broken_image,
                         size: 50, color: AppColors.lightGeryColor),
                   ),
