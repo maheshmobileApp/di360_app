@@ -136,8 +136,7 @@ class _CouresListingCardState extends State<CouresListingCard> {
                 ),
 
                 const SizedBox(height: 8),
-                Text(presenterNames?[currentIndex] ?? "",
-                    style: TextStyles.medium1(color: AppColors.black)),
+                Text(currentPresenterName),
                 const SizedBox(height: 8),
                 _chipWidget(widget.types, widget.meetingLink, time),
                 const SizedBox(height: 8),
@@ -195,10 +194,8 @@ class _CouresListingCardState extends State<CouresListingCard> {
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 400),
                     child: CachedNetworkImageWidget(
-                      key: ValueKey(presenterImages?[currentIndex]),
-                      imageUrl: presenterImages?[currentIndex] ?? "",
-                      fit: BoxFit.contain,
-                      errorWidget: Image.asset(ImageConst.directorProfile),
+                      imageUrl: currentPresenterImage,
+                      key: ValueKey(currentPresenterImage),
                     ),
                   ),
                 ),
@@ -271,7 +268,9 @@ class _CouresListingCardState extends State<CouresListingCard> {
                 SizedBox(
                   height: 8,
                 ),
-                (meetingLink != "" && types.first == "Webinar")
+                (meetingLink.isNotEmpty &&
+                        types.isNotEmpty &&
+                        types.first == "Webinar")
                     ? _meetingLinkWidget(meetingLink)
                     : SizedBox.shrink(),
               ],
@@ -286,6 +285,30 @@ class _CouresListingCardState extends State<CouresListingCard> {
         );
       }).toList(),
     );
+  }
+
+  String get currentPresenterName {
+    if (widget.presenters == null || widget.presenters!.isEmpty) {
+      return "";
+    }
+
+    if (currentIndex >= widget.presenters!.length) {
+      return "";
+    }
+
+    return widget.presenters![currentIndex].presentedByName ?? "";
+  }
+
+  String get currentPresenterImage {
+    if (widget.presenters == null || widget.presenters!.isEmpty) {
+      return "";
+    }
+
+    if (currentIndex >= widget.presenters!.length) {
+      return "";
+    }
+
+    return widget.presenters![currentIndex].presentedByImage?.url ?? "";
   }
 
   Widget _meetingLinkWidget(String link) {

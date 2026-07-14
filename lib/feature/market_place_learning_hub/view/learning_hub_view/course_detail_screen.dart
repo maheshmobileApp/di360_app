@@ -96,16 +96,20 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             courseDetails?.earlyBirdPrice?.toString() ?? "0",
                         oldPrice:
                             courseDetails?.afterwardsPrice?.toString() ?? "0",
-                        courseRegisterStatus: courseDetails
-                            ?.courseRegisteredUsers?.firstOrNull?.status,
+                        courseRegisterStatus:
+                            courseListingVM.getCourseRegisterStatus(
+                                courseDetails?.courseRegisteredUsers ?? []),
                         onPressed: isRegistered &&
-                                courseDetails?.courseRegisteredUsers
-                                        ?.firstOrNull?.status !=
+                                courseListingVM.getCourseRegisterStatus(
+                                        courseDetails?.courseRegisteredUsers ??
+                                            []) !=
                                     "EXPIRED"
                             ? courseDetails?.type == 'Online Academy'
                                 ? () async {
-                                    courseDetails?.courseRegisteredUsers
-                                                ?.firstOrNull?.status ==
+                                    courseListingVM.getCourseRegisterStatus(
+                                                courseDetails
+                                                        ?.courseRegisteredUsers ??
+                                                    []) ==
                                             "PENDING"
                                         ? showAlertMessage(
                                             context,
@@ -278,8 +282,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         bannerName: bannerName,
                         creatAt: courseDetails?.updatedAt,
                         registerStatus: isRegistered,
-                        courseStatus: courseDetails
-                                ?.courseRegisteredUsers?.firstOrNull?.status ??
+                        courseStatus: courseListingVM.getCourseRegisterStatus(
+                                courseDetails?.courseRegisteredUsers ?? []) ??
                             "",
                       ),
                       addVertical(12),

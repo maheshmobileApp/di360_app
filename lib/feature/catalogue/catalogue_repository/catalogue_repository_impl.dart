@@ -76,9 +76,7 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
         ]
       }
     };
-
-    final catalogueData = await http.query(getCatalogueQuery,
-        variables: isCommunityCatalogue == true
+    /*variables: isCommunityCatalogue == true
             ? communityCatalogue
             : {
                 "categoryWhere": {
@@ -118,7 +116,9 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
                         "dental_professional_id": {"_eq": loginId}
                     }
                 }
-              });
+              }*/
+
+    final catalogueData = await http.query(getCatalogueQuery);
     if (catalogueData != null) {
       final result = CatalogueData.fromJson(catalogueData);
       return result.catalogueCategories ?? [];

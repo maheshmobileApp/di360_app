@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/news_feed_community/query/community_like_q
 import 'package:di360_flutter/feature/news_feed_community/query/community_unlike_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/delete_new_feed_community.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/filter_community_query.dart';
+import 'package:di360_flutter/feature/news_feed_community/query/get_all_community_newsfeed_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_all_news_feeds_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_banner_url.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_community_members_count_query.dart';
@@ -25,7 +26,7 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
   @override
   Future<NewsFeedCommunityData> getAllNewsFeeds(dynamic variables) async {
     print("-------------------getAllNewsFeeds Calling----------------");
-    final res = await http.query(getAllNewsFeedQuery, variables: variables);
+    final res = await http.query(getAllCommunityNewsfeedQuery, variables: variables);
     final data = NewsFeedCommunityData.fromJson(res);
 
     return data;

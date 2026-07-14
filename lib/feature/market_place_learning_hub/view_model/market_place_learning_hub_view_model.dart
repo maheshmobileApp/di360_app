@@ -563,16 +563,23 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   }
 
   String? getCourseStatus(List<CourseRegisteredUsers> users) {
-    print("************************$currentUserId");
-    final user = users
-        ?.where(
-          (e) => e.fromId == currentUserId,
-        )
-        .toList();
+    if (users.isEmpty) return null;
 
-    if (user == null || user.isEmpty) return null;
+    final userList = users.where((e) => e.fromId == currentUserId).toList();
 
-    return user.first.status;
+    if (userList.isEmpty) return null;
+
+    return userList.last.status;
+  }
+
+  String? getCourseRegisterStatus(List<CourseDetailRegisteredUsers>? users) {
+    if (users == null || users.isEmpty) return null;
+
+    final userList = users.where((e) => e.fromId == currentUserId).toList();
+
+    if (userList.isEmpty) return null;
+
+    return userList.last.status;
   }
 
   clearAll() {

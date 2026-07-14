@@ -61,7 +61,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
                   '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
                   '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
                   needFeedViewModel,
-                  context),
+                  context, newsfeeds?.commentsEnabled?? false),
               addVertical(10)
             ],
           ),
@@ -182,7 +182,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildStatsRow(String likeCount, String commentCount,
-      NewsFeedViewModel viewModel, BuildContext context) {
+      NewsFeedViewModel viewModel, BuildContext context, bool commentEnabled) {
     final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
@@ -219,6 +219,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
           ),
         ),
         Spacer(),
+        if (commentEnabled)
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),

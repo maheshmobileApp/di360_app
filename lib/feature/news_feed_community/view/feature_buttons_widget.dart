@@ -105,10 +105,12 @@ class FeatureButtonsWidget extends StatelessWidget {
                             communityId: communityId ?? userCommunityId);
                     Loaders.circularHideLoader(context);
                   } else if (index == 4) {
+                    final userCommunityId = await LocalStorage.getStringVal(
+                        LocalStorageConst.communityId);
                     navigationService.navigateTo(RouteList.catalogueScreen);
                     context
                         .read<CatalogueViewModel>()
-                        .fetchCatalogue(context, isCommunityCatalogue: true);
+                        .fetchCatalogue(context, isCommunityCatalogue: true, communityId: communityId ?? userCommunityId );
                   }
                 },
                 child: Container(

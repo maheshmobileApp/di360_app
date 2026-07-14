@@ -103,7 +103,7 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchCatalogue(BuildContext context,
-      {bool? isCommunityCatalogue}) async {
+      {bool? isCommunityCatalogue, String? communityId}) async {
     cataloguesLoading = true;
     Loaders.circularShowLoader(context);
     var res = await repo.getCatalogue(searchController.text, type, catagroies,
@@ -118,7 +118,7 @@ class CatalogueViewModel extends ChangeNotifier {
           name: "All",
         ),
       );
-      getCataloguesList("");
+      getCataloguesList(communityId??"");
       initializeExpanded(catalogueCategories);
       Loaders.circularHideLoader(context);
       for (var cat in catalogueCategories) {
@@ -302,7 +302,6 @@ class CatalogueViewModel extends ChangeNotifier {
 
   CatalougesListData? catalougesListData;
   Future<void> getCataloguesList(String categoryId) async {
-    print("***********getCataloguesList $categoryId *");
     final myCommunityIds =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -344,7 +343,6 @@ class CatalogueViewModel extends ChangeNotifier {
       "limit": 20,
       "offset": 0
     };
-    print("************variables $variables");
     final res = await repo.getCatalougesList(variables);
     if (res != null) {
       catalougesListData = res;

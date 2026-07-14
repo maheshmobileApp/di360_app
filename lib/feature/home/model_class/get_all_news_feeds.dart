@@ -88,44 +88,45 @@ class Newsfeeds {
   bool? commentsEnabled;
   CommunityOwner? communityOwner;
 
-  Newsfeeds(
-      {this.id,
-      this.createdAt,
-      this.updatedAt,
-      this.postImage,
-      this.imageUrl,
-      this.communityId,
-      this.description,
-      this.categoryType,
-      this.communityType,
-      this.attachments,
-      this.feedType,
-      this.payload,
-      this.userRole,
-      this.videoUrl,
-      this.webUrl,
-      this.userId,
-      this.status,
-      this.title,
-      this.dentalPracticeId,
-      this.dentalProfessionalId,
-      this.dentalSupplierId,
-      this.dentalAdminId,
-      this.dentalSupplier,
-      this.dentalProfessional,
-      this.dentalPractice,
-      this.adminUser,
-      this.courses,
-      this.jobs,
-      this.newsfeedsLikes,
-      this.myLike,
-      this.newsfeedsLikesAggregate,
-      this.newsFeedsComments,
-      this.newsFeedsCommentsAggregate,
-      this.sTypename,
-      this.payloadId,
-      this.commentsEnabled,
-      this.communityOwner,});
+  Newsfeeds({
+    this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.postImage,
+    this.imageUrl,
+    this.communityId,
+    this.description,
+    this.categoryType,
+    this.communityType,
+    this.attachments,
+    this.feedType,
+    this.payload,
+    this.userRole,
+    this.videoUrl,
+    this.webUrl,
+    this.userId,
+    this.status,
+    this.title,
+    this.dentalPracticeId,
+    this.dentalProfessionalId,
+    this.dentalSupplierId,
+    this.dentalAdminId,
+    this.dentalSupplier,
+    this.dentalProfessional,
+    this.dentalPractice,
+    this.adminUser,
+    this.courses,
+    this.jobs,
+    this.newsfeedsLikes,
+    this.myLike,
+    this.newsfeedsLikesAggregate,
+    this.newsFeedsComments,
+    this.newsFeedsCommentsAggregate,
+    this.sTypename,
+    this.payloadId,
+    this.commentsEnabled,
+    this.communityOwner,
+  });
 
   Newsfeeds.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -214,7 +215,7 @@ class Newsfeeds {
         : null;
     sTypename = json['__typename'];
     payloadId = json['payload_id'];
-     commentsEnabled = json['comments_enabled'];
+    commentsEnabled = json['comments_enabled'];
     communityOwner = json['community_owner'] != null
         ? new CommunityOwner.fromJson(json['community_owner'])
         : null;
@@ -286,7 +287,7 @@ class Newsfeeds {
     }
     data['__typename'] = this.sTypename;
     data['payload_id'] = this.payloadId;
-     data['comments_enabled'] = this.commentsEnabled;
+    data['comments_enabled'] = this.commentsEnabled;
     if (this.communityOwner != null) {
       data['community_owner'] = this.communityOwner!.toJson();
     }
@@ -298,13 +299,18 @@ class CommunityOwner {
   Logo? logo;
   String? businessName;
   List<Directories>? directories;
+  String? communityId;
   String? sTypename;
 
   CommunityOwner(
-      {this.logo, this.businessName, this.directories, this.sTypename});
+      {this.logo,
+      this.businessName,
+      this.directories,
+      this.communityId,
+      this.sTypename});
 
   CommunityOwner.fromJson(Map<String, dynamic> json) {
-   logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
+    logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
     businessName = json['business_name'];
     if (json['directories'] != null) {
       directories = <Directories>[];
@@ -312,6 +318,7 @@ class CommunityOwner {
         directories!.add(new Directories.fromJson(v));
       });
     }
+    communityId = json['community_id'];
     sTypename = json['__typename'];
   }
 
@@ -322,6 +329,7 @@ class CommunityOwner {
     if (this.directories != null) {
       data['directories'] = this.directories!.map((v) => v.toJson()).toList();
     }
+    data['community_id'];
     data['__typename'] = this.sTypename;
     return data;
   }

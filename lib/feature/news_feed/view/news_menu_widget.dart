@@ -50,6 +50,7 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
         if (value == 'edit') {
           await addNeedFeedViewModel.fetchNewsfeedCategories();
           await addNeedFeedViewModel.editFeedObject(widget.newsfeeds);
+          await addNeedFeedViewModel.getUserType();
           navigationService.navigateTo(RouteList.addNewsFeed);
         } else if (value == 'delete') {
           showAlertMessage(

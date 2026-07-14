@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
@@ -22,7 +20,6 @@ import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -121,11 +118,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             needFeedViewModel,
                             addNeedFeedViewModel,
                             directoryVM,
+                            isLogoAvailable
+                                ? newsfeeds?.communityOwner?.communityId
+                                : getDirectoryId(
+                                    newsfeeds, newsfeeds?.userRole ?? ""),
                             getDirectoryId(
                                 newsfeeds, newsfeeds?.userRole ?? ""),
-                            newsfeeds?.dentalProfessional != null
-                                ? newsfeeds?.dentalProfessional?.id ?? ""
-                                : "",
                             isLogoAvailable,
                             newsCommunityVM),
                         addVertical(10),
@@ -473,6 +471,10 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     return "";
   }
 
+  String getFirstLetter(String? name) {
+    return name?[0].toUpperCase() ?? "";
+  }
+
   Widget _buildHeader(
       String? imageUrl,
       String? name,
@@ -493,9 +495,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           children: [
             Stack(alignment: Alignment.center, children: [
               CircleAvatar(
-                backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
-                    ? AppColors.greyLight
-                    : AppColors.primaryColor,
+                backgroundColor: AppColors.primaryColor,
                 radius: 26.5,
                 child: (imageUrl != null && imageUrl.isNotEmpty)
                     ? SizedBox(
@@ -511,13 +511,10 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                     Image.asset(ImageConst.directorProfile))),
                       )
                     : Text(
-                        name!
-                            .split('')
-                            .firstWhere(
-                              (char) => char.trim().isNotEmpty,
-                              orElse: () => '',
-                            )
-                            .toUpperCase(),
+                        getFirstLetter(
+                            newsfeeds?.communityOwner?.businessName ??
+                                name ??
+                                'Dental Interface'),
                         style: TextStyles.bold5(color: AppColors.whiteColor),
                       ),
               ),
@@ -541,7 +538,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                         ImageConst.directorProfile))),
                           )
                         : Text(
-                            "D",
+                            getFirstLetter(name),
                             style:
                                 TextStyles.bold5(color: AppColors.whiteColor),
                           ),
@@ -556,14 +553,14 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 GestureDetector(
                   onTap: () async {
                     if (logoAvailable) {
-                      scaffoldMessenger("Not Implemented");
-                      /* newsCommunityVM.listingStatus = "PUBLISHED";
+                      newsCommunityVM.listingStatus = "PUBLISHED";
                       newsCommunityVM.setNewsFeedCommunityId(id ?? "");
+                      newsCommunityVM.setProfCommunityId(id ?? "", "");
                       newsCommunityVM.getBannerUrl(context);
                       newsCommunityVM.getCommunityMemberDirectorIds(
                           communityId: id ?? "");
                       navigationService
-                          .navigateTo(RouteList.newsFeedCommunityView);*/
+                          .navigateTo(RouteList.newsFeedCommunityView);
                     } else {
                       Loaders.circularShowLoader(context);
 
@@ -583,31 +580,47 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       style: TextStyles.clashMedium(
                           fontSize: 16, color: AppColors.black)),
                 ),
-                Row(
-                  children: [
-                    logoAvailable
-                        ? GestureDetector(
-                            onTap: () async {
-                              /*Loaders.circularShowLoader(context);
+                if (!logoAvailable)
+                  Text(
+                      DateFormatUtils.formatTwoDateTime(
+                        date ?? "",
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          TextStyles.regular1(color: AppColors.lightGeryColor)),
+                if (logoAvailable)
+                  Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
 
-                              await directoryVM.GetDirectorDetails(userId ?? "");
-                              await directoryVM.getDirectory(userId ?? "");
-
-                              Loaders.circularHideLoader(context);
-
-                              navigationService
-                                  .navigateTo(RouteList.directoryDetailsScreen);*/
-                            },
-                            child: Text("$name ",
-                                style: TextStyles.regular1(
-                                    color: Colors.black, fontSize: 14)),
-                          )
-                        : SizedBox.shrink(),
-                    Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
-                        style: TextStyles.regular1(
-                            color: AppColors.lightGeryColor)),
-                  ],
-                ),
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          Loaders.circularShowLoader(context);
+                      
+                          await directoryVM.GetDirectorDetails(userId ?? "");
+                          await directoryVM.getDirectory(userId ?? "");
+                      
+                          Loaders.circularHideLoader(context);
+                      
+                          navigationService
+                              .navigateTo(RouteList.directoryDetailsScreen);
+                        },
+                        child: Text(name ?? "",
+                            style: TextStyles.regular1(
+                                color: Colors.black, fontSize: 14)),
+                      ),
+                       const SizedBox(width: 8),
+                      Text(
+                          DateFormatUtils.formatTwoDateTime(
+                            date ?? "",
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyles.regular1(
+                              color: AppColors.lightGeryColor)),
+                    ],
+                  ),
               ],
             ),
           ],

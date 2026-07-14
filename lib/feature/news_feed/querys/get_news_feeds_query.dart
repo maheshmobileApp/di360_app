@@ -26,6 +26,7 @@ const String getAllNewsfeedsQuery =
     community_owner {
       logo
       business_name
+      community_id
       directories {
         id
         __typename

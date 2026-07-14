@@ -24,6 +24,7 @@ class UpcomingCourseCard extends StatelessWidget {
   final int? registerCount;
   final String? expiryDateCount;
   final String? courseStatus;
+  final String? courseType;
 
   const UpcomingCourseCard({
     super.key,
@@ -46,6 +47,7 @@ class UpcomingCourseCard extends StatelessWidget {
     this.registerCount,
     this.expiryDateCount,
     this.courseStatus,
+    this.courseType
   });
 
   @override
@@ -76,28 +78,26 @@ class UpcomingCourseCard extends StatelessWidget {
                         size: 50, color: AppColors.lightGeryColor),
                   ),
                 ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        border: Border.all(
-                            color: AppColors.primaryColor, width: 1.5),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text(
-                        noOfSeats != null
-                            ? "FILLING FAST !"
-                                    
-                            : "SOLD OUT",
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold)),
+                if (courseType != "Online Academy")
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          border: Border.all(
+                              color: AppColors.primaryColor, width: 1.5),
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Text(
+                          noOfSeats != null ? "FILLING FAST !" : "SOLD OUT",
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold)),
+                    ),
                   ),
-                ),
               ],
             ),
             Padding(

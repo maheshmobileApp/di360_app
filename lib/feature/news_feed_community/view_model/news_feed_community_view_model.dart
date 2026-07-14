@@ -322,7 +322,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           }
         ]
       },
-      "userId": userId
+      "userId": userId,
+      "includeEntryFeed": false
     };
     print("************$variables");
 
@@ -733,12 +734,15 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
-        String? selectedCommunity = (newsfeedCommunityId != null &&
-            newsfeedCommunityId?.isNotEmpty == true)
-        ? newsfeedCommunityId
-        : (type == UserRole.professional.value ? profCommunityId : userCommunityId);
-    final res =
-        await repo.getCommunityMemberCountData(communityId ?? selectedCommunity??"");
+    String? selectedCommunity =
+        (newsfeedCommunityId != null && newsfeedCommunityId?.isNotEmpty == true)
+            ? newsfeedCommunityId
+            : (type == UserRole.professional.value
+                ? profCommunityId
+                : userCommunityId);
+    print("selected community id **************$selectedCommunity");
+    final res = await repo
+        .getCommunityMemberCountData(communityId ?? selectedCommunity ?? "");
     if (res.dentalSuppliers != null) {
       communityMembersCountData = res;
       communityMemberDirectorId =
@@ -885,19 +889,16 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
-       String? selectedCommunity = (newsfeedCommunityId != null &&
+    String? selectedCommunity = (newsfeedCommunityId != null &&
             newsfeedCommunityId?.isNotEmpty == true)
         ? newsfeedCommunityId
         : (type == UserRole.professional.value ? profCommunityId : communityId);
-
 
     final variables = {
       "where": {
         "_and": [
           {
-            "community_id": {
-              "_eq": selectedCommunity
-            }
+            "community_id": {"_eq": selectedCommunity}
           },
           {
             "community_status": {"_eq": "YES"}

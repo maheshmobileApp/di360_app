@@ -233,7 +233,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               child: _buildRow(Icons.send_rounded, AppColors.primaryColor,
                   "Send for Approval")),
         if (vm.userType != UserRole.admin.value &&
-            vm.selectedStatus != 'Approved & Scheduled' && status != 'EXPIRED' )
+            status != 'EXPIRED' )
           PopupMenuItem(
               value: "Edit",
               child:

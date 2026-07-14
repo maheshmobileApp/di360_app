@@ -86,24 +86,26 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
       _initializeSortedComments(currentComments);
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: currentComments?.isEmpty ?? true
-          ? Center(
-              child: Text('No Comments',
-                  style: TextStyles.clashSemiBold(
-                      color: AppColors.black, fontSize: 20)))
-          : ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _sortedComments?.length ?? 0,
-              itemBuilder: (context, index) {
-                final comments = _sortedComments?[index];
-                return _buildCommentTile(
-                    comments, viewModel, widget.newsfeeds?.id ?? '');
-              },
-            ),
-    );
+    return widget.newsfeeds?.commentsEnabled == true
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: currentComments?.isEmpty ?? true
+                ? Center(
+                    child: Text('No Comments',
+                        style: TextStyles.clashSemiBold(
+                            color: AppColors.black, fontSize: 20)))
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _sortedComments?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final comments = _sortedComments?[index];
+                      return _buildCommentTile(
+                          comments, viewModel, widget.newsfeeds?.id ?? '');
+                    },
+                  ),
+          )
+        : SizedBox.shrink();
   }
 
   Widget _buildCommentTile(
