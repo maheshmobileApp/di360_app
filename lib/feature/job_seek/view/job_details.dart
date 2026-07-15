@@ -111,7 +111,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            if (widget.job.bannerImage != null)
+            if (widget.job.bannerImage != null && widget.job.bannerImage != "")
               CachedNetworkImageWidget(
                 imageUrl: widget.job.bannerImage?.url ?? "",
                 width: double.infinity,
