@@ -48,12 +48,18 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        addVertical(8),
-                        _buildCatalogueName('Catalogue Name', item?.title),
+                        addVertical(22),
+                        //_buildCatalogueName('Catalogue Name', item?.title),
+                        _buildCataloguRow(
+                            'Catalogue Name',
+                            item?.title,
+                            'Type',
+                            '${item?.catalogueCategory?.name}',
+                            false),
                         addVertical(10),
                         _buildCataloguRow(
                             'Category',
-                            item?.catalogueCategory?.name,
+                            item?.catalogueSubCategory?.name,
                             'Views',
                             '${item?.views}',
                             false),
@@ -86,7 +92,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           ),
           Positioned(
               right: 2,
-              top: 15,
+              top: 2,
               child: menuWidget(
                   myCatalogVM,
                   context,
