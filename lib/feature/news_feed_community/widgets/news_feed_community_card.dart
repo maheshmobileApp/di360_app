@@ -598,7 +598,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         onTap: () async {
                           Loaders.circularShowLoader(context);
 
-                          await directoryVM.GetDirectorDetails(newsfeedCreatedId);
+                          await directoryVM.GetDirectorDetails(
+                              newsfeedCreatedId);
                           await directoryVM.getDirectory(newsfeedCreatedId);
 
                           Loaders.circularHideLoader(context);
@@ -610,12 +611,16 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                             style: TextStyles.regular1(
                                 color: Colors.black, fontSize: 14)),
                       ),
-                    Flexible(
-                      child: Text(DateFormatUtils.formatDateTime(createdAt),
-                          style: TextStyles.regular1(color: Colors.grey)),
-                    ),
+                    if (!logoAvailable)
+                      Flexible(
+                        child: Text(DateFormatUtils.formatDateTime(createdAt),
+                            style: TextStyles.regular1(color: Colors.grey)),
+                      ),
                   ],
                 ),
+                if (logoAvailable)
+                      Text(DateFormatUtils.formatDateTime(createdAt),
+                          style: TextStyles.regular1(color: Colors.grey)),
               ],
             ),
           ),

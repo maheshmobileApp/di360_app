@@ -19,11 +19,18 @@ class GetNewsFeedCommunityRes {
 }
 
 class NewsFeedCommunityData {
+  List<Newsfeeds>? entryFeed;
   List<Newsfeeds>? newsfeeds;
 
   NewsFeedCommunityData({this.newsfeeds});
 
   NewsFeedCommunityData.fromJson(Map<String, dynamic> json) {
+    if (json['entryFeed'] != null) {
+      entryFeed = <Newsfeeds>[];
+      json['entryFeed'].forEach((v) {
+        entryFeed!.add(new Newsfeeds.fromJson(v));
+      });
+    }
     if (json['feedList'] != null) {
       newsfeeds = <Newsfeeds>[];
       json['feedList'].forEach((v) {
@@ -34,6 +41,9 @@ class NewsFeedCommunityData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.entryFeed != null) {
+      data['entryFeed'] = this.entryFeed!.map((v) => v.toJson()).toList();
+    }
     if (this.newsfeeds != null) {
       data['feedList'] = this.newsfeeds!.map((v) => v.toJson()).toList();
     }

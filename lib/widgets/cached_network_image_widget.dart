@@ -19,10 +19,6 @@ class CachedNetworkImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl.isEmpty) {
-      return SizedBox.shrink();
-    }
-    
     return CachedNetworkImage(
       width: width,
       height: height,

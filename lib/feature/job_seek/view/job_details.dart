@@ -98,20 +98,21 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            leading: IconButton(
-                onPressed: () {
-                  navigationService.goBack();
-                },
-                icon: Icon(Icons.arrow_back_ios)),
-            title: Text(
-              "Job Detail View",
-              style: TextStyles.medium2(),
-            )),
+          backgroundColor: AppColors.whiteColor,
+          leading: IconButton(
+              onPressed: () {
+                navigationService.goBack();
+              },
+              icon: Icon(Icons.arrow_back_ios)),
+          title: Text(
+            "Job Detail View",
+            style: TextStyles.medium2(),
+          )),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            if (widget.job.bannerImage != null && widget.job.bannerImage != "")
+            if (widget.job.bannerImage?.url != null &&
+                widget.job.bannerImage?.url != "")
               CachedNetworkImageWidget(
                 imageUrl: widget.job.bannerImage?.url ?? "",
                 width: double.infinity,

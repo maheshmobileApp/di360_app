@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -552,25 +553,29 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    if (logoAvailable) {
-                      newsCommunityVM.listingStatus = "PUBLISHED";
-                      newsCommunityVM.setNewsFeedCommunityId(id ?? "");
-                      newsCommunityVM.setProfCommunityId(id ?? "", "");
-                      newsCommunityVM.getBannerUrl(context);
-                      newsCommunityVM.getCommunityMemberDirectorIds(
-                          communityId: id ?? "");
-                      navigationService
-                          .navigateTo(RouteList.newsFeedCommunityView);
+                    if (newsfeeds?.userRole != UserRole.admin.value) {
+                      if (logoAvailable) {
+                        newsCommunityVM.listingStatus = "PUBLISHED";
+                        newsCommunityVM.setNewsFeedCommunityId(id ?? "");
+                        newsCommunityVM.setProfCommunityId(id ?? "", "");
+                        newsCommunityVM.getBannerUrl(context);
+                        newsCommunityVM.getCommunityMemberDirectorIds(
+                            communityId: id ?? "");
+                        navigationService
+                            .navigateToWithParams(RouteList.newsFeedCommunityView, params: {"newsfeedId": newsfeeds?.id});
+                      } else {
+                        Loaders.circularShowLoader(context);
+
+                        await directoryVM.GetDirectorDetails(id ?? "");
+                        await directoryVM.getDirectory(id ?? "");
+
+                        Loaders.circularHideLoader(context);
+
+                        navigationService
+                            .navigateTo(RouteList.directoryDetailsScreen);
+                      }
                     } else {
-                      Loaders.circularShowLoader(context);
-
-                      await directoryVM.GetDirectorDetails(id ?? "");
-                      await directoryVM.getDirectory(id ?? "");
-
-                      Loaders.circularHideLoader(context);
-
-                      navigationService
-                          .navigateTo(RouteList.directoryDetailsScreen);
+                      scaffoldMessenger("Admin feed");
                     }
                   },
                   child: Text(
@@ -591,18 +596,17 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                           TextStyles.regular1(color: AppColors.lightGeryColor)),
                 if (logoAvailable)
                   Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
                         onTap: () async {
                           Loaders.circularShowLoader(context);
-                      
+
                           await directoryVM.GetDirectorDetails(userId ?? "");
                           await directoryVM.getDirectory(userId ?? "");
-                      
+
                           Loaders.circularHideLoader(context);
-                      
+
                           navigationService
                               .navigateTo(RouteList.directoryDetailsScreen);
                         },
@@ -610,7 +614,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             style: TextStyles.regular1(
                                 color: Colors.black, fontSize: 14)),
                       ),
-                       const SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
                           DateFormatUtils.formatTwoDateTime(
                             date ?? "",
