@@ -121,12 +121,15 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             directoryVM,
                             isLogoAvailable
                                 ? newsfeeds?.communityOwner?.communityId
-                                : getDirectoryId(
-                                    newsfeeds, newsfeeds?.userRole ?? ""),
+                                : getDirectoryIdWithoutUserType(
+                                    newsfeeds),
                             getDirectoryId(
                                 newsfeeds, newsfeeds?.userRole ?? ""),
                             isLogoAvailable,
-                            newsCommunityVM),
+                            newsCommunityVM,
+                            (newsfeeds?.communityOwner != null)
+                                ? newsfeeds?.communityOwner?.communityId
+                                : ""),
                         addVertical(10),
                         _buildImageRow(catalogueViewModel, context),
                         if (newsfeeds?.videoUrl != null &&
@@ -454,6 +457,17 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+  String getDirectoryIdWithoutUserType(Newsfeeds? newsfeeds) {
+    if (newsfeeds?.dentalProfessional != null) {
+      return newsfeeds?.dentalProfessional?.directories?.first.id ?? "";
+    } else if (newsfeeds?.dentalPractice != null) {
+      return newsfeeds?.dentalPractice?.directories?.first.id ?? "";
+    } else if (newsfeeds?.dentalSupplier != null) {
+      return newsfeeds?.dentalSupplier?.directories?.first.id ?? "";
+    }
+    return "";
+  }
+
   String getDirectoryId(Newsfeeds? newsfeeds, String userType) {
     if (userType == UserRole.professional.value) {
       return newsfeeds?.dentalProfessional?.directories?.isNotEmpty == true
@@ -488,7 +502,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       String? id,
       String? userId,
       bool logoAvailable,
-      NewsFeedCommunityViewModel newsCommunityVM) {
+      NewsFeedCommunityViewModel newsCommunityVM,
+      String? communityId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -556,13 +571,16 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                     if (newsfeeds?.userRole != UserRole.admin.value) {
                       if (logoAvailable) {
                         newsCommunityVM.listingStatus = "PUBLISHED";
-                        newsCommunityVM.setNewsFeedCommunityId(id ?? "");
-                        newsCommunityVM.setProfCommunityId(id ?? "", "");
+                        newsCommunityVM
+                            .setNewsFeedCommunityId(communityId ?? "");
+                        newsCommunityVM.setProfCommunityId(
+                            communityId ?? "", "");
                         newsCommunityVM.getBannerUrl(context);
                         newsCommunityVM.getCommunityMemberDirectorIds(
-                            communityId: id ?? "");
-                        navigationService
-                            .navigateToWithParams(RouteList.newsFeedCommunityView, params: {"newsfeedId": newsfeeds?.id});
+                            communityId: communityId ?? "");
+                        navigationService.navigateToWithParams(
+                            RouteList.newsFeedCommunityView,
+                            params: {"newsfeedId": newsfeeds?.id});
                       } else {
                         Loaders.circularShowLoader(context);
 
