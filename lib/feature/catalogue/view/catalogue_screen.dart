@@ -17,7 +17,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class CataloguePage extends StatefulWidget {
-  const CataloguePage({super.key});
+  const CataloguePage({super.key,});
 
   @override
   State<CataloguePage> createState() => _CataloguePageState();

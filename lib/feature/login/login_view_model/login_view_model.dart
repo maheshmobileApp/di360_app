@@ -304,8 +304,6 @@ class LoginViewModel extends ChangeNotifier {
           communityMembers.map((e) => e.communityId ?? '').toList();
       await LocalStorage.setStringList(
           LocalStorageConst.myCommunityIds, communityIds);
-      await LocalStorage.setStringVal(LocalStorageConst.communityId,
-          communityMembers.isNotEmpty ? communityMembers.first.communityId ?? '' : '');
     }
     notifyListeners();
   }

@@ -18,7 +18,9 @@ import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -55,6 +57,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final directoryVM = Provider.of<DirectoryViewModel>(context);
     final isLogoAvailable = newsfeeds?.communityType == "COMMUNITY_USER" &&
         newsfeeds?.userRole == UserRole.professional.value;
+    final newsCommunityVM = Provider.of<NewsFeedCommunityViewModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -116,16 +119,17 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             needFeedViewModel,
                             addNeedFeedViewModel,
                             directoryVM,
-                            newsfeeds?.communityOwner?.directories
-                                        ?.isNotEmpty ==
-                                    true
-                                ? newsfeeds
-                                    ?.communityOwner?.directories?.first.id
-                                : "",
-                            newsfeeds?.dentalProfessional != null
-                                ? newsfeeds?.dentalProfessional?.id ?? ""
-                                : "",
-                            isLogoAvailable),
+                            isLogoAvailable
+                                ? newsfeeds?.communityOwner?.communityId
+                                : getDirectoryIdWithoutUserType(
+                                    newsfeeds),
+                            getDirectoryId(
+                                newsfeeds, newsfeeds?.userRole ?? ""),
+                            isLogoAvailable,
+                            newsCommunityVM,
+                            (newsfeeds?.communityOwner != null)
+                                ? newsfeeds?.communityOwner?.communityId
+                                : ""),
                         addVertical(10),
                         _buildImageRow(catalogueViewModel, context),
                         if (newsfeeds?.videoUrl != null &&
@@ -165,11 +169,13 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                   catalogueViewModel, context, shareId),
                             addVertical(10),
                             if (newsfeeds?.description?.isNotEmpty == true) ...[
-                              Text(
-                                "Course Description :",
-                                style: TextStyles.semiBold(
-                                    fontSize: 14, color: AppColors.black),
-                              ),
+                              if (newsfeeds?.feedType ==
+                                  FeedType.learnhub.value)
+                                Text(
+                                  "Course Description :",
+                                  style: TextStyles.semiBold(
+                                      fontSize: 14, color: AppColors.black),
+                                ),
                               ExpandableHtmlText(
                                 htmlData: newsfeeds?.description ?? "",
                                 index: index,
@@ -451,6 +457,39 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+  String getDirectoryIdWithoutUserType(Newsfeeds? newsfeeds) {
+    if (newsfeeds?.dentalProfessional != null) {
+      return newsfeeds?.dentalProfessional?.directories?.first.id ?? "";
+    } else if (newsfeeds?.dentalPractice != null) {
+      return newsfeeds?.dentalPractice?.directories?.first.id ?? "";
+    } else if (newsfeeds?.dentalSupplier != null) {
+      return newsfeeds?.dentalSupplier?.directories?.first.id ?? "";
+    }
+    return "";
+  }
+
+  String getDirectoryId(Newsfeeds? newsfeeds, String userType) {
+    if (userType == UserRole.professional.value) {
+      return newsfeeds?.dentalProfessional?.directories?.isNotEmpty == true
+          ? newsfeeds?.dentalProfessional?.directories?.first.id ?? ""
+          : "";
+    } else if (userType == UserRole.practice.value) {
+      return newsfeeds?.dentalPractice?.directories?.isNotEmpty == true
+          ? newsfeeds?.dentalPractice?.directories?.first.id ?? ""
+          : "";
+    } else if (userType == UserRole.supplier.value) {
+      return newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
+          ? newsfeeds?.dentalSupplier?.directories?.first.id ?? ""
+          : "";
+    }
+
+    return "";
+  }
+
+  String getFirstLetter(String? name) {
+    return name?[0].toUpperCase() ?? "";
+  }
+
   Widget _buildHeader(
       String? imageUrl,
       String? name,
@@ -462,7 +501,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       DirectoryViewModel directoryVM,
       String? id,
       String? userId,
-      bool logoAvailable) {
+      bool logoAvailable,
+      NewsFeedCommunityViewModel newsCommunityVM,
+      String? communityId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -470,9 +511,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           children: [
             Stack(alignment: Alignment.center, children: [
               CircleAvatar(
-                backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
-                    ? AppColors.greyLight
-                    : AppColors.primaryColor,
+                backgroundColor: AppColors.primaryColor,
                 radius: 26.5,
                 child: (imageUrl != null && imageUrl.isNotEmpty)
                     ? SizedBox(
@@ -483,18 +522,15 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 imageUrl: logoAvailable
                                     ? newsfeeds?.communityOwner?.logo?.url ?? ''
                                     : imageUrl,
-                                fit: BoxFit.contain,
+                                fit: BoxFit.cover,
                                 errorWidget:
                                     Image.asset(ImageConst.directorProfile))),
                       )
                     : Text(
-                        name!
-                            .split('')
-                            .firstWhere(
-                              (char) => char.trim().isNotEmpty,
-                              orElse: () => '',
-                            )
-                            .toUpperCase(),
+                        getFirstLetter(
+                            newsfeeds?.communityOwner?.businessName ??
+                                name ??
+                                'Dental Interface'),
                         style: TextStyles.bold5(color: AppColors.whiteColor),
                       ),
               ),
@@ -513,12 +549,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             child: ClipOval(
                                 child: CachedNetworkImageWidget(
                                     imageUrl: imageUrl ?? '',
-                                    fit: BoxFit.contain,
+                                    fit: BoxFit.cover,
                                     errorWidget: Image.asset(
                                         ImageConst.directorProfile))),
                           )
                         : Text(
-                            "D",
+                            getFirstLetter(name),
                             style:
                                 TextStyles.bold5(color: AppColors.whiteColor),
                           ),
@@ -532,15 +568,33 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    Loaders.circularShowLoader(context);
+                    if (newsfeeds?.userRole != UserRole.admin.value) {
+                      if (logoAvailable) {
+                        newsCommunityVM.listingStatus = "PUBLISHED";
+                        newsCommunityVM
+                            .setNewsFeedCommunityId(communityId ?? "");
+                        newsCommunityVM.setProfCommunityId(
+                            communityId ?? "", "");
+                        newsCommunityVM.getBannerUrl(context);
+                        newsCommunityVM.getCommunityMemberDirectorIds(
+                            communityId: communityId ?? "");
+                        navigationService.navigateToWithParams(
+                            RouteList.newsFeedCommunityView,
+                            params: {"newsfeedId": newsfeeds?.id});
+                      } else {
+                        Loaders.circularShowLoader(context);
 
-                    await directoryVM.GetDirectorDetails(id ?? "");
-                    await directoryVM.getDirectory(id ?? "");
+                        await directoryVM.GetDirectorDetails(id ?? "");
+                        await directoryVM.getDirectory(id ?? "");
 
-                    Loaders.circularHideLoader(context);
+                        Loaders.circularHideLoader(context);
 
-                    navigationService
-                        .navigateTo(RouteList.directoryDetailsScreen);
+                        navigationService
+                            .navigateTo(RouteList.directoryDetailsScreen);
+                      }
+                    } else {
+                      scaffoldMessenger("Admin feed");
+                    }
                   },
                   child: Text(
                       logoAvailable
@@ -549,31 +603,46 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       style: TextStyles.clashMedium(
                           fontSize: 16, color: AppColors.black)),
                 ),
-                Row(
-                  children: [
-                    logoAvailable
-                        ? GestureDetector(
-                            onTap: () async {
-                              /*Loaders.circularShowLoader(context);
+                if (!logoAvailable)
+                  Text(
+                      DateFormatUtils.formatTwoDateTime(
+                        date ?? "",
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          TextStyles.regular1(color: AppColors.lightGeryColor)),
+                if (logoAvailable)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          Loaders.circularShowLoader(context);
 
-                              await directoryVM.GetDirectorDetails(userId ?? "");
-                              await directoryVM.getDirectory(userId ?? "");
+                          await directoryVM.GetDirectorDetails(userId ?? "");
+                          await directoryVM.getDirectory(userId ?? "");
 
-                              Loaders.circularHideLoader(context);
+                          Loaders.circularHideLoader(context);
 
-                              navigationService
-                                  .navigateTo(RouteList.directoryDetailsScreen);*/
-                            },
-                            child: Text("$name ",
-                                style: TextStyles.regular1(
-                                    color: Colors.black, fontSize: 14)),
-                          )
-                        : SizedBox.shrink(),
-                    Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
-                        style: TextStyles.regular1(
-                            color: AppColors.lightGeryColor)),
-                  ],
-                ),
+                          navigationService
+                              .navigateTo(RouteList.directoryDetailsScreen);
+                        },
+                        child: Text(name ?? "",
+                            style: TextStyles.regular1(
+                                color: Colors.black, fontSize: 14)),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                          DateFormatUtils.formatTwoDateTime(
+                            date ?? "",
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyles.regular1(
+                              color: AppColors.lightGeryColor)),
+                    ],
+                  ),
               ],
             ),
           ],
@@ -674,7 +743,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
           );
         } else {
-          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.contain);
+          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.cover);
         }
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);

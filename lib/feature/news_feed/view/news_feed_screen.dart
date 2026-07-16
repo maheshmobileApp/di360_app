@@ -199,6 +199,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
               await categoryVM.fetchNewsfeedCategories();
               addNewsFeedVM.clearFeedNews();
               addNewsFeedVM.getUserType();
+              addNewsFeedVM.setEnableComments(true);
               navigationService.navigateTo(RouteList.addNewsFeed);
             },
             child: SvgPicture.asset(ImageConst.addFeed)));
@@ -210,6 +211,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
     return SizedBox(
       height: 60,
       child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemCount: ConstantData.statuses.length,
         itemBuilder: (context, index) {

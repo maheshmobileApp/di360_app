@@ -50,6 +50,7 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
         if (value == 'edit') {
           await addNeedFeedViewModel.fetchNewsfeedCategories();
           await addNeedFeedViewModel.editFeedObject(widget.newsfeeds);
+          await addNeedFeedViewModel.getUserType();
           navigationService.navigateTo(RouteList.addNewsFeed);
         } else if (value == 'delete') {
           showAlertMessage(
@@ -136,7 +137,7 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
           PopupMenuItem(
               value: "delete",
               child: buildRow(Icons.delete, AppColors.redColor, "Delete")),
-        if (isSameUser) ...[
+        if (isSameUser && widget.newsfeeds?.communityType != "COMMUNITY_USER") ...[
           PopupMenuItem(
               value: "edit",
               child: buildRow(Icons.edit, AppColors.blueColor, "Edit")),

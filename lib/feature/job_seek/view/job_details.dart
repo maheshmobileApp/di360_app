@@ -97,66 +97,35 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     final provider = Provider.of<JobSeekViewModel>(context, listen: false);
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 240.0,
-            pinned: true,
-            backgroundColor: Colors.white,
-            iconTheme: IconThemeData(color: Colors.white),
-            elevation: 0,
-            flexibleSpace: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                final top = constraints.biggest.height;
-                final isCollapsed =
-                    top <= kToolbarHeight + MediaQuery.of(context).padding.top;
-                return FlexibleSpaceBar(
-                  centerTitle: false,
-                  title: isCollapsed
-                      ? Text(
-                          widget.job.title ?? '',
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        )
-                      : null,
-                  background: CachedNetworkImageWidget(
-                    imageUrl: widget.job.bannerImage?.url ?? '',
-                    width: double.infinity,
-                  ),
-                );
+      appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          leading: IconButton(
+              onPressed: () {
+                navigationService.goBack();
               },
-            ),
-            leading: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                final top = constraints.biggest.height;
-                final isCollapsed =
-                    top <= kToolbarHeight + MediaQuery.of(context).padding.top;
-
-                return isCollapsed
-                    ? IconButton(
-                        icon: const Icon(Icons.arrow_back,
-                            size: 24, color: Colors.black),
-                        onPressed: () => Navigator.pop(context),
-                      )
-                    : CircleAvatar(
-                        backgroundColor: AppColors.whiteColor,
-                        radius: 20,
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_back,
-                              size: 20, color: Colors.black),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      );
-              },
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
+              icon: Icon(Icons.arrow_back_ios)),
+          title: Text(
+            "Job Detail View",
+            style: TextStyles.medium2(),
+          )),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            if (widget.job.bannerImage?.url != null &&
+                widget.job.bannerImage?.url != "")
+              CachedNetworkImageWidget(
+                imageUrl: widget.job.bannerImage?.url ?? "",
+                width: double.infinity,
+                height: 240,
+                fit: BoxFit.cover,
+              ),
+            Container(
               color: Colors.white,
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: _buildBodyContent(context),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -190,11 +159,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.job.title != "")
+                  if (widget.job.title != "" && widget.job.title != null)
                     customHeadTexter("Job Title", widget.job.title ?? ''),
-                  if (widget.job.jRole != "")
+                  if (widget.job.jRole != "" && widget.job.jRole != null)
                     customHeadTexter("Role", widget.job.jRole ?? ''),
-                  if (widget.job.companyName != "")
+                  if (widget.job.companyName != "" &&
+                      widget.job.companyName != null)
                     customHeadTexter(
                         "Company Name", widget.job.companyName ?? ''),
                 ],

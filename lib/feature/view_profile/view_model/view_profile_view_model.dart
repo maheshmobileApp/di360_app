@@ -199,7 +199,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     userName = viewProfile?.businessName ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
-    await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
+    //await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
     notifyListeners();
   }
 
@@ -264,7 +264,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
-    await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
+    //await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
     notifyListeners();
   }
 

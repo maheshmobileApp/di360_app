@@ -88,7 +88,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (registerStatus == true && courseStatus != "PENDING")
+                      if (registerStatus == true && courseStatus != "PENDING" && courseStatus != "EXPIRED")
                         Text("Already Registered",
                             style: TextStyles.medium2(
                                 color: AppColors.greenColor)),
@@ -142,6 +142,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                           if (platform == "Online Academy" &&
                               registerStatus == true &&
                               courseStatus != "PENDING" &&
+                              courseStatus != "EXPIRED" &&
                               expiryDate != '')
                             Text("Expires on : $expiryDate"),
                           if (platform != "Online Academy")

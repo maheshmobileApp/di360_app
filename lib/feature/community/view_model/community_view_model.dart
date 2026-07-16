@@ -493,6 +493,7 @@ class CommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    
     final variables = {
       "where": {
         "_and": [

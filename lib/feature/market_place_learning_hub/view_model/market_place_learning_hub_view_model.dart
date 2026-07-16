@@ -562,6 +562,26 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     return user.first.courseValidTill;
   }
 
+  String? getCourseStatus(List<CourseRegisteredUsers> users) {
+    if (users.isEmpty) return null;
+
+    final userList = users.where((e) => e.fromId == currentUserId).toList();
+
+    if (userList.isEmpty) return null;
+
+    return userList.last.status;
+  }
+
+  String? getCourseRegisterStatus(List<CourseDetailRegisteredUsers>? users) {
+    if (users == null || users.isEmpty) return null;
+
+    final userList = users.where((e) => e.fromId == currentUserId).toList();
+
+    if (userList.isEmpty) return null;
+
+    return userList.last.status;
+  }
+
   clearAll() {
     userFirstNameController.text = "";
     userLastNameController.text = "";

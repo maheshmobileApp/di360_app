@@ -24,7 +24,9 @@ class DentalPractice {
 
   DentalPractice.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    logo = json['logo'] != null ? new DentalPracticeLogo.fromJson(json['logo']) : null;
+    logo = json['logo'] != null
+        ? new DentalPracticeLogo.fromJson(json['logo'])
+        : null;
     businessName = json['business_name'];
     professionType = json['profession_type'];
     email = json['email'];
@@ -110,6 +112,7 @@ class DentalPracticeLogo {
 }
 
 class DentalPracticesDirectories {
+  String? id;
   String? companyName;
   PracticeLogo? logo;
   String? description;
@@ -117,15 +120,18 @@ class DentalPracticesDirectories {
   String? sTypename;
 
   DentalPracticesDirectories(
-      {this.companyName,
+      {this.id,
+      this.companyName,
       this.logo,
       this.description,
       this.bannerImage,
       this.sTypename});
 
   DentalPracticesDirectories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     companyName = json['company_name'];
-    logo = json['logo'] != null ? new PracticeLogo.fromJson(json['logo']) : null;
+    logo =
+        json['logo'] != null ? new PracticeLogo.fromJson(json['logo']) : null;
     description = json['description'];
     bannerImage = json['banner_image'] != null
         ? new PracticeBannerImage.fromJson(json['banner_image'])
@@ -135,6 +141,7 @@ class DentalPracticesDirectories {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['company_name'] = this.companyName;
     if (this.logo != null) {
       data['logo'] = this.logo!.toJson();

@@ -63,6 +63,13 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final directionalVM = Provider.of<DirectoryViewModel>(context);
+    final ownerId =
+    directionalVM.directorDetails?.dentalSupplierId ??
+    directionalVM.directorDetails?.dentalProfessionalId ??
+    directionalVM.directorDetails?.dentalPracticeId;
+
+final isNotOwner = 
+    directionalVM.userId != ownerId;
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -104,7 +111,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
             ((directionalVM.directorDetails?.dentalSupplier?.communityStatus ==
                         "YES") &&
                     (directionalVM.userType == UserRole.professional.value ||
-                        directionalVM.userType == UserRole.supplier.value))
+                        directionalVM.userType == UserRole.supplier.value && isNotOwner))
                 ? Positioned(
                     top: 20,
                     right: 20,

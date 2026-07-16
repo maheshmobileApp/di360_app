@@ -593,7 +593,7 @@ class DirectoryViewModel extends ChangeNotifier {
   Future<void> GetDirectorDetails(String id) async{
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {"id": id, "member_id": userId};
-    print("***************$variables");
+    print("******Get Directory Details*********$variables");
     sectionKeys = {
       'Basic Info': GlobalKey(),
       'Services': GlobalKey(),
