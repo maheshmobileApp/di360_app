@@ -121,10 +121,13 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                 ),
               ),
             ),
+            if (widget.newsfeeds?.commentsEnabled ?? false)
             _buildCommentInputField(context, viewModel, widget.newsfeeds),
-            if (viewModel.existingAttachments.isNotEmpty || viewModel.selectedFiles.isNotEmpty)
+            if (viewModel.existingAttachments.isNotEmpty ||
+                viewModel.selectedFiles.isNotEmpty)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -132,7 +135,9 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                     ...List.generate(
                       viewModel.existingAttachments.length,
                       (index) => _buildExistingFilePreview(
-                          viewModel.existingAttachments[index], index, viewModel),
+                          viewModel.existingAttachments[index],
+                          index,
+                          viewModel),
                     ),
                     ...List.generate(
                       viewModel.selectedFiles.length,
@@ -155,7 +160,6 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
         clipBehavior: Clip.none,
         children: [
           Container(
-           
             decoration: BoxDecoration(
               color: AppColors.whiteColor,
               border: Border.all(color: AppColors.dividerColor),
@@ -255,8 +259,8 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
     );
   }
 
-  Widget _buildExistingFilePreview(CommentsAttachments attachment, int index,
-      CommentViewModel viewModel) {
+  Widget _buildExistingFilePreview(
+      CommentsAttachments attachment, int index, CommentViewModel viewModel) {
     final ext = attachment.name?.split('.').last.toLowerCase();
     return Stack(
       children: [

@@ -103,7 +103,7 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchCatalogue(BuildContext context,
-      {bool? isCommunityCatalogue}) async {
+      {bool? isCommunityCatalogue, String? communityId}) async {
     cataloguesLoading = true;
     Loaders.circularShowLoader(context);
     var res = await repo.getCatalogue(searchController.text, type, catagroies,
@@ -118,7 +118,7 @@ class CatalogueViewModel extends ChangeNotifier {
           name: "All",
         ),
       );
-      getCataloguesList("");
+      getCataloguesList("", communityId: communityId);
       initializeExpanded(catalogueCategories);
       Loaders.circularHideLoader(context);
       for (var cat in catalogueCategories) {
@@ -301,12 +301,15 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   CatalougesListData? catalougesListData;
-  Future<void> getCataloguesList(String categoryId) async {
-    print("***********getCataloguesList $categoryId *");
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+  Future<void> getCataloguesList(String categoryId,
+      {String? communityId}) async {
+    final myCommunityIds =
+        await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final date =
+        "${DateTime.now().toUtc().toIso8601String().split('T')[0]}T00:00:00.000Z";
+
     final variables = {
       "where": {
         if (categoryId.isEmpty) "catalogue_category_id": {},
@@ -318,8 +321,14 @@ class CatalogueViewModel extends ChangeNotifier {
         "catalogue_category": {
           "status": {"_eq": "ACTIVE"}
         },
-        "schedulerDay": {"_lte": "2026-07-03T00:00:00.000Z"},
+        "schedulerDay": {"_lte": date},
         "_and": [
+          if (communityId?.isNotEmpty == true)
+            {
+              "community_id": {
+                "_in": [communityId]
+              }
+            },
           {
             "_or": [
               {
@@ -331,12 +340,18 @@ class CatalogueViewModel extends ChangeNotifier {
               {
                 "dental_supplier_id": {"_eq": userId}
               },
-              if (UserRole.professional.value == userType)
+              if (UserRole.professional.value == userType && communityId?.isNotEmpty == false)
                 {
                   "community_id": {
-                    "_in": ["$communityId"]
+                    "_in": ["${myCommunityIds.first}"]
                   }
-                }
+                },
+              if (communityId?.isNotEmpty == true)
+                {
+                  "community_id": {
+                    "_in": [communityId]
+                  }
+                },
             ]
           }
         ]
@@ -344,7 +359,6 @@ class CatalogueViewModel extends ChangeNotifier {
       "limit": 20,
       "offset": 0
     };
-    print("************variables $variables");
     final res = await repo.getCatalougesList(variables);
     if (res != null) {
       catalougesListData = res;

@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_button.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/sold_out_button.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
@@ -102,15 +103,11 @@ class ListingHubMasterCard extends StatelessWidget {
                               color: AppColors.primaryColor, width: 1.5),
                           borderRadius: BorderRadius.circular(20)),
                       child: Text(
-                          noOfSeats != null
-                              ? noOfSeats <= registerCount
-                                  ? "SOLD OUT"
-                                  : noOfSeats > 10
-                                      ? " FILLING FAST !"
-                                      : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
-                              : afterWardsPrice == 0.0
-                                  ? "FREE MASTERCLASS"
-                                  : "PAID",
+                          getSeatStatus(
+                            noOfSeats: noOfSeats,
+                            registerCount: registerCount,
+                            afterWardsPrice: afterWardsPrice,
+                          ),
                           style: const TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
                               fontSize: 12,
@@ -273,20 +270,51 @@ class ListingHubMasterCard extends StatelessWidget {
                   ],
                 ),
               ),
-              //Spacer(),
-              RegisterButton(
-                  text: isRegistered && courseStatus != "EXPIRED"
-                      ? (type == "Online Academy")
-                          ? "View Course Details"
-                          : "Already Registered"
-                      : 'Register Now',
-                  onTap: registerTap,
-                  isRegistered: isRegistered && courseStatus != "EXPIRED")
+              (getSeatStatus(
+                          noOfSeats: noOfSeats,
+                          registerCount: registerCount,
+                          afterWardsPrice: afterWardsPrice) ==
+                      "SOLD OUT")
+                  ? SoldOutButton()
+                  : RegisterButton(
+                      courseStatus: courseStatus ?? "",
+                      text: isRegistered && courseStatus != "EXPIRED"
+                          ? (type == "Online Academy")
+                              ? courseStatus == "PENDING"
+                                  ? "Awaiting Approval"
+                                  : "View Course Details"
+                              : "Already Registered"
+                          : 'Register Now',
+                      onTap: registerTap,
+                      isRegistered: isRegistered && courseStatus != "EXPIRED")
             ],
           ),
         ),
       ),
     );
+  }
+
+  String getSeatStatus({
+    int? noOfSeats,
+    int? registerCount,
+    double? afterWardsPrice,
+  }) {
+    if (noOfSeats != null) {
+      final remaining = noOfSeats - (registerCount ?? 0);
+      /*final isUnlimited = courseType == "Online Academy" &&
+          afterWardsPrice == 0 &&
+          noOfSeats == null;*/
+
+      if (remaining <= 0) {
+        return "SOLD OUT";
+      } else if (remaining <= 10) {
+        return "HURRY UP!! Only $remaining SEATS LEFT";
+      } else {
+        return "FILLING FAST!";
+      }
+    }
+
+    return (afterWardsPrice ?? 0) == 0 ? "FREE MASTERCLASS" : "PAID";
   }
 
   String _expiryLabel() {

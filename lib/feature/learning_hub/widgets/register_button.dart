@@ -5,12 +5,14 @@ class RegisterButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
   final bool isRegistered;
+  final String courseStatus;
 
   const RegisterButton({
     super.key,
     required this.text,
     required this.onTap,
     required this.isRegistered,
+    required this.courseStatus,
   });
 
   @override
@@ -22,7 +24,11 @@ class RegisterButton extends StatelessWidget {
         height: 40,
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-            color: isRegistered ? AppColors.primaryColor : AppColors.black,
+            color: isRegistered
+                ? courseStatus == "PENDING"
+                    ? AppColors.redColor
+                    : AppColors.primaryColor
+                : AppColors.black,
             borderRadius: BorderRadius.circular(8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -38,8 +44,10 @@ class RegisterButton extends StatelessWidget {
             Container(
               width: 28,
               height: 28,
-              decoration: const BoxDecoration(
-                color: Colors.orange,
+              decoration:  BoxDecoration(
+                color: courseStatus == "PENDING"
+                    ? AppColors.black
+                    : AppColors.primaryColor,
                 shape: BoxShape.circle,
               ),
               child: const Icon(

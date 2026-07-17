@@ -193,9 +193,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   id: course.id ?? "",
                   index: index,
                   meetingLink: course.meetingLink ?? "",
-                  logoUrl:
-                      course.presenters?.firstOrNull?.presentedByImage?.url ??
-                          '',
+                  logoUrl: course.presenters?.isNotEmpty == true ?
+                      course.presenters?.first.presentedByImage?.url ??
+                          '' : "",
                   companyName: course.courseName ?? '',
                   courseTitle: course.presentedByName ?? '',
                   status: course.status ?? '',

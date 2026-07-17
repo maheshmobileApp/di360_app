@@ -39,6 +39,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     with ValidationMixins, BaseContextHelpers {
   String selectedFilter = 'all';
   final ScrollController _scrollController = ScrollController();
+  final ScrollController _screenScrollController = ScrollController();
 
   @override
   void initState() {
@@ -202,6 +203,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                 ),
                 body: (viewModel.communityStatus)
                     ? SingleChildScrollView(
+                      controller: _screenScrollController,
                         child: Column(
                           children: [
                             CommunityHeaderCard(
@@ -267,7 +269,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Upcomming Courses :",
+                                    Text("Upcoming Courses :",
                                         style: TextStyles.bold3(
                                             color: AppColors.primaryColor)),
                                     SizedBox(height: 10),
@@ -284,6 +286,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                           return SizedBox(
                                             width: 300,
                                             child: UpcomingCourseCard(
+                                              noOfSeats: course.numberOfSeats,
                                                 feedId: course.id ?? "",
                                                 afterWardsPrice:
                                                     course.afterwardsPrice,
@@ -319,6 +322,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                     ? (course.address?.first.formattedAddress ?? course.address?.first.city ?? "")
                                                     : "",
                                                 courseStatus: course.courseRegisteredUsers?.firstOrNull?.status,
+                                                courseType : course.type,
                                                 onTap: () async {
                                                   await courseListingVM
                                                       .getCourseDetails(context,
@@ -416,6 +420,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 : viewModel.communityLike(
                                                     context, newsItem.id ?? '');
                                           },
+                                          onCommunityTap: scrollToTop,
                                           onDetailView: () async {
                                             final feedTypeEnum =
                                                 FeedType.fromString(
@@ -611,6 +616,14 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       },
     );
   }
+
+  void scrollToTop() {
+  _screenScrollController.animateTo(
+    0,
+    duration: const Duration(milliseconds: 500),
+    curve: Curves.easeInOut,
+  );
+}
 
   SizedBox communityStatusWidget(NewsFeedCommunityViewModel courseListingVM) {
     return SizedBox(

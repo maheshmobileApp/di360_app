@@ -9,6 +9,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
+import 'package:html/parser.dart' as htmlParser;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -151,7 +152,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "feed_type": "NEWSFEED",
           "community_id": null,
           "community_type": "BOTH",
-          "comments_enabled": enableComments,
+           if (type == UserRole.supplier.value) "comments_enabled": enableComments,
         }
       };
 
@@ -177,7 +178,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
 
   updateTheNewsFeeds(BuildContext context) async {
     // final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    // final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
       uploadedFiles.clear();
@@ -206,7 +207,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "video_url": videoController.text,
           "post_image": uploadedFiles,
           "web_url": websiteController.text,
-          "comments_enabled": enableComments,
+          if (type == UserRole.supplier.value)  "comments_enabled": enableComments,
         }
       });
 
@@ -281,7 +282,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     existingImages.addAll(images);
     videoController.text = newsfeeds?.videoUrl ?? '';
     websiteController.text = newsfeeds?.webUrl ?? '';
-    desController.text = newsfeeds?.description ?? '';
+    desController.text =  htmlParser.parse(newsfeeds?.description ?? '').body?.text ?? '';
     setEnableComments(newsfeeds?.commentsEnabled ?? false);
     editSelectCategoryAssigned(newsfeeds?.categoryType ?? '');
     notifyListeners();

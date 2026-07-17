@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class EnableCommentsWidget extends StatelessWidget {
@@ -49,8 +50,10 @@ class EnableCommentsWidget extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.orange,
-            activeTrackColor: Colors.orange.withOpacity(0.4),
+            activeColor: AppColors.greenColor,
+            activeTrackColor: AppColors.greenColor.withOpacity(0.4),
+            inactiveTrackColor: AppColors.redColor.withOpacity(0.4),
+            inactiveThumbColor: AppColors.redColor,
           ),
         ],
       ),

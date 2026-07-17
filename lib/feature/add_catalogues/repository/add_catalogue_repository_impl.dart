@@ -64,6 +64,12 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                 "name": {"_ilike": "%$subCatagory%"}
               }
             },
+          if (status?.isNotEmpty == true)
+            {
+              "catalogue_status": {
+                "_in": status?.isEmpty == true ? ["ACTIVE", "INACTIVE"] : status
+              }
+            },
           (selectedStatus == "All")
               ? {
                   "_or": [
@@ -79,14 +85,6 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                         ]
                       }
                     },
-                    if (status?.isNotEmpty == true)
-                      {
-                        "catalogue_status": {
-                          "_in": status?.isEmpty == true
-                              ? ["ACTIVE", "INACTIVE"]
-                              : status
-                        }
-                      }
                   ]
                 }
               : {

@@ -50,6 +50,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final VoidCallback? onDetailView;
   final VoidCallback? onLikeTap;
   final VoidCallback? onCommentTap;
+  final VoidCallback? onCommunityTap;
   final int likes;
   final int comments;
   final bool isLiked;
@@ -81,6 +82,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     required this.chipTitle,
     this.onLikeTap,
     this.onCommentTap,
+    this.onCommunityTap,
     required this.likes,
     required this.feedType,
     this.isLiked = false,
@@ -149,7 +151,10 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                               logoAvailable,
                               communityUserId,
                               directoryVM,
-                              context),
+                              context,
+                              onCommunityTap,
+                              getDirectoryId(
+                                  newsfeeds, newsfeeds?.userRole ?? "")),
                         ),
                         /*if (type == UserRole.supplier.value ||
                             (type == UserRole.professional.value &&
@@ -169,6 +174,12 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
                     const SizedBox(height: 8),
+                    if (newsfeeds?.feedType == FeedType.learnhub.value)
+                      Text(
+                        "Course Description :",
+                        style: TextStyles.semiBold(
+                            fontSize: 14, color: AppColors.black),
+                      ),
                     ExpandableHtmlText(
                       htmlData: description,
                       index: index,
@@ -278,6 +289,24 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+  String getDirectoryId(Newsfeeds? newsfeeds, String userType) {
+    if (userType == UserRole.professional.value) {
+      return newsfeeds?.dentalProfessional?.directories?.isNotEmpty == true
+          ? newsfeeds?.dentalProfessional?.directories?.first.id ?? ""
+          : "";
+    } else if (userType == UserRole.practice.value) {
+      return newsfeeds?.dentalPractice?.directories?.isNotEmpty == true
+          ? newsfeeds?.dentalPractice?.directories?.first.id ?? ""
+          : "";
+    } else if (userType == UserRole.supplier.value) {
+      return newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
+          ? newsfeeds?.dentalSupplier?.directories?.first.id ?? ""
+          : "";
+    }
+
+    return "";
+  }
+
   String _fetchId(Newsfeeds? newsfeeds) {
     if (newsfeeds?.feedType == FeedType.jobs.value) {
       return newsfeeds?.payloadId ?? '';
@@ -308,7 +337,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
           .push(ImageViewerScreen(postImage: allMedia as List<PostImage>?)),
       child: Container(
         width: double.infinity,
-        height: 200,
+        height: 160,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.grey[100],
@@ -485,9 +514,12 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       bool logoAvailable,
       String communityUserId,
       DirectoryViewModel directoryVM,
-      BuildContext context) {
+      BuildContext context,
+      VoidCallback? onCommunityTap,
+      String newsfeedCreatedId) {
     return GestureDetector(
-      onTap: () async {
+      onTap: onCommunityTap,
+      /*() async {
         Loaders.circularShowLoader(context);
 
         await directoryVM.GetDirectorDetails(communityUserId);
@@ -496,7 +528,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
         Loaders.circularHideLoader(context);
 
         navigationService.navigateTo(RouteList.directoryDetailsScreen);
-      },
+      },*/
       child: Row(
         children: [
           Stack(
@@ -534,8 +566,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                     radius: 16,
                     child: (communityLogo.isNotEmpty)
                         ? SizedBox(
-                            height: 24,
-                            width: 24,
+                            height: 30,
+                            width: 30,
                             child: ClipOval(
                                 child: CachedNetworkImageWidget(
                                     imageUrl: logo,
@@ -544,7 +576,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                                         ImageConst.directorProfile))),
                           )
                         : Text(
-                            company[0].toUpperCase(),
+                            userName[0].toUpperCase(),
                             style:
                                 TextStyles.bold5(color: AppColors.whiteColor),
                           ),
@@ -562,15 +594,33 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                 Row(
                   children: [
                     if (userName.isNotEmpty)
-                      Text("$userName ",
-                          style: TextStyles.regular1(
-                              color: Colors.black, fontSize: 14)),
-                    Flexible(
-                      child: Text(DateFormatUtils.formatDateTime(createdAt),
-                          style: TextStyles.regular1(color: Colors.grey)),
-                    ),
+                      GestureDetector(
+                        onTap: () async {
+                          Loaders.circularShowLoader(context);
+
+                          await directoryVM.GetDirectorDetails(
+                              newsfeedCreatedId);
+                          await directoryVM.getDirectory(newsfeedCreatedId);
+
+                          Loaders.circularHideLoader(context);
+
+                          navigationService
+                              .navigateTo(RouteList.directoryDetailsScreen);
+                        },
+                        child: Text("$userName ",
+                            style: TextStyles.regular1(
+                                color: Colors.black, fontSize: 14)),
+                      ),
+                    if (!logoAvailable)
+                      Flexible(
+                        child: Text(DateFormatUtils.formatDateTime(createdAt),
+                            style: TextStyles.regular1(color: Colors.grey)),
+                      ),
                   ],
                 ),
+                if (logoAvailable)
+                      Text(DateFormatUtils.formatDateTime(createdAt),
+                          style: TextStyles.regular1(color: Colors.grey)),
               ],
             ),
           ),
