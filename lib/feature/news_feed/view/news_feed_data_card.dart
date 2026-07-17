@@ -121,8 +121,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             directoryVM,
                             isLogoAvailable
                                 ? newsfeeds?.communityOwner?.communityId
-                                : getDirectoryIdWithoutUserType(
-                                    newsfeeds),
+                                : getDirectoryIdWithoutUserType(newsfeeds),
                             getDirectoryId(
                                 newsfeeds, newsfeeds?.userRole ?? ""),
                             isLogoAvailable,
@@ -573,6 +572,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                         newsCommunityVM.listingStatus = "PUBLISHED";
                         newsCommunityVM
                             .setNewsFeedCommunityId(communityId ?? "");
+                        newsCommunityVM.setentryNewsFeedId(newsfeeds?.id ?? "");
                         newsCommunityVM.setProfCommunityId(
                             communityId ?? "", "");
                         newsCommunityVM.getBannerUrl(context);

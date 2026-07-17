@@ -54,6 +54,12 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   List<CoursesListingDetails> upComingCoursesList = [];
   String? userType;
   String? newsfeedCommunityId = "";
+  String? entryNewsFeedId = "";
+
+  void setentryNewsFeedId(String value) {
+    entryNewsFeedId = value;
+    notifyListeners();
+  }
 
   void setNewsFeedCommunityId(String value) {
     newsfeedCommunityId = value;
@@ -319,13 +325,58 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
                 "status": {"_eq": "ACTIVE"}
               }
             }
-          }
+          },
+          if (entryNewsFeedId?.isNotEmpty == true)
+            {
+              "id": {"_neq": entryNewsFeedId}
+            }
         ]
       },
       "userId": userId,
-      "includeEntryFeed": false
+      "includeEntryFeed": entryNewsFeedId?.isNotEmpty == true ? true : false,
+      if (entryNewsFeedId?.isNotEmpty == true)
+        "entryFeedWhere": {
+          "_and": [
+            {
+              "status": {"_eq": listingStatus}
+            },
+            {
+              "community_id": {"_eq": selectedCommunity}
+            },
+            {
+              "community_type": {
+                "_in": ["BOTH", "COMMUNITY_USER"]
+              }
+            },
+            {
+              "_not": {
+                "newsfeed_user_actions": {
+                  "created_by_id": {"_eq": userId},
+                  "entity_type": {"_eq": "POST"},
+                  "action": {
+                    "_in": ["HIDE", "REPORT"]
+                  },
+                  "status": {"_eq": "ACTIVE"}
+                }
+              }
+            },
+            {
+              "_not": {
+                "blocked_by_user_actions": {
+                  "created_by_id": {"_eq": userId},
+                  "entity_type": {"_eq": "PROFILE"},
+                  "action": {"_eq": "BLOCK"},
+                  "status": {"_eq": "ACTIVE"}
+                }
+              }
+            },
+            if (entryNewsFeedId?.isNotEmpty == true)
+              {
+                "id": {"_neq": entryNewsFeedId}
+              }
+          ]
+        }
     };
-    print("************$variables");
 
     final res = await repo.getAllNewsFeeds(variables);
 

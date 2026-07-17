@@ -97,7 +97,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
             Provider.of<NewsFeedCommunityViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
-        final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
+        final newsFeeds = viewModel.newsFeedCommunityData?.newsfeeds ?? [];
+        final entryFeeds = viewModel.newsFeedCommunityData?.entryFeed ?? [];
+        final combinedFeeds = [...(entryFeeds), ...(newsFeeds)];
         return FutureBuilder<List<String>>(
           future: Future.wait([
             LocalStorage.getStringVal(LocalStorageConst.type),
@@ -203,7 +205,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                 ),
                 body: (viewModel.communityStatus)
                     ? SingleChildScrollView(
-                      controller: _screenScrollController,
+                        controller: _screenScrollController,
                         child: Column(
                           children: [
                             CommunityHeaderCard(
@@ -239,8 +241,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                             FeatureButtonsWidget(
                               communityMemberDirectorId:
                                   newsFeedCommunityVM.communityMemberDirectorId,
-                              communityId:
-                                  joinRequests?.firstOrNull?.communityId,
+                              communityId: combinedFeeds.isNotEmpty
+                                  ? combinedFeeds.first.communityId
+                                  : null,
                             ),
                             addVertical(8),
                             if (viewModel.searchBarOpen)
@@ -286,7 +289,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                           return SizedBox(
                                             width: 300,
                                             child: UpcomingCourseCard(
-                                              noOfSeats: course.numberOfSeats,
+                                                noOfSeats: course.numberOfSeats,
                                                 feedId: course.id ?? "",
                                                 afterWardsPrice:
                                                     course.afterwardsPrice,
@@ -322,7 +325,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                     ? (course.address?.first.formattedAddress ?? course.address?.first.city ?? "")
                                                     : "",
                                                 courseStatus: course.courseRegisteredUsers?.firstOrNull?.status,
-                                                courseType : course.type,
+                                                courseType: course.type,
                                                 onTap: () async {
                                                   await courseListingVM
                                                       .getCourseDetails(context,
@@ -342,19 +345,19 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   ],
                                 ),
                               ),
-                            (joinRequests?.length != 0 && joinRequests != null)
+                            (combinedFeeds.isNotEmpty)
                                 ? ListView.builder(
                                     shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     padding: EdgeInsets.all(10),
-                                    itemCount: joinRequests.length +
+                                    itemCount: combinedFeeds.length +
                                         (viewModel.hasMoreNewsFeeds &&
                                                 viewModel.isLoadingMore
                                             ? 1
                                             : 0),
                                     itemBuilder: (context, index) {
-                                      if (index == joinRequests.length) {
+                                      if (index == combinedFeeds.length) {
                                         return const Padding(
                                           padding: EdgeInsets.all(16),
                                           child: Center(
@@ -363,7 +366,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                       AppColors.primaryColor)),
                                         );
                                       }
-                                      final newsItem = joinRequests[index];
+                                      final newsItem = combinedFeeds[index];
                                       return NewsFeedCommunityCard(
                                           communityUserId: newsItem.communityOwner?.directories?.isNotEmpty == true
                                               ? newsItem.communityOwner?.directories
@@ -618,12 +621,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
   }
 
   void scrollToTop() {
-  _screenScrollController.animateTo(
-    0,
-    duration: const Duration(milliseconds: 500),
-    curve: Curves.easeInOut,
-  );
-}
+    _screenScrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
 
   SizedBox communityStatusWidget(NewsFeedCommunityViewModel courseListingVM) {
     return SizedBox(
