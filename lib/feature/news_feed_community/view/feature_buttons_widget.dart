@@ -108,9 +108,11 @@ class FeatureButtonsWidget extends StatelessWidget {
                     final userCommunityId = await LocalStorage.getStringVal(
                         LocalStorageConst.communityId);
                     navigationService.navigateTo(RouteList.catalogueScreen);
+                    context.read<CatalogueViewModel>().setCommunityIdCatalouge(
+                        communityId ?? userCommunityId);
                     context
                         .read<CatalogueViewModel>()
-                        .fetchCatalogue(context, isCommunityCatalogue: true, communityId: communityId ?? userCommunityId );
+                        .fetchCatalogue(context, isCommunityCatalogue: true);
                   }
                 },
                 child: Container(

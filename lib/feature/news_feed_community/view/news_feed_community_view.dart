@@ -483,6 +483,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
 
                                                 break;
                                               case "Edit":
+                                                viewModel.getUserType();
                                                 viewModel.setEditNewsFeed(true);
                                                 viewModel.setEditNewsFeedId(
                                                     newsItem.id ?? "");

@@ -137,10 +137,10 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<NewsFeedCommunityViewModel>().initialStateData();
           context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
           context.read<NewsFeedCommunityViewModel>().setentryNewsFeedId("");
-          
 
           break;
         case 4: // Catalogue
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
           context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
@@ -160,6 +160,7 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Catalogue
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
           context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
@@ -187,6 +188,7 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<NewsFeedCommunityViewModel>().setentryNewsFeedId("");
           break;
         case 4: // Catalogue
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
           context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
