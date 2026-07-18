@@ -94,17 +94,17 @@ class _DashBoardState extends State<DashBoard> {
                   activeIcon: Image.asset(ImageConst.feed,
                       height: 24, width: 24, color: AppColors.primaryColor),
                   label: 'Feeds'),
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset(ImageConst.jobSeek,
-                      height: 24,
-                      width: 24,
-                      color: AppColors.bottomNavUnSelectedColor),
-                  activeIcon: SvgPicture.asset(ImageConst.jobSeek,
-                      height: 24, width: 24, color: AppColors.primaryColor),
-                  label: 'Job Seek'),
+              if (type != UserRole.admin.value)
+                BottomNavigationBarItem(
+                    icon: SvgPicture.asset(ImageConst.jobSeek,
+                        height: 24,
+                        width: 24,
+                        color: AppColors.bottomNavUnSelectedColor),
+                    activeIcon: SvgPicture.asset(ImageConst.jobSeek,
+                        height: 24, width: 24, color: AppColors.primaryColor),
+                    label: 'Job Seek'),
               if (type == UserRole.professional.value ||
-                  type == UserRole.supplier.value ||
-                  type == UserRole.admin.value)
+                  type == UserRole.supplier.value)
                 BottomNavigationBarItem(
                     icon: Icon(Icons.group, size: 24), label: 'Community'),
               BottomNavigationBarItem(

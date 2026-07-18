@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 class ApiConst {
@@ -14,10 +13,13 @@ class ApiConst {
       "AIzaSyAoHGQktk5y--nUH7Q8ZHUcNuUa_rHTFQo";
   static const String _googleMapAPIKeyIOS =
       "AIzaSyA5vRiUsDawykjIT0GpCKgJ_20f-6eHWFA";
-      
+
   static const String staticGoogleAPIKey =
       "AIzaSyAzaYcSFRWOySuMNQMzAYPIVhvvF3eieDY";
 
   static String get googleAPIKey =>
       Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;
+
+  static const String resendMail = '/api/v1/event/resend-verification-mail';
+  static const String adminApproveUser = '/api/v1/event/admin-approve-user/';
 }
