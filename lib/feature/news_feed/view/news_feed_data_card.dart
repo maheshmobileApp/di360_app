@@ -510,7 +510,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           children: [
             Stack(alignment: Alignment.center, children: [
               CircleAvatar(
-                backgroundColor: AppColors.primaryColor,
+                backgroundColor: AppColors.greyLightcolor,
                 radius: 26.5,
                 child: (imageUrl != null && imageUrl.isNotEmpty)
                     ? SizedBox(
@@ -521,7 +521,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 imageUrl: logoAvailable
                                     ? newsfeeds?.communityOwner?.logo?.url ?? ''
                                     : imageUrl,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 errorWidget:
                                     Image.asset(ImageConst.directorProfile))),
                       )
@@ -743,7 +743,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
           );
         } else {
-          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.cover);
+          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.contain);
         }
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);

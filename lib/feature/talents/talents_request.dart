@@ -1,72 +1,45 @@
 String talentsRequest =
-    r'''query GetJobProfileData($limit: Int!, $offset: Int!) {
-  job_profiles(
-    order_by: { created_at: desc }
-    where: { active_status: { _eq: "ACTIVE" } }
-    limit: $limit
-    offset: $offset
-  ) {
+    r'''query getMarketPlaceTalents($limit: Int, $offset: Int, $where: job_profiles_bool_exp, $order_by: [job_profiles_order_by!], $loginId: uuid!) {
+  job_profiles(where: $where, order_by: $order_by, limit: $limit, offset: $offset) {
     id
     created_at
     updated_at
-    skills
     jobexperiences
-    educations
-    upload_resume
     job_designation
-    current_company
-    current_ctc
     dental_professional_id
     post_anonymously
     admin_status
     profile_image
     full_name
-    mobile_number
-    email_address
     work_type
     profession_type
     location
     country
     city
     state
-    cover_letter
-    certificate
-    radius
-    abn_number
-    availabilityOption
-    availabilityDate
-    fromDate
     availabilityDay
-    work_rights
     Year_of_experiance
-    languages_spoken
-    areas_expertise
-    skills
     percentage
-    salary_amount
-    salary_type
-    aphra_number
-    willing_to_travel
-    travel_distance
     about_yourself
-    location
-    availabilityType
-    unavailabilityDate
     dental_professional {
       id
       gender
       __typename
     }
-    jobhirings {
+    jobhirings(
+      where: {_or: [{dental_supplier_id: {_eq: $loginId}}, {dental_practice_id: {_eq: $loginId}}]}
+      order_by: {created_at: desc}
+    ) {
       id
       dental_supplier_id
-      dental_practice_id
       hiring_status
+      dental_practice_id
       __typename
     }
     __typename
   }
-}''';
+}
+''';
 
 String hireMeMutation = r'''
 mutation insert_jobhirings($hireobject:jobhirings_insert_input!) {
