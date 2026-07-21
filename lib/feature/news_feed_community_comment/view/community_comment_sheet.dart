@@ -27,90 +27,48 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     with BaseContextHelpers {
   final Map<String, double> _replyHeights = {};
   final Map<String, GlobalKey> _replyKeys = {};
-  List<NewsFeedsComments>? _sortedComments;
 
   @override
   void initState() {
     super.initState();
-    _initializeSortedComments();
-  }
-
-  void _initializeSortedComments() {
-    final viewModel =
-        Provider.of<NewsFeedCommunityCommentViewModel>(context, listen: false);
-
-    if (viewModel.newsFeedComments?.newsFeedsComments != null) {
-      // Create a deep copy to ensure we have a fresh list
-      _sortedComments = viewModel.newsFeedComments?.newsFeedsComments;
-      _sortedComments?.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-
-      // Pre-create GlobalKeys to avoid duplicates
-      for (var comment in _sortedComments!) {
-        if (comment.id != null && !_replyKeys.containsKey(comment.id)) {
-          _replyKeys[comment.id!] = GlobalKey();
-        }
-      }
-    }
-  }
-
-  @override
-  void didUpdateWidget(CommunityCommentSheet oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // Always reinitialize when widget updates to ensure fresh data
-    /*if (oldWidget.newsFeedsComments != widget.newsFeedsComments ||
-        _hasCommentsChanged(widget.newsFeedsComments, widget.newsFeedsComments)) {
-      _initializeSortedComments();
-    }*/
-  }
-
-  // Helper method to check if comments have actually changed
-  bool _hasCommentsChanged(List<NewsFeedsComments>? oldComments,
-      List<NewsFeedsComments>? newComments) {
-    if (oldComments == null && newComments == null) return false;
-    if (oldComments == null || newComments == null) return true;
-    if (oldComments.length != newComments.length) return true;
-
-    // Check if any comment content has changed
-    for (int i = 0; i < oldComments.length; i++) {
-      if (oldComments[i].id != newComments[i].id ||
-          oldComments[i].comments != newComments[i].comments ||
-          oldComments[i].createdAt != newComments[i].createdAt) {
-        return true;
-      }
-    }
-    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<NewsFeedCommunityCommentViewModel>(context);
 
-    // Always use the latest data from widget.newsfeeds
-    final currentComments = viewModel.newsFeedComments?.newsFeedsComments;
+    final comments = [...?viewModel.newsFeedComments?.newsFeedsComments];
 
-    // Update sorted comments if the source data has changed
-    if (currentComments != null &&
-        (_sortedComments == null ||
-            _hasCommentsChanged(_sortedComments, currentComments))) {
-      _initializeSortedComments();
+    comments.sort((a, b) => (b.createdAt ?? "").compareTo(a.createdAt ?? ""));
+
+    for (final comment in comments) {
+      if (comment.id != null && !_replyKeys.containsKey(comment.id)) {
+        _replyKeys[comment.id!] = GlobalKey();
+      }
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: _sortedComments?.isEmpty ?? true
+      child: comments.isEmpty
           ? Center(
-              child: Text('No Comments',
-                  style: TextStyles.clashSemiBold(
-                      color: AppColors.black, fontSize: 20)))
+              child: Text(
+                "No Comments",
+                style: TextStyles.clashSemiBold(
+                  color: AppColors.black,
+                  fontSize: 20,
+                ),
+              ),
+            )
           : ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: _sortedComments?.length ?? 0,
+              itemCount: comments.length,
               itemBuilder: (context, index) {
-                final comments = _sortedComments?[index];
                 return _buildCommentTile(
-                    comments, viewModel, widget.newsfeeds?.id ?? '');
+                  comments[index],
+                  viewModel,
+                  widget.newsfeeds?.id ?? "",
+                );
               },
             ),
     );
@@ -127,8 +85,10 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     if (replyKey == null) {
       return const SizedBox.shrink();
     }
+    final apiCount = comments.repliesAggregate?.aggregate?.count ?? 0;
+    final cacheCount = viewModel.repliesDataCache[comments.id]?.length ?? 0;
 
-    final replyCount = comments.repliesAggregate?.aggregate?.count ?? 0;
+    final replyCount = apiCount > cacheCount ? apiCount : cacheCount;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -262,7 +222,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                   ],
                 ),
                 if (viewModel.expandedReplies[comments.id] ?? false)
-                  _buildRepliesSection(comments.id ?? "", feedId, replyKey, viewModel),
+                  _buildRepliesSection(
+                      comments.id ?? "", feedId, replyKey, viewModel),
               ],
             ),
           ),
@@ -271,8 +232,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-  void _handleViewReplyTap(
-      NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) async {
+  void _handleViewReplyTap(NewsFeedsComments comments,
+      NewsFeedCommunityCommentViewModel viewModel) async {
     final isExpanded = viewModel.expandedReplies[comments.id] ?? false;
 
     if (!isExpanded) {
@@ -494,10 +455,17 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
       NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) {
     FocusScope.of(navigatorKey.currentContext!)
         .requestFocus(viewModel.replyFocusNode);
-    final comment = comments.comments ?? '';
+    final comment = comments.commentText ?? '';
     viewModel.commentController.text = comment;
     viewModel.setEditAttachments(comments.commentsAttachments);
-    viewModel.updateIsReply(false, comments.id ?? '', '', commentupdate: true);
+    viewModel.selectedCommentId = comments.id;
+
+    viewModel.updateIsReply(
+      false,
+      comments.id ?? '',
+      '',
+      commentupdate: true,
+    );
   }
 
   void _handleReplyTap(
@@ -506,14 +474,18 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
         removeReplyVal: true);
     viewModel.commentController.clear();
     viewModel.updateIsReply(
-        true, comments.id ?? '', comments.commenterName ?? '');
+      true,
+      comments.id ?? '',
+      comments.commenterName ?? '',
+      refreshId: comments.id ?? "",
+    );
     FocusScope.of(navigatorKey.currentContext!)
         .requestFocus(viewModel.replyFocusNode);
   }
 
-  Widget _buildRepliesSection(
-      String commentId, String feedId, GlobalKey replyKey, NewsFeedCommunityCommentViewModel viewModel) {
-        final replies = viewModel.repliesDataCache[commentId] ?? [];
+  Widget _buildRepliesSection(String commentId, String feedId,
+      GlobalKey replyKey, NewsFeedCommunityCommentViewModel viewModel) {
+    final replies = viewModel.repliesDataCache[commentId] ?? [];
     return MeasureSize(
       onChange: (size) {
         WidgetsBinding.instance.addPostFrameCallback((_) {

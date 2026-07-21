@@ -3,20 +3,23 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
-import 'package:di360_flutter/feature/news_feed_comment/view/new_reply_comment_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CommunityCommentReplyWidget extends StatelessWidget
-    with BaseContextHelpers {
+class CommunityNewReplyComment extends StatelessWidget with BaseContextHelpers {
   final NewsFeedsComments? comments;
   final String feedId;
   final int depth;
-  const CommunityCommentReplyWidget(
-      {super.key, this.comments, required this.feedId, this.depth = 0});
+
+  const CommunityNewReplyComment({
+    super.key,
+    this.comments,
+    required this.feedId,
+    this.depth = 0,
+  });
 
   String get _commenterName =>
       comments?.dentalSupplier?.businessName ??
@@ -28,7 +31,13 @@ class CommunityCommentReplyWidget extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<NewsFeedCommunityCommentViewModel>(context);
-    final replyCount = comments?.repliesAggregate?.aggregate?.count ?? 0;
+    final apiReplyCount = comments?.repliesAggregate?.aggregate?.count ?? 0;
+
+    final cacheReplyCount =
+        viewModel.repliesDataCache[comments?.id]?.length ?? 0;
+
+    final replyCount =
+        apiReplyCount > cacheReplyCount ? apiReplyCount : cacheReplyCount;
     final isExpanded = viewModel.expandedReplies[comments?.id] ?? false;
     final nestedReplies = viewModel.repliesDataCache[comments?.id] ?? [];
 
@@ -120,15 +129,17 @@ class CommunityCommentReplyWidget extends StatelessWidget
               children: [
                 if (replyCount > 0)
                   GestureDetector(
-                    onTap: () async {
-                      if (!isExpanded) {
-                        await viewModel.getReplies(context, comments!.id!);
-                      }
-                      viewModel.toggleReplyExpansion(comments?.id ?? '');
+                    onTap: () {
+                      viewModel.handleReplyExpansion(
+                        context,
+                        comments?.id ?? '',
+                      );
                     },
                     child: Text(
                       isExpanded ? 'Hide replies' : 'View $replyCount replies',
-                      style: TextStyles.bold2(color: AppColors.black),
+                      style: TextStyles.bold2(
+                        color: AppColors.black,
+                      ),
                     ),
                   ),
                 if (replyCount > 0) addHorizontal(16),
@@ -138,7 +149,8 @@ class CommunityCommentReplyWidget extends StatelessWidget
                         removeReplyVal: true);
                     viewModel.commentController.clear();
                     viewModel.updateIsReply(
-                        true, comments?.id ?? '', _commenterName);
+                        true, comments?.id ?? '', _commenterName,
+                        refreshId: comments?.id ?? "");
                     FocusScope.of(navigatorKey.currentContext!)
                         .requestFocus(viewModel.replyFocusNode);
                   },
@@ -155,11 +167,13 @@ class CommunityCommentReplyWidget extends StatelessWidget
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: nestedReplies.length,
-                itemBuilder: (context, index) => NewReplyCommentWidget(
-                  comments: nestedReplies[index],
-                  feedId: feedId,
-                  depth: depth + 1,
-                ),
+                itemBuilder: (context, index) {
+                  return CommunityNewReplyComment(
+                    comments: nestedReplies[index],
+                    feedId: feedId,
+                    depth: depth + 1,
+                  );
+                },
               ),
             ),
         ],
@@ -206,8 +220,9 @@ class CommunityCommentReplyWidget extends StatelessWidget
                 .requestFocus(viewModel.replyFocusNode);
             final comment = comments?.commentText ?? '';
             viewModel.commentController.text = comment;
-            viewModel.setEditAttachments(comments?.commentsAttachments);
-            viewModel.selectedCommentId = comments?.id;
+            final spaceIndex = comment.indexOf(' ');
+            viewModel.commentController.text =
+                spaceIndex == -1 ? '' : comment.substring(spaceIndex + 1);
             viewModel.updateIsReply(false, comments?.id ?? '', _commenterName,
                 isedit: true);
           } else if (value == 'delete') {

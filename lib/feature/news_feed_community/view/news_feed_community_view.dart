@@ -11,7 +11,6 @@ import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
-import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/feature_buttons_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
@@ -99,7 +98,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
             Provider.of<NewsFeedCommunityViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
-        final newsfeedCommunityCommentViewModel = Provider.of<NewsFeedCommunityCommentViewModel>(context);
+        final newsfeedCommunityCommentViewModel =
+            Provider.of<NewsFeedCommunityCommentViewModel>(context);
         final newsFeeds = viewModel.newsFeedCommunityData?.newsfeeds ?? [];
         final entryFeeds = viewModel.newsFeedCommunityData?.entryFeed ?? [];
         final combinedFeeds = [...(entryFeeds), ...(newsFeeds)];
@@ -412,10 +412,17 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                           likes: newsItem.newsfeedsLikesAggregate?.aggregate?.count ?? 0,
                                           isLiked: newsItem.myLike?.isNotEmpty ?? false,
                                           onCommentTap: () async {
-                                            await newsfeedCommunityCommentViewModel.getNewsfeedComment(context, newsItem.id ?? "");
+                                            await newsfeedCommunityCommentViewModel
+                                                .getNewsfeedComment(
+                                                    context, newsItem.id ?? "");
+                                            newsfeedCommunityCommentViewModel
+                                                .expandedReplies = {};
                                             navigationService.push(
                                                 CommunityCommentScreen(
-                                                    newsfeeds: newsItem, newsFeedComments: newsfeedCommunityCommentViewModel.newsFeedComments));  
+                                                    newsfeeds: newsItem,
+                                                    newsFeedComments:
+                                                        newsfeedCommunityCommentViewModel
+                                                            .newsFeedComments));
                                           },
                                           onLikeTap: () {
                                             (newsItem.myLike?.isNotEmpty ??

@@ -35,7 +35,6 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   final FocusNode replyFocusNode = FocusNode();
 
   bool isReply = false;
-  String? commentId;
   String? commenterName;
   bool replyCommentUpdate = false;
   bool commentUpdate = false;
@@ -46,6 +45,10 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   Map<String, bool> expandedReplies = {};
   NewsFeedCommentData? newsFeedReplies;
   Map<String, List<NewsFeedsComments>> repliesDataCache = {};
+
+  String? replyToId; // used in insert API
+  String? refreshParentId; // used in getReplies()
+  String? selectedCommentId;
 
   @override
   void dispose() {
@@ -59,16 +62,26 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateIsReply(bool value, String commentsId, String commenteName,
-      {bool? isedit, bool? commentupdate}) {
+  void updateIsReply(
+    bool value,
+    String replyToCommentId,
+    String commenterName, {
+    String? refreshId,
+    bool? isedit,
+    bool? commentupdate,
+  }) {
     isReply = value;
-    commentId = commentsId;
-    commenterName = commenteName;
+    selectedCommentId = replyToCommentId;
+
+    replyToId = replyToCommentId;
+
+    refreshParentId = refreshId ?? replyToCommentId;
+
+    this.commenterName = commenterName;
+
     replyCommentUpdate = isedit ?? false;
     commentUpdate = commentupdate ?? false;
-    if (!value && isedit == false && commentupdate == false) {
-      existingAttachments.clear();
-    }
+
     notifyListeners();
   }
 
@@ -168,6 +181,17 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
         commentController.clear();
         selectedFiles.clear();
         await getNewsfeedComment(context, feedId);
+        final comment = newsFeedComments?.newsFeedsComments
+            ?.cast<NewsFeedsComments?>()
+            .firstWhere(
+              (e) => e?.id == replyToId,
+              orElse: () => null,
+            );
+
+        if (comment != null) {
+          comment.repliesAggregate?.aggregate?.count =
+              (comment.repliesAggregate?.aggregate?.count ?? 0) + 1;
+        }
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
@@ -187,13 +211,14 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
               {"url": a.url, "name": a.name, "type": a.type, "size": a.size})
           .toList();
       final allAttachments = [...existingAsMap, ...uploadedFiles];
-      var res = await _http.mutation(updateCommentQuery, {
-        "id": commentId,
-        "data": {
-          "comments": commentController.text,
-          "comments_attachments": allAttachments
+      final variables = {
+        "id": selectedCommentId,
+        "_set": {
+          "comment_text": commentController.text,
+          "attachments": allAttachments
         }
-      });
+      };
+      var res = await _http.mutation(updateCommentQuery, variables);
 
       if (res.isNotEmpty) {
         commentController.clear();
@@ -219,7 +244,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -305,7 +330,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
         "object": {
           "comment_text": commentController.text,
           "news_feeds_id": feedId,
-          "parent_comment_id": commentId,
+          "parent_comment_id": replyToId,
           "created_by_id": userId,
           "role_type": userType,
           "attachments": uploadedFiles,
@@ -326,15 +351,23 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         commentController.clear();
         selectedFiles.clear();
+        isReply = false;
+
         await getNewsfeedComment(context, feedId);
-        await getReplies(context, commentId ?? "");
+        print("Calling getReplies => $refreshParentId");
+        await getReplies(context, refreshParentId ?? "");
+
+        expandedReplies[refreshParentId ?? ""] = true;
+
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
-    } catch (e) {
+    } catch (e, s) {
       Loaders.circularHideLoader(context);
-      print("Error removing like: $e");
+
+      print(e);
+      print(s);
     }
 
     notifyListeners();
@@ -345,18 +378,20 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     try {
       final uploadedFiles = await _getUploadedFiles();
-      var res = await _http.mutation(updateReplyCommentQuery, {
-        "id": commentId,
-        "data": {
-          "reply_text": "@$commenterName ${commentController.text}",
-          "reply_attachments": uploadedFiles
+      final variables = {
+        "id": selectedCommentId,
+        "_set": {
+          "comment_text": commentController.text,
+          "attachments": uploadedFiles
         }
-      });
+      };
+      var res = await _http.mutation(updateReplyCommentQuery, variables);
 
       if (res.isNotEmpty) {
         commentController.clear();
         selectedFiles.clear();
         await getNewsfeedComment(context, feedId);
+        await getReplies(context, refreshParentId ?? "");
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -375,10 +410,13 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     try {
       var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
+      print("*ParentID*****$parentCommentId");
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getNewsfeedComment(context, feedId);
+        await getReplies(context, parentCommentId);
+        expandedReplies[parentCommentId] = true;
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -410,47 +448,61 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     expandedReplies[commentId] = !(expandedReplies[commentId] ?? false);
     notifyListeners();
   }
+
+  Future<void> handleReplyExpansion(
+    BuildContext context,
+    String commentId,
+  ) async {
+    final isExpanded = expandedReplies[commentId] ?? false;
+
+    if (isExpanded) {
+      expandedReplies[commentId] = false;
+      notifyListeners();
+      return;
+    }
+
+    if (!repliesDataCache.containsKey(commentId)) {
+      await getReplies(context, commentId);
+    }
+
+    expandedReplies[commentId] = true;
+    notifyListeners();
+  }
 }
 
-const String deleteCommentQuery = '''
-mutation DeleteNewsfeedComments(\$id: uuid!) {
-  delete_news_feeds_comments_by_pk(id: \$id) {
-    id
-    __typename
-  }
-  delete_news_feeds_comments_replys(where: {comment_id: {_eq: \$id}}) {
-    affected_rows
-    __typename
-  }
-}
-''';
-
-const String updateCommentQuery = '''
-mutation UpdateNewsfeedComments(\$id: uuid!, \$data: news_feeds_comments_set_input!) {
-  update_news_feeds_comments_by_pk(pk_columns: {id: \$id}, _set: \$data) {
-    id
-    __typename
-  }
-}
-''';
-
-const String updateReplyCommentQuery = '''
-mutation updateNewsfeedReply(\$id: uuid!, \$data: news_feeds_comments_replys_set_input!) {
-  update_news_feeds_comments_replys_by_pk(pk_columns: {id: \$id}, _set: \$data) {
+const String deleteCommentQuery = r'''
+mutation deleteRecord($id: uuid!) {
+  delete_news_feeds_comments_by_pk(id: $id) {
     id
     __typename
   }
 }
 ''';
 
-const String deleteReplyCommentQuery = '''
-mutation deleteNewsfeedReply(\$id: uuid!) {
-  delete_news_feeds_comments_replys_by_pk(id: \$id) {
+const String updateCommentQuery = r'''
+mutation EditComment($id: uuid!, $_set: news_feeds_comments_set_input!) {
+  update_news_feeds_comments_by_pk(pk_columns: {id: $id}, _set: $_set) {
     id
+    comment_text
     __typename
   }
-  delete_news_feeds_comments_replys(where: {reply_id: {_eq: \$id}}) {
-    affected_rows
+}
+''';
+
+const String updateReplyCommentQuery = r'''
+mutation EditComment($id: uuid!, $_set: news_feeds_comments_set_input!) {
+  update_news_feeds_comments_by_pk(pk_columns: {id: $id}, _set: $_set) {
+    id
+    comment_text
+    __typename
+  }
+}
+''';
+
+const String deleteReplyCommentQuery = r'''
+mutation deleteRecord($id: uuid!) {
+  delete_news_feeds_comments_by_pk(id: $id) {
+    id
     __typename
   }
 }
