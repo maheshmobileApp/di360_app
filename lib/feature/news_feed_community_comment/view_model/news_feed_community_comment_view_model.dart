@@ -2,8 +2,14 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
+import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
+import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_community_repo_impl.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/queries/news_feed_community_comment_reply.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/query/add_news_feed_comment_query.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/repository/news_feed_community_comment_repo.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/repository/news_feed_community_comment_repo_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -13,6 +19,7 @@ import 'package:file_picker/file_picker.dart';
 
 class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
+  final NewsFeedCommunityCommentRepo repo = NewsFeedCommunityCommentRepoImpl();
 
   NewsFeedCommunityCommentViewModel() {
     getUserId();
@@ -36,6 +43,9 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   String? hintText;
   List<PlatformFile> selectedFiles = [];
   List<CommentsAttachments> existingAttachments = [];
+  Map<String, bool> expandedReplies = {};
+  NewsFeedCommentData? newsFeedReplies;
+  Map<String, List<NewsFeedsComments>> repliesDataCache = {};
 
   @override
   void dispose() {
@@ -129,9 +139,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   addCommentTheFeed(BuildContext context, String feedId) async {
     print("*****************addCommentfee");
     await getUserId();
-    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
@@ -139,17 +147,20 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       final uploadedFiles = await _getUploadedFiles();
 
       var res = await _http.mutation(addNewsFeedCommentQuery, {
-        "addCommentsData": {
+        "object": {
+          "comment_text": commentController.text,
+          "news_feeds_id": feedId,
+          "parent_comment_id": null,
           "created_by_id": userId,
-          if (UserRole.practice.value == userType) "dental_practice_id": practiceId,
-          if (UserRole.professional.value == userType) "dental_professional_id": professionId,
+          "role_type": userType,
+          "attachments": uploadedFiles,
+          if (UserRole.practice.value == userType)
+            "dental_practice_id": practiceId,
+          if (UserRole.professional.value == userType)
+            "dental_professional_id": professionId,
           if (UserRole.admin.value == userType) "dental_admin_id": adminId,
-          if (UserRole.supplier.value == userType) "dental_supplier_id": supplierId,
-          "commenter_name": name,
-          "comment_Pro_Img": img,
-          "comments": commentController.text,
-          "comments_attachments": uploadedFiles,
-          "news_feeds_id": feedId
+          if (UserRole.supplier.value == userType)
+            "dental_supplier_id": supplierId,
         }
       });
 
@@ -172,7 +183,8 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     try {
       final uploadedFiles = await _getUploadedFiles();
       final existingAsMap = existingAttachments
-          .map((a) => {"url": a.url, "name": a.name, "type": a.type, "size": a.size})
+          .map((a) =>
+              {"url": a.url, "name": a.name, "type": a.type, "size": a.size})
           .toList();
       final allAttachments = [...existingAsMap, ...uploadedFiles];
       var res = await _http.mutation(updateCommentQuery, {
@@ -219,7 +231,22 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  NewsFeedCommentData? newsFeedComments;
   Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"feedId": feedId, "limit": 10, "offset": 0};
+    try {
+      var res = await repo.getComments(variables);
+      newsFeedComments = res;
+    } catch (e) {
+      print("Error fetching comments: $e");
+      scaffoldMessenger(e.toString());
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  /*Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
     try {
       var res = await _http.query(getNewsfeedQuery, variables: {'id': feedId});
       if (res != null) {
@@ -234,7 +261,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
-  }
+  }*/
 
   getUserId() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -268,28 +295,39 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
   replyCommentTheFeed(BuildContext context, String feedId) async {
     await getUserId();
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+
     Loaders.circularShowLoader(context);
     try {
       final uploadedFiles = await _getUploadedFiles();
-      var res = await _http.mutation(replyCommentQuery, {
-        "addReplyData": {
-          "dental_practice_id": practiceId ?? null,
-          "dental_professional_id": professionId ?? null,
-          "dental_supplier_id": supplierId ?? null,
+      final variables = {
+        "object": {
+          "comment_text": commentController.text,
           "news_feeds_id": feedId,
-          "reply_text": "@$commenterName ${commentController.text}",
-          "dental_admin_id": adminId ?? null,
-          "comment_id": commentId,
-          "reply_id": commentId,
-          "liked_count": 0,
-          "reply_attachments": uploadedFiles
+          "parent_comment_id": commentId,
+          "created_by_id": userId,
+          "role_type": userType,
+          "attachments": uploadedFiles,
+          if (UserRole.practice.value == userType)
+            "dental_practice_id": practiceId,
+          if (UserRole.professional.value == userType)
+            "dental_professional_id": professionId,
+          if (UserRole.admin.value == userType) "dental_admin_id": adminId,
+          if (UserRole.supplier.value == userType)
+            "dental_supplier_id": supplierId,
         }
-      });
+      };
+      var res =
+          await _http.mutation(replyCommunityNewsFeedCommentQuery, variables);
+
+      print("**************$variables");
 
       if (res.isNotEmpty) {
         commentController.clear();
         selectedFiles.clear();
         await getNewsfeedComment(context, feedId);
+        await getReplies(context, commentId ?? "");
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -331,7 +369,8 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTheReplyComment(BuildContext context, String id, String feedId) async {
+  deleteTheReplyComment(BuildContext context, String id, String feedId,
+      String parentCommentId) async {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
@@ -349,6 +388,26 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       print("Error removing like: $e");
     }
 
+    notifyListeners();
+  }
+
+  Future<void> getReplies(BuildContext context, String parentId) async {
+    final variables = {"parentId": parentId, "limit": 3, "offset": 0};
+    try {
+      var res = await repo.getReplies(variables);
+      // ignore: unnecessary_null_comparison
+      if (res != null) {
+        newsFeedReplies = res;
+        repliesDataCache[parentId] = res.newsFeedsComments ?? [];
+      }
+    } catch (e) {
+      scaffoldMessenger(e.toString());
+    }
+    notifyListeners();
+  }
+
+  void toggleReplyExpansion(String commentId) {
+    expandedReplies[commentId] = !(expandedReplies[commentId] ?? false);
     notifyListeners();
   }
 }
@@ -428,59 +487,6 @@ final String commentQuery = '''
     __typename
       }
     }
-  ''';
-
-const String replyCommentQuery = '''
-  mutation addNewsFeedCommentsReplys(\$addReplyData: news_feeds_comments_replys_insert_input!) {
-  insert_news_feeds_comments_replys_one(object: \$addReplyData) {
-    id
-    admin_user {
-      id
-      name
-      email
-      profile_image
-      __typename
-    }
-    dental_supplier {
-      name
-      logo
-      directories {
-        id
-        __typename
-      }
-      __typename
-    }
-    dental_practice {
-      name
-      logo
-      directories {
-        id
-        __typename
-      }
-      __typename
-    }
-    dental_professional {
-      name
-      profile_image
-      directories {
-        id
-        __typename
-      }
-      __typename
-    }
-    comment_id
-    reply_text
-    news_feeds_id
-    dental_supplier_id
-    dental_professional_id
-    dental_practice_id
-    dental_admin_id
-    liked_count
-    reply_id
-    reply_attachments
-    __typename
-  }
-}
   ''';
 
 const String getNewsfeedQuery = '''

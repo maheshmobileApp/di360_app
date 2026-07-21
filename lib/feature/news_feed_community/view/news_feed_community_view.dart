@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/feature_buttons_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
@@ -19,6 +20,7 @@ import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_comm
 import 'package:di360_flutter/feature/news_feed_community/widgets/show_report_popup.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/upcoming_course_card.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_screen.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -97,6 +99,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
             Provider.of<NewsFeedCommunityViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
+        final newsfeedCommunityCommentViewModel = Provider.of<NewsFeedCommunityCommentViewModel>(context);
         final newsFeeds = viewModel.newsFeedCommunityData?.newsfeeds ?? [];
         final entryFeeds = viewModel.newsFeedCommunityData?.entryFeed ?? [];
         final combinedFeeds = [...(entryFeeds), ...(newsFeeds)];
@@ -405,13 +408,14 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                           types: [],
                                           registeredCount: 0,
                                           chipTitle: newsItem.categoryType ?? '',
-                                          comments: newsItem.newsFeedsComments?.length ?? 0,
+                                          comments: newsItem.newsFeedsCommentsAggregate?.aggregate?.count ?? 0,
                                           likes: newsItem.newsfeedsLikesAggregate?.aggregate?.count ?? 0,
                                           isLiked: newsItem.myLike?.isNotEmpty ?? false,
-                                          onCommentTap: () {
+                                          onCommentTap: () async {
+                                            await newsfeedCommunityCommentViewModel.getNewsfeedComment(context, newsItem.id ?? "");
                                             navigationService.push(
                                                 CommunityCommentScreen(
-                                                    newsfeeds: newsItem));
+                                                    newsfeeds: newsItem, newsFeedComments: newsfeedCommunityCommentViewModel.newsFeedComments));  
                                           },
                                           onLikeTap: () {
                                             (newsItem.myLike?.isNotEmpty ??

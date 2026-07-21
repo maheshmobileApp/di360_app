@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -28,6 +29,9 @@ class CommunityCommentFeedDetails extends StatelessWidget
   Widget build(BuildContext context) {
     final needFeedViewModel = Provider.of<NewsFeedCommunityViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
+    final newsfeedCommunityCommentVM = Provider.of<NewsFeedCommunityCommentViewModel>(context, listen: false);
+
+
     return Container(
       color: AppColors.whiteColor,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -57,7 +61,7 @@ class CommunityCommentFeedDetails extends StatelessWidget
               addVertical(4),
               _buildStatsRow(
                   '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
-                  '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
+                  '${newsfeedCommunityCommentVM.newsFeedComments?.newsFeedsComments?.length ?? 0}',
                   needFeedViewModel,
                   context),
               addVertical(10)

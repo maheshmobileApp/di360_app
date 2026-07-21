@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
@@ -975,6 +976,22 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   Future<void> getUserType() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     setUserType(type);
+  }
+
+  NewsFeedCommentData? newsFeedComments;
+
+  Future<void> getComments(BuildContext context, String feedId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"feedId": feedId, "limit": 10, "offset": 0};
+    try {
+      var res = await repo.getComments(variables);
+      newsFeedComments = res;
+    } catch (e) {
+      print("Error fetching comments: $e");
+      scaffoldMessenger(e.toString());
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
   }
 
   void setUserType(String type) {

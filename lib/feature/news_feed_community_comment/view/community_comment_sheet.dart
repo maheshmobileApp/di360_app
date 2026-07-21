@@ -36,10 +36,13 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
   }
 
   void _initializeSortedComments() {
-    if (widget.newsfeeds?.newsFeedsComments != null) {
+    final viewModel =
+        Provider.of<NewsFeedCommunityCommentViewModel>(context, listen: false);
+
+    if (viewModel.newsFeedComments?.newsFeedsComments != null) {
       // Create a deep copy to ensure we have a fresh list
-      _sortedComments = List.from(widget.newsfeeds!.newsFeedsComments!);
-      _sortedComments!.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+      _sortedComments = viewModel.newsFeedComments?.newsFeedsComments;
+      _sortedComments?.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
       // Pre-create GlobalKeys to avoid duplicates
       for (var comment in _sortedComments!) {
@@ -55,11 +58,10 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     super.didUpdateWidget(oldWidget);
 
     // Always reinitialize when widget updates to ensure fresh data
-    if (oldWidget.newsfeeds != widget.newsfeeds ||
-        _hasCommentsChanged(oldWidget.newsfeeds?.newsFeedsComments,
-            widget.newsfeeds?.newsFeedsComments)) {
+    /*if (oldWidget.newsFeedsComments != widget.newsFeedsComments ||
+        _hasCommentsChanged(widget.newsFeedsComments, widget.newsFeedsComments)) {
       _initializeSortedComments();
-    }
+    }*/
   }
 
   // Helper method to check if comments have actually changed
@@ -85,7 +87,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     final viewModel = Provider.of<NewsFeedCommunityCommentViewModel>(context);
 
     // Always use the latest data from widget.newsfeeds
-    final currentComments = widget.newsfeeds?.newsFeedsComments;
+    final currentComments = viewModel.newsFeedComments?.newsFeedsComments;
 
     // Update sorted comments if the source data has changed
     if (currentComments != null &&
@@ -125,6 +127,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     if (replyKey == null) {
       return const SizedBox.shrink();
     }
+
+    final replyCount = comments.repliesAggregate?.aggregate?.count ?? 0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -180,7 +184,14 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(comments.commenterName ?? '',
+                          Text(
+                              comments.commentProImg ??
+                                  comments.dentalSupplier?.businessName ??
+                                  comments.dentalPractice?.logo?.url ??
+                                  comments
+                                      .dentalProfessional?.profileImage?.url ??
+                                  comments.adminUser?.profileImage?.url ??
+                                  "",
                               style: TextStyles.semiBold(
                                   color: AppColors.black, fontSize: 14)),
                           addHorizontal(20),
@@ -196,12 +207,13 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                                 overflow: TextOverflow.ellipsis,
                               ),
                               addHorizontal(15),
-                              if (comments.dentalAdminId == viewModel.userID ||
-                                  comments.dentalPracticeId ==
+                              if (comments.dentalSupplier?.id ==
                                       viewModel.userID ||
-                                  comments.dentalProfessionalId ==
+                                  comments.dentalPractice?.id ==
                                       viewModel.userID ||
-                                  comments.dentalSupplierId == viewModel.userID)
+                                  comments.dentalProfessional?.id ==
+                                      viewModel.userID ||
+                                  comments.adminUser?.id == viewModel.userID)
                                 _buildCommentMenu(comments, viewModel, feedId),
                             ],
                           ),
@@ -209,7 +221,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                       ),
                       addVertical(6),
                       Text(
-                        comments.comments ?? '',
+                        comments.commentText ?? '',
                         style: TextStyles.regular2(
                             color: AppColors.bottomNavUnSelectedColor),
                       ),
@@ -218,15 +230,39 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                   ),
                 ),
                 addVertical(5),
-                GestureDetector(
-                  onTap: () => _handleReplyTap(comments, viewModel),
+                /*GestureDetector(
+                  onTap: () {
+                    _handleReplyTap(comments, viewModel);
+                  },
                   child: Align(
                     alignment: Alignment.bottomRight,
                     child: Text('Reply',
                         style: TextStyles.bold2(color: AppColors.black)),
                   ),
                 ),
-                _buildRepliesSection(comments, feedId, replyKey),
+                _buildRepliesSection(comments, feedId, replyKey),*/
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if ((replyCount) > 0)
+                      GestureDetector(
+                        onTap: () => _handleViewReplyTap(comments, viewModel),
+                        child: Text(
+                          viewModel.expandedReplies[comments.id] ?? false
+                              ? 'Hide replies'
+                              : 'View $replyCount replies',
+                          style: TextStyles.bold2(color: AppColors.black),
+                        ),
+                      ),
+                    GestureDetector(
+                      onTap: () => _handleReplyTap(comments, viewModel),
+                      child: Text('Reply',
+                          style: TextStyles.bold2(color: AppColors.black)),
+                    ),
+                  ],
+                ),
+                if (viewModel.expandedReplies[comments.id] ?? false)
+                  _buildRepliesSection(comments.id ?? "", feedId, replyKey, viewModel),
               ],
             ),
           ),
@@ -235,7 +271,18 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-   Widget _buildImageRow(List<CommentsAttachments>? allMediaList) {
+  void _handleViewReplyTap(
+      NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) async {
+    final isExpanded = viewModel.expandedReplies[comments.id] ?? false;
+
+    if (!isExpanded) {
+      await viewModel.getReplies(context, comments.id ?? "");
+    }
+
+    viewModel.toggleReplyExpansion(comments.id ?? '');
+  }
+
+  Widget _buildImageRow(List<CommentsAttachments>? allMediaList) {
     final mediaList = allMediaList ?? [];
     if (mediaList.isEmpty) return SizedBox();
 
@@ -247,10 +294,11 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-  Widget _buildSingleMedia(CommentsAttachments media, List<CommentsAttachments> allMedia) {
+  Widget _buildSingleMedia(
+      CommentsAttachments media, List<CommentsAttachments> allMedia) {
     return GestureDetector(
-      onTap: () => navigationService
-          .push(ImageViewrScreenCommunity(postImage: allMedia as List<CommentsAttachments>?)),
+      onTap: () => navigationService.push(ImageViewrScreenCommunity(
+          postImage: allMedia as List<CommentsAttachments>?)),
       child: Container(
         width: double.infinity,
         height: 100,
@@ -266,10 +314,9 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-  
   Widget _buildMultipleMedia(List<CommentsAttachments> mediaList) {
     return SizedBox(
-      height:100,
+      height: 100,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: mediaList.length,
@@ -277,8 +324,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
         itemBuilder: (context, index) {
           final media = mediaList[index];
           return GestureDetector(
-            onTap: () => navigationService.push(
-                ImageViewrScreenCommunity(postImage: mediaList as List<CommentsAttachments>?)),
+            onTap: () => navigationService.push(ImageViewrScreenCommunity(
+                postImage: mediaList as List<CommentsAttachments>?)),
             child: Container(
               width: 250,
               decoration: BoxDecoration(
@@ -296,9 +343,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-  
-
-  Widget _buildMediaWidget(CommentsAttachments media, {bool isFullSize = false}) {
+  Widget _buildMediaWidget(CommentsAttachments media,
+      {bool isFullSize = false}) {
     final type = media.type ?? media.type ?? '';
     final url = media.url ?? '';
     final name = media.name ?? '';
@@ -351,7 +397,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
         ),
       );
     }
-    
+
     // Word document handling
     if (type.contains('msword') ||
         name.endsWith('.doc') ||
@@ -390,7 +436,6 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
       ),
     );
   }
-
 
   Widget _buildCommentMenu(NewsFeedsComments comments,
       NewsFeedCommunityCommentViewModel viewModel, String feedId) {
@@ -467,28 +512,24 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
   }
 
   Widget _buildRepliesSection(
-      NewsFeedsComments comments, String feedId, GlobalKey replyKey) {
+      String commentId, String feedId, GlobalKey replyKey, NewsFeedCommunityCommentViewModel viewModel) {
+        final replies = viewModel.repliesDataCache[commentId] ?? [];
     return MeasureSize(
       onChange: (size) {
-        final newHeight = size.height - 35;
-        if (_replyHeights[comments.id] != newHeight) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              setState(() {
-                _replyHeights[comments.id ?? ''] = newHeight;
-              });
-            }
-          });
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {});
+          }
+        });
       },
       child: Container(
         key: replyKey,
         child: ListView.builder(
-          itemCount: comments.commentReply?.length ?? 0,
+          itemCount: replies?.length ?? 0,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            final commentReply = comments.commentReply?[index];
+            final commentReply = replies[index];
             return CommunityCommentReplyWidget(
                 comments: commentReply, feedId: feedId);
           },

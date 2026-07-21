@@ -1,5 +1,5 @@
-const String addNewsFeedCommentQuery =
-    r'''mutation InsertComment($object: news_feeds_comments_insert_input!) {
+const String replyCommunityNewsFeedCommentQuery = r'''
+  mutation InsertComment($object: news_feeds_comments_insert_input!) {
   insert_news_feeds_comments_one(object: $object) {
     id
     parent_comment_id
@@ -41,5 +41,4 @@ const String addNewsFeedCommentQuery =
     }
     __typename
   }
-}
-''';
+}''';
