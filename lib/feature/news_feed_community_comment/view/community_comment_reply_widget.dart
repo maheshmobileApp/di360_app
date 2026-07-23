@@ -3,14 +3,14 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
-import 'package:di360_flutter/feature/news_feed_comment/view/new_reply_comment_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/main.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CommunityCommentReplyWidget extends StatelessWidget
+class CommunityCommentReplyWidget extends StatefulWidget
     with BaseContextHelpers {
   final NewsFeedsComments? comments;
   final String feedId;
@@ -18,22 +18,34 @@ class CommunityCommentReplyWidget extends StatelessWidget
   const CommunityCommentReplyWidget(
       {super.key, this.comments, required this.feedId, this.depth = 0});
 
+  @override
+  State<CommunityCommentReplyWidget> createState() =>
+      _CommunityCommentReplyWidgetState();
+}
+
+class _CommunityCommentReplyWidgetState
+    extends State<CommunityCommentReplyWidget> with BaseContextHelpers {
   String get _commenterName =>
-      comments?.dentalSupplier?.businessName ??
-      comments?.dentalPractice?.name ??
-      comments?.dentalProfessional?.name ??
-      comments?.adminUser?.name ??
-      'Dental Interface';
+      widget.comments?.dentalSupplier?.businessName ??
+      widget.comments?.dentalPractice?.businessName ??
+      widget.comments?.dentalProfessional?.name ??
+      widget.comments?.adminUser?.name ??
+      widget.comments?.commenterName ??
+      'Unknown';
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<NewsFeedCommunityCommentViewModel>(context);
-    final replyCount = comments?.repliesAggregate?.aggregate?.count ?? 0;
-    final isExpanded = viewModel.expandedReplies[comments?.id] ?? false;
-    final nestedReplies = viewModel.repliesDataCache[comments?.id] ?? [];
+    final replyCount = widget.comments?.repliesAggregate?.aggregate?.count ?? 0;
+    final isExpanded = viewModel.expandedReplies[widget.comments?.id] ?? false;
+    final nestedReplies = viewModel.repliesDataCache[widget.comments?.id] ?? [];
+
+    if (widget.comments?.id == null) {
+      return const SizedBox.shrink();
+    }
 
     return Padding(
-      padding: EdgeInsets.only(left: depth * 12.0, top: 8),
+      padding: EdgeInsets.only(left: widget.depth * 12.0, top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -51,17 +63,19 @@ class CommunityCommentReplyWidget extends StatelessWidget
                       radius: 18,
                       child: ClipOval(
                         child: CachedNetworkImageWidget(
-                          imageUrl: comments?.dentalSupplier?.logo?.url ??
-                              comments?.dentalPractice?.logo?.url ??
-                              comments?.dentalProfessional?.profileImage?.url ??
-                              comments?.adminUser?.profileImage?.url ??
+                          imageUrl: widget
+                                  .comments?.dentalSupplier?.logo?.url ??
+                              widget.comments?.dentalPractice?.logo?.url ??
+                              widget.comments?.dentalProfessional?.profileImage
+                                  ?.url ??
+                              widget.comments?.adminUser?.profileImage?.url ??
                               '',
                           errorWidget: Image.asset(ImageConst.directorProfile),
                         ),
                       ),
                     ),
                   ),
-                  if (depth > 0)
+                  /*if (widget.depth > 0)
                     Positioned(
                       top: 1,
                       bottom: 18,
@@ -70,7 +84,7 @@ class CommunityCommentReplyWidget extends StatelessWidget
                         size: const Size(40, 0),
                         painter: CurvedLinePainter(),
                       ),
-                    ),
+                    ),*/
                 ],
               ),
               addHorizontal(8),
@@ -89,24 +103,41 @@ class CommunityCommentReplyWidget extends StatelessWidget
                     children: [
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                          Flexible(
                             child: Text(
                               _commenterName,
                               style: TextStyles.semiBold(
                                   color: AppColors.black, fontSize: 14),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          if (comments?.createdById == viewModel.userID)
+                          addHorizontal(8),
+                          Flexible(
+                            child: Text(
+                              DateFormatUtils.formatDate(
+                                widget.comments?.createdAt ?? '',
+                              ),
+                              style: TextStyles.regular1(
+                                  fontSize: 10,
+                                  color: AppColors.lightGeryColor),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (widget.comments?.createdById == viewModel.userID)
                             _buildMenu(context, viewModel),
                         ],
                       ),
                       addVertical(4),
                       Text(
-                        comments?.commentText ?? '',
+                        widget.comments?.commentText ?? '',
                         style: TextStyles.regular1(
                             color: AppColors.bottomNavUnSelectedColor),
                       ),
+                      if ((widget.comments?.commentsAttachments?.isNotEmpty ??
+                          false))
+                        _buildMediaRow(widget.comments?.commentsAttachments),
                     ],
                   ),
                 ),
@@ -118,16 +149,18 @@ class CommunityCommentReplyWidget extends StatelessWidget
             padding: const EdgeInsets.only(left: 48),
             child: Row(
               children: [
-                if (replyCount > 0)
+                if (((replyCount) > 0) && !(viewModel.expandedReplies[widget.comments?.id] ?? false))
                   GestureDetector(
                     onTap: () async {
                       if (!isExpanded) {
-                        await viewModel.getReplies(context, comments!.id!);
+                        await viewModel.loadReplies(
+                            context, widget.comments!.id!);
+                      } else {
+                        viewModel.toggleReplyExpansion(widget.comments!.id!);
                       }
-                      viewModel.toggleReplyExpansion(comments?.id ?? '');
                     },
                     child: Text(
-                      isExpanded ? 'Hide replies' : 'View $replyCount replies',
+                      isExpanded ? "Hide replies" : "View $replyCount replies",
                       style: TextStyles.bold2(color: AppColors.black),
                     ),
                   ),
@@ -138,7 +171,7 @@ class CommunityCommentReplyWidget extends StatelessWidget
                         removeReplyVal: true);
                     viewModel.commentController.clear();
                     viewModel.updateIsReply(
-                        true, comments?.id ?? '', _commenterName);
+                        true, widget.comments?.id ?? '', _commenterName);
                     FocusScope.of(navigatorKey.currentContext!)
                         .requestFocus(viewModel.replyFocusNode);
                   },
@@ -155,10 +188,10 @@ class CommunityCommentReplyWidget extends StatelessWidget
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: nestedReplies.length,
-                itemBuilder: (context, index) => NewReplyCommentWidget(
+                itemBuilder: (context, index) => CommunityCommentReplyWidget(
                   comments: nestedReplies[index],
-                  feedId: feedId,
-                  depth: depth + 1,
+                  feedId: widget.feedId,
+                  depth: widget.depth + 1,
                 ),
               ),
             ),
@@ -202,21 +235,102 @@ class CommunityCommentReplyWidget extends StatelessWidget
           ],
         ).then((value) {
           if (value == 'edit') {
-            FocusScope.of(navigatorKey.currentContext!)
+            /*FocusScope.of(navigatorKey.currentContext!)
                 .requestFocus(viewModel.replyFocusNode);
-            final comment = comments?.commentText ?? '';
+            final comment = widget.comments?.commentText ?? '';
             viewModel.commentController.text = comment;
-            viewModel.setEditAttachments(comments?.commentsAttachments);
-            viewModel.selectedCommentId = comments?.id;
-            viewModel.updateIsReply(false, comments?.id ?? '', _commenterName,
-                isedit: true);
+            viewModel.setEditAttachments(widget.comments?.commentsAttachments);
+            viewModel.selectedCommentId = widget.comments?.id;
+            viewModel.updateIsReply(
+                false, widget.comments?.id ?? '', _commenterName,
+                isedit: true);*/
+            viewModel.EditReplyComment(widget.comments);
           } else if (value == 'delete') {
-            viewModel.deleteTheReplyComment(context, comments?.id ?? '', feedId,
-                comments?.parentCommentId ?? '');
+            viewModel.deleteTheReplyComment(context, widget.comments?.id ?? '',
+                widget.feedId, widget.comments?.parentCommentId ?? '');
           }
         });
       },
       child: const Icon(Icons.more_horiz, size: 20),
+    );
+  }
+
+  Widget _buildMediaRow(List<CommentsAttachments>? mediaList) {
+    final list = mediaList ?? [];
+    if (list.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: SizedBox(
+        height: 80,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: list.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          itemBuilder: (context, index) {
+            final media = list[index];
+            return Container(
+              width: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.grey[100],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: _buildMediaWidget(media),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMediaWidget(CommentsAttachments media) {
+    final type = media.type ?? '';
+    final url = media.url ?? '';
+    final name = media.name ?? '';
+
+    // Video handling
+    if (type.contains('video') || name.endsWith('.mp4')) {
+      return Container(
+        color: Colors.black87,
+        child: const Center(
+          child: Icon(Icons.play_circle_fill, color: Colors.white, size: 32),
+        ),
+      );
+    }
+
+    // PDF handling
+    if (type.contains('pdf') || name.endsWith('.pdf')) {
+      return Container(
+        color: Colors.red[50],
+        child: Center(
+          child: Icon(Icons.picture_as_pdf, size: 32, color: Colors.red),
+        ),
+      );
+    }
+
+    // Document handling
+    if (type.contains('msword') ||
+        name.endsWith('.doc') ||
+        name.endsWith('.docx')) {
+      return Container(
+        color: Colors.blue[50],
+        child: Center(
+          child: Icon(Icons.description, size: 32, color: Colors.blue),
+        ),
+      );
+    }
+
+    // Image handling (default)
+    return CachedNetworkImageWidget(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      errorWidget: Container(
+        color: Colors.grey[200],
+        child: Icon(Icons.broken_image, color: Colors.grey[400]),
+      ),
     );
   }
 }

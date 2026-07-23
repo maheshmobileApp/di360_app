@@ -2,14 +2,13 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
-import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
-import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_community_repo_impl.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/queries/news_feed_community_comment_reply.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/query/add_news_feed_comment_query.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/repository/news_feed_community_comment_repo.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/repository/news_feed_community_comment_repo_impl.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -178,8 +177,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       });
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
+        resetCommentState();
         await getNewsfeedComment(context, feedId);
         final comment = newsFeedComments?.newsFeedsComments
             ?.cast<NewsFeedsComments?>()
@@ -221,10 +219,9 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       var res = await _http.mutation(updateCommentQuery, variables);
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
-        existingAttachments.clear();
+        resetCommentState();
         await getNewsfeedComment(context, feedId);
+        resetCommentState();
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -349,15 +346,17 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       print("**************$variables");
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
-        isReply = false;
+        final parentId = refreshParentId!;
 
-        await getNewsfeedComment(context, feedId);
-        print("Calling getReplies => $refreshParentId");
-        await getReplies(context, refreshParentId ?? "");
+        resetCommentState();
 
-        expandedReplies[refreshParentId ?? ""] = true;
+        repliesDataCache.remove(parentId);
+
+        await loadReplies(
+          context,
+          parentId,
+          forceRefresh: true,
+        );
 
         Loaders.circularHideLoader(context);
       } else {
@@ -373,6 +372,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  
   updateTheReplyCommentTheFeed(BuildContext context, String feedId) async {
     await getUserId();
     Loaders.circularShowLoader(context);
@@ -385,13 +385,28 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
           "attachments": uploadedFiles
         }
       };
+      /*{
+    "id": "4af71a66-11e5-453b-91c4-f73a4669f899",
+    "_set": {
+        "comment_text": "hi update",
+        "attachments": null
+    }
+} */
+      print("********ReplyComment Update ****$variables");
       var res = await _http.mutation(updateReplyCommentQuery, variables);
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
+        final parentId = refreshParentId!;
+
+        resetCommentState();
+
         await getNewsfeedComment(context, feedId);
-        await getReplies(context, refreshParentId ?? "");
+
+        await loadReplies(
+          context,
+          parentId,
+          forceRefresh: true,
+        );
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -404,44 +419,48 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTheReplyComment(BuildContext context, String id, String feedId,
-      String parentCommentId) async {
-    await getUserId();
+  void EditReplyComment(NewsFeedsComments? comments) {
+    FocusScope.of(navigatorKey.currentContext!).requestFocus(replyFocusNode);
+    final comment = comments?.commentText ?? '';
+    commentController.text = comment;
+    setEditAttachments(comments?.commentsAttachments);
+    selectedCommentId = comments?.id;
+
+    updateIsReply(false, comments?.id ?? '', '', isedit: true, refreshId : comments?.parentCommentId);
+  }
+
+  Future<void> deleteTheReplyComment(
+    BuildContext context,
+    String id,
+    String feedId,
+    String parentCommentId,
+  ) async {
     Loaders.circularShowLoader(context);
-    try {
-      var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
-      print("*ParentID*****$parentCommentId");
+    var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
 
-      if (res.isNotEmpty) {
-        commentController.clear();
-        await getNewsfeedComment(context, feedId);
-        await getReplies(context, parentCommentId);
-        expandedReplies[parentCommentId] = true;
-        Loaders.circularHideLoader(context);
-      } else {
-        Loaders.circularHideLoader(context);
-      }
-    } catch (e) {
+    if (res.isNotEmpty) {
+      commentController.clear();
+      repliesDataCache.remove(id);
+      expandedReplies.remove(id);
+
+      repliesDataCache.remove(parentCommentId);
+
+      await loadReplies(
+        context,
+        parentCommentId,
+        forceRefresh: true,
+      );
+      repliesDataCache.remove(parentCommentId);
+
+      await loadReplies(
+        context,
+        parentCommentId,
+        forceRefresh: true,
+      );
       Loaders.circularHideLoader(context);
-      print("Error removing like: $e");
+    } else {
+      Loaders.circularHideLoader(context);
     }
-
-    notifyListeners();
-  }
-
-  Future<void> getReplies(BuildContext context, String parentId) async {
-    final variables = {"parentId": parentId, "limit": 3, "offset": 0};
-    try {
-      var res = await repo.getReplies(variables);
-      // ignore: unnecessary_null_comparison
-      if (res != null) {
-        newsFeedReplies = res;
-        repliesDataCache[parentId] = res.newsFeedsComments ?? [];
-      }
-    } catch (e) {
-      scaffoldMessenger(e.toString());
-    }
-    notifyListeners();
   }
 
   void toggleReplyExpansion(String commentId) {
@@ -462,10 +481,67 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     }
 
     if (!repliesDataCache.containsKey(commentId)) {
-      await getReplies(context, commentId);
+      await loadReplies(context, commentId);
     }
 
     expandedReplies[commentId] = true;
+    notifyListeners();
+  }
+
+  Future<void> loadReplies(
+    BuildContext context,
+    String parentId, {
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh && repliesDataCache.containsKey(parentId)) {
+      expandedReplies[parentId] = true;
+      notifyListeners();
+      return;
+    }
+
+    final res = await repo.getReplies({
+      "parentId": parentId,
+      "limit": 10,
+      "offset": 0,
+    });
+
+    repliesDataCache[parentId] = res.newsFeedsComments ?? [];
+
+    expandedReplies[parentId] = true;
+
+    notifyListeners();
+  }
+
+  void collapseReplies(String id) {
+    expandedReplies[id] = false;
+
+    notifyListeners();
+  }
+
+  Future<void> toggleReplies(
+    BuildContext context,
+    String id,
+  ) async {
+    if (expandedReplies[id] ?? false) {
+      collapseReplies(id);
+    } else {
+      await loadReplies(context, id);
+    }
+  }
+
+  void resetCommentState() {
+    isReply = false;
+    replyToId = null;
+    refreshParentId = null;
+    selectedCommentId = null;
+
+    commentUpdate = false;
+    replyCommentUpdate = false;
+
+    commentController.clear();
+    selectedFiles.clear();
+    existingAttachments.clear();
+
     notifyListeners();
   }
 }

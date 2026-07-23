@@ -373,7 +373,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
             },
             if (entryNewsFeedId?.isNotEmpty == true)
               {
-                "id": {"_neq": entryNewsFeedId}
+                "id": {"_eq": entryNewsFeedId}
               }
           ]
         }

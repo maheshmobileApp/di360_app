@@ -412,6 +412,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                           likes: newsItem.newsfeedsLikesAggregate?.aggregate?.count ?? 0,
                                           isLiked: newsItem.myLike?.isNotEmpty ?? false,
                                           onCommentTap: () async {
+                                            newsfeedCommunityCommentViewModel
+                                                .getUserId();
                                             await newsfeedCommunityCommentViewModel
                                                 .getNewsfeedComment(
                                                     context, newsItem.id ?? "");

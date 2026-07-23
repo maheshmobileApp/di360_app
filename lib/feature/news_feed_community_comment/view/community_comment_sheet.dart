@@ -75,7 +75,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
   }
 
   Widget _buildCommentTile(NewsFeedsComments? comments,
-      NewsFeedCommunityCommentViewModel viewModel, String feedId) {
+      NewsFeedCommunityCommentViewModel viewModel, String feedId,
+      {int depth = 0}) {
     if (comments?.id == null) {
       return const SizedBox.shrink();
     }
@@ -144,14 +145,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                              comments.commentProImg ??
-                                  comments.dentalSupplier?.businessName ??
-                                  comments.dentalPractice?.logo?.url ??
-                                  comments
-                                      .dentalProfessional?.profileImage?.url ??
-                                  comments.adminUser?.profileImage?.url ??
-                                  "",
+                          Text(_getCommenterName(comments),
                               style: TextStyles.semiBold(
                                   color: AppColors.black, fontSize: 14)),
                           addHorizontal(20),
@@ -190,21 +184,10 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                   ),
                 ),
                 addVertical(5),
-                /*GestureDetector(
-                  onTap: () {
-                    _handleReplyTap(comments, viewModel);
-                  },
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Text('Reply',
-                        style: TextStyles.bold2(color: AppColors.black)),
-                  ),
-                ),
-                _buildRepliesSection(comments, feedId, replyKey),*/
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if ((replyCount) > 0)
+                    if (((replyCount) > 0) && !(viewModel.expandedReplies[comments.id] ?? false))
                       GestureDetector(
                         onTap: () => _handleViewReplyTap(comments, viewModel),
                         child: Text(
@@ -222,8 +205,12 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                   ],
                 ),
                 if (viewModel.expandedReplies[comments.id] ?? false)
-                  _buildRepliesSection(
-                      comments.id ?? "", feedId, replyKey, viewModel),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: _buildRepliesSection(
+                        comments.id ?? "", feedId, replyKey, viewModel,
+                        depth: depth + 1),
+                  ),
               ],
             ),
           ),
@@ -234,13 +221,20 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
 
   void _handleViewReplyTap(NewsFeedsComments comments,
       NewsFeedCommunityCommentViewModel viewModel) async {
-    final isExpanded = viewModel.expandedReplies[comments.id] ?? false;
+    final commentId = comments.id ?? '';
+    final isExpanded = viewModel.expandedReplies[commentId] ?? false;
 
-    if (!isExpanded) {
-      await viewModel.getReplies(context, comments.id ?? "");
+    if (isExpanded) {
+      // Collapsing replies
+      viewModel.toggleReplyExpansion(commentId);
+    } else {
+      // Expanding replies - load them first if not already loaded
+      if (!viewModel.repliesDataCache.containsKey(commentId)) {
+        await viewModel.loadReplies(context, commentId);
+      }
+      // Now toggle to show the replies
+      viewModel.toggleReplyExpansion(commentId);
     }
-
-    viewModel.toggleReplyExpansion(comments.id ?? '');
   }
 
   Widget _buildImageRow(List<CommentsAttachments>? allMediaList) {
@@ -468,15 +462,24 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
+  String _getCommenterName(NewsFeedsComments? comments) {
+    return comments?.dentalSupplier?.businessName ??
+        comments?.dentalPractice?.businessName ??
+        comments?.dentalProfessional?.name ??
+        comments?.adminUser?.name ??
+        comments?.commenterName ??
+        'Unknown';
+  }
+
   void _handleReplyTap(
       NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) {
-    viewModel.updateHintText('Reply to @${comments.commenterName}',
-        removeReplyVal: true);
+    final commenterName = _getCommenterName(comments);
+    viewModel.updateHintText('Reply to @$commenterName', removeReplyVal: true);
     viewModel.commentController.clear();
     viewModel.updateIsReply(
       true,
       comments.id ?? '',
-      comments.commenterName ?? '',
+      commenterName,
       refreshId: comments.id ?? "",
     );
     FocusScope.of(navigatorKey.currentContext!)
@@ -484,7 +487,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
   }
 
   Widget _buildRepliesSection(String commentId, String feedId,
-      GlobalKey replyKey, NewsFeedCommunityCommentViewModel viewModel) {
+      GlobalKey replyKey, NewsFeedCommunityCommentViewModel viewModel,
+      {int depth = 1}) {
     final replies = viewModel.repliesDataCache[commentId] ?? [];
     return MeasureSize(
       onChange: (size) {
@@ -503,7 +507,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
           itemBuilder: (context, index) {
             final commentReply = replies[index];
             return CommunityCommentReplyWidget(
-                comments: commentReply, feedId: feedId);
+                comments: commentReply, feedId: feedId, depth: depth);
           },
         ),
       ),

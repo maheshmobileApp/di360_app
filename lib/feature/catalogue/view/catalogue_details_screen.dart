@@ -158,7 +158,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                       SvgPicture.asset(ImageConst.noCatalogue,
                           height: 200, width: 450),
                       addVertical(10),
-                      Text("No Releted Catalogues",
+                      Text("No Related Catalogues",
                           style: TextStyles.medium2(color: AppColors.black))
                     ]))
               : Padding(
