@@ -110,9 +110,15 @@ class LoginApi {
     message = json['message'];
     profileCompleted = json['profile_completed'];
     paymentCompleted = json['payment_completed'];
-    profileImage = json['profile_image'] != null
-        ? new ProfileImage.fromJson(json['profile_image'])
-        : null;
+    if (json['profile_image'] != null) {
+      if (json['profile_image'] is String) {
+        profileImage = ProfileImage(url: json['profile_image']);
+      } else if (json['profile_image'] is Map<String, dynamic>) {
+        profileImage = ProfileImage.fromJson(json['profile_image']);
+      }
+    } else {
+      profileImage = null;
+    }
     type = json['type'];
     address = json['address'];
     directoryCategoryId = json['directory_category_id'];
@@ -172,7 +178,7 @@ class LoginApi {
     }
     data['sub_type'] = this.subType;
     data['owner_id'] = this.ownerId;
-     if (this.professiontype != null) {
+    if (this.professiontype != null) {
       data['professiontype'] = this.professiontype!.toJson();
     }
     return data;
