@@ -80,7 +80,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
                       bottomRight: Radius.circular(10))),
               child: Text(
                 item?.status == "APPROVED"
-                    ? "${item?.catalogueStatus} & ${item?.status}"
+                    ? "${item?.catalogueStatus}"
                     : "${item?.status}",
                 style: TextStyles.medium3(
                     color: item?.status == 'APPROVED'
