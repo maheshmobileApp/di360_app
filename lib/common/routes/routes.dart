@@ -40,6 +40,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_s
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/interested_screen.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/my_job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
@@ -270,6 +271,8 @@ class Routes {
       RouteList.termsAndConditionsDetails: (context) =>
           TermsAndConditionsDetails(),
       RouteList.clientScreen: (context) => ClientsScreen(),
+      RouteList.interestedScreen: (context) => InterestedScreen(),
+      
     };
   }
 }

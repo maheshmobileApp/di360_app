@@ -2,9 +2,11 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/request_count_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_all_talents_request_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_my_enquiry_job_data.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_profile_enquiry_query.dart';
+import 'package:di360_flutter/feature/job_profile_listing/quary/get_request_count_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_deleted_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_updated.dart';
@@ -67,9 +69,12 @@ class JobProfileRepoImpl implements JobProfileRepository {
     final variables = {
       "where": {
         "talent_id": {"_eq": profileId},
-        "enquiry_from": {"_eq": enquiryId}
-      }
+        "enq_sender_id": {"_eq": enquiryId}
+      },
+      "limit": 20
     };
+
+    print("******************$variables");
 
     final response =
         await http.query(getProfileEnquiryQuery, variables: variables);
@@ -79,18 +84,23 @@ class JobProfileRepoImpl implements JobProfileRepository {
 
   @override
   Future<HiringTalentList> getAllTalentsRequest(variables) async {
-    
-
     final response =
         await http.query(getAllTalentsRequestQuery, variables: variables);
     final output = HiringTalentList.fromJson(response);
     return output;
   }
-  
+
   @override
   Future updateTalentListing(variables) async {
     final response =
-        await http.mutation(updateTalentRequestStatusQuery,variables);
+        await http.mutation(updateTalentRequestStatusQuery, variables);
     return response;
+  }
+
+  @override
+  Future<RequestCountData> getRequestCount(variables) async {
+    final response =
+        await http.query(getRequestCountQuery, variables: variables);
+    return RequestCountData.fromJson(response);
   }
 }
