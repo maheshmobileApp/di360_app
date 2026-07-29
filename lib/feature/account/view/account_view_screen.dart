@@ -198,6 +198,10 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             await context
                                 .read<JobProfileListingViewModel>()
                                 .fetchJobProfiles(context);
+                            await context
+                                .read<JobProfileListingViewModel>()
+                                .getRequestCount(context);
+
                             Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobProfileScreen);

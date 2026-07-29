@@ -96,4 +96,6 @@ class RouteList {
   static const String forgotPasswordScreen = '/forgotPasswordScreen';
   static const String termsAndConditionsDetails = '/termsAndConditionsDetails';
   static const String clientScreen = '/clientScreen';
+  static const String interestedScreen = '/interestedScreen';
+  
 }

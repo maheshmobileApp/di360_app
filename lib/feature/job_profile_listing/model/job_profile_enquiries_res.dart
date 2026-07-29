@@ -4,7 +4,9 @@ class JobProfileEnquiriesRes {
   JobProfileEnquiriesRes({this.data});
 
   JobProfileEnquiriesRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new JobProfileEnquiriesResList.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new JobProfileEnquiriesResList.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +49,7 @@ class TalentEnquiriesData {
   String? talentId;
   String? enquiryDescription;
   String? enquiryFrom;
+  String? enquirySenderId;
   dynamic dentalPractices;
   DentalSuppliers? dentalSuppliers;
   dynamic jobhiringsFindPractice;
@@ -58,6 +61,7 @@ class TalentEnquiriesData {
       this.createdAt,
       this.talentId,
       this.enquiryFrom,
+      this.enquirySenderId,
       this.enquiryDescription,
       this.updatedAt,
       this.dentalPractices,
@@ -71,6 +75,7 @@ class TalentEnquiriesData {
     createdAt = json['created_at'];
     talentId = json['talent_id'];
     enquiryFrom = json['enquiry_from'];
+    enquirySenderId = json['enq_sender_id'];
     dentalPractices = json['dental_practices'];
     dentalSuppliers = json['dental_suppliers'] != null
         ? new DentalSuppliers.fromJson(json['dental_suppliers'])
@@ -88,6 +93,7 @@ class TalentEnquiriesData {
     data['created_at'] = this.createdAt;
     data['talent_id'] = this.talentId;
     data['enquiry_from'] = this.enquiryFrom;
+    data['enq_sender_id'] = this.enquirySenderId;
     data['dental_practices'] = this.dentalPractices;
     if (this.dentalSuppliers != null) {
       data['dental_suppliers'] = this.dentalSuppliers!.toJson();

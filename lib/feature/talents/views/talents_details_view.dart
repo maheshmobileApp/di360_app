@@ -61,7 +61,8 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 future: LocalStorage.getStringVal(LocalStorageConst.userId),
                 builder: (context, userSnapshot) {
                   if (userSnapshot.hasData) {
-                    return SafeArea(child: _bottomButtons(context, userSnapshot.data!));
+                    return SafeArea(
+                        child: _bottomButtons(context, userSnapshot.data!));
                   }
                   return const SizedBox.shrink();
                 },
@@ -94,7 +95,8 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                       createdAt: widget.talentList?.createdAt ?? "",
                       role: widget.talentList?.professionType ?? "",
                       imageUrl: profleImage,
-                      postAnonymously: widget.talentList?.postAnonymously ?? false,
+                      postAnonymously:
+                          widget.talentList?.postAnonymously ?? false,
                     ),
                   ),
                   if ((widget.talentList?.uploadResume.isNotEmpty ?? false))
@@ -129,13 +131,13 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                   if (widget.talentList?.location?.isNotEmpty == true)
                     ExerinaceInfoIcons(
                         icon: Icons.location_on,
-                        text: widget.talentList?.location??""),
+                        text: widget.talentList?.location ?? ""),
                   if (widget.talentList?.location?.isNotEmpty == true)
                     addVertical(12),
                   if (widget.talentList?.mobileNumber?.isNotEmpty == true)
                     ExerinaceInfoIcons(
                         icon: Icons.call,
-                        text: widget.talentList?.mobileNumber??""),
+                        text: widget.talentList?.mobileNumber ?? ""),
                   if (widget.talentList?.mobileNumber?.isNotEmpty == true)
                     addVertical(12),
                   if (widget.talentList?.currentCompany?.isNotEmpty == true)
@@ -506,16 +508,16 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                     Provider.of<TalentsViewModel>(context, listen: false);
                 final userId =
                     await LocalStorage.getStringVal(LocalStorageConst.userId);
-                 final type =
+                final type =
                     await LocalStorage.getStringVal(LocalStorageConst.type);
-                
 
                 final enquire = EnquiryRequest(
                     enquiryDescription: provider.enquiryData ?? '',
                     talentId: widget.talentList?.id ?? '',
                     enquirySenderId: userId,
                     enquirySenderType: type,
-                    enquiryReceiverId: widget.talentList?.dentalProfessionalId ?? "",
+                    enquiryReceiverId:
+                        widget.talentList?.dentalProfessionalId ?? "",
                     enquiryReceiverType: UserRole.professional.value);
                 if (provider.enquiryData == null ||
                     provider.enquiryData?.isEmpty == true) {

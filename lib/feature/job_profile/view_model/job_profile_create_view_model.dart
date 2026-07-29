@@ -173,6 +173,13 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   String? selectedSalaryPer;
+  String? jobProfileStatus;
+
+  void setJobProfileStatus(String val) {
+    print("******************$val");
+    jobProfileStatus = val;
+    notifyListeners();
+  }
 
   void setSelectSalaryPer(String value) {
     if (value == "Hourly") {
@@ -966,7 +973,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> updateJobProfile(
-      BuildContext context, bool isDraft, String jobProfileId) async {
+    BuildContext context,
+    bool isDraft,
+    String jobProfileId,
+    {String? status}
+  ) async {
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {};
 
@@ -1053,7 +1064,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         "availabilityOption": selectedAvailabilityType,
         "current_ctc": "100000",
         "post_anonymously": isPostAnonymous,
-        "admin_status": "APPROVE",
+        "admin_status": status == "APPROVE" ? "APPROVE" : "PENDING",
         "jobexperiences": experiences
             .map((e) => {
                   "company_name": e.companyName,
