@@ -13,25 +13,37 @@ class ForgotPasswordViewModel extends ChangeNotifier {
 
   Future<void> forgotPassword(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    final variables = {
-      "details": {"email": emailController.text}
-    };
 
-    final res = await repo.forgotPassword(variables);
-    if (res != null && res is Map) {
-      if (res['_error'] != null) {
-        scaffoldMessenger(res['_error'].toString());
-      } else if (res['forget_password'] != null) {
-        showSignupSuccessDialog(context, emailController.text, () {
-          navigationService.navigateTo(RouteList.login);
+    try {
+      final variables = {
+        "details": {
+          "email": emailController.text,
+          "type": null,
         },
-            title: "Sent Successfully",
-            subTitle: ". Please click on the link to Reset your Password.");
+      };
+
+      final res = await repo.forgotPassword(variables);
+
+      if (res.forgetPassword?.status == "success") {
+        final message =
+            "Reset password link has been sent to your mail, PLease verify to reset the password";
+
+        showSignupSuccessDialog(
+          context,
+          emailController.text,
+          () {
+            navigationService.navigateTo(RouteList.login);
+          },
+          title: "Sent Successfully",
+          subTitle: message,
+        );
       } else {
-        scaffoldMessenger('Password reset link sent to your email');
-        navigationService.goBack();
+        scaffoldMessenger('Invalid response received');
       }
+    } catch (e) {
+      scaffoldMessenger(e.toString());
+    } finally {
+      Loaders.circularHideLoader(context);
     }
-    Loaders.circularHideLoader(context);
   }
 }

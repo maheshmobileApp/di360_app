@@ -217,11 +217,11 @@ class _JobProfileViewState extends State<JobProfileView> {
                     if (!mounted) return;
                     (jobProfileListVM.editProfileEnable)
                         ? await jobProfileVM.updateJobProfile(
-                            context, false, jobProfileListVM.jobProfileId ?? "")
+                            context, false, jobProfileListVM.jobProfileId ?? "",
+                            status: jobProfileVM.jobProfileStatus)
                         : await jobProfileVM.createJobProfile(context, false);
                     if (!mounted) return;
                     await jobProfileListVM.fetchJobProfiles(context);
-                    
                   } else {
                     jobProfileVM.goToNextStep();
                   }

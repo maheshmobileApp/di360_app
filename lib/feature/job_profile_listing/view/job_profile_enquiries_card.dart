@@ -94,7 +94,7 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 addHorizontal(10),
                 InkWell(
                     onTap: () async {
-                      await vm.getJobProfileEnquiry(context,vm.jobProfileId??"",jobsListingData.enquiryFrom??"");
+                      await vm.getJobProfileEnquiry(context,vm.jobProfileId??"",jobsListingData.enquirySenderId??"");
                       if (vm.jobPrilfeEnquiryData == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -150,9 +150,10 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       ),
                     ),
                   )
-                : const CircleAvatar(
+                :  CircleAvatar(
                     radius: 24,
-                    backgroundColor: AppColors.geryColor,
+                    backgroundColor: AppColors.primaryColor,
+                    child: Text(name[0].toUpperCase(), style: TextStyles.bold4(color: AppColors.whiteColor),),
                   ),
           ),
         ),

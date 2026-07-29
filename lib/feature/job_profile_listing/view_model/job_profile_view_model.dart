@@ -1,5 +1,8 @@
 //import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/request_count_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_respo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
@@ -30,6 +33,13 @@ class JobProfileListingViewModel extends ChangeNotifier {
   List<JobProfiles> allJobProfiles = [];
   String? jobProfileId;
   bool editProfileEnable = false;
+  String? jobProfileStatus;
+  String? requestType;
+
+  void setRequestType(String val) {
+    requestType = val;
+    notifyListeners();
+  }
 
   bool isLoading = false;
 
@@ -107,7 +117,6 @@ class JobProfileListingViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Failed to remove JobListingData');
     }
-
     notifyListeners();
   }
 
@@ -118,7 +127,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
       {required String id}) async {
     final res = await repo.getMyEnquiryJobData(id);
     myEnquiryJobData = res;
-  
+
     notifyListeners();
     return res;
   }
@@ -129,17 +138,19 @@ class JobProfileListingViewModel extends ChangeNotifier {
     final res = await repo.getJobProfileEnquiry(profileId, enquiryId);
     jobPrilfeEnquiryData = res;
     Loaders.circularHideLoader(context);
-      notifyListeners();
+    notifyListeners();
     return res;
   }
 
-  Future updateTalentRequestStatus(
-      BuildContext context) async {
+  Future updateTalentRequestStatus(BuildContext context, String id,
+      String status, String professionalId) async {
     Loaders.circularShowLoader(context);
-    final variables = {};
+    final variables = {"id": id, "status": status};
     final res = await repo.updateTalentListing(variables);
     if (res != null) {
       scaffoldMessenger("Talent request status updated successfully");
+      await getAllTalentsRequest(
+          context, professionalId, status == "APPROVE" ? "REJECT" : "APPROVE");
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
@@ -151,20 +162,37 @@ class JobProfileListingViewModel extends ChangeNotifier {
   HiringTalentList? hiringTalentList;
 
   Future<HiringTalentList> getAllTalentsRequest(
-      BuildContext context, String professionalId) async {
+      BuildContext context, String professionalId, String status) async {
     final variables = {
       "where": {
         "dental_professional_id": {"_eq": professionalId},
-        "hiring_status": {"_eq": "PENDING"}
+        "hiring_status": {"_eq": status}
       },
-      "limit": 3,
+      "limit": 20,
       "offset": 0
     };
     Loaders.circularShowLoader(context);
     final res = await repo.getAllTalentsRequest(variables);
     hiringTalentList = res;
+    await getRequestCount(context);
     Loaders.circularHideLoader(context);
-      notifyListeners();
+    notifyListeners();
     return res;
+  }
+
+  RequestCountData? requestCountData;
+
+  Future<void> getRequestCount(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "where": {
+        "dental_professional_id": {"_eq": userId}
+      }
+    };
+    Loaders.circularShowLoader(context);
+    final res = await repo.getRequestCount(variables);
+    requestCountData = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
   }
 }
