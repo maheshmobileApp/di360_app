@@ -117,7 +117,7 @@ class _BannersListScreenState extends State<BannersListScreen>
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () async {
-            bannersVM.clearAddBannerData();
+            bannersVM.clearAddBannerData();   
             await navigationService.navigateTo(RouteList.addBanners);
             _loadData();
           },

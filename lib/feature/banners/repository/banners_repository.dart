@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/banners/model/banners_count_model.dart';
+import 'package:di360_flutter/feature/banners/model/disable_months_model.dart';
 import 'package:di360_flutter/feature/banners/model/edit_banner_model.dart';
 import 'package:di360_flutter/feature/banners/model/approve_banner_model.dart';
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
@@ -11,6 +12,7 @@ abstract class BannersRepository {
   Future<void> deleteBanner(String? id);
   Future<BannersByPk?> editBannerView(String? id);
   Future<dynamic> updateBanner(dynamic variables);
-  Future<BannersCountData> bannersCounts();
+  Future<BannerCountData> bannersCounts();
   Future<ApproveBannerResp> getApprovedBanners({dynamic variables});
+  Future<DisableMonthsData> getDisableMonths(dynamic variables);
 }

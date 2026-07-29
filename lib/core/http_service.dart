@@ -22,10 +22,14 @@ class HttpService {
   }
 
   Future query(document, {variables, showLoading = true}) async {
+    final token = await LocalStorage.getStringVal(LocalStorageConst.token);
+
     var response;
     try {
-      response = (await _hasuraConnect.query(document,
-          variables: variables ?? {}))['data'];
+      response = (await _hasuraConnect
+          .query(document, variables: variables ?? {}, headers: {
+        'Authorization': 'Bearer $token',
+      }))['data'];
       print(response);
     } catch (e, s) {
       print("$e , $s");
