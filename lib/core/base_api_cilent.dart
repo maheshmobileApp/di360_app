@@ -40,11 +40,16 @@ class BaseApiClient {
   }
 
   Future<dynamic> postCall(String endPoint,
-      {dynamic payload, bool? isTokenRequired}) async {
+      {dynamic payload}) async {
     final url = '${AppConfig.serverBaseUrl}$endPoint';
 
+    var headersPayload = {
+      'x-client-type': 'mobile',
+    };
+
     try {
-      var respone = await client.post(url, data: payload);
+      var respone = await client.post(url,
+          options: Options(headers: headersPayload), data: payload);
       return respone.data;
     } on DioException catch (e) {
       return e.response!.data;
