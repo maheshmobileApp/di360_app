@@ -1,48 +1,30 @@
-const String professionalViewProfileQuery = r'''
-query professionalDisplay($id: uuid!) {
+const String professionalViewProfileQuery = r'''query getProfDisplayV2($id: uuid!) {
   dental_professionals_by_pk(id: $id) {
     id
-    email
-    name
-    phone
     first_name
-    middle_name
     last_name
-    second_hand
-    alt_email
-    alt_phone
-    profession_type
-    professiontype
-    directory_category_id
-    pro_details_aphra_registration_number
-    bank_details
+    name
+    email
+    phone
+    state
+    professionType
+    aphra_registration_number
+    profile_image
+    directory_business_type_id
+    middle_name
+    gender
     date_of_birth
     salutation
-    driving_licence
-    profile_image
-    gender
-    type
     address
-    city
-    zipcode
-    state
-    country
     address_line_one
     address_line_two
+    city
+    zipcode
     land_mark
-    clients {
-      state
-      postal_code
-      __typename
-    }
+    directory_category_id
+    profile_completed
     directories {
       id
-      name
-      email
-      phone
-      profile_image
-      address
-      profession_type
       __typename
     }
     __typename
