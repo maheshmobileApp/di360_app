@@ -41,6 +41,7 @@ import 'package:di360_flutter/feature/news_feed_community_comment/view_model/new
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
+import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
@@ -162,7 +163,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ClientsProvider()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => JobProfileCreateViewModel()),
-        
+        ChangeNotifierProvider(create: (_) => SuppliesViewModel()),
       ],
       child: MaterialApp(
         builder: (context, child) {

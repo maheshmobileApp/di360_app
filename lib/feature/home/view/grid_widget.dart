@@ -8,6 +8,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -81,6 +82,9 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       await navigationService.navigateTo(RouteList.learningHubMasterView);
     } else if (title == 'Clients') {
       navigationService.navigateTo(RouteList.clientScreen);
+    } else if (title == 'Supplies') {
+      await context.read<SuppliesViewModel>().getSuppliers(context);
+      navigationService.navigateTo(RouteList.suppliesMarketPlace);
     }
   }
 }
