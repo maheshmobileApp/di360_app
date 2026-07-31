@@ -27,4 +27,5 @@ class LocalStorageConst {
   static const String bannerPermission = 'bannerPermission';
   static const String directoryFullAccessPermission = 'directoryFullAccessPermission';
   static const String myCommunityIds = 'myCommunityIds';
+  static const String permissions = "permissions";
 }

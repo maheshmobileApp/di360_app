@@ -97,6 +97,8 @@ class LoginViewModel extends ChangeNotifier {
               LocalStorageConst.type, loginData.type ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.token, loginData.accessToken ?? '');
+          await LocalStorage.setStringList(LocalStorageConst.permissions,
+              loginData.navigation?.permissions ?? []);
 
           if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {

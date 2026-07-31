@@ -93,13 +93,13 @@ class BannerRepositoryImpl extends BannersRepository {
         "status": "APPROVED",
         "category_names": ["All Left Nav Medium Banners"],
         "banner_location": ["Web Left Nav News Feed"],
-        "schedule_date": "2026-07-30T10:46:28.158Z",
+        "schedule_date": DateTime.now().toUtc().toIso8601String(),
         "limit": 10,
         "offset": 0
       },
     );
 
-    if (response != null && response['banners'] != null) {
+    if (response != null) {
       return ApproveBannerResp.fromJson(response);
     } else {
       throw Exception("Empty response received from server");

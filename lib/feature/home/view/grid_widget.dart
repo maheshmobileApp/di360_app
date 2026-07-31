@@ -6,6 +6,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/home_grid_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/main.dart';
@@ -17,26 +18,29 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class GridWidget extends StatelessWidget with BaseContextHelpers {
-  const GridWidget({super.key});
+  final List<HomeGridItem> visibleItems;
+  const GridWidget({super.key, required this.visibleItems});
 
   @override
   Widget build(BuildContext context) {
     final dashBoardVM = Provider.of<DashBoardViewModel>(context);
+
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemCount: dashBoardVM.userType == UserRole.admin.value
           ? ConstantData.adminHomeGridImgs.length
-          : ConstantData.homeGridImgs.length,
+          : visibleItems.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           mainAxisSpacing: 20, crossAxisCount: 3, childAspectRatio: 4.4 / 3),
       itemBuilder: (context, index) {
+        final item = visibleItems[index];
         final img = dashBoardVM.userType == UserRole.admin.value
             ? ConstantData.adminHomeGridImgs[index]
-            : ConstantData.homeGridImgs[index];
+            : item.image;
         final title = dashBoardVM.userType == UserRole.admin.value
             ? ConstantData.adminHomeGridTitles[index]
-            : ConstantData.homeGridTitles[index];
+            : item.title;
         return GestureDetector(
           onTap: () {
             gridOnTap(title, context, dashBoardVM);
