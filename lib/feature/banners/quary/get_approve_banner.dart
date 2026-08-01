@@ -1,27 +1,19 @@
 const String approveBannerQuary = r'''
-query getApprovedBanners($limit: Int, $offset: Int) {
+query GetBanners($status: String, $category_names: [String!], $banner_location: [String!], $schedule_date: timestamptz, $limit: Int, $offset: Int) {
   banners(
-    where: { status: { _eq: "APPROVED" }}
+    where: {status: {_eq: $status}, category_name: {_in: $category_names}, banner_categories: {banner_location: {_has_keys_any: $banner_location}}, schedule_date: {_lt: $schedule_date}}
+    order_by: {created_at: desc}
     limit: $limit
     offset: $offset
   ) {
     id
-    banner_name
-    category_name
-    status
-    views
-    expiry_date
     image
-    schedule_date
-    created_at
-    updated_at
-    from_id
-    views
     url
-    company_name
-    dental_suppliers {
-      name
+    banner_categories {
+      timer
+      __typename
     }
+    __typename
   }
 }
 ''';

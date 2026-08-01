@@ -584,7 +584,7 @@ class JobSeekViewModel extends ChangeNotifier {
       "status": "APPROVED",
       "category_names": ["All Header Banners"],
       "banner_location": ["Web Header Job Seek"],
-      "schedule_date": "2026-06-12T05:03:01.250Z",
+      "schedule_date": DateTime.now().toUtc().toIso8601String(),
       "limit": 10,
       "offset": 0
     };

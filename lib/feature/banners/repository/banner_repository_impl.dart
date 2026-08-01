@@ -5,7 +5,6 @@ import 'package:di360_flutter/feature/banners/model/banners_count_model.dart';
 import 'package:di360_flutter/feature/banners/model/disable_months_model.dart';
 import 'package:di360_flutter/feature/banners/model/edit_banner_model.dart';
 import 'package:di360_flutter/feature/banners/model/approve_banner_model.dart';
-
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/quary/add_banner_quary.dart';
@@ -91,12 +90,16 @@ class BannerRepositoryImpl extends BannersRepository {
     final response = await http.query(
       approveBannerQuary,
       variables: {
-        "limit": 100,
-        "offset": 0,
+        "status": "APPROVED",
+        "category_names": ["All Left Nav Medium Banners"],
+        "banner_location": ["Web Left Nav News Feed"],
+        "schedule_date": DateTime.now().toUtc().toIso8601String(),
+        "limit": 10,
+        "offset": 0
       },
     );
 
-    if (response != null && response['banners'] != null) {
+    if (response != null) {
       return ApproveBannerResp.fromJson(response);
     } else {
       throw Exception("Empty response received from server");

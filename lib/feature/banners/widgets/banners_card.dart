@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -116,7 +117,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(titleVal ?? '', format: 'MMM d, y')
+                  ? DateFormatUtils.formatDate(titleVal?? "")
                   : titleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),
@@ -127,7 +128,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(subTitleVal ?? '', format: 'MMM d, y')
+                  ? DateFormatUtils.formatDate(subTitleVal?? "")
                   : subTitleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),

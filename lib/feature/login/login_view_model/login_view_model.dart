@@ -31,9 +31,6 @@ class LoginViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
 
-  final Map<String, dynamic> _variables = {
-    "details": {"emailOrPhone": "", "password": ""}
-  };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
   bool get isPasswordVisible => _isPasswordVisible;
@@ -47,10 +44,7 @@ class LoginViewModel extends ChangeNotifier {
   List<CommunityMembers> communityMembers = [];
 
   Future<void> submit(BuildContext context) async {
-    _variables['details']['emailOrPhone'] = emailController.text.toLowerCase();
-    _variables['details']['password'] = passController.text;
-
-    if (Map.from(_variables['details']).containsValue("")) {
+    if (emailController.text.isEmpty || passController.text.isEmpty) {
       scaffoldMessenger("Please fill all the details");
       return;
     }
@@ -58,7 +52,11 @@ class LoginViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
 
     try {
-      final res = await repo.login(_variables);
+      final variables = {
+        "email": emailController.text.toLowerCase(),
+        "password": passController.text
+      };
+      final res = await repo.login(variables);
 
       if (res.isNotEmpty && res.containsKey('_error')) {
         Loaders.circularHideLoader(context);
@@ -79,14 +77,14 @@ class LoginViewModel extends ChangeNotifier {
         return;
       }
 
-      if (res.isNotEmpty && res.containsKey('login_api')) {
-        final result = LogInData.fromJson(res);
-        final loginData = result.loginApi;
+      if (res.isNotEmpty) {
+        final result = LoginApi.fromJson(res);
+        final loginData = result;
 
-        if (loginData?.status == 'ACTIVE' || loginData?.status == 'UNBLOCKED') {
-          final userId = loginData?.id ?? '';
-          final isSupplier = loginData?.type == UserRole.supplier.value;
-          _http.setToken(loginData?.accessToken ?? '');
+        if (loginData.status == 'ACTIVE' || loginData.status == 'UNBLOCKED') {
+          final userId = loginData.id ?? '';
+          final isSupplier = loginData.type == UserRole.supplier.value;
+          _http.setToken(loginData.accessToken ?? '');
           //_modulePermissions(loginData?.subscriptionPermissions?.modules ?? []);
 
           // Set dashboard index
@@ -96,12 +94,12 @@ class LoginViewModel extends ChangeNotifier {
           Loaders.circularHideLoader(context);
 
           await LocalStorage.setStringVal(
-              LocalStorageConst.type, loginData?.type ?? '');
+              LocalStorageConst.type, loginData.type ?? '');
           await LocalStorage.setStringVal(
-              LocalStorageConst.token, loginData?.accessToken ?? '');
+              LocalStorageConst.token, loginData.accessToken ?? '');
 
-          if (loginData?.type == UserRole.admin.name) {
-            if (loginData?.profileCompleted == true) {
+          if (loginData.type == UserRole.admin.name) {
+            if (loginData.profileCompleted == true) {
               homeNavigation(context);
             } else {
               viewProfileHandle(context);
@@ -118,31 +116,31 @@ class LoginViewModel extends ChangeNotifier {
                 if (isSupplier) getSuppliers(userId),
                 if (isSupplier) getSupplierCommunityOwner(userId),
                 getMyCommunityData(userId),
-                updateDevieToken(userId, loginData?.type ?? ''),
+                updateDevieToken(userId, loginData.type ?? ''),
 
                 // Local Storage
                 LocalStorage.setStringVal(
-                    LocalStorageConst.name, loginData?.name ?? ''),
+                    LocalStorageConst.name, loginData.name ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.businessName,
-                    loginData?.businessName ?? ''),
+                    loginData.businessName ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.userId, userId),
                 LocalStorage.setStringVal(
-                    LocalStorageConst.emailId, loginData?.email ?? ''),
+                    LocalStorageConst.emailId, loginData.email ?? ''),
                 LocalStorage.setStringVal(
-                    LocalStorageConst.type, loginData?.type ?? ''),
+                    LocalStorageConst.type, loginData.type ?? ''),
 
                 LocalStorage.setStringVal(LocalStorageConst.professionType,
-                    loginData?.professiontype?.name ?? ''),
+                    loginData.professiontype?.name ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.professionId,
-                    loginData?.professiontype?.id ?? ''),
+                    loginData.professiontype?.id ?? ''),
                 LocalStorage.setStringVal(
-                    LocalStorageConst.subType, loginData?.subType ?? ''),
+                    LocalStorageConst.subType, loginData.subType ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
-                    loginData?.subscriptionId ?? ''),
+                    loginData.subscriptionId ?? ''),
                 LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
-                    loginData?.profileCompleted ?? false),
+                    loginData.profileCompleted ?? false),
                 LocalStorage.setStringVal(LocalStorageConst.profilePic,
-                    loginData?.logo?.url ?? loginData?.profileImage?.url ?? ''),
+                    loginData.logo?.url ?? loginData.profileImage?.url ?? ''),
                 LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
               ]);
             } catch (e) {
@@ -151,7 +149,7 @@ class LoginViewModel extends ChangeNotifier {
           });
         } else {
           Loaders.circularHideLoader(context);
-          scaffoldMessenger('Account is ${loginData?.status}');
+          scaffoldMessenger('Account is ${loginData.status}');
         }
       } else {
         Loaders.circularHideLoader(context);

@@ -29,6 +29,7 @@ class HttpService {
       response = (await _hasuraConnect
           .query(document, variables: variables ?? {}, headers: {
         'Authorization': 'Bearer $token',
+        'x-client-type': 'mobile',
       }))['data'];
       print(response);
     } catch (e, s) {
@@ -138,6 +139,7 @@ class HttpService {
         response = await _hasuraConnect
             .mutation(document, variables: variables ?? {}, headers: {
           'Authorization': 'Bearer $token',
+          'x-client-type': 'mobile',
         });
       } else {
         response = await _hasuraConnect.mutation(
