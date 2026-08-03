@@ -64,12 +64,20 @@ class Supplies {
   String? supplyBrandId;
   SupplyBrand? supplyBrand;
   String? supplyCategoryId;
+  SupplyBrand? supplyCategory;
   String? supplySubCategoryId;
+  SupplyBrand? supplySubCategory;
+  String? productCondition;
   dynamic video;
   List<SupplyVariants>? supplyVariants;
   String? dentalSuppliersId;
   DentalSupplier? dentalSupplier;
   List<JSupplyDealsSupplies>? jSupplyDealsSupplies;
+  Image? docMsds;
+  Image? docSpecSheet;
+  Image? docBrochure;
+  Image? docManual;
+  Image? docWarranty;
   String? sTypename;
 
   Supplies(
@@ -99,10 +107,18 @@ class Supplies {
       this.dentalSuppliersId,
       this.dentalSupplier,
       this.jSupplyDealsSupplies,
+      this.productCondition,
+      this.supplyCategory,
+      this.supplySubCategory,
+      this.docMsds,
+      this.docSpecSheet,
+      this.docBrochure,
+      this.docManual,
+      this.docWarranty,
       this.sTypename});
 
   Supplies.fromJson(Map<String, dynamic> json) {
-    id = json['id']?.toString();
+    id = json['id'];
     createdAt = json['created_at']?.toString();
     updatedAt = json['updated_at']?.toString();
     name = json['name']?.toString();
@@ -159,6 +175,30 @@ class Supplies {
         }
       }
     }
+    productCondition = json['product_condition'];
+    supplyCategory = json['supply_category'] != null
+        ? new SupplyBrand.fromJson(json['supply_category'])
+        : null;
+    supplySubCategory = json['supply_sub_category'] != null
+        ? new SupplyBrand.fromJson(json['supply_sub_category'])
+        : null;
+    docMsds =
+        json['doc_msds'] != null ? new Image.fromJson(json['doc_msds']) : null;
+    ;
+    docSpecSheet = json['doc_spec_sheet'] != null
+        ? new Image.fromJson(json['doc_spec_sheet'])
+        : null;
+    ;
+    docBrochure = json['doc_brochure'] != null
+        ? new Image.fromJson(json['doc_brochure'])
+        : null;
+    docManual = json['doc_manual'] != null
+        ? new Image.fromJson(json['doc_manual'])
+        : null;
+    docWarranty = json['doc_warranty'] != null
+        ? new Image.fromJson(json['doc_warranty'])
+        : null;
+
     sTypename = json['__typename']?.toString();
   }
 
@@ -203,6 +243,26 @@ class Supplies {
     if (this.jSupplyDealsSupplies != null) {
       data['j_supply_deals_supplies'] =
           this.jSupplyDealsSupplies?.map((v) => v.toJson()).toList();
+    }
+    data['product_condition'] = this.productCondition;
+    if (this.supplyCategory != null) {
+      data['supply_category'] = this.supplyCategory?.toJson();
+    }
+    if (this.supplySubCategory != null) {
+      data['supply_sub_category'] = this.supplySubCategory?.toJson();
+    }
+    if (this.docMsds != null) {
+      data['doc_msds'] = this.docMsds?.toJson;
+    }
+    if (this.docSpecSheet != null) {
+      data['doc_spec_sheet'] = this.docSpecSheet?.toJson();
+    }
+    if (this.docBrochure != null) {
+      data['doc_brochure'] = this.docBrochure?.toJson();
+    }
+    data['doc_manual'] = this.docManual;
+    if (this.docWarranty != null) {
+      data['doc_warranty'] = this.docWarranty?.toJson();
     }
     data['__typename'] = this.sTypename;
     return data;

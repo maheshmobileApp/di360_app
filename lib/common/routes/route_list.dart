@@ -98,7 +98,5 @@ class RouteList {
   static const String clientScreen = '/clientScreen';
   static const String interestedScreen = '/interestedScreen';
   static const String suppliesMarketPlace = '/suppliesMarketPlace';
-
-  
-  
+  static const String suppliesDetailsView = '/suppliesDetailsView';
 }

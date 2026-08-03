@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/supplies/model/product_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_card.dart';
@@ -105,7 +106,19 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
               onDecrease: () {
                 vm.decreaseQuantity(supply.id ?? "");
               },
-              onAddToCart: () {},
+              onAddToCart: () async {
+                await vm.addToCart(
+                    context,
+                    supply.id ?? "",
+                    supply.supplyVariants?.firstOrNull?.id ?? "",
+                    vm.getQuantity(supply.id ?? ""));
+              },
+              onDetailView: () async {
+                print("Navigating to details view for supply ID: ${supply.id}");
+                await vm.getSuppliesDetails(context, supply.id ?? "");
+                navigationService.navigateTo(RouteList.suppliesDetailsView);
+              }
+
             );
           },
         ),

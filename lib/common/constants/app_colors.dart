@@ -29,7 +29,7 @@ class AppColors {
   static const Color secondaryBlueColor = Color.fromRGBO(4, 113, 222, 0.15);
   static const Color primaryBlueColor = Color(0xff0471de);
   static const Color dropDownHint = Color(0xffBAC1C8);
-  static const Color greenColor = Color(0xff00934F);
+  static const Color greenColor = Colors.green;
   static const Color lightGreenColor = Color.fromARGB(255, 196, 238, 218);
   static const Color redColor = Color(0xffD71313);
   static const Color cardcolor = Color(0xffF6F7F9);

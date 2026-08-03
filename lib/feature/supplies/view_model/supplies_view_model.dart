@@ -1,5 +1,4 @@
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
-import 'package:di360_flutter/feature/supplies/model/product_model.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ class SuppliesViewModel extends ChangeNotifier {
   final SuppliesRepoImpl repo = SuppliesRepoImpl();
 
   getSupplyData? supplyData;
+  Supplies? suppliesDetailsData;
 
   int _supplyLimit = 20;
   int _supplyOffset = 0;
@@ -41,80 +41,107 @@ class SuppliesViewModel extends ChangeNotifier {
   }
 
   Future<void> getSuppliers(
-  BuildContext context, {
-  bool isLoadMore = false,
-}) async {
-  if (isLoading || isLoadingMore) return;
-  if (isLoadMore && !hasMoreData) return;
+    BuildContext context, {
+    bool isLoadMore = false,
+  }) async {
+    if (isLoading || isLoadingMore) return;
+    if (isLoadMore && !hasMoreData) return;
 
-  if (isLoadMore) {
-    isLoadingMore = true;
-  } else {
-    isLoading = true;
-    _supplyOffset = 0;
-    hasMoreData = true;
-    Loaders.circularShowLoader(context);
+    if (isLoadMore) {
+      isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _supplyOffset = 0;
+      hasMoreData = true;
+      Loaders.circularShowLoader(context);
+    }
+
+    final variables = {
+      "andList": [
+        {
+          "status": {"_eq": "APPROVED"}
+        },
+        {
+          "product_status": {"_eq": "ACTIVE"}
+        },
+        {
+          "name": {"_ilike": "%%"}
+        },
+        {
+          "supply_brand": {
+            "status": {"_eq": "ACTIVE"}
+          }
+        },
+        {
+          "supply_category": {
+            "status": {"_eq": "ACTIVE"}
+          }
+        },
+        {
+          "supply_sub_category": {
+            "status": {"_eq": "ACTIVE"}
+          }
+        },
+        {
+          "supply_variants": {
+            "make_default": {"_eq": true}
+          }
+        }
+      ],
+      "limit": _supplyLimit,
+      "offset": _supplyOffset,
+    };
+
+    final res = await repo.getSuppliers(variables);
+
+    final newItems = res.supplies ?? [];
+
+    if (isLoadMore) {
+      supplyData?.supplies?.addAll(newItems);
+    } else {
+      supplyData = res;
+    }
+
+    if (newItems.length < _supplyLimit) {
+      hasMoreData = false;
+    } else {
+      _supplyOffset += _supplyLimit;
+    }
+
+    if (!isLoadMore) {
+      Loaders.circularHideLoader(context);
+      isLoading = false;
+    } else {
+      isLoadingMore = false;
+    }
+
+    notifyListeners();
   }
 
-  final variables = {
-    "andList": [
-      {
-        "status": {"_eq": "APPROVED"}
-      },
-      {
-        "product_status": {"_eq": "ACTIVE"}
-      },
-      {
-        "name": {"_ilike": "%%"}
-      },
-      {
-        "supply_brand": {
-          "status": {"_eq": "ACTIVE"}
-        }
-      },
-      {
-        "supply_category": {
-          "status": {"_eq": "ACTIVE"}
-        }
-      },
-      {
-        "supply_sub_category": {
-          "status": {"_eq": "ACTIVE"}
-        }
-      },
-      {
-        "supply_variants": {
-          "make_default": {"_eq": true}
-        }
+//add to cart
+  Future<void> addToCart(BuildContext context, String supplyId,
+      String supplyVariantId, int quantity) async {
+    final variables = {
+      "supply_carts": {
+        "supply_id": supplyId,
+        "supply_variant_id": supplyVariantId,
+        "quantity": quantity,
       }
-    ],
-    "limit": _supplyLimit,
-    "offset": _supplyOffset,
-  };
+    };
 
-  final res = await repo.getSuppliers(variables);
-
-  final newItems = res.supplies ?? [];
-
-  if (isLoadMore) {
-    supplyData?.supplies?.addAll(newItems);
-  } else {
-    supplyData = res;
+    print("Add to cart variables: $variables");
+    final res = await repo.addToCart(variables);
   }
 
-  if (newItems.length < _supplyLimit) {
-    hasMoreData = false;
-  } else {
-    _supplyOffset += _supplyLimit;
-  }
+  Future<void> getSuppliesDetails(BuildContext context, String supplyId) async {
+    Loaders.circularShowLoader(context);
 
-  if (!isLoadMore) {
+    final variables = {"id": supplyId};
+
+    final res = await repo.getSuppliesDetails(variables);
+    suppliesDetailsData = res.supplies?.firstOrNull;
     Loaders.circularHideLoader(context);
-    isLoading = false;
-  } else {
-    isLoadingMore = false;
-  }
 
-  notifyListeners();
-}
+    notifyListeners();
+  }
 }
