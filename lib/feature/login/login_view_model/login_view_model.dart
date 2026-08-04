@@ -98,6 +98,14 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringVal(
               LocalStorageConst.token, loginData.accessToken ?? '');
 
+          await LocalStorage.setStringList(
+            LocalStorageConst.permissions,
+            [
+              ...(loginData.navigation?.permissions ?? []),
+              "SUPPLIES_MARKETPLACE",
+            ],
+          );
+
           if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {
               homeNavigation(context);

@@ -1,6 +1,7 @@
 import 'package:di360_flutter/feature/clients/model_class/get_client_count_response.dart';
 import 'package:di360_flutter/feature/clients/model_class/get_client_response.dart';
 import 'package:di360_flutter/feature/clients/repository/clients_repository_impl.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -52,6 +53,46 @@ class ClientsProvider extends ChangeNotifier {
     if (response != null) {
       final clientsCountData = ClientCountData.fromJson(response);
       clientCountData = clientsCountData;
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> deleteUserData(BuildContext context, String clientId) async {
+    Loaders.circularShowLoader(context);
+    final response = await clientsRepositoryImpl.deleteUser(clientId);
+    if (response['delete_clients'] != null) {
+      fetchClients(context);
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> inactiveClient(BuildContext context, String clientId) async {
+    Loaders.circularShowLoader(context);
+    final response = await clientsRepositoryImpl.inactiveClient(clientId);
+    if (response['update_clients_by_pk'] != null) {
+      fetchClients(context);
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> reSendVerifyMail(BuildContext context, String clientId) async {
+    Loaders.circularShowLoader(context);
+    final response = await clientsRepositoryImpl.resendMail(clientId);
+    if (response != null) {
+      scaffoldMessenger('Verification email resent successfully');
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> adminApproveUser(BuildContext context, String clientId) async {
+    Loaders.circularShowLoader(context);
+    final response = await clientsRepositoryImpl.adminApproveUser(clientId);
+    if (response != null) {
+      scaffoldMessenger('User approved successfully');
     }
     Loaders.circularHideLoader(context);
     notifyListeners();

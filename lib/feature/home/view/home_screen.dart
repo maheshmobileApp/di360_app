@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/dash_board/home_grid_data.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/home/view/grid_widget.dart';
 import 'package:di360_flutter/feature/home/view/user_data.dart';
@@ -22,11 +23,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String type = '';
+  List<String> permissions = [];
+  
 
   @override
   Widget build(BuildContext context) {
     final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
     final directorVM = Provider.of<DirectoryViewModel>(context);
+    final visibleItems = HomeGridData.items.where(
+      (item) => permissions.contains(item.permission.value),
+    ).toList();
+    
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -48,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    
     final viewModel = Provider.of<HomeViewModel>(context, listen: false);
     viewModel.getFollowersCount(context);
     context.read<NotificationViewModel>().getNotificationsCount();
@@ -57,5 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => type = t);
     });
     super.initState();
+    _loadPermissions();
+  }
+
+  Future<void> _loadPermissions() async {
+    permissions = await LocalStorage.getStringList(
+      LocalStorageConst.permissions,
+    );
+    setState(() {});
   }
 }
