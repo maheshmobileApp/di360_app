@@ -85,7 +85,8 @@ class HttpService {
         data: _data,
       );
       if (result.statusCode == 201 || result.statusCode == 200) {
-        return Map<String, dynamic>.from(result.data);
+        if (result.data is Map) return Map<String, dynamic>.from(result.data);
+        return result.data;
       }
       print("Upload failed with status code: ${result.statusCode}");
       return null;

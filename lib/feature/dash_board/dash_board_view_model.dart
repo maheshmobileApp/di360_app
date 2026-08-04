@@ -93,8 +93,6 @@ class DashBoardViewModel extends ChangeNotifier {
       _pages = [
         HomeScreen(),
         NewsFeedScreen(),
-        JobSeekView(),
-        NewsFeedCommunityView(),
         CataloguePage(),
         AccountScreen()
       ];
@@ -167,6 +165,22 @@ class DashBoardViewModel extends ChangeNotifier {
               .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
         case 4: // Account
+          break;
+      }
+    } else if (_userType == UserRole.admin.value) {
+      switch (index) {
+        case 0: // Home
+          break;
+        case 1: // News Feed
+          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+          context.read<NewsFeedViewModel>().updateApplyCatageories(false);
+          break;
+        case 2: // Catalogue
+          context
+              .read<CatalogueViewModel>()
+              .fetchCatalogue(context, isCommunityCatalogue: false);
+          break;
+        case 3: // Account
           break;
       }
     } else {

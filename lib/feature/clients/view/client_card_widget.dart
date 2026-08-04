@@ -1,4 +1,6 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/clients/model_class/get_client_response.dart';
+import 'package:di360_flutter/feature/clients/view/client_menu_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -14,14 +16,10 @@ class ClientCard extends StatelessWidget {
         children: [
           SizedBox(
             width: 80,
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            child: Text(title,
+                style: const TextStyle(fontWeight: FontWeight.w600)),
           ),
-          Expanded(child: Text(value)),
+          Expanded(child: Text(value))
         ],
       ),
     );
@@ -30,13 +28,8 @@ class ClientCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -50,25 +43,22 @@ class ClientCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    client?.name ?? '',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
+                    child: Text(client?.name ?? '',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18))),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    client?.status ?? '',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                        color: basedOnStatusColor(client?.status ?? ''),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text(showStatus(client?.status ?? ''),
+                        style: const TextStyle(color: Colors.white))),
+                ClientMenuWidget(
+                    status: client?.status,
+                    clientId: client?.id,
+                    clientName: client?.name)
+              ]
             ),
             const Divider(height: 24),
             infoRow("Email", client?.email ?? ''),
@@ -76,10 +66,38 @@ class ClientCard extends StatelessWidget {
             infoRow("Phone", client?.phone ?? ''),
             infoRow("Plan", client?.subscriptionPlans?.name ?? ''),
             infoRow("Signup", client?.trackingDetails ?? ''),
-            infoRow("Date", jiffyDataWidget(client?.createdAt, format: "yyyy-MM-dd hh:mm:ss a").toString())
+            infoRow(
+                "Date",
+                jiffyDataWidget(client?.createdAt,
+                        format: "yyyy-MM-dd hh:mm:ss a")
+                    .toString())
           ],
         ),
       ),
     );
+  }
+
+  String showStatus(String status) {
+    if (status == 'VERIFIED') {
+      return "Verified";
+    } else if (status == 'VERIFICATION_PENDING') {
+      return "Verification Pending";
+    } else if (status == 'ADMIN_APPROVED' || status == 'ACTIVE') {
+      return "Active";
+    } else {
+      return "Inactive";
+    }
+  }
+
+  Color basedOnStatusColor(String status) {
+    if (status == 'VERIFIED') {
+      return AppColors.quizCorrectBorder;
+    } else if (status == 'VERIFICATION_PENDING') {
+      return AppColors.pendingsendary;
+    } else if (status == 'ADMIN_APPROVED' || status == 'ACTIVE') {
+      return AppColors.greenColor;
+    } else {
+      return AppColors.greenColor;
+    }
   }
 }
