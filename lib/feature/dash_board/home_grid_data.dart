@@ -29,5 +29,10 @@ class HomeGridData {
       title: 'Catalogue',
       image: ImageConst.catalogue,
     ),
+     HomeGridItem(
+      permission: ModulePermission.suppliesMarketplace,
+      title: 'Supplies',
+      image: ImageConst.supplies,
+    ),
   ];
 }
