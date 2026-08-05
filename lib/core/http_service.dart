@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/configuration/app_config.dart';
+import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:hasura_connect/hasura_connect.dart';
@@ -21,24 +22,53 @@ class HttpService {
     _hasuraConnect.headers?["Authorization"] = "Bearer $token";
   }
 
-  Future query(document, {variables, showLoading = true}) async {
-    final token = await LocalStorage.getStringVal(LocalStorageConst.token);
-
-    var response;
+  Future<dynamic> query(
+    document, {
+    variables,
+    bool showLoading = true,
+  }) async {
     try {
-      response = (await _hasuraConnect
-          .query(document, variables: variables ?? {}, headers: {
-        'Authorization': 'Bearer $token',
-        'x-client-type': 'mobile',
-      }))['data'];
-      print(response);
-    } catch (e, s) {
-      print("$e , $s");
-      print("hasura error $e");
+      String? token = await LocalStorage.getStringVal(LocalStorageConst.token);
+
+      final response = (await _hasuraConnect.query(
+        document,
+        variables: variables ?? {},
+        headers: {
+          'Authorization': 'Bearer $token',
+          'x-client-type': 'mobile',
+        },
+      ))['data'];
+      //final isRefreshed = await refreshAccessToken();
+
+      return response;
+    } catch (e) {
       final err = showHasuraError(e);
+
+      if (err.contains("JWTExpired")) {
+        final isRefreshed = await refreshAccessToken();
+
+        if (isRefreshed) {
+          // Read newly saved access token
+          final newToken =
+              await LocalStorage.getStringVal(LocalStorageConst.token);
+
+          final retryResponse = (await _hasuraConnect.query(
+            document,
+            variables: variables ?? {},
+            headers: {
+              'Authorization': 'Bearer $newToken',
+              'x-client-type': 'mobile',
+            },
+          ))['data'];
+
+          return retryResponse;
+        }
+
+        return {"_error": "Session expired. Please login again."};
+      }
+
       return {"_error": err};
     }
-    return response;
   }
 
   String _getContentType(String filePath) {
@@ -131,33 +161,66 @@ class HttpService {
     }
   }
 
-  Future<Map<String, dynamic>> mutation(document, variables,
-      {showLoading = true, isTokenRequired = true}) async {
-    final token = await LocalStorage.getStringVal(LocalStorageConst.token);
-    var response;
+  Future<Map<String, dynamic>> mutation(
+    document,
+    variables, {
+    bool showLoading = true,
+    bool isTokenRequired = true,
+  }) async {
     try {
+      String? token = await LocalStorage.getStringVal(LocalStorageConst.token);
+
+      dynamic response;
+
       if (isTokenRequired) {
-        response = await _hasuraConnect
-            .mutation(document, variables: variables ?? {}, headers: {
-          'Authorization': 'Bearer $token',
-          'x-client-type': 'mobile',
-        });
+        response = await _hasuraConnect.mutation(
+          document,
+          variables: variables ?? {},
+          headers: {
+            'Authorization': 'Bearer $token',
+            'x-client-type': 'mobile',
+          },
+        );
       } else {
         response = await _hasuraConnect.mutation(
           document,
           variables: variables ?? {},
         );
       }
-      response = response['data'];
-    } catch (e, s) {
-      print("$e , $s");
-      if (e is HasuraRequestError) {
-        return {"_error": e.message, "_errorType": "hasura"};
-      }
+
+      return response['data'] ?? {};
+    } catch (e) {
       final err = showHasuraError(e);
+
+      if (err.contains("JWTExpired") && isTokenRequired) {
+        final isRefreshed = await refreshAccessToken();
+
+        if (isRefreshed) {
+          // Read newly saved token
+          final newToken =
+              await LocalStorage.getStringVal(LocalStorageConst.token);
+
+          dynamic retryResponse;
+
+          retryResponse = await _hasuraConnect.mutation(
+            document,
+            variables: variables ?? {},
+            headers: {
+              'Authorization': 'Bearer $newToken',
+              'x-client-type': 'mobile',
+            },
+          );
+
+          return retryResponse['data'] ?? {};
+        }
+
+        return {
+          "_error": "Session expired. Please login again.",
+        };
+      }
+
       return {"_error": err};
     }
-    return response ?? {};
   }
 
   showHasuraError(e) {
@@ -195,6 +258,41 @@ class HttpService {
       print("$e , $s");
     }
     return responses;
+  }
+
+  Future<bool> refreshAccessToken() async {
+    print("Refreshing access token......................");
+    final refreshToken =
+        await LocalStorage.getStringVal(LocalStorageConst.refreshToken);
+        final url = "https://boastful-mayra-acerbically.ngrok-free.dev/api/v1/auth/refresh-token_v2" ;
+        //final url = '${AppConfig.serverBaseUrl}${ApiConst.refreshToken}';
+
+    final response = await Dio().post(
+      url,
+      data: {
+        "refreshToken": refreshToken,
+      },
+      options: Options(
+        headers: {
+          "x-client-type": "mobile",
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      await LocalStorage.setStringVal(
+        LocalStorageConst.token,
+        response.data["accessToken"],
+      );
+      await LocalStorage.setStringVal(
+        LocalStorageConst.refreshToken,
+        response.data["refreshToken"],
+      );
+
+      return true;
+    }
+
+    return false;
   }
 
   dispose() {

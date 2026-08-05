@@ -150,6 +150,9 @@ class LoginViewModel extends ChangeNotifier {
                 LocalStorage.setStringVal(LocalStorageConst.profilePic,
                     loginData.logo?.url ?? loginData.profileImage?.url ?? ''),
                 LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
+                LocalStorage.setStringVal(
+              LocalStorageConst.refreshToken, loginData.refreshToken ?? '')
+
               ]);
             } catch (e) {
               debugPrint("Post login error: $e");

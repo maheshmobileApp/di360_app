@@ -27,4 +27,5 @@ class ApiConst {
   static String login = "/api/v1/auth/login-v2";
   static const String resendMail = '/api/v1/event/resend-verification-mail';
   static const String adminApproveUser = '/api/v1/event/admin-approve-user/';
+  static String refreshToken = '/api/v1/auth/refresh-token_v2';
 }
