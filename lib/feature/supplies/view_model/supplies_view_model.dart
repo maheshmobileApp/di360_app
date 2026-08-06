@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
+import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ class SuppliesViewModel extends ChangeNotifier {
 
   getSupplyData? supplyData;
   Supplies? suppliesDetailsData;
+  SupplyCartData? suppliesCartData;
 
   int _supplyLimit = 20;
   int _supplyOffset = 0;
@@ -38,6 +40,91 @@ class SuppliesViewModel extends ChangeNotifier {
 
       notifyListeners();
     }
+  }
+
+  Map<String, bool> get selectedProducts => _selectedProducts;
+
+  final Map<String, bool> _selectedProducts = {};
+  String? _selectedSupplier;
+
+  bool isProductSelected(String cartId) {
+  return _selectedProducts[cartId] ?? false;
+}
+
+  void toggleProduct(
+  SupplyCarts item,
+  bool value,
+) {
+  final supplier =
+      item.supply?.dentalSupplier?.businessName ?? "";
+
+  // Switching supplier
+  if (_selectedSupplier != supplier) {
+    _selectedProducts.clear();
+    _selectedSupplier = supplier;
+  }
+
+  _selectedProducts[item.id!] = value;
+
+  // If no products remain selected, clear supplier
+  final hasSelected = _selectedProducts.values.any((e) => e);
+
+  if (!hasSelected) {
+    _selectedSupplier = null;
+  }
+
+  notifyListeners();
+}
+
+  void toggleSupplier(
+  String supplierName,
+  bool value,
+) {
+  final carts = suppliesCartData?.supplyCarts ?? [];
+
+  _selectedProducts.clear();
+
+  if (value) {
+    _selectedSupplier = supplierName;
+
+    // Select all products of this supplier
+    for (final item in carts) {
+      if (item.supply?.dentalSupplier?.businessName == supplierName) {
+        _selectedProducts[item.id!] = true;
+      }
+    }
+  } else {
+    _selectedSupplier = null;
+  }
+
+  notifyListeners();
+}
+
+  bool isSupplierSelected(String supplierName) {
+  return _selectedSupplier == supplierName &&
+      _selectedProducts.values.any((e) => e);
+}
+
+  bool? supplierCheckboxValue(String supplierName) {
+    final carts = suppliesCartData?.supplyCarts ?? [];
+
+    final supplierItems = carts.where(
+      (e) => e.supply?.dentalSupplier?.businessName == supplierName,
+    );
+
+    final total = supplierItems.length;
+
+    final selected = supplierItems
+        .where(
+          (e) => _selectedProducts[e.id] ?? false,
+        )
+        .length;
+
+    if (selected == 0) return false;
+
+    if (selected == total) return true;
+
+    return null;
   }
 
   Future<void> getSuppliers(
@@ -140,6 +227,16 @@ class SuppliesViewModel extends ChangeNotifier {
 
     final res = await repo.getSuppliesDetails(variables);
     suppliesDetailsData = res.supplies?.firstOrNull;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> getSuppliesCart(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final res = await repo.getSupplyCarts();
+    suppliesCartData = res;
     Loaders.circularHideLoader(context);
 
     notifyListeners();

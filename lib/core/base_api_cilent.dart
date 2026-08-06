@@ -40,9 +40,8 @@ class BaseApiClient {
   }
 
   Future<dynamic> postCall(String endPoint, {dynamic payload}) async {
-    //final url = '${AppConfig.serverBaseUrl}$endPoint';
-    final url =
-        "https://boastful-mayra-acerbically.ngrok-free.dev/api/v1/auth/login-v2";
+    final url = '${AppConfig.serverBaseUrl}$endPoint';
+    //final url = "https://boastful-mayra-acerbically.ngrok-free.dev/api/v1/auth/login-v2";
 
     var headersPayload = {
       'x-client-type': 'mobile',

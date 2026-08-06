@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/login/model_class/refresh_token_response.dart';
 import 'package:dio/dio.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 
@@ -45,7 +46,7 @@ class HttpService {
       final err = showHasuraError(e);
 
       if (err.contains("JWTExpired")) {
-        final isRefreshed = await refreshAccessToken();
+        final isRefreshed = await _refreshAccessTokenOnce();
 
         if (isRefreshed) {
           // Read newly saved access token
@@ -193,7 +194,7 @@ class HttpService {
       final err = showHasuraError(e);
 
       if (err.contains("JWTExpired") && isTokenRequired) {
-        final isRefreshed = await refreshAccessToken();
+        final isRefreshed = await _refreshAccessTokenOnce();
 
         if (isRefreshed) {
           // Read newly saved token
@@ -260,39 +261,64 @@ class HttpService {
     return responses;
   }
 
-  Future<bool> refreshAccessToken() async {
-    print("Refreshing access token......................");
-    final refreshToken =
-        await LocalStorage.getStringVal(LocalStorageConst.refreshToken);
-        final url = "https://boastful-mayra-acerbically.ngrok-free.dev/api/v1/auth/refresh-token_v2" ;
-        //final url = '${AppConfig.serverBaseUrl}${ApiConst.refreshToken}';
+  Future<bool>? _refreshFuture;
 
-    final response = await Dio().post(
-      url,
-      data: {
-        "refreshToken": refreshToken,
-      },
-      options: Options(
-        headers: {
-          "x-client-type": "mobile",
-        },
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      await LocalStorage.setStringVal(
-        LocalStorageConst.token,
-        response.data["accessToken"],
-      );
-      await LocalStorage.setStringVal(
-        LocalStorageConst.refreshToken,
-        response.data["refreshToken"],
-      );
-
-      return true;
+  Future<bool> _refreshAccessTokenOnce() async {
+    // If refresh is already running, wait for it.
+    if (_refreshFuture != null) {
+      return await _refreshFuture!;
     }
 
-    return false;
+    _refreshFuture = refreshAccessToken();
+
+    try {
+      return await _refreshFuture!;
+    } finally {
+      _refreshFuture = null;
+    }
+  }
+
+  Future<bool> refreshAccessToken() async {
+    print("Refresh API Calling**********************");
+    try {
+      final refreshToken =
+          await LocalStorage.getStringVal(LocalStorageConst.refreshToken);
+
+      final url = '${AppConfig.serverBaseUrl}${ApiConst.refreshToken}';
+
+      final response = await Dio().post(
+        url,
+        data: {
+          "refreshToken": refreshToken,
+        },
+        options: Options(
+          headers: {
+            "x-client-type": "mobile",
+          },
+        ),
+      );
+
+      final result = RefreshTokenResponse.fromJson(response.data);
+
+      if (result.accessToken != null) {
+        await LocalStorage.setStringVal(
+          LocalStorageConst.token,
+          result.accessToken ?? "",
+        );
+
+        await LocalStorage.setStringVal(
+          LocalStorageConst.refreshToken,
+          result.refreshToken ?? "",
+        );
+
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print("Refresh token failed: $e");
+      return false;
+    }
   }
 
   dispose() {

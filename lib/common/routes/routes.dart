@@ -76,6 +76,8 @@ import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/supplies/view/order_request_review_view.dart';
+import 'package:di360_flutter/feature/supplies/view/supplies_cart_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_details_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_marketplace_view.dart';
 import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
@@ -276,8 +278,12 @@ class Routes {
       RouteList.interestedScreen: (context) => InterestedScreen(),
       RouteList.suppliesMarketPlace: (context) => SuppliesMarketplaceView(),
       RouteList.suppliesDetailsView: (context) => SuppliesDetailsView(),
-      
-      
+      RouteList.suppliesCartView: (context) => SuppliesCartView(),
+      RouteList.orderRequestReviewView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return OrderRequestReviewView(selectedProducts: args['selected_products'] ?? {});
+      },
     };
   }
 }

@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           UserData(type: type, gender: viewProfileVM.gender),
-          Expanded(child: SingleChildScrollView(child: GridWidget()))
+          Expanded(child: SingleChildScrollView(child: GridWidget(visibleItems : visibleItems)))
         ],
       ),
     );

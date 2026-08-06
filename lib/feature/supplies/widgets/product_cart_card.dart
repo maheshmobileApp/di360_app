@@ -1,101 +1,189 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
+import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
+import 'package:di360_flutter/feature/supplies/widgets/quantity_stepper.dart';
 import 'package:flutter/material.dart';
 
 class ProductCartCard extends StatelessWidget {
+  final SupplyCarts item;
   final bool isSelected;
   final String productId;
   final String productName;
   final String price;
   final int quantity;
+  final String? imageUrl;
 
   final ValueChanged<bool?>? onChecked;
   final ValueChanged<String>? onMenuSelected;
+  final VoidCallback? onIncrease;
+  final VoidCallback? onDecrease;
+  final bool checkbox;
 
   const ProductCartCard({
     super.key,
+    required this.item,
     required this.isSelected,
     required this.productId,
     required this.productName,
     required this.price,
     required this.quantity,
+    this.imageUrl,
     this.onChecked,
     this.onMenuSelected,
+    this.onIncrease,
+    this.onDecrease,
+    this.checkbox = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final total = (double.tryParse(price) ?? 0) * quantity;
+
     return Card(
+      elevation: 2,
       color: AppColors.whiteColor,
-      elevation: 1,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.all(8),
+        child: Column(
           children: [
-            Checkbox(
-              value: isSelected,
-              onChanged: onChecked,
-            ),
+            /// Top Section
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if(checkbox)
+                Checkbox(
+                  activeColor: AppColors.primaryColor,
+                  value: isSelected,
+                  onChanged: (value) {
+                    onChecked?.call(value);
+                  },
+                ),
 
-            const SizedBox(width: 8),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    productName,
-                    style: TextStyles.bold3(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    "Product ID : $productId",
-                    style: TextStyles.medium2(
-                      color: Colors.grey.shade700,
+                /// Image
+                Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.grey.shade300,
                     ),
                   ),
+                  child: NetworkImageWidget(
+                    imageUrl: imageUrl ?? "",
+                    fit: BoxFit.contain,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                ),
 
-                  const SizedBox(height: 8),
+                const SizedBox(width: 12),
 
-                  Row(
+                /// Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "AUD $price",
-                        style: TextStyles.bold3(
-                          color: AppColors.primaryColor,
+                        productName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyles.bold2(),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "Product ID: $productId",
+                        style: TextStyles.medium2(
+                          color: Colors.grey.shade700,
                         ),
                       ),
-
-                      const SizedBox(width: 16),
-
+                      const SizedBox(height: 10),
                       Text(
-                        "Qty : $quantity",
-                        style: TextStyles.medium2(),
+                        "Price: AUD $price",
+                        style: TextStyles.bold2(
+                          color: Colors.green,
+                        ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+
+                PopupMenuButton<String>(
+                  onSelected: onMenuSelected,
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(
+                      value: "wishlist",
+                      child: Row(
+                        children: [
+                          Icon(Icons.favorite_border),
+                          SizedBox(width: 10),
+                          Text("Save for Later"),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: "remove",
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                          SizedBox(width: 10),
+                          Text("Remove"),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
 
-            PopupMenuButton<String>(
-              onSelected: onMenuSelected,
-              itemBuilder: (context) => const [
-                PopupMenuItem(
-                  value: "edit",
-                  child: Text("Edit"),
+            const Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 14,
+              ),
+              child: Divider(height: 1),
+            ),
+
+            /// Bottom Section
+            Row(
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: QuantityStepper(
+                    quantity: quantity,
+                    onIncrease: onIncrease,
+                    onDecrease: onDecrease,
+                  ),
                 ),
-                PopupMenuItem(
-                  value: "remove",
-                  child: Text("Remove"),
+                const Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "Total",
+                      style: TextStyles.medium2(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Text(
+                      "AUD ${total.toStringAsFixed(2)}",
+                      style: TextStyles.bold3(
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -105,23 +193,3 @@ class ProductCartCard extends StatelessWidget {
     );
   }
 }
-
-/*ProductCartCard(
-  isSelected: true,
-  productId: "PRD-10001",
-  productName: "Dental Composite Kit",
-  price: "125.00",
-  quantity: 3,
-  onChecked: (value) {
-    // Handle checkbox
-  },
-  onMenuSelected: (action) {
-    switch (action) {
-      case "edit":
-        break;
-
-      case "remove":
-        break;
-    }
-  },
-)*/

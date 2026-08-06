@@ -61,6 +61,15 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                 navigationService.goBack();
               },
               icon: Icon(Icons.arrow_back_ios)),
+          actions : [
+            IconButton(
+              onPressed: () async {
+                await vm.getSuppliesCart(context);
+                navigationService.navigateTo(RouteList.suppliesCartView);
+              },
+              icon: Icon(Icons.shopping_cart),
+            ),
+          ],
           title: Text(
             "All Products",
             style: TextStyles.bold3(),

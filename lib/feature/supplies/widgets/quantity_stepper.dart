@@ -33,6 +33,7 @@ class QuantityStepper extends StatelessWidget {
         borderRadius: borderRadius ?? BorderRadius.circular(10),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _actionButton(
             icon: Icons.remove,

@@ -1,225 +1,170 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
+import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
+import 'package:di360_flutter/feature/supplies/widgets/app_button.dart';
+import 'package:di360_flutter/feature/supplies/widgets/quantity_stepper.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OrderSummaryCard extends StatelessWidget {
-  final String supplierName;
-  final int totalSelectedItems;
-  final double subtotal;
-  final double discount;
-  final double freightCharges;
-  final double estimatedTotal;
-
-  final TextEditingController? couponController;
-
-  final VoidCallback? onApplyCoupon;
-  final VoidCallback? onViewCoupons;
-  final VoidCallback? onSubmitOrder;
-  final VoidCallback? onBackToCart;
+  final String supplier;
+  final String itemsCount;
+  final String subTotal;
+  final String discount;
+  final String freightCharges;
+  final String estimatedTotal;
 
   const OrderSummaryCard({
-    super.key,
-    required this.supplierName,
-    required this.totalSelectedItems,
-    required this.subtotal,
+    required this.supplier,
+    required this.itemsCount,
+    required this.subTotal,
     required this.discount,
     required this.freightCharges,
     required this.estimatedTotal,
-    this.couponController,
-    this.onApplyCoupon,
-    this.onViewCoupons,
-    this.onSubmitOrder,
-    this.onBackToCart,
+    super.key,
   });
-
-  Widget _row(String title, String value,
-      {bool highlight = false, bool bold = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              style: bold
-                  ? TextStyles.bold3()
-                  : TextStyles.medium2(color: Colors.grey.shade700),
-            ),
-          ),
-          Text(
-            value,
-            style: bold
-                ? TextStyles.bold3(
-                    color: highlight
-                        ? AppColors.primaryColor
-                        : AppColors.black,
-                  )
-                : TextStyles.bold3(),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: AppColors.whiteColor,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            Text(
-              "Order Summary",
-              style: TextStyles.bold4(),
-            ),
-
-            const SizedBox(height: 20),
-
-            _row("Supplier", supplierName),
-
-            _row(
-              "Total Selected Items",
-              totalSelectedItems.toString(),
-            ),
-
-            const Divider(height: 28),
-
-            _row(
-              "Subtotal",
-              "AUD ${subtotal.toStringAsFixed(2)}",
-            ),
-
-            _row(
-              "Discount",
-              "(-) AUD ${discount.toStringAsFixed(2)}",
-            ),
-
-            _row(
-              "Freight Charges",
-              "AUD ${freightCharges.toStringAsFixed(2)}",
-            ),
-
-            const Divider(height: 28),
-
-            _row(
-              "Estimated Total",
-              "AUD ${estimatedTotal.toStringAsFixed(2)}",
-              bold: true,
-              highlight: true,
-            ),
-
-            const SizedBox(height: 28),
-
-            Text(
-              "Have Promo Code?",
-              style: TextStyles.bold3(),
-            ),
-
-            const SizedBox(height: 14),
-
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: couponController,
-                    decoration: InputDecoration(
-                      hintText: "Enter Coupon Code",
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: onApplyCoupon,
-                    child: const Text("Apply"),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            InkWell(
-              onTap: onViewCoupons,
-              child: Text(
-                "View Coupons",
-                style: TextStyles.bold3(),
+    final vm = context.watch<SuppliesViewModel>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+      child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.whiteColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, 3), // changes position of shadow
               ),
-            ),
-
-            const SizedBox(height: 22),
-
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.orange.shade50,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
+            ],
+          ),
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.info,
-                    color: Colors.deepOrange,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "This is an order request. The supplier will confirm availability and dispatch details.",
-                      style: TextStyles.medium2(
-                        color: Colors.deepOrange,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: onSubmitOrder,
-                icon: const Icon(Icons.send),
-                label: const Text("Submit Order Request"),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: OutlinedButton.icon(
-                onPressed: onBackToCart,
-                icon: const Icon(Icons.arrow_back_ios_new, size: 16),
-                label: const Text("Back to Cart"),
-              ),
-            ),
-          ],
-        ),
-      ),
+                  Text('Order Summary',
+                      style: TextStyles.clashSemiBold(fontSize: 18)),
+                  _infoDetailColumn(supplier, itemsCount, subTotal, discount,
+                      freightCharges, estimatedTotal)
+                ]),
+          )),
     );
   }
+}
+
+_iconWithText(IconData icon, String text) {
+  return Row(
+    children: [
+      Icon(icon, size: 16, color: Colors.grey.shade700),
+      const SizedBox(width: 4),
+      Text(text, style: TextStyles.medium2(color: Colors.grey.shade700)),
+    ],
+  );
+}
+
+_quantityCard(SuppliesViewModel vm, String supplyId) {
+  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    Text("Quantity", style: TextStyles.medium2(color: Colors.grey.shade700)),
+    const SizedBox(height: 4),
+    QuantityStepper(
+      width: 120,
+      quantity: vm.getQuantity(supplyId),
+      onIncrease: () {
+        vm.increaseQuantity(supplyId);
+      },
+      onDecrease: () {
+        vm.decreaseQuantity(supplyId);
+      },
+    ),
+    const SizedBox(height: 4),
+  ]);
+}
+
+_priceInfoCard(Supplies? suppliesDetails) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Price", style: TextStyles.medium2(color: Colors.grey.shade700)),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text(
+                "AUD ${suppliesDetails?.supplyVariants?.firstOrNull?.sellingPrice ?? 'N/A'}",
+                style: TextStyles.semiBold(
+                    fontSize: 20, color: AppColors.primaryColor),
+              ),
+              Text(" / Piece",
+                  style: TextStyles.medium2(color: Colors.grey.shade700)),
+            ],
+          ),
+        ],
+      ),
+      Container(
+        decoration: BoxDecoration(
+            color: AppColors.greenColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.greenColor, width: 1)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          child: Text("In Stock",
+              style: TextStyles.semiBold(
+                  color: AppColors.greenColor, fontSize: 12)),
+        ),
+      )
+    ],
+  );
+}
+
+_infoDetailColumn(String? supplier, String? itemsCount, String? subtotal,
+    String? discount, String freightCharges, String estimatedTotal) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _infoRow("Supplier", supplier ?? ''),
+      _infoRow("Total Selected Items", itemsCount ?? ''),
+      Divider(),
+      _infoRow("Subtotal", "AUD $subtotal"),
+      _infoRow("Discount", "(-) AUD $discount"),
+      _infoRow("Freight Charges", "AUD $freightCharges"),
+      Divider(),
+      _infoRow2("Estimated Total", "AUD $subtotal")
+    ],
+  );
+}
+
+_infoRow(String title, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: TextStyles.medium2(color: Colors.grey.shade700)),
+        Text(value, style: TextStyles.bold2()),
+      ],
+    ),
+  );
+}
+
+_infoRow2(String title, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: TextStyles.bold2(color: Colors.grey.shade700)),
+        Text(value, style: TextStyles.bold3(color: AppColors.primaryColor)),
+      ],
+    ),
+  );
 }

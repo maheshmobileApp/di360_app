@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
@@ -98,11 +97,13 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringVal(
               LocalStorageConst.token, loginData.accessToken ?? '');
 
+          final newPermission = "SUPPLIES_MARKETPLACE";
+
           await LocalStorage.setStringList(
             LocalStorageConst.permissions,
             [
               ...(loginData.navigation?.permissions ?? []),
-              "SUPPLIES_MARKETPLACE",
+              newPermission,
             ],
           );
 
