@@ -101,4 +101,5 @@ class RouteList {
   static const String suppliesDetailsView = '/suppliesDetailsView';
   static const String suppliesCartView = '/suppliesCartView';
   static const String orderRequestReviewView = '/orderRequestReviewView';
+  static const String jobProfileTalentMessage = '/jobProfileTalentMessage';
 }

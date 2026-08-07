@@ -42,6 +42,7 @@ import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/interested_screen.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_talent_message.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/my_job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
@@ -146,6 +147,17 @@ class Routes {
             profilePic: args['profilePic'] ?? "",
             applicant: args['applicant'],
             typeName: args['type']);
+      },
+      RouteList.jobProfileTalentMessage: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return JobProfileTalentMessage(
+            id: args['id'],
+            dentalSupplierId: args['dental_supplier_id'],
+            dentalPracticeId: args['dental_practice_id'],
+            talentId: args['talentId'],
+            profilePic: args['profile_pic'],
+            userId : args['userId'],);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =
@@ -282,7 +294,8 @@ class Routes {
       RouteList.orderRequestReviewView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return OrderRequestReviewView(selectedProducts: args['selected_products'] ?? {});
+        return OrderRequestReviewView(
+            selectedProducts: args['selected_products'] ?? {});
       },
     };
   }

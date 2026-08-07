@@ -2,7 +2,9 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_talent_messages_response.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/request_count_res.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/talent_messages_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_all_talents_request_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_my_enquiry_job_data.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_profile_enquiry_query.dart';
@@ -13,6 +15,10 @@ import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_upda
 import 'package:di360_flutter/feature/job_profile_listing/quary/update_talent_request_status_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profle_repository.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/delete_talent_message.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/send_talent_message_query.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/update_talent_query.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 
 class JobProfileRepoImpl implements JobProfileRepository {
@@ -102,5 +108,32 @@ class JobProfileRepoImpl implements JobProfileRepository {
     final response =
         await http.query(getRequestCountQuery, variables: variables);
     return RequestCountData.fromJson(response);
+  }
+
+  @override
+  Future<TalentsMessageResData> fetchTalentMessages(variables) async {
+    final response =
+        await http.query(jobTalentMessageListing, variables: variables);
+    return TalentsMessageResData.fromJson(response);
+  }
+
+  @override
+  Future<dynamic> deleteTalentMessage(variables) async {
+    final res = await http.mutation(deleteTalentMessageQuery, variables);
+    return res;
+  }
+  
+
+  @override
+  Future<dynamic> sendTalentMessage(variables) async {
+    final res = await http.mutation(sendTalentMessageQuery, variables);
+    return res;
+  }
+  
+
+  @override
+  Future<dynamic> updateTalentMessage(variables) async {
+    final res = await http.mutation(updateTalentMessageQuery, variables);
+    return res;
   }
 }
