@@ -114,7 +114,7 @@ class _BannersListScreenState extends State<BannersListScreen>
             )
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () async {
             bannersVM.clearAddBannerData();   
@@ -122,7 +122,7 @@ class _BannersListScreenState extends State<BannersListScreen>
             _loadData();
           },
           child: SvgPicture.asset(ImageConst.addFeed),
-        ));
+        )*/);
   }
 
   @override

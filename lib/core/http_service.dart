@@ -265,11 +265,7 @@ class HttpService {
 
   Future<bool> _refreshAccessTokenOnce() async {
     // If refresh is already running, wait for it.
-    if (_refreshFuture != null) {
-      return await _refreshFuture!;
-    }
-
-    _refreshFuture = refreshAccessToken();
+    _refreshFuture ??= refreshAccessToken();
 
     try {
       return await _refreshFuture!;
@@ -279,7 +275,6 @@ class HttpService {
   }
 
   Future<bool> refreshAccessToken() async {
-    print("Refresh API Calling**********************");
     try {
       final refreshToken =
           await LocalStorage.getStringVal(LocalStorageConst.refreshToken);

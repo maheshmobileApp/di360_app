@@ -97,7 +97,7 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringVal(
               LocalStorageConst.token, loginData.accessToken ?? '');
 
-          final newPermission = "SUPPLIES_MARKETPLACE";
+          /*final newPermission = "SUPPLIES_MARKETPLACE";
 
           await LocalStorage.setStringList(
             LocalStorageConst.permissions,
@@ -105,7 +105,10 @@ class LoginViewModel extends ChangeNotifier {
               ...(loginData.navigation?.permissions ?? []),
               newPermission,
             ],
-          );
+          );*/
+
+          await LocalStorage.setStringList(LocalStorageConst.permissions,
+              loginData.navigation?.permissions ?? []);
 
           if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {
@@ -151,9 +154,8 @@ class LoginViewModel extends ChangeNotifier {
                 LocalStorage.setStringVal(LocalStorageConst.profilePic,
                     loginData.logo?.url ?? loginData.profileImage?.url ?? ''),
                 LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
-                LocalStorage.setStringVal(
-              LocalStorageConst.refreshToken, loginData.refreshToken ?? '')
-
+                LocalStorage.setStringVal(LocalStorageConst.refreshToken,
+                    loginData.refreshToken ?? '')
               ]);
             } catch (e) {
               debugPrint("Post login error: $e");
