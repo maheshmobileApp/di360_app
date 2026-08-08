@@ -65,6 +65,7 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
             IconButton(
               onPressed: () async {
                 await vm.getSuppliesCart(context);
+                vm.clearSelectedSuppliersAndProducts();
                 navigationService.navigateTo(RouteList.suppliesCartView);
               },
               icon: Stack(

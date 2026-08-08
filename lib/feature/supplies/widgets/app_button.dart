@@ -1,11 +1,10 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
   final String title;
   final VoidCallback? onPressed;
   final IconData? prefixIcon;
-
-  final bool outlined;
   final bool isLoading;
 
   final Color backgroundColor;
@@ -23,10 +22,9 @@ class AppButton extends StatelessWidget {
     required this.title,
     this.onPressed,
     this.prefixIcon,
-    this.outlined = false,
     this.isLoading = false,
-    this.backgroundColor = Colors.deepOrange,
-    this.borderColor = Colors.deepOrange,
+    this.backgroundColor = AppColors.primaryColor,
+    this.borderColor = AppColors.primaryColor,
     this.textColor = Colors.white,
     this.iconColor = Colors.white,
     this.height = 52,
@@ -46,9 +44,9 @@ class AppButton extends StatelessWidget {
           elevation: 0,
           padding: padding,
           backgroundColor:
-              outlined ? Colors.white : backgroundColor,
+              backgroundColor,
           foregroundColor:
-              outlined ? textColor : Colors.white,
+              textColor,
           side: BorderSide(
             color: borderColor,
           ),
@@ -63,9 +61,8 @@ class AppButton extends StatelessWidget {
                 width: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: outlined
-                      ? borderColor
-                      : Colors.white,
+                  color:  borderColor
+                      ,
                 ),
               )
             : Row(
@@ -74,9 +71,8 @@ class AppButton extends StatelessWidget {
                   if (prefixIcon != null) ...[
                     Icon(
                       prefixIcon,
-                      color: outlined
-                          ? iconColor
-                          : Colors.white,
+                      color:iconColor
+                         ,
                     ),
                     const SizedBox(width: 8),
                   ],
@@ -85,9 +81,8 @@ class AppButton extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: fontSize,
-                      color: outlined
-                          ? textColor
-                          : Colors.white,
+                      color: textColor
+                          ,
                     ),
                   ),
                 ],

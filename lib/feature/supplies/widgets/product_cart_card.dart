@@ -164,7 +164,7 @@ class ProductCartCard extends StatelessWidget {
                   child: QuantityStepper(
                     quantity: quantity,
                     onIncrease: onIncrease,
-                    onDecrease: onDecrease,
+                    onDecrease: quantity > 1? onDecrease : null,
                   ),
                 ),
                 const Spacer(),

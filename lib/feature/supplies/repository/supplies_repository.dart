@@ -5,6 +5,7 @@ abstract class SuppliesRepository {
   Future<getSupplyData> getSuppliers(dynamic variables);
   Future<dynamic> addToCart(dynamic variables);
   Future<dynamic> increaseQuantityById(dynamic variables);
+  Future<dynamic> decreaseQuantityById(dynamic variables);
   Future<getSupplyData> getSuppliesDetails(dynamic variables);
   Future<SupplyCartData> getSupplyCarts();
 }

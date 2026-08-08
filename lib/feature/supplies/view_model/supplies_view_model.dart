@@ -18,6 +18,8 @@ class SuppliesViewModel extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMoreData = true;
 
+  int selectedTotal = 0;
+
   //cart quantity
   final Map<String, int> _cartQuantity = {};
 
@@ -43,14 +45,21 @@ class SuppliesViewModel extends ChangeNotifier {
   }
 
   void resetQuantity(String productId) {
-  _cartQuantity.remove(productId);
-  notifyListeners();
-}
+    _cartQuantity.remove(productId);
+    notifyListeners();
+  }
 
   Map<String, bool> get selectedProducts => _selectedProducts;
 
   final Map<String, bool> _selectedProducts = {};
   String? _selectedSupplier;
+
+  void clearSelectedSuppliersAndProducts() {
+    _selectedSupplier = null;
+    _selectedProducts.clear();
+
+    notifyListeners();
+  }
 
   bool isProductSelected(String cartId) {
     return _selectedProducts[cartId] ?? false;
@@ -222,7 +231,6 @@ class SuppliesViewModel extends ChangeNotifier {
 
     print("Add to cart variables: $variables");
     final res = await repo.addToCart(variables);
-
   }
 
   Future<void> getSuppliesDetails(BuildContext context, String supplyId) async {
@@ -248,22 +256,51 @@ class SuppliesViewModel extends ChangeNotifier {
   }
 
   SupplyCarts? getCartItemBySupplyId(String supplyId) {
-  return suppliesCartData?.supplyCarts?.cast<SupplyCarts?>().firstWhere(
-        (item) => item?.supplyId == supplyId,
-        orElse: () => null,
-      );
-}
+    return suppliesCartData?.supplyCarts?.cast<SupplyCarts?>().firstWhere(
+          (item) => item?.supplyId == supplyId,
+          orElse: () => null,
+        );
+  }
 
-  Future<void> increaseQuantityById(BuildContext context, String id, int amount) async {
+  Future<void> increaseQuantityById(
+      BuildContext context, String id, int amount) async {
     Loaders.circularShowLoader(context);
-    final variables = {
-      "id": id,
-      "amount": amount
-    };
+    final variables = {"id": id, "amount": amount};
 
     final res = await repo.increaseQuantityById(variables);
+    await getSuppliesCart(context);
     Loaders.circularHideLoader(context);
 
     notifyListeners();
+  }
+
+  Future<void> decreaseQuantityById(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": id};
+
+    final res = await repo.decreaseQuantityById(variables);
+    await getSuppliesCart(context);
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  double get selectedProductsTotalPrice {
+    final cartItems = suppliesCartData?.supplyCarts ?? [];
+
+    double total = 0;
+
+    for (final item in cartItems) {
+      final isSelected = _selectedProducts[item.id] ?? false;
+
+      if (isSelected) {
+        final price = item.supplyVariant?.sellingPrice ?? 0;
+        final quantity = item.quantity ?? 0;
+
+        total += price * quantity;
+      }
+    }
+
+    return total;
   }
 }

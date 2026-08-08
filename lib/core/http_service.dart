@@ -298,13 +298,15 @@ class HttpService {
       if (result.accessToken != null) {
         await LocalStorage.setStringVal(
           LocalStorageConst.token,
-          result.accessToken ?? "",
+          result.accessToken!,
         );
 
-        await LocalStorage.setStringVal(
-          LocalStorageConst.refreshToken,
-          result.refreshToken ?? "",
-        );
+        if (result.refreshToken != null && result.refreshToken?.isNotEmpty == true) {
+          await LocalStorage.setStringVal(
+            LocalStorageConst.refreshToken,
+            result.refreshToken!,
+          );
+        }
 
         return true;
       }

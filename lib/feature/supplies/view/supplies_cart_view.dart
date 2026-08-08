@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/app_button.dart';
+import 'package:di360_flutter/feature/supplies/widgets/cart_summary_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_cart_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +23,7 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
   @override
   void initState() {
     super.initState();
-
-    
   }
-
-  
 
   @override
   void dispose() {
@@ -68,20 +65,28 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
         body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ListView(controller: scrollController, children: [
-              Card(
-                color: const Color.fromARGB(255, 237, 236, 235),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("You have selected Multiple Items From Multiple Vendors !", style: TextStyles.semiBold(fontSize: 12, color: AppColors.redColor),),
-                      Text("You can place order from one vendor at once", style: TextStyles.medium1( color: AppColors.redColor),),
-                    ],
+              if (supplierEntries.length > 1)
+                Card(
+                  color: const Color.fromARGB(255, 237, 236, 235),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "You have selected Multiple Items From Multiple Vendors !",
+                          style: TextStyles.semiBold(
+                              fontSize: 12, color: AppColors.redColor),
+                        ),
+                        Text(
+                          "You can place order from one vendor at once",
+                          style: TextStyles.medium1(color: AppColors.redColor),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 6),
               ...supplierEntries.map(
                 (supplier) {
                   return Card(
@@ -118,10 +123,27 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                             SizedBox(
                               width: 120,
                               child: AppButton(
+                                backgroundColor:
+                                    vm.isSupplierSelected(supplier.key)
+                                        ? AppColors.primaryColor
+                                        : AppColors.greyLight,
+                                borderColor: vm.isSupplierSelected(supplier.key)
+                                    ? AppColors.primaryColor
+                                    : AppColors.greysecond,
+                                textColor: vm.isSupplierSelected(supplier.key)
+                                    ? AppColors.whiteColor
+                                    : AppColors.black,
                                 height: 40,
                                 title: "Proceed",
                                 onPressed: () {
-                                  navigationService.navigateToWithParams(RouteList.orderRequestReviewView, params: {"selected_products": vm.selectedProducts});
+                                  if (vm.isSupplierSelected(supplier.key)) {
+                                    navigationService.navigateToWithParams(
+                                        RouteList.orderRequestReviewView,
+                                        params: {
+                                          "selected_products":
+                                              vm.selectedProducts
+                                        });
+                                  }
                                 },
                               ),
                             ),
@@ -129,7 +151,7 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                           ],
                         ),
 
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
 
                         /// Products
                         ...supplier.value.map(
@@ -152,13 +174,43 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                               );
                             },
                             onMenuSelected: (action) {},
+                            onDecrease: () async {
+                              await vm.decreaseQuantityById(
+                                  context, item.id ?? "");
+                            },
+                            onIncrease: () async {
+                              await vm.increaseQuantityById(
+                                  context, item.id ?? "", 1);
+                            },
                           ),
                         ),
+                        const SizedBox(height: 4),
+                        if (vm.isSupplierSelected(supplier.key))
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "Selected Items: ${vm.selectedProducts.length}",
+                                  style: TextStyles.medium2(
+                                      color: AppColors.geryColor),
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  "Selected Total: AUD ${vm.selectedProductsTotalPrice}",
+                                  style: TextStyles.medium2(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 4),
                       ],
                     ),
                   );
                 },
-              )
+              ),
+              CartSummaryCard(totalSuppliers: supplierEntries.length, totalActiveItems: cartItems.length, totalSelectedItems: vm.selectedProducts.length,)
             ])));
   }
 }

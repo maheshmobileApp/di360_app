@@ -62,13 +62,20 @@ class QuantityStepper extends StatelessWidget {
     required IconData icon,
     VoidCallback? onTap,
   }) {
+    final isDisabled = onTap == null;
+    
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: SizedBox(
         width: 45,
         height: double.infinity,
-        child: Icon(icon),
+        child: Icon(
+        icon,
+        color: isDisabled
+            ? Colors.grey.shade400
+            : AppColors.black,
+      ),
       ),
     );
   }
