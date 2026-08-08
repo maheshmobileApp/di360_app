@@ -61,13 +61,34 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                 navigationService.goBack();
               },
               icon: Icon(Icons.arrow_back_ios)),
-          actions : [
+          actions: [
             IconButton(
               onPressed: () async {
                 await vm.getSuppliesCart(context);
                 navigationService.navigateTo(RouteList.suppliesCartView);
               },
-              icon: Icon(Icons.shopping_cart),
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.shopping_cart),
+                  Positioned(
+                    right: -6,
+                    top: -6,
+                    child: CircleAvatar(
+                      radius: 9,
+                      backgroundColor: AppColors.primaryColor,
+                      child: Text(
+                        '${vm.suppliesCartData?.supplyCarts?.length ?? 0}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
           title: Text(
@@ -93,42 +114,61 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
             final supply = supplies[index];
 
             return ProductCard(
-              product: Product(
-                id: supply.id ?? "",
-                image: supply.image?.firstOrNull?.url ?? "",
-                name: supply.name ?? "",
-                brand: supply.dentalSupplier?.businessName ?? "",
-                price: supply.supplyVariants?.firstOrNull?.sellingPrice
-                        ?.toString() ??
-                    "",
-                inStock:
-                    (supply.supplyVariants?.firstOrNull?.availableStock ?? 0) >
-                        0,
-                quantity: vm.getQuantity(supply.id ?? ""),
-                isSpotOn: true,
-                supplyBrand: supply.supplyBrand?.name ?? "",
-              ),
-              onFavorite: () {},
-              onIncrease: () {
-                vm.increaseQuantity(supply.id ?? "");
-              },
-              onDecrease: () {
-                vm.decreaseQuantity(supply.id ?? "");
-              },
-              onAddToCart: () async {
-                await vm.addToCart(
-                    context,
-                    supply.id ?? "",
-                    supply.supplyVariants?.firstOrNull?.id ?? "",
-                    vm.getQuantity(supply.id ?? ""));
-              },
-              onDetailView: () async {
-                print("Navigating to details view for supply ID: ${supply.id}");
-                await vm.getSuppliesDetails(context, supply.id ?? "");
-                navigationService.navigateTo(RouteList.suppliesDetailsView);
-              }
+                product: Product(
+                  id: supply.id ?? "",
+                  image: supply.image?.firstOrNull?.url ?? "",
+                  name: supply.name ?? "",
+                  brand: supply.dentalSupplier?.businessName ?? "",
+                  price: supply.supplyVariants?.firstOrNull?.sellingPrice
+                          ?.toString() ??
+                      "",
+                  inStock:
+                      (supply.supplyVariants?.firstOrNull?.availableStock ??
+                              0) >
+                          0,
+                  quantity: vm.getQuantity(supply.id ?? ""),
+                  isSpotOn: true,
+                  supplyBrand: supply.supplyBrand?.name ?? "",
+                ),
+                onFavorite: () {},
+                onIncrease: () {
+                  vm.increaseQuantity(supply.id ?? "");
+                },
+                onDecrease: () {
+                  vm.decreaseQuantity(supply.id ?? "");
+                },
+                onAddToCart: () async {
+                  final supplyId = supply.id ?? "";
+                  final variantId =
+                      supply.supplyVariants?.firstOrNull?.id ?? "";
+                  final quantity = vm.getQuantity(supplyId);
 
-            );
+                  final cartItem = vm.getCartItemBySupplyId(supplyId);
+
+                  if (cartItem != null) {
+                    await vm.increaseQuantityById(
+                      context,
+                      cartItem.id ?? "",
+                      quantity,
+                    );
+                  } else {
+                    await vm.addToCart(
+                      context,
+                      supplyId,
+                      variantId,
+                      quantity,
+                    );
+                  }
+
+                  vm.resetQuantity(supplyId);
+                  vm.getSuppliesCart(context);
+                },
+                onDetailView: () async {
+                  print(
+                      "Navigating to details view for supply ID: ${supply.id}");
+                  await vm.getSuppliesDetails(context, supply.id ?? "");
+                  navigationService.navigateTo(RouteList.suppliesDetailsView);
+                });
           },
         ),
       ),

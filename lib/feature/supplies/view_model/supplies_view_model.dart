@@ -42,68 +42,72 @@ class SuppliesViewModel extends ChangeNotifier {
     }
   }
 
+  void resetQuantity(String productId) {
+  _cartQuantity.remove(productId);
+  notifyListeners();
+}
+
   Map<String, bool> get selectedProducts => _selectedProducts;
 
   final Map<String, bool> _selectedProducts = {};
   String? _selectedSupplier;
 
   bool isProductSelected(String cartId) {
-  return _selectedProducts[cartId] ?? false;
-}
+    return _selectedProducts[cartId] ?? false;
+  }
 
   void toggleProduct(
-  SupplyCarts item,
-  bool value,
-) {
-  final supplier =
-      item.supply?.dentalSupplier?.businessName ?? "";
+    SupplyCarts item,
+    bool value,
+  ) {
+    final supplier = item.supply?.dentalSupplier?.businessName ?? "";
 
-  // Switching supplier
-  if (_selectedSupplier != supplier) {
-    _selectedProducts.clear();
-    _selectedSupplier = supplier;
+    // Switching supplier
+    if (_selectedSupplier != supplier) {
+      _selectedProducts.clear();
+      _selectedSupplier = supplier;
+    }
+
+    _selectedProducts[item.id!] = value;
+
+    // If no products remain selected, clear supplier
+    final hasSelected = _selectedProducts.values.any((e) => e);
+
+    if (!hasSelected) {
+      _selectedSupplier = null;
+    }
+
+    notifyListeners();
   }
-
-  _selectedProducts[item.id!] = value;
-
-  // If no products remain selected, clear supplier
-  final hasSelected = _selectedProducts.values.any((e) => e);
-
-  if (!hasSelected) {
-    _selectedSupplier = null;
-  }
-
-  notifyListeners();
-}
 
   void toggleSupplier(
-  String supplierName,
-  bool value,
-) {
-  final carts = suppliesCartData?.supplyCarts ?? [];
+    String supplierName,
+    bool value,
+  ) {
+    final carts = suppliesCartData?.supplyCarts ?? [];
 
-  _selectedProducts.clear();
+    _selectedProducts.clear();
 
-  if (value) {
-    _selectedSupplier = supplierName;
+    if (value) {
+      _selectedSupplier = supplierName;
 
-    // Select all products of this supplier
-    for (final item in carts) {
-      if (item.supply?.dentalSupplier?.businessName == supplierName) {
-        _selectedProducts[item.id!] = true;
+      // Select all products of this supplier
+      for (final item in carts) {
+        if (item.supply?.dentalSupplier?.businessName == supplierName) {
+          _selectedProducts[item.id!] = true;
+        }
       }
+    } else {
+      _selectedSupplier = null;
     }
-  } else {
-    _selectedSupplier = null;
+
+    notifyListeners();
   }
 
-  notifyListeners();
-}
-
   bool isSupplierSelected(String supplierName) {
-  return _selectedSupplier == supplierName &&
-      _selectedProducts.values.any((e) => e);
-}
+    return _selectedSupplier == supplierName &&
+        _selectedProducts.values.any((e) => e);
+  }
 
   bool? supplierCheckboxValue(String supplierName) {
     final carts = suppliesCartData?.supplyCarts ?? [];
@@ -218,6 +222,7 @@ class SuppliesViewModel extends ChangeNotifier {
 
     print("Add to cart variables: $variables");
     final res = await repo.addToCart(variables);
+
   }
 
   Future<void> getSuppliesDetails(BuildContext context, String supplyId) async {
@@ -237,6 +242,26 @@ class SuppliesViewModel extends ChangeNotifier {
 
     final res = await repo.getSupplyCarts();
     suppliesCartData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  SupplyCarts? getCartItemBySupplyId(String supplyId) {
+  return suppliesCartData?.supplyCarts?.cast<SupplyCarts?>().firstWhere(
+        (item) => item?.supplyId == supplyId,
+        orElse: () => null,
+      );
+}
+
+  Future<void> increaseQuantityById(BuildContext context, String id, int amount) async {
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "id": id,
+      "amount": amount
+    };
+
+    final res = await repo.increaseQuantityById(variables);
     Loaders.circularHideLoader(context);
 
     notifyListeners();

@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_details_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/increase_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repository.dart';
 
 class SuppliesRepoImpl extends SuppliesRepository {
@@ -23,7 +24,7 @@ class SuppliesRepoImpl extends SuppliesRepository {
 
   @override
   Future<dynamic> increaseQuantityById(variables) async {
-    final res = await http.mutation(increaseQuantityById, variables);
+    final res = await http.mutation(increaseQuantityQuery, variables);
     return res;
   }
 

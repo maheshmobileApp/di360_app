@@ -50,7 +50,32 @@ class ProductDetailCard extends StatelessWidget {
                     height: 40,
                     title: "Add to Cart",
                     prefixIcon: Icons.shopping_cart,
-                    onPressed: () {},
+                    onPressed: () async{
+                      final supplyId = suppliesDetails?.id ?? "";
+                  final variantId =
+                      suppliesDetails?.supplyVariants?.firstOrNull?.id ?? "";
+                  final quantity = vm.getQuantity(supplyId);
+
+                  final cartItem = vm.getCartItemBySupplyId(supplyId);
+
+                  if (cartItem != null) {
+                    await vm.increaseQuantityById(
+                      context,
+                      cartItem.id ?? "",
+                      quantity,
+                    );
+                  } else {
+                    await vm.addToCart(
+                      context,
+                      supplyId,
+                      variantId,
+                      quantity,
+                    );
+                  }
+
+                  vm.resetQuantity(supplyId);
+                  vm.getSuppliesCart(context);
+                    },
                   ),
                   SizedBox(height: 10),
                   Row(
