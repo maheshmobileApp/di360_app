@@ -1,5 +1,7 @@
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/core/api_constants.dart';
+import 'package:di360_flutter/core/base_api_cilent.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/get_business_type.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/signup_res.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/material.dart';
 
 class SignupViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
+  final baseClient = BaseApiClient();
   final SignUpRepositoryImpl signUpRepo = SignUpRepositoryImpl();
 
   List<SubscriptionData>? subscriptionPlanList;
@@ -135,7 +138,7 @@ class SignupViewModel extends ChangeNotifier {
     _selectedIndex = 0;
     try {
       final res = await _http
-          .query(businessQuery, variables: {"type": selectedType?['type']});
+          .query(businessQuery, variables: {"type": selectedType?['type']}, isTokenRequired: false);
       if (res != null) {
         final data = BusinessData.fromJson(res);
         directoryBusinessTypes = data.directoryBusinessTypes;
@@ -148,60 +151,55 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  String getEndPoint(String? type) {
+    if (type == UserRole.professional.value) {
+      return ApiConst.professionalSignUp;
+    } else if (type == UserRole.practice.value) {
+      return ApiConst.practiceSignUp;
+    } else if (type == UserRole.supplier.value) {
+      return ApiConst.supplierSignUp;
+    } else {
+      return "";
+    }
+  }
+
   signUp(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+    final type = selectedType?['type'];
+    final endPoint = getEndPoint(type);
     try {
-      final res = await _http.mutation(singUpQuery, {
-        "signUpObj": {
-          "name": nameController.text,
-          "email": emailController.text.toLowerCase(),
-          "password": passController.text,
-          "directory_business_type_id": businessTypeId,
-          "phone": '$phoneCode${numberController.text}',
-          "aphra_registration_number": ahpraRegistrationNumber.text,
-          "abn_number": abnNumber.text,
-          "type": selectedType?['type'],
-          "state": stateController.text,
-          "business_name": companyNameController.text,
-          "status": selectedType?['type'] == UserRole.supplier.value
-              ? "VERIFICATION_PENDING"
-              : "VERIFICATION_PENDING",
-          "subscription_plan_id": selectedSubscriptionPlanId,
-          "professionType": selectedCategory?.name,
-          "professiontype": selectedCategorys,
-          "payload": {"subscriptionId": selectedSubscriptionPlanId},
-          "tracking_details": "Mobile"
-        }
+      final res = await baseClient.postCall(endPoint, payload: {
+        "name": nameController.text,
+        "email": emailController.text.toLowerCase(),
+        "phone": '$phoneCode${numberController.text}',
+        "professionType": selectedCategory,
+        "profession_type_id": selectedCategory?.id,
+        "directory_business_type_id": businessTypeId,
+        "state": stateController.text,
+        "subscription_plan_id": selectedSubscriptionPlanId,
+        "tracking_details": "Mobile",
+        "password": passController.text,
+        "aphra_registration_number": ahpraRegistrationNumber.text,
+        "business_name": companyNameController.text,
+        "abn_number": abnNumber.text,
+        "source": null,
+        "zipcode": null,
       });
-      Loaders.circularHideLoader(context);
-
-      if (res.containsKey('_error')) {
-        final error = res['_error'].toString();
-        if (error.contains('duplicate key') ||
-            error.contains('clients_email_key')) {
-          scaffoldMessenger(
-              "Email already exists. Please use a different email.");
-        } else {
-          scaffoldMessenger(error);
-        }
-        return;
-      }
-
-      if (res['insert_clients_one'] != null &&
-          res['insert_clients_one'].isNotEmpty) {
-        SignUpData.fromJson(res);
-        /*  selectedType?['type'] == UserRole.supplier.value
-            ? supplierUserAlertPopup(context, onBack: () {
-                navigationService.pushNamedAndRemoveUntil(RouteList.login);
-                clearSignupData();
-              })
-            :*/
+      final response = SignUpRes.fromJson(res);
+      if (response.success == true) {
         showSignupSuccessDialog(context, emailController.text, () {
           navigationService.pushNamedAndRemoveUntil(RouteList.login);
           clearSignupData();
         });
+      } else {
+        scaffoldMessenger(
+            (response.message?.contains("clients_email_key")) ?? false
+                ? "Email already exists. Please use a different email."
+                : "Something went wrong");
       }
+      Loaders.circularHideLoader(context);
     } catch (e) {
       Loaders.circularHideLoader(context);
       scaffoldMessenger("Error: $e");

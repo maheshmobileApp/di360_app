@@ -79,7 +79,7 @@ class CampaignCard extends StatelessWidget {
                   onSelected: (value) => onMenuAction?.call(value,id),
                   itemBuilder: (context) => [
                     _popupItem("Preview", Icons.remove_red_eye, Colors.orange),
-                    if (type == "SMS") _popupItem("Repeat", Icons.repeat, AppColors.blueColor),
+                    //if (type == "SMS") _popupItem("Repeat", Icons.repeat, AppColors.blueColor),
                     _popupItem("Delete", Icons.delete, AppColors.redColor),
                     //_popupItem("View Details", Icons.remove_red_eye, Colors.orange),
                   ],

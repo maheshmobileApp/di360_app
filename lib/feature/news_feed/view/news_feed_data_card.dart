@@ -121,8 +121,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             directoryVM,
                             isLogoAvailable
                                 ? newsfeeds?.communityOwner?.communityId
-                                : getDirectoryIdWithoutUserType(
-                                    newsfeeds),
+                                : getDirectoryIdWithoutUserType(newsfeeds),
                             getDirectoryId(
                                 newsfeeds, newsfeeds?.userRole ?? ""),
                             isLogoAvailable,
@@ -511,7 +510,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           children: [
             Stack(alignment: Alignment.center, children: [
               CircleAvatar(
-                backgroundColor: AppColors.primaryColor,
+                backgroundColor: AppColors.greyLightcolor,
                 radius: 26.5,
                 child: (imageUrl != null && imageUrl.isNotEmpty)
                     ? SizedBox(
@@ -522,7 +521,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 imageUrl: logoAvailable
                                     ? newsfeeds?.communityOwner?.logo?.url ?? ''
                                     : imageUrl,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 errorWidget:
                                     Image.asset(ImageConst.directorProfile))),
                       )
@@ -573,6 +572,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                         newsCommunityVM.listingStatus = "PUBLISHED";
                         newsCommunityVM
                             .setNewsFeedCommunityId(communityId ?? "");
+                        newsCommunityVM.setentryNewsFeedId(newsfeeds?.id ?? "");
                         newsCommunityVM.setProfCommunityId(
                             communityId ?? "", "");
                         newsCommunityVM.getBannerUrl(context);
@@ -743,7 +743,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
           );
         } else {
-          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.cover);
+          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.contain);
         }
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);

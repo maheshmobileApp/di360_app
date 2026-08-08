@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,12 +11,20 @@ class BannersScheduleExpiryPage extends StatelessWidget {
 
   Future<void> _pickScheduleDate(BuildContext context) async {
     final provider = context.read<BannersViewModel>();
-    provider.scheduleDate = null;
+
+    final initialDate = await provider.getFirstAvailableDate(provider.disableMonthsData?.banners ?? []);
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: provider.scheduleDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: initialDate.isBefore(DateTime.now()) ? DateTime.now(): initialDate ,
+      firstDate: initialDate.isBefore(DateTime.now()) ? DateTime.now(): initialDate ,
       lastDate: DateTime(2100),
+      selectableDayPredicate: (date) {
+        return isDateSelectable(
+          date,
+          provider.disableMonthsData?.banners ?? [],
+        );
+      },
     );
 
     if (picked != null) {
@@ -50,6 +59,32 @@ class BannersScheduleExpiryPage extends StatelessWidget {
     if (picked != null) {
       provider.setExpiryDate(picked);
     }
+  }
+
+  DateTime getFirstAvailableDate(List<Banners> banners) {
+    final bookedMonths = banners
+        .map((e) => DateTime.parse(e.scheduleDate!))
+        .map((e) => DateTime(e.year, e.month))
+        .toSet();
+
+    DateTime current = DateTime(DateTime.now().year, DateTime.now().month);
+
+    while (bookedMonths.contains(DateTime(current.year, current.month))) {
+      current = DateTime(current.year, current.month + 1);
+    }
+
+    return DateTime(current.year, current.month, 1);
+  }
+
+  bool isDateSelectable(DateTime date, List<Banners> banners) {
+    for (final banner in banners) {
+      final bannerDate = DateTime.parse(banner.scheduleDate!);
+
+      if (bannerDate.year == date.year && bannerDate.month == date.month) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
@@ -105,7 +140,10 @@ class DatePickerField extends StatelessWidget {
               label,
               style: TextStyles.regular3(color: AppColors.black),
             ),
-            Text("*", style: TextStyles.regular3(color: AppColors.redColor),)
+            Text(
+              "*",
+              style: TextStyles.regular3(color: AppColors.redColor),
+            )
           ],
         ),
         const SizedBox(height: 8),

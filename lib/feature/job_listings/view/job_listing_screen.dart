@@ -147,13 +147,13 @@ class _JobListingScreenState extends State<JobListingScreen>
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () async {
             await navigationService.navigateTo(RouteList.jobCreate);
           },
           child: SvgPicture.asset(ImageConst.addFeed),
-        ));
+        )*/);
   }
 
   String _getEmptyStateMessage(String status) {

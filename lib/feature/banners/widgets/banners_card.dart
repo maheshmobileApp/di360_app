@@ -5,7 +5,7 @@ import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
-import 'package:di360_flutter/widgets/jiffy_widget.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart' as flutter;
@@ -116,7 +116,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(titleVal ?? '', format: 'MMM d, y')
+                  ? DateFormatUtils.formatDate(titleVal?? "")
                   : titleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),
@@ -127,7 +127,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(subTitleVal ?? '', format: 'MMM d, y')
+                  ? DateFormatUtils.formatDate(subTitleVal?? "")
                   : subTitleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),
@@ -195,7 +195,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           ),
 
         // ✅ Only show Edit when NOT EXPIRED, NOT APPROVED, NOT REJECTED
-        if (item?.status != 'REJECTED')
+        /*if (item?.status != 'REJECTED')
           PopupMenuItem(
             value: "Edit",
             child: _buildRow(
@@ -203,10 +203,10 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
               AppColors.blueColor,
               "Edit",
             ),
-          ),
+          ),*/
 
         // ✅ Only EXPIRED → Re-Listing
-        if (item?.status == 'EXPIRED')
+        /*if (item?.status == 'EXPIRED')
           PopupMenuItem(
             value: "Re-Listing",
             child: _buildRow(
@@ -214,7 +214,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
               AppColors.blueColor,
               "Re-Listing",
             ),
-          ),
+          ),*/
 
         // ✅ Delete allowed in PENDING, EXPIRED, REJECTED
         if (item?.status == 'PENDING' ||

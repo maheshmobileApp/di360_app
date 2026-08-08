@@ -1,5 +1,6 @@
 class LocalStorageConst {
   static const String token = "token";
+  static const String refreshToken = 'refreshToken';
   static const String deviceToken = "deviceToken";
   static const String userId = "userId";
   static const String emailId = "emailId";
@@ -25,6 +26,8 @@ class LocalStorageConst {
   static const String jobseekPermission = 'jobseekPermission';
   static const String newsfeedPermission = 'newsfeedPermission';
   static const String bannerPermission = 'bannerPermission';
-  static const String directoryFullAccessPermission = 'directoryFullAccessPermission';
+  static const String directoryFullAccessPermission =
+      'directoryFullAccessPermission';
   static const String myCommunityIds = 'myCommunityIds';
+  static const String permissions = "permissions";
 }

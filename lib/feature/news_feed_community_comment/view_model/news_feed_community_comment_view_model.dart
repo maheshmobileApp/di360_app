@@ -2,8 +2,13 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
+import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/queries/news_feed_community_comment_reply.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/query/add_news_feed_comment_query.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/repository/news_feed_community_comment_repo.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/repository/news_feed_community_comment_repo_impl.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -13,6 +18,7 @@ import 'package:file_picker/file_picker.dart';
 
 class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
+  final NewsFeedCommunityCommentRepo repo = NewsFeedCommunityCommentRepoImpl();
 
   NewsFeedCommunityCommentViewModel() {
     getUserId();
@@ -28,7 +34,6 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   final FocusNode replyFocusNode = FocusNode();
 
   bool isReply = false;
-  String? commentId;
   String? commenterName;
   bool replyCommentUpdate = false;
   bool commentUpdate = false;
@@ -36,6 +41,13 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   String? hintText;
   List<PlatformFile> selectedFiles = [];
   List<CommentsAttachments> existingAttachments = [];
+  Map<String, bool> expandedReplies = {};
+  NewsFeedCommentData? newsFeedReplies;
+  Map<String, List<NewsFeedsComments>> repliesDataCache = {};
+
+  String? replyToId; // used in insert API
+  String? refreshParentId; // used in getReplies()
+  String? selectedCommentId;
 
   @override
   void dispose() {
@@ -49,16 +61,26 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateIsReply(bool value, String commentsId, String commenteName,
-      {bool? isedit, bool? commentupdate}) {
+  void updateIsReply(
+    bool value,
+    String replyToCommentId,
+    String commenterName, {
+    String? refreshId,
+    bool? isedit,
+    bool? commentupdate,
+  }) {
     isReply = value;
-    commentId = commentsId;
-    commenterName = commenteName;
+    selectedCommentId = replyToCommentId;
+
+    replyToId = replyToCommentId;
+
+    refreshParentId = refreshId ?? replyToCommentId;
+
+    this.commenterName = commenterName;
+
     replyCommentUpdate = isedit ?? false;
     commentUpdate = commentupdate ?? false;
-    if (!value && isedit == false && commentupdate == false) {
-      existingAttachments.clear();
-    }
+
     notifyListeners();
   }
 
@@ -129,9 +151,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   addCommentTheFeed(BuildContext context, String feedId) async {
     print("*****************addCommentfee");
     await getUserId();
-    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
@@ -139,24 +159,37 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       final uploadedFiles = await _getUploadedFiles();
 
       var res = await _http.mutation(addNewsFeedCommentQuery, {
-        "addCommentsData": {
+        "object": {
+          "comment_text": commentController.text,
+          "news_feeds_id": feedId,
+          "parent_comment_id": null,
           "created_by_id": userId,
-          if (UserRole.practice.value == userType) "dental_practice_id": practiceId,
-          if (UserRole.professional.value == userType) "dental_professional_id": professionId,
+          "role_type": userType,
+          "attachments": uploadedFiles,
+          if (UserRole.practice.value == userType)
+            "dental_practice_id": practiceId,
+          if (UserRole.professional.value == userType)
+            "dental_professional_id": professionId,
           if (UserRole.admin.value == userType) "dental_admin_id": adminId,
-          if (UserRole.supplier.value == userType) "dental_supplier_id": supplierId,
-          "commenter_name": name,
-          "comment_Pro_Img": img,
-          "comments": commentController.text,
-          "comments_attachments": uploadedFiles,
-          "news_feeds_id": feedId
+          if (UserRole.supplier.value == userType)
+            "dental_supplier_id": supplierId,
         }
       });
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
+        resetCommentState();
         await getNewsfeedComment(context, feedId);
+        final comment = newsFeedComments?.newsFeedsComments
+            ?.cast<NewsFeedsComments?>()
+            .firstWhere(
+              (e) => e?.id == replyToId,
+              orElse: () => null,
+            );
+
+        if (comment != null) {
+          comment.repliesAggregate?.aggregate?.count =
+              (comment.repliesAggregate?.aggregate?.count ?? 0) + 1;
+        }
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
@@ -172,22 +205,23 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     try {
       final uploadedFiles = await _getUploadedFiles();
       final existingAsMap = existingAttachments
-          .map((a) => {"url": a.url, "name": a.name, "type": a.type, "size": a.size})
+          .map((a) =>
+              {"url": a.url, "name": a.name, "type": a.type, "size": a.size})
           .toList();
       final allAttachments = [...existingAsMap, ...uploadedFiles];
-      var res = await _http.mutation(updateCommentQuery, {
-        "id": commentId,
-        "data": {
-          "comments": commentController.text,
-          "comments_attachments": allAttachments
+      final variables = {
+        "id": selectedCommentId,
+        "_set": {
+          "comment_text": commentController.text,
+          "attachments": allAttachments
         }
-      });
+      };
+      var res = await _http.mutation(updateCommentQuery, variables);
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
-        existingAttachments.clear();
+        resetCommentState();
         await getNewsfeedComment(context, feedId);
+        resetCommentState();
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -207,7 +241,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -219,7 +253,22 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  NewsFeedCommentData? newsFeedComments;
   Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"feedId": feedId, "limit": 10, "offset": 0};
+    try {
+      var res = await repo.getComments(variables);
+      newsFeedComments = res;
+    } catch (e) {
+      print("Error fetching comments: $e");
+      scaffoldMessenger(e.toString());
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  /*Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
     try {
       var res = await _http.query(getNewsfeedQuery, variables: {'id': feedId});
       if (res != null) {
@@ -234,7 +283,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
-  }
+  }*/
 
   getUserId() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -268,57 +317,96 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
   replyCommentTheFeed(BuildContext context, String feedId) async {
     await getUserId();
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+
     Loaders.circularShowLoader(context);
     try {
       final uploadedFiles = await _getUploadedFiles();
-      var res = await _http.mutation(replyCommentQuery, {
-        "addReplyData": {
-          "dental_practice_id": practiceId ?? null,
-          "dental_professional_id": professionId ?? null,
-          "dental_supplier_id": supplierId ?? null,
+      final variables = {
+        "object": {
+          "comment_text": commentController.text,
           "news_feeds_id": feedId,
-          "reply_text": "@$commenterName ${commentController.text}",
-          "dental_admin_id": adminId ?? null,
-          "comment_id": commentId,
-          "reply_id": commentId,
-          "liked_count": 0,
-          "reply_attachments": uploadedFiles
+          "parent_comment_id": replyToId,
+          "created_by_id": userId,
+          "role_type": userType,
+          "attachments": uploadedFiles,
+          if (UserRole.practice.value == userType)
+            "dental_practice_id": practiceId,
+          if (UserRole.professional.value == userType)
+            "dental_professional_id": professionId,
+          if (UserRole.admin.value == userType) "dental_admin_id": adminId,
+          if (UserRole.supplier.value == userType)
+            "dental_supplier_id": supplierId,
         }
-      });
+      };
+      var res =
+          await _http.mutation(replyCommunityNewsFeedCommentQuery, variables);
+
+      print("**************$variables");
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
-        await getNewsfeedComment(context, feedId);
+        final parentId = refreshParentId!;
+
+        resetCommentState();
+
+        repliesDataCache.remove(parentId);
+
+        await loadReplies(
+          context,
+          parentId,
+          forceRefresh: true,
+        );
+
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
-    } catch (e) {
+    } catch (e, s) {
       Loaders.circularHideLoader(context);
-      print("Error removing like: $e");
+
+      print(e);
+      print(s);
     }
 
     notifyListeners();
   }
 
+  
   updateTheReplyCommentTheFeed(BuildContext context, String feedId) async {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
       final uploadedFiles = await _getUploadedFiles();
-      var res = await _http.mutation(updateReplyCommentQuery, {
-        "id": commentId,
-        "data": {
-          "reply_text": "@$commenterName ${commentController.text}",
-          "reply_attachments": uploadedFiles
+      final variables = {
+        "id": selectedCommentId,
+        "_set": {
+          "comment_text": commentController.text,
+          "attachments": uploadedFiles
         }
-      });
+      };
+      /*{
+    "id": "4af71a66-11e5-453b-91c4-f73a4669f899",
+    "_set": {
+        "comment_text": "hi update",
+        "attachments": null
+    }
+} */
+      print("********ReplyComment Update ****$variables");
+      var res = await _http.mutation(updateReplyCommentQuery, variables);
 
       if (res.isNotEmpty) {
-        commentController.clear();
-        selectedFiles.clear();
+        final parentId = refreshParentId!;
+
+        resetCommentState();
+
         await getNewsfeedComment(context, feedId);
+
+        await loadReplies(
+          context,
+          parentId,
+          forceRefresh: true,
+        );
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -331,67 +419,166 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTheReplyComment(BuildContext context, String id, String feedId) async {
-    await getUserId();
+  void EditReplyComment(NewsFeedsComments? comments) {
+    FocusScope.of(navigatorKey.currentContext!).requestFocus(replyFocusNode);
+    final comment = comments?.commentText ?? '';
+    commentController.text = comment;
+    setEditAttachments(comments?.commentsAttachments);
+    selectedCommentId = comments?.id;
+
+    updateIsReply(false, comments?.id ?? '', '', isedit: true, refreshId : comments?.parentCommentId);
+  }
+
+  Future<void> deleteTheReplyComment(
+    BuildContext context,
+    String id,
+    String feedId,
+    String parentCommentId,
+  ) async {
     Loaders.circularShowLoader(context);
-    try {
-      var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
+    var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
 
-      if (res.isNotEmpty) {
-        commentController.clear();
-        getNewsfeedComment(context, feedId);
-        Loaders.circularHideLoader(context);
-      } else {
-        Loaders.circularHideLoader(context);
-      }
-    } catch (e) {
+    if (res.isNotEmpty) {
+      commentController.clear();
+      repliesDataCache.remove(id);
+      expandedReplies.remove(id);
+
+      repliesDataCache.remove(parentCommentId);
+
+      await loadReplies(
+        context,
+        parentCommentId,
+        forceRefresh: true,
+      );
+      repliesDataCache.remove(parentCommentId);
+
+      await loadReplies(
+        context,
+        parentCommentId,
+        forceRefresh: true,
+      );
       Loaders.circularHideLoader(context);
-      print("Error removing like: $e");
+    } else {
+      Loaders.circularHideLoader(context);
     }
+  }
+
+  void toggleReplyExpansion(String commentId) {
+    expandedReplies[commentId] = !(expandedReplies[commentId] ?? false);
+    notifyListeners();
+  }
+
+  Future<void> handleReplyExpansion(
+    BuildContext context,
+    String commentId,
+  ) async {
+    final isExpanded = expandedReplies[commentId] ?? false;
+
+    if (isExpanded) {
+      expandedReplies[commentId] = false;
+      notifyListeners();
+      return;
+    }
+
+    if (!repliesDataCache.containsKey(commentId)) {
+      await loadReplies(context, commentId);
+    }
+
+    expandedReplies[commentId] = true;
+    notifyListeners();
+  }
+
+  Future<void> loadReplies(
+    BuildContext context,
+    String parentId, {
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh && repliesDataCache.containsKey(parentId)) {
+      expandedReplies[parentId] = true;
+      notifyListeners();
+      return;
+    }
+
+    final res = await repo.getReplies({
+      "parentId": parentId,
+      "limit": 10,
+      "offset": 0,
+    });
+
+    repliesDataCache[parentId] = res.newsFeedsComments ?? [];
+
+    expandedReplies[parentId] = true;
+
+    notifyListeners();
+  }
+
+  void collapseReplies(String id) {
+    expandedReplies[id] = false;
+
+    notifyListeners();
+  }
+
+  Future<void> toggleReplies(
+    BuildContext context,
+    String id,
+  ) async {
+    if (expandedReplies[id] ?? false) {
+      collapseReplies(id);
+    } else {
+      await loadReplies(context, id);
+    }
+  }
+
+  void resetCommentState() {
+    isReply = false;
+    replyToId = null;
+    refreshParentId = null;
+    selectedCommentId = null;
+
+    commentUpdate = false;
+    replyCommentUpdate = false;
+
+    commentController.clear();
+    selectedFiles.clear();
+    existingAttachments.clear();
 
     notifyListeners();
   }
 }
 
-const String deleteCommentQuery = '''
-mutation DeleteNewsfeedComments(\$id: uuid!) {
-  delete_news_feeds_comments_by_pk(id: \$id) {
-    id
-    __typename
-  }
-  delete_news_feeds_comments_replys(where: {comment_id: {_eq: \$id}}) {
-    affected_rows
-    __typename
-  }
-}
-''';
-
-const String updateCommentQuery = '''
-mutation UpdateNewsfeedComments(\$id: uuid!, \$data: news_feeds_comments_set_input!) {
-  update_news_feeds_comments_by_pk(pk_columns: {id: \$id}, _set: \$data) {
+const String deleteCommentQuery = r'''
+mutation deleteRecord($id: uuid!) {
+  delete_news_feeds_comments_by_pk(id: $id) {
     id
     __typename
   }
 }
 ''';
 
-const String updateReplyCommentQuery = '''
-mutation updateNewsfeedReply(\$id: uuid!, \$data: news_feeds_comments_replys_set_input!) {
-  update_news_feeds_comments_replys_by_pk(pk_columns: {id: \$id}, _set: \$data) {
+const String updateCommentQuery = r'''
+mutation EditComment($id: uuid!, $_set: news_feeds_comments_set_input!) {
+  update_news_feeds_comments_by_pk(pk_columns: {id: $id}, _set: $_set) {
     id
+    comment_text
     __typename
   }
 }
 ''';
 
-const String deleteReplyCommentQuery = '''
-mutation deleteNewsfeedReply(\$id: uuid!) {
-  delete_news_feeds_comments_replys_by_pk(id: \$id) {
+const String updateReplyCommentQuery = r'''
+mutation EditComment($id: uuid!, $_set: news_feeds_comments_set_input!) {
+  update_news_feeds_comments_by_pk(pk_columns: {id: $id}, _set: $_set) {
     id
+    comment_text
     __typename
   }
-  delete_news_feeds_comments_replys(where: {reply_id: {_eq: \$id}}) {
-    affected_rows
+}
+''';
+
+const String deleteReplyCommentQuery = r'''
+mutation deleteRecord($id: uuid!) {
+  delete_news_feeds_comments_by_pk(id: $id) {
+    id
     __typename
   }
 }
@@ -428,59 +615,6 @@ final String commentQuery = '''
     __typename
       }
     }
-  ''';
-
-const String replyCommentQuery = '''
-  mutation addNewsFeedCommentsReplys(\$addReplyData: news_feeds_comments_replys_insert_input!) {
-  insert_news_feeds_comments_replys_one(object: \$addReplyData) {
-    id
-    admin_user {
-      id
-      name
-      email
-      profile_image
-      __typename
-    }
-    dental_supplier {
-      name
-      logo
-      directories {
-        id
-        __typename
-      }
-      __typename
-    }
-    dental_practice {
-      name
-      logo
-      directories {
-        id
-        __typename
-      }
-      __typename
-    }
-    dental_professional {
-      name
-      profile_image
-      directories {
-        id
-        __typename
-      }
-      __typename
-    }
-    comment_id
-    reply_text
-    news_feeds_id
-    dental_supplier_id
-    dental_professional_id
-    dental_practice_id
-    dental_admin_id
-    liked_count
-    reply_id
-    reply_attachments
-    __typename
-  }
-}
   ''';
 
 const String getNewsfeedQuery = '''

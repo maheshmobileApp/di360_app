@@ -1,346 +1,133 @@
+class GetBannersCount {
+  final BannerCountData? data;
 
-class getBannersCount {
-  BannersCountData? data;
+  GetBannersCount({this.data});
 
-  getBannersCount({this.data});
-
-  getBannersCount.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null
-        ? new BannersCountData.fromJson(json['data'])
-        : null;
+  factory GetBannersCount.fromJson(Map<String, dynamic> json) {
+    return GetBannersCount(
+      data: json['data'] != null
+          ? BannerCountData.fromJson(json['data'] as Map<String, dynamic>)
+          : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
+    return {
+      'data': data?.toJson(),
+    };
   }
 }
 
-class BannersCountData {
-  ALL? aLL;
-  Approved? approved;
-  Rejected? rejected;
-  Pending? pending;
-  Expired? expired;
-  Scheduled? scheduled;
-  Draft? draft;
+class BannerCountData {
+  final All? all;
+  final All? draft;
+  final All? pending;
+  final All? active;
+  final All? inactive;
+  final All? scheduled;
+  final All? rejected;
+  final All? expired;
 
-  BannersCountData(
-      {this.aLL,
-      this.approved,
-      this.rejected,
-      this.pending,
-      this.expired,
-      this.scheduled,
-      this.draft});
+  BannerCountData({
+    this.all,
+    this.draft,
+    this.pending,
+    this.active,
+    this.inactive,
+    this.scheduled,
+    this.rejected,
+    this.expired,
+  });
 
-  BannersCountData.fromJson(Map<String, dynamic> json) {
-    aLL = json['ALL'] != null
-        ? ALL.fromJson(json['ALL'] as Map<String, dynamic>)
-        : null;
-    approved = json['approved'] != null
-        ? Approved.fromJson(json['approved'] as Map<String, dynamic>)
-        : null;
-    rejected = json['rejected'] != null
-        ? Rejected.fromJson(json['rejected'] as Map<String, dynamic>)
-        : null;
-    pending = json['pending'] != null
-        ? Pending.fromJson(json['pending'] as Map<String, dynamic>)
-        : null;
-    expired = json['expired'] != null
-        ? Expired.fromJson(json['expired'] as Map<String, dynamic>)
-        : null;
-    scheduled = json['scheduled'] != null
-        ? Scheduled.fromJson(json['scheduled'] as Map<String, dynamic>)
-        : null;
-    draft = json['draft'] != null
-        ? Draft.fromJson(json['draft'] as Map<String, dynamic>)
-        : null;
+  factory BannerCountData.fromJson(Map<String, dynamic> json) {
+    return BannerCountData(
+      all: json['all'] != null
+          ? All.fromJson(json['all'] as Map<String, dynamic>)
+          : null,
+      draft: json['draft'] != null
+          ? All.fromJson(json['draft'] as Map<String, dynamic>)
+          : null,
+      pending: json['pending'] != null
+          ? All.fromJson(json['pending'] as Map<String, dynamic>)
+          : null,
+      active: json['active'] != null
+          ? All.fromJson(json['active'] as Map<String, dynamic>)
+          : null,
+      inactive: json['inactive'] != null
+          ? All.fromJson(json['inactive'] as Map<String, dynamic>)
+          : null,
+      scheduled: json['scheduled'] != null
+          ? All.fromJson(json['scheduled'] as Map<String, dynamic>)
+          : null,
+      rejected: json['rejected'] != null
+          ? All.fromJson(json['rejected'] as Map<String, dynamic>)
+          : null,
+      expired: json['expired'] != null
+          ? All.fromJson(json['expired'] as Map<String, dynamic>)
+          : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aLL != null) {
-      data['ALL'] = this.aLL!.toJson();
-    }
-    if (this.approved != null) {
-      data['approved'] = this.approved!.toJson();
-    }
-    if (this.rejected != null) {
-      data['rejected'] = this.rejected!.toJson();
-    }
-    if (this.pending != null) {
-      data['pending'] = this.pending!.toJson();
-    }
-    if (this.expired != null) {
-      data['expired'] = this.expired!.toJson();
-    }
-    if (this.scheduled != null) {
-      data['scheduled'] = this.scheduled!.toJson();
-    }
-    if (this.draft != null) {
-      data['draft'] = this.draft!.toJson();
-    }
-    return data;
+    return {
+      'all': all?.toJson(),
+      'draft': draft?.toJson(),
+      'pending': pending?.toJson(),
+      'active': active?.toJson(),
+      'inactive': inactive?.toJson(),
+      'scheduled': scheduled?.toJson(),
+      'rejected': rejected?.toJson(),
+      'expired': expired?.toJson(),
+    };
   }
 }
 
-class ALL {
-  Aggregate? aggregate;
+class All {
+  final Aggregate? aggregate;
+  final String typename;
 
-  ALL({this.aggregate});
+  All({
+    this.aggregate,
+    required this.typename,
+  });
 
-  ALL.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new Aggregate.fromJson(json['aggregate'])
-        : null;
+  factory All.fromJson(Map<String, dynamic> json) {
+    return All(
+      aggregate: json['aggregate'] != null
+          ? Aggregate.fromJson(json['aggregate'] as Map<String, dynamic>)
+          : null,
+      typename: json['__typename']?.toString() ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
+    return {
+      'aggregate': aggregate?.toJson(),
+      '__typename': typename,
+    };
   }
 }
 
 class Aggregate {
-  int? count;
+  final int count;
+  final String typename;
 
-  Aggregate({this.count});
+  Aggregate({
+    required this.count,
+    required this.typename,
+  });
 
-  Aggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
+  factory Aggregate.fromJson(Map<String, dynamic> json) {
+    return Aggregate(
+      count: json['count'] ?? 0,
+      typename: json['__typename']?.toString() ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
-  }
-}
-
-class Approved {
-  ApprovedAggregate? aggregate;
-
-  Approved({this.aggregate});
-
-  Approved.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new ApprovedAggregate.fromJson(json['aggregate'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
-  }
-}
-
-class ApprovedAggregate {
-  int? count;
-
-  ApprovedAggregate({this.count});
-
-  ApprovedAggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
-  }
-}
-
-//rejected
-class Rejected {
-  RejectedAggregate? aggregate;
-
-  Rejected({this.aggregate});
-
-  Rejected.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new RejectedAggregate.fromJson(json['aggregate'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
-  }
-}
-
-class RejectedAggregate {
-  int? count;
-
-  RejectedAggregate({this.count});
-
-  RejectedAggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
-  }
-}
-
-//pendind
-class Pending {
-  PendingAggregate? aggregate;
-
-  Pending({this.aggregate});
-
-  Pending.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new PendingAggregate.fromJson(json['aggregate'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
-  }
-}
-
-class PendingAggregate {
-  int? count;
-
-  PendingAggregate({this.count});
-
-  PendingAggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
-  }
-}
-
-//expired
-class Expired {
-  ExpiredAggregate? aggregate;
-
-  Expired({this.aggregate});
-
-  Expired.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new ExpiredAggregate.fromJson(json['aggregate'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
-  }
-}
-
-class ExpiredAggregate {
-  int? count;
-
-  ExpiredAggregate({this.count});
-
-  ExpiredAggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
-  }
-}
-
-//schudule
-class Scheduled {
-  ScheduledAggregate? aggregate;
-
-  Scheduled({this.aggregate});
-
-  Scheduled.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new ScheduledAggregate.fromJson(json['aggregate'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
-  }
-}
-
-class ScheduledAggregate {
-  int? count;
-
-  ScheduledAggregate({this.count});
-
-  ScheduledAggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
-  }
-}
-
-//Draft
-class Draft {
-  DraftAggregate? aggregate;
-
-  Draft({this.aggregate});
-
-  Draft.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new DraftAggregate.fromJson(json['aggregate'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
-  }
-}
-
-class DraftAggregate {
-  int? count;
-
-  DraftAggregate({this.count});
-
-  DraftAggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
+    return {
+      'count': count,
+      '__typename': typename,
+    };
   }
 }
