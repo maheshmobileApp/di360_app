@@ -138,7 +138,7 @@ class SignupViewModel extends ChangeNotifier {
     _selectedIndex = 0;
     try {
       final res = await _http
-          .query(businessQuery, variables: {"type": selectedType?['type']});
+          .query(businessQuery, variables: {"type": selectedType?['type']}, isTokenRequired: false);
       if (res != null) {
         final data = BusinessData.fromJson(res);
         directoryBusinessTypes = data.directoryBusinessTypes;
