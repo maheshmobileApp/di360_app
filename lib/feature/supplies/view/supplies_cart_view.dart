@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/supplies/widgets/app_button.dart';
 import 'package:di360_flutter/feature/supplies/widgets/cart_summary_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_cart_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +63,7 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
               "Cart",
               style: TextStyles.bold3(),
             )),
-        body: Padding(
+        body: supplierEntries.length == 0 ? Center(child: Text("No Items", style: TextStyles.medium2(),)): Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ListView(controller: scrollController, children: [
               if (supplierEntries.length > 1)
@@ -173,7 +174,19 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                 value ?? false,
                               );
                             },
-                            onMenuSelected: (action) {},
+                            onMenuSelected: (action) async {
+                              switch (action) {
+                                case 'delete':
+                                  showAlertMessage(context,
+                                      "Are you really want to delete this cart item ?",
+                                      no: "No", yes: "Yes", onBack: () async {
+                                    await vm.deleteCartItem(
+                                        context, item.id ?? "");
+                                  });
+
+                                  break;
+                              }
+                            },
                             onDecrease: () async {
                               await vm.decreaseQuantityById(
                                   context, item.id ?? "");
@@ -210,7 +223,11 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                   );
                 },
               ),
-              CartSummaryCard(totalSuppliers: supplierEntries.length, totalActiveItems: cartItems.length, totalSelectedItems: vm.selectedProducts.length,)
+              CartSummaryCard(
+                totalSuppliers: supplierEntries.length,
+                totalActiveItems: cartItems.length,
+                totalSelectedItems: vm.selectedProducts.length,
+              )
             ])));
   }
 }

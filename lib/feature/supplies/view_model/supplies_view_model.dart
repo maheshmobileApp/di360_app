@@ -1,6 +1,7 @@
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -280,6 +281,19 @@ class SuppliesViewModel extends ChangeNotifier {
 
     final res = await repo.decreaseQuantityById(variables);
     await getSuppliesCart(context);
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> deleteCartItem(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": id};
+    print("****************$variables");
+
+    final res = await repo.deleteCartItem(variables);
+    await getSuppliesCart(context);
+    navigationService.goBack();
     Loaders.circularHideLoader(context);
 
     notifyListeners();

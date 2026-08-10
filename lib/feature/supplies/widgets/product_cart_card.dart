@@ -119,6 +119,7 @@ class ProductCartCard extends StatelessWidget {
                 ),
 
                 PopupMenuButton<String>(
+                  color : AppColors.whiteColor,
                   onSelected: onMenuSelected,
                   itemBuilder: (_) => const [
                     PopupMenuItem(
@@ -127,12 +128,12 @@ class ProductCartCard extends StatelessWidget {
                         children: [
                           Icon(Icons.favorite_border),
                           SizedBox(width: 10),
-                          Text("Save for Later"),
+                          Text("Move to Wishlist"),
                         ],
                       ),
                     ),
                     PopupMenuItem(
-                      value: "remove",
+                      value: "delete",
                       child: Row(
                         children: [
                           Icon(
@@ -140,7 +141,7 @@ class ProductCartCard extends StatelessWidget {
                             color: Colors.red,
                           ),
                           SizedBox(width: 10),
-                          Text("Remove"),
+                          Text("Delete"),
                         ],
                       ),
                     ),

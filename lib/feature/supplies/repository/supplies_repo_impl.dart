@@ -3,6 +3,7 @@ import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/decrease_quantity_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/delete_cart_item.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_details_query.dart';
@@ -16,7 +17,7 @@ class SuppliesRepoImpl extends SuppliesRepository {
     final res = await http.query(getSupplies, variables: variables);
     return getSupplyData.fromJson(res);
   }
-  
+
   @override
   Future<dynamic> addToCart(variables) async {
     final res = await http.mutation(addToCartQuery, variables);
@@ -43,7 +44,15 @@ class SuppliesRepoImpl extends SuppliesRepository {
 
   @override
   Future<SupplyCartData> getSupplyCarts() async {
-    final res = await http.query(getSuppliesCartQuery, );
+    final res = await http.query(
+      getSuppliesCartQuery,
+    );
     return SupplyCartData.fromJson(res);
+  }
+
+  @override
+  Future<dynamic> deleteCartItem(variables) async {
+    final res = await http.mutation(deleteCartItemQuery, variables);
+    return res;
   }
 }
