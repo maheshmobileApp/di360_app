@@ -110,7 +110,7 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringList(LocalStorageConst.permissions,
               loginData.navigation?.permissions ?? []);
 
-          if (loginData.type == UserRole.admin.name) {
+          /*if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {
               homeNavigation(context);
             } else {
@@ -118,6 +118,12 @@ class LoginViewModel extends ChangeNotifier {
             }
           } else {
             homeNavigation(context);
+          }*/
+
+          if (loginData.profileCompleted == true) {
+            homeNavigation(context);
+          } else {
+            viewProfileHandle(context);
           }
 
           // Background tasks (parallel)

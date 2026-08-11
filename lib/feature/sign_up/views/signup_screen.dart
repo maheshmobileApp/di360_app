@@ -8,6 +8,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
@@ -188,10 +189,16 @@ class _SignupScreenState extends State<SignupScreen>
                     addVertical(80),
                     Center(
                       child: AppButton(
-                        onTap: () {
+                        onTap: () async {
                           if (formKey.currentState!.validate()) {
-                            viewModel.selectedCategorys = null;
-                            viewModel.businessType(context);
+                            await viewModel.checkMail(context);
+                            if (viewModel.checkMailData?.clients?.isEmpty ==
+                                true) {
+                              viewModel.selectedCategorys = null;
+                              viewModel.businessType(context);
+                            } else {
+                              scaffoldMessenger("Email is already registered");
+                            }
                           }
                         },
                         text: "Create new account",
