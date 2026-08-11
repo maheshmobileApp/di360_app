@@ -184,7 +184,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
       },
       itemBuilder: (context) => [
         // ✅ PENDING, APPROVED, EXPIRED → View (except REJECTED)
-        if (item?.status != 'REJECTED')
+        //if (item?.status != 'REJECTED')
           PopupMenuItem(
             value: "View",
             child: _buildRow(

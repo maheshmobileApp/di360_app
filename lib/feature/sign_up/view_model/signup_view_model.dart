@@ -190,6 +190,7 @@ class SignupViewModel extends ChangeNotifier {
         "profession_type_id": selectedCategory?.id,
         "directory_business_type_id": businessTypeId,
         "state": stateController.text,
+        "subscription_plan_id": selectedSubscriptionPlanId,
         "tracking_details": "Mobile",
         "password": passController.text,
         "aphra_registration_number": ahpraRegistrationNumber.text,
