@@ -56,13 +56,13 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
   }
 
   @override
-  Future<DentalPracticesByPk?> getPracticeViewProfileData() async {
+  Future<DentalSuppliersByPk?> getPracticeViewProfileData() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {"id": userId};
     final res =
         await http.query(practiceViewProfileQuery, variables: variables);
-    final parsed = PracticeProfileData.fromJson(res);
-    return parsed.dentalPracticesByPk;
+    final parsed = DentalSuppliersByPk.fromJson(res);
+    return parsed;
   }
 
   @override

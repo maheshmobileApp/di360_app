@@ -144,8 +144,8 @@ class LoginApi {
         : null;
     subType = json['sub_type'];
     ownerId = json['owner_id'];
-    professiontype = json['professiontype'] != null
-        ? new Professiontype.fromJson(json['professiontype'])
+    professiontype = json['professionType'] != null
+        ? new Professiontype.fromJson(json['professionType'])
         : null;
     expiresAt = json['expiresAt'];
     subscription = json['subscription'] != null
@@ -193,7 +193,7 @@ class LoginApi {
     data['sub_type'] = this.subType;
     data['owner_id'] = this.ownerId;
     if (this.professiontype != null) {
-      data['professiontype'] = this.professiontype!.toJson();
+      data['professionType'] = this.professiontype!.toJson();
     }
     data['expiresAt'] = this.expiresAt;
      if (this.subscription != null) {

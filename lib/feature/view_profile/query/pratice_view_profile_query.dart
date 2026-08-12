@@ -1,85 +1,33 @@
 const String practiceViewProfileQuery = r'''
-query practiceDisplay($id: uuid!) {
+query practiceDisplayV2($id: uuid!) {
   dental_practices_by_pk(id: $id) {
-    abn_number
-    address
-    city
-    zipcode
+    id
+    first_name
+    last_name
+    name
+    email
+    phone
     state
-    country
+    professionType
+    business_name
+    business_email
+    business_phone
+    fax_number
+    abn_number
+    profile_image
+    directory_business_type_id
+    middle_name
+    address
     address_line_one
     address_line_two
-    alt_email
-    alt_phone
-    bank_details
-    blocked_at
-    blocked_reason
-    business_email
-    business_name
-    business_phone
-    contact_person_first_name
-    contact_person_gender
-    contact_person_last_name
-    contact_person_middle_name
-    contact_person_profile_image
-    created_at
-    credits
-    defaultAddress
-    directory_category_id
-    directory_column_other_name
-    driving_licence
-    email
-    email_verification_expiry_at
-    email_verification_key
-    email_verification_required
-    email_verified
-    fax_number
-    first_name
-    id
-    last_name
-    logo
-    middle_name
-    name
-    passcode
-    password
-    password_reset_expiry_at
-    password_reset_key
-    password_reset_required
-    payment_completed
-    phone
-    mobile_number
+    city
+    zipcode
+    land_mark
     website_link
-    phone_verification_expiry_at
-    phone_verification_key
-    phone_verification_required
-    phone_verified
-    present_subscription_id
-    pro_details_abn_acn_number
-    pro_details_aphra_registration_number
-    pro_details_driving_license_image
-    pro_details_other_attachments
-    pro_details_provider_number
-    profession_type
-    professiontype
+    directory_category_id
     profile_completed
-    profile_image
-    second_hand
-    secondary_contact
-    sell_products
-    status
-    subsciption_plan_id
-    tga_number
-    timings
-    type
     directories {
       id
-      name
-      email
-      phone
-      profile_image
-      address
-      profession_type
-      professiontype
       __typename
     }
     __typename

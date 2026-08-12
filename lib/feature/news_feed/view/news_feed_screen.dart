@@ -49,7 +49,6 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
 
   @override
   Widget build(BuildContext context) {
-    final categoryVM = Provider.of<AddNewsFeedViewModel>(context);
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final addNewsFeedVM = Provider.of<AddNewsFeedViewModel>(context);
     return Scaffold(
@@ -196,7 +195,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
                 borderRadius: BorderRadius.circular(100)),
             backgroundColor: AppColors.primaryColor,
             onPressed: () async {
-              await categoryVM.fetchNewsfeedCategories();
+              await addNewsFeedVM.fetchNewsfeedCategories();
               addNewsFeedVM.clearFeedNews();
               addNewsFeedVM.getUserType();
               addNewsFeedVM.setEnableComments(true);

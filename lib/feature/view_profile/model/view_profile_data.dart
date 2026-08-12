@@ -143,8 +143,8 @@ class DentalSuppliersByPk {
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
     professionType = json['profession_type'];
-    professiontype = json['professiontype'] != null
-        ? new DirectoryCategories.fromJson(json['professiontype'])
+    professiontype = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
         : null;
     tgaNumber = json['tga_number'];
     secondHand = json['second_hand'];
@@ -197,7 +197,7 @@ class DentalSuppliersByPk {
     data['alt_email'] = this.altEmail;
     data['alt_phone'] = this.altPhone;
     data['profession_type'] = this.professionType;
-    data['professiontype'] = this.professiontype!.toJson();
+    data['professionType'] = this.professiontype!.toJson();
     data['tga_number'] = this.tgaNumber;
     data['second_hand'] = this.secondHand;
     data['sell_products'] = this.sellProducts;
