@@ -39,11 +39,12 @@ class BaseApiClient {
     }
   }
 
-  Future<dynamic> postCall(String endPoint, {dynamic payload}) async {
+  Future<dynamic> postCall(String endPoint, {dynamic payload, bool isTokenRequired = false}) async {
     final url = '${AppConfig.serverBaseUrl}$endPoint';
-    //final url = "https://boastful-mayra-acerbically.ngrok-free.dev/api/v1/auth/login-v2";
+    final token = await LocalStorage.getStringVal(LocalStorageConst.token);
 
     var headersPayload = {
+      if (isTokenRequired)'Authorization': 'Bearer $token',
       'x-client-type': 'mobile',
     };
 

@@ -557,30 +557,22 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       }
     }
 
-    final Map<String, dynamic> fields = {
+    final variables = {
       "description": descriptionController.text,
       "category_type": selectedCategory?.id,
-      "community_type": "COMMUNITY_USER",
       "video_url": videoLinkController.text,
       "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
       "user_role": type,
       "user_id": userId,
-      "status": (type == UserRole.professional.value) ? "PENDING" : "PUBLISHED",
-      "feed_type": "NEWSFEED",
+      if (type == UserRole.supplier.value) "dental_supplier_id": userId,
+      if (type == UserRole.professional.value) "dental_professional_id": userId,
+      "status": "",
+      if (type == UserRole.supplier.value) "comments_enabled": enableComments,
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
-      if (type == UserRole.supplier.value) "comments_enabled": enableComments,
+      "newsfeedType": "COMMUNITY_NEWSFEED",
     };
-
-    if (type == UserRole.professional.value) {
-      fields["dental_professional_id"] = userId;
-    } else {
-      fields["dental_supplier_id"] = userId;
-    }
-
-    final variables = {"fields": fields};
-    print("**********addNFCommunity: $variables");
 
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
