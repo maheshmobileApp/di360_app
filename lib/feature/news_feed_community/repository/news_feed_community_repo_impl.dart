@@ -1,3 +1,5 @@
+import 'package:di360_flutter/core/api_constants.dart';
+import 'package:di360_flutter/core/base_api_cilent.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
@@ -23,6 +25,7 @@ import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_c
 
 class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
   final HttpService http = HttpService();
+  final baseClient = BaseApiClient();
 
   @override
   Future<NewsFeedCommunityData> getAllNewsFeeds(dynamic variables) async {
@@ -60,7 +63,8 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
 
   @override
   Future addNewsFeed(variables) async {
-    final res = await http.mutation(addNeedFeedQuery, variables);
+    final endpoint = ApiConst.newsfeedCreation;
+    final res = await baseClient.postCall(endpoint, payload : variables, isTokenRequired: true);
     return res;
   }
 
