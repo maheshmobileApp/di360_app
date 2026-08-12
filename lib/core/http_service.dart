@@ -27,6 +27,7 @@ class HttpService {
     document, {
     variables,
     bool showLoading = true,
+    bool isTokenRequired = true
   }) async {
     try {
       String? token = await LocalStorage.getStringVal(LocalStorageConst.token);
@@ -34,12 +35,12 @@ class HttpService {
       final response = (await _hasuraConnect.query(
         document,
         variables: variables ?? {},
+        
         headers: {
-          'Authorization': 'Bearer $token',
+          if (isTokenRequired) 'Authorization': 'Bearer $token',
           'x-client-type': 'mobile',
         },
       ))['data'];
-      //final isRefreshed = await refreshAccessToken();
 
       return response;
     } catch (e) {
