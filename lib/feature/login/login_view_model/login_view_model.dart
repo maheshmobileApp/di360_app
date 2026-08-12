@@ -107,7 +107,7 @@ class LoginViewModel extends ChangeNotifier {
             ],
           );
 
-          if (loginData.type == UserRole.admin.name) {
+          /*if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {
               homeNavigation(context);
             } else {
@@ -115,6 +115,12 @@ class LoginViewModel extends ChangeNotifier {
             }
           } else {
             homeNavigation(context);
+          }*/
+
+          if (loginData.profileCompleted == true) {
+            homeNavigation(context);
+          } else {
+            viewProfileHandle(context);
           }
 
           // Background tasks (parallel)
@@ -152,7 +158,9 @@ class LoginViewModel extends ChangeNotifier {
                     loginData.logo?.url ?? loginData.profileImage?.url ?? ''),
                 LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
                 LocalStorage.setStringVal(LocalStorageConst.refreshToken,
-                    loginData.refreshToken ?? '')
+                    loginData.refreshToken ?? ''),
+                     LocalStorage.setStringVal(
+          LocalStorageConst.professionId, loginData.professiontype?.id ?? '')
               ]);
             } catch (e) {
               debugPrint("Post login error: $e");
@@ -160,7 +168,7 @@ class LoginViewModel extends ChangeNotifier {
           });
         } else {
           Loaders.circularHideLoader(context);
-          scaffoldMessenger('Account is ${loginData.status}');
+          scaffoldMessenger('${loginData.message}');
         }
       } else {
         Loaders.circularHideLoader(context);

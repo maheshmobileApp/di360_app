@@ -61,7 +61,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   String? gender;
 
   DentalSuppliersByPk? supplierViewProfileData;
-  DentalPracticesByPk? practiceViewProfileData;
+  DentalSuppliersByPk? practiceViewProfileData;
   DentalProfessionalsByPk? professionalViewProfileData;
   File? logoFile;
 
@@ -151,7 +151,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void loadViewProfileData(dynamic viewProfile) async {
+  void loadViewProfileData(DentalSuppliersByPk? viewProfile) async {
     nameController.text = viewProfile?.name ?? "";
     emailController.text = viewProfile?.email ?? "";
     final phone = viewProfile?.phone ?? "";
@@ -167,7 +167,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     businessNameController.text = viewProfile?.businessName ?? "";
     businessEmailController.text = viewProfile?.businessEmail ?? "";
-    businessPhoneNoController.text = viewProfile.mobileNumber ?? "";
+    businessPhoneNoController.text = viewProfile?.phone ?? "";
     websiteUrlController.text = viewProfile?.websiteLink ?? "";
     abnNumberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
@@ -189,7 +189,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == viewProfile?.professiontype.name,
+      (cat) => cat.name == viewProfile?.professiontype?.name,
       orElse: () => null,
     );
     if (businessType != null) {

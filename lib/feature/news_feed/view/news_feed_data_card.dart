@@ -130,6 +130,11 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 ? newsfeeds?.communityOwner?.communityId
                                 : ""),
                         addVertical(10),
+                        if (newsfeeds?.feedType == FeedType.newsfeed.value)
+                          ExpandableHtmlText(
+                            htmlData: newsfeeds?.description ?? "",
+                            index: index,
+                          ),
                         _buildImageRow(catalogueViewModel, context),
                         if (newsfeeds?.videoUrl != null &&
                             newsfeeds?.videoUrl?.isNotEmpty == true &&
@@ -175,10 +180,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                   style: TextStyles.semiBold(
                                       fontSize: 14, color: AppColors.black),
                                 ),
-                              ExpandableHtmlText(
-                                htmlData: newsfeeds?.description ?? "",
-                                index: index,
-                              )
+                              if (newsfeeds?.feedType !=
+                                  FeedType.newsfeed.value)
+                                ExpandableHtmlText(
+                                  htmlData: newsfeeds?.description ?? "",
+                                  index: index,
+                                )
                             ]
                           ],
                         ),

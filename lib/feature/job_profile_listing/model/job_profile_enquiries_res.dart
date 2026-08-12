@@ -52,8 +52,8 @@ class TalentEnquiriesData {
   String? enquirySenderId;
   dynamic dentalPractices;
   DentalSuppliers? dentalSuppliers;
-  dynamic jobhiringsFindPractice;
-  dynamic jobhiringsFindSupplier;
+  JobhiringsFindSupplier? jobhiringsFindPractice;
+  JobhiringsFindSupplier? jobhiringsFindSupplier;
   String? sTypename;
 
   TalentEnquiriesData(
@@ -80,8 +80,12 @@ class TalentEnquiriesData {
     dentalSuppliers = json['dental_suppliers'] != null
         ? new DentalSuppliers.fromJson(json['dental_suppliers'])
         : null;
-    jobhiringsFindPractice = json['jobhirings_find_practice'];
-    jobhiringsFindSupplier = json['jobhirings_find_supplier'];
+    jobhiringsFindPractice = json['jobhirings_find_practice'] != null
+        ? new JobhiringsFindSupplier.fromJson(json['jobhirings_find_practice'])
+        : null;
+    jobhiringsFindSupplier = json['jobhirings_find_supplier'] != null
+        ? new JobhiringsFindSupplier.fromJson(json['jobhirings_find_supplier'])
+        : null;
     sTypename = json['__typename'];
     enquiryDescription = json['enquiry_description'];
     updatedAt = json['updated_at'];
@@ -98,8 +102,12 @@ class TalentEnquiriesData {
     if (this.dentalSuppliers != null) {
       data['dental_suppliers'] = this.dentalSuppliers!.toJson();
     }
-    data['jobhirings_find_practice'] = this.jobhiringsFindPractice;
-    data['jobhirings_find_supplier'] = this.jobhiringsFindSupplier;
+    if (this.jobhiringsFindPractice != null) {
+      data['jobhirings_find_supplier'] = this.jobhiringsFindPractice?.toJson();
+    }
+    if (this.jobhiringsFindSupplier != null) {
+      data['jobhirings_find_supplier'] = this.jobhiringsFindSupplier?.toJson();
+    }
     data['__typename'] = this.sTypename;
     data['enquiry_description'] = this.enquiryDescription;
     data['updated_at'] = this.updatedAt;
@@ -214,6 +222,27 @@ class Directories {
     data['id'] = this.id;
     data['email'] = this.email;
     data['phone'] = this.phone;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+
+  
+}
+
+class JobhiringsFindSupplier {
+  String? id;
+  String? sTypename;
+
+  JobhiringsFindSupplier({this.id, this.sTypename});
+
+  JobhiringsFindSupplier.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['__typename'] = this.sTypename;
     return data;
   }

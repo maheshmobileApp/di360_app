@@ -80,12 +80,14 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                     final userId = await LocalStorage.getStringVal(
                         LocalStorageConst.userId);
                     navigationService.navigateToWithParams(
-                      RouteList.JobListingApplicantsMessege,
+                      RouteList.jobProfileTalentMessage,
                       params: {
-                        "jobId": jobId,
-                        "applicantId": profileId,
-                        "userId": userId,
-                        "type":"job_profile"
+                         "id": jobsListingData.jobhiringsFindSupplier?.id??jobsListingData.jobhiringsFindSupplier?.id??"",
+                        "dental_supplier_id": jobsListingData.dentalSuppliers?.id,
+                        "dental_practice_id": jobsListingData.dentalPractices?.id,
+                        "talentId": jobsListingData.talentId,
+                        "userId" : userId,
+                        "talent_enquiry_id" : jobsListingData.id ?? ""
                       },
                     );
                   },

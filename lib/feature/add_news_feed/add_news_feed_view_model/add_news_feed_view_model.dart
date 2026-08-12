@@ -80,7 +80,8 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     created_by_user_id
     __typename
   }
-}''';
+}
+''';
     final variables = {
       "where": {
         "_and": [

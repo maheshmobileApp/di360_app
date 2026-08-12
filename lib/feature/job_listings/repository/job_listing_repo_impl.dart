@@ -66,8 +66,14 @@ class JobListingRepoImpl extends JobListingRepository {
 
   @override
   Future<dynamic> updateJobListing(String? id, String status) async {
+    final variables = {
+    "id": id,
+    "fields": {
+        "active_status": status
+    }
+};
     final jobListingStatusData = await http
-        .mutation(updateJobListingStatus, {"id": id, "status": status});
+        .mutation(updateJobListingStatus, variables);
     return jobListingStatusData;
   }
 

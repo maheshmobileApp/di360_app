@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/core/base_api_cilent.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/sign_up/model_class/check_mail_res.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/get_business_type.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/signup_res.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/subscription_res.dart';
@@ -21,6 +22,7 @@ class SignupViewModel extends ChangeNotifier {
 
   List<SubscriptionData>? subscriptionPlanList;
   List<DirectoryBusinessTypes>? directoryBusinessTypes;
+  CheckMailData? checkMailData;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
@@ -99,6 +101,7 @@ class SignupViewModel extends ChangeNotifier {
     _selectedIndex = index;
     selectedCategorys = null;
     businessTypeId = directoryBusinessTypes?[index].id;
+    print("*************************$businessTypeId");
     notifyListeners();
   }
 
@@ -137,8 +140,8 @@ class SignupViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     _selectedIndex = 0;
     try {
-      final res = await _http
-          .query(businessQuery, variables: {"type": selectedType?['type']}, isTokenRequired: false);
+      final res = await _http.query(businessQuery,
+          variables: {"type": selectedType?['type']}, isTokenRequired: false);
       if (res != null) {
         final data = BusinessData.fromJson(res);
         directoryBusinessTypes = data.directoryBusinessTypes;
@@ -151,6 +154,14 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> checkMail(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"email": emailController.text};
+    final res = await signUpRepo.checkMail(variables);
+    checkMailData = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
 
   String getEndPoint(String? type) {
     if (type == UserRole.professional.value) {
@@ -169,6 +180,7 @@ class SignupViewModel extends ChangeNotifier {
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final type = selectedType?['type'];
     final endPoint = getEndPoint(type);
+    final businessTypeId = directoryBusinessTypes?[_selectedIndex].id;
     try {
       final res = await baseClient.postCall(endPoint, payload: {
         "name": nameController.text,
@@ -197,7 +209,7 @@ class SignupViewModel extends ChangeNotifier {
         scaffoldMessenger(
             (response.message?.contains("clients_email_key")) ?? false
                 ? "Email already exists. Please use a different email."
-                : "Something went wrong");
+                : "${response.message}");
       }
       Loaders.circularHideLoader(context);
     } catch (e) {
