@@ -202,7 +202,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
 
   List<TalentsMessage>? messages = [];
 
-  Future<void> fetchTalentMessages(String jobId) async {
+  Future<void> fetchTalentMessages(String jobId, String talentEnquiryId) async {
     try {
       isLoading = true;
 
@@ -213,7 +213,11 @@ class JobProfileListingViewModel extends ChangeNotifier {
               "_or": [
                 {
                   "jobhirings_id": {"_eq": jobId}
-                }
+                },
+                if (talentEnquiryId.isNotEmpty)
+                  {
+                    "talent_enquiry_id": {"_eq": talentEnquiryId}
+                  }
               ]
             }
           ]
@@ -246,8 +250,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateApplicantMessage(
-      BuildContext context, String id) async {
+  Future<void> updateApplicantMessage(BuildContext context, String id, String talentEnquiryId) async {
     try {
       isLoading = true;
 
@@ -260,7 +263,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
       final res = await repo.updateTalentMessage(variables);
       if (res != null) {
         setEditMessage(false);
-        await fetchTalentMessages(id);
+        await fetchTalentMessages(id, talentEnquiryId);
         scaffoldMessenger("Message updated successfully");
       }
     } catch (e) {
@@ -270,7 +273,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> sendApplicantMessage(BuildContext context, String talentId, String receiverId,String receiverType, String jobHiringId) async {
+  Future<void> sendApplicantMessage(BuildContext context, String talentId,
+      String receiverId, String receiverType, String jobHiringId, String talentEnquiryId) async {
     if (messageController.text.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;
@@ -298,8 +302,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
       if (res != null) {
         scaffoldMessenger("Message sent successfully");
         messageController.clear();
-       
-        fetchTalentMessages(jobHiringId);
+
+        fetchTalentMessages(jobHiringId, talentEnquiryId);
       } else {
         scaffoldMessenger("Failed to send message");
       }
@@ -311,16 +315,14 @@ class JobProfileListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteapplicantMessage(BuildContext context, String messageId, String id ) async {
+  Future<void> deleteapplicantMessage(
+      BuildContext context, String messageId, String id, String talentEnquiryId) async {
     try {
       isLoading = true;
-      final variables = {
-        "id": messageId,
-        "deleted_status": true
-      };
+      final variables = {"id": messageId, "deleted_status": true};
       final res = await repo.deleteTalentMessage(variables);
       if (res != null) {
-        await fetchTalentMessages(id);
+        await fetchTalentMessages(id, talentEnquiryId);
         scaffoldMessenger("Message deleted successfully");
       }
     } catch (e) {

@@ -20,6 +20,7 @@ class JobProfileTalentMessage extends StatefulWidget with BaseContextHelpers {
   final String? talentId;
   final String? profilePic;
   final String? userId;
+  final String? talentEnquiryId;
 
   const JobProfileTalentMessage(
       {super.key,
@@ -28,7 +29,9 @@ class JobProfileTalentMessage extends StatefulWidget with BaseContextHelpers {
       this.dentalPracticeId,
       this.talentId,
       this.profilePic,
-      this.userId});
+      this.userId,
+      this.talentEnquiryId
+      });
 
   @override
   State<JobProfileTalentMessage> createState() =>
@@ -42,7 +45,7 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
   void initState() {
     super.initState();
     final vm = Provider.of<JobProfileListingViewModel>(context, listen: false);
-    vm.fetchTalentMessages(widget.id ?? "");
+    vm.fetchTalentMessages(widget.id ?? "", widget.talentEnquiryId?? "");
   }
 
   String formatDateTime(String? time) {
@@ -215,7 +218,7 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
                           if (text.isNotEmpty)  {
                             if (vm.editMessage) {
                               await vm.updateApplicantMessage(context, 
-                                  widget.id?? "");
+                                  widget.id?? "", widget.talentEnquiryId?? "");
                               vm.messageController.clear();
                             } else {
                               await vm.sendApplicantMessage(
@@ -227,7 +230,7 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
                                   widget.dentalSupplierId != ""
                                       ? UserRole.supplier.value
                                       : UserRole.practice.value,
-                                  widget.id ?? "");
+                                  widget.id ?? "",widget.talentEnquiryId?? "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
@@ -268,7 +271,7 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-          vm.deleteapplicantMessage(context, messageId, id);
+          vm.deleteapplicantMessage(context, messageId, id, widget.talentEnquiryId?? "");
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(messageId, vm.messageController.text);

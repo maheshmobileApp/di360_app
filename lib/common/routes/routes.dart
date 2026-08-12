@@ -157,7 +157,8 @@ class Routes {
             dentalPracticeId: args['dental_practice_id'],
             talentId: args['talentId'],
             profilePic: args['profile_pic'],
-            userId : args['userId'],);
+            userId : args['userId'],
+            talentEnquiryId : args["talent_enquiry_id"]);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =
