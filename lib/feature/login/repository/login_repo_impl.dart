@@ -9,7 +9,6 @@ import 'package:di360_flutter/feature/login/query/get_directory_query.dart';
 import 'package:di360_flutter/feature/login/query/get_my_community_data_query.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_community_owner_query.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_query.dart';
-import 'package:di360_flutter/feature/login/query/login_querys.dart';
 import 'package:di360_flutter/feature/login/repository/login_repository.dart';
 
 class LoginRepoImpl extends LoginRepository {

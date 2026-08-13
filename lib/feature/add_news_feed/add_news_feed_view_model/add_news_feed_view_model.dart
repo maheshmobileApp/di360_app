@@ -136,28 +136,23 @@ class AddNewsFeedViewModel extends ChangeNotifier {
       }
 
       final variables = {
-        "fields": {
-          "description": desController.text,
-          "category_type": selectedCategory?.id,
-          "video_url": videoController.text,
-          "post_image": uploadedFiles,
-          "web_url": websiteController.text,
-          "user_role": type,
-          "user_id": userId,
-          "status": "PENDING",
-          if (type == UserRole.practice.value) "dental_practice_id": userId,
-          if (type == UserRole.supplier.value) "dental_supplier_id": userId,
-          if (type == UserRole.professional.value)
-            "dental_professional_id": userId,
-          if (type == UserRole.admin.value) "dental_admin_id": userId,
-          "feed_type": "NEWSFEED",
-          "community_id": null,
-          "community_type": "BOTH",
-           if (type == UserRole.supplier.value) "comments_enabled": enableComments,
-        }
+        "description": desController.text,
+        "category_type": selectedCategory?.id,
+        "video_url": videoController.text,
+        "post_image": uploadedFiles,
+        "web_url": websiteController.text,
+        "user_role": type,
+        "user_id": userId,
+        if (type == UserRole.practice.value) "dental_practice_id": userId,
+        if (type == UserRole.supplier.value) "dental_supplier_id": userId,
+        if (type == UserRole.professional.value)
+          "dental_professional_id": userId,
+        if (type == UserRole.admin.value) "dental_admin_id": userId,
+        "newsfeedType": "NEWSFEED",
+        "community_id": null,
+        if (type == UserRole.supplier.value) "comments_enabled": enableComments,
       };
 
-      print("***************$variables");
 
       final res = await repo.addNewsFeed(variables);
 
@@ -208,7 +203,8 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "video_url": videoController.text,
           "post_image": uploadedFiles,
           "web_url": websiteController.text,
-          if (type == UserRole.supplier.value)  "comments_enabled": enableComments,
+          if (type == UserRole.supplier.value)
+            "comments_enabled": enableComments,
         }
       });
 
@@ -250,7 +246,6 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   void setUserType(String type) {
     userType = type;
     notifyListeners();
-    
   }
 
   clearFeedNews() {
@@ -283,7 +278,8 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     existingImages.addAll(images);
     videoController.text = newsfeeds?.videoUrl ?? '';
     websiteController.text = newsfeeds?.webUrl ?? '';
-    desController.text =  htmlParser.parse(newsfeeds?.description ?? '').body?.text ?? '';
+    desController.text =
+        htmlParser.parse(newsfeeds?.description ?? '').body?.text ?? '';
     setEnableComments(newsfeeds?.commentsEnabled ?? false);
     editSelectCategoryAssigned(newsfeeds?.categoryType ?? '');
     notifyListeners();

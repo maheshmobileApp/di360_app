@@ -28,4 +28,5 @@ class ApiConst {
   static const String resendMail = '/api/v1/event/resend-verification-mail';
   static const String adminApproveUser = '/api/v1/event/admin-approve-user/';
   static String refreshToken = '/api/v1/auth/refresh-token_v2';
+  static String newsfeedCreation = '/api/v1/newsfeeds';
 }
