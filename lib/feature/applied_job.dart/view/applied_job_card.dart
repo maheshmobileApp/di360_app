@@ -66,7 +66,8 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         _statusChip(appliedJob.status ?? ''),
                         addHorizontal(4),
-                        _appliedJobMenu(context, vm, appliedJob.jobId ?? '', jobSeekVM),
+                        _appliedJobMenu(
+                            context, vm, appliedJob.jobId ?? '', jobSeekVM),
                       ],
                     ),
                   ],
@@ -104,11 +105,14 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                     navigationService.navigateToWithParams(
                       RouteList.JobListingApplicantsMessege,
                       params: {
-                        "jobId": applicant.jobId ?? "",
-                        "applicantId": applicant.id ?? "",
+                        "applicantId": applicant.id?? "",
                         "userId": userId,
                         "profilePic": job?.logo ?? '',
-                        "type": "applicant"
+                        "receiverId": applicant.job?.createdById?? "",
+                        "receiverType": applicant.job?.userRole?? "", 
+                        "jobEnquiryId": applicant.jobEnquiriesFind?.id ?? "",
+                        "jobId" : applicant.jobId,
+                        "type" : ""
                       },
                     );
                   },
@@ -151,62 +155,46 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
 
   Widget _logoWithTitle(BuildContext context, String imageUrl, String title,
       String role, String companyName) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey,
-          radius: 24,
-          child: CircleAvatar(
-            radius: 24,
-            backgroundColor: AppColors.whiteColor,
-            child: (imageUrl.isNotEmpty)
-                ? ClipOval(
-                    child: CachedNetworkImageWidget(
-                      width: 48,
-                      height: 48,
-                      imageUrl: imageUrl,
-                      errorWidget: const CircleAvatar(
-                        backgroundColor: Colors.grey,
-                        child: Icon(Icons.error),
-                      ),
-                    ),
-                  )
-                : const CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Colors.grey,
-                  ),
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      CircleAvatar(
+        radius: 24,
+        backgroundColor: AppColors.whiteColor,
+        child: ClipOval(
+          child: CachedNetworkImageWidget(
+            width: 48,
+            height: 48,
+            imageUrl: imageUrl,
+            errorWidget: Image.asset(ImageConst.prfImg),
           ),
         ),
-        addHorizontal(6),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style:
-                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                role,
-                style: TextStyles.regular2(color: AppColors.geryColor),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                companyName,
-                style: TextStyles.regular2(color: AppColors.lightGeryColor),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
+      ),
+      addHorizontal(6),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              role,
+              style: TextStyles.regular2(color: AppColors.geryColor),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              companyName,
+              style: TextStyles.regular2(color: AppColors.lightGeryColor),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
-      ],
-    );
+      )
+    ]);
   }
 
   Widget _descriptionWidget(String description) {
@@ -313,8 +301,8 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _appliedJobMenu(
-      BuildContext context, EnquiriesViewModel vm, String jobEnquiryId, JobSeekViewModel jobSeekVM) {
+  Widget _appliedJobMenu(BuildContext context, EnquiriesViewModel vm,
+      String jobEnquiryId, JobSeekViewModel jobSeekVM) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -324,7 +312,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
         if (value == "Preview") {
           if (appliedJob.job != null) {
             await vm.getJobEnquiryDetails(context, jobEnquiryId);
-               jobSeekVM.setHideFloatingButton(true);
+            jobSeekVM.setHideFloatingButton(true);
             navigationService.navigateToWithParams(
               RouteList.jobdetailsScreen,
               params: vm.jobEnquiryDetails?.isNotEmpty == true

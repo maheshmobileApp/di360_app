@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -19,16 +20,21 @@ class JobListingApplicantsMessege extends StatefulWidget
   final String profilePic;
   final JobApplicants? applicant;
   final String? typeName;
+  final String? receiverId;
+  final String? receiverType;
+  final String? jobEnquiryId;
 
-  const JobListingApplicantsMessege({
-    super.key,
-    required this.jobId,
-    required this.applicantId,
-    required this.userId,
-    required this.profilePic,
-    this.applicant,
-    required this.typeName,
-  });
+  const JobListingApplicantsMessege(
+      {super.key,
+      required this.jobId,
+      required this.applicantId,
+      required this.userId,
+      required this.profilePic,
+      this.applicant,
+      required this.typeName,
+      required this.receiverId,
+      required this.receiverType,
+      required this.jobEnquiryId});
 
   @override
   State<JobListingApplicantsMessege> createState() =>
@@ -43,7 +49,7 @@ class _JobListingApplicantsMessegeState
   void initState() {
     super.initState();
     final vm = Provider.of<JobListingsViewModel>(context, listen: false);
-    vm.fetchApplicantMessages(widget.applicantId);
+    vm.fetchApplicantMessages(widget.applicantId ?? "", widget.jobEnquiryId?? "");
   }
 
   String formatDateTime(String? time) {
@@ -61,36 +67,31 @@ class _JobListingApplicantsMessegeState
       final profileUrl = homeViewModel.profilePic ?? '';
       {
         return CircleAvatar(
-          radius: 22,
-          backgroundColor: AppColors.geryColor,
-          child: (profileUrl.isNotEmpty)
-              ? ClipOval(
-                  child: CachedNetworkImageWidget(
-                    imageUrl: profileUrl,
-                    width: 44,
-                    height: 44,
-                    fit: BoxFit.contain,
-                  ),
-                )
-              : const Icon(Icons.person, color: AppColors.whiteColor),
-        );
+            radius: 22,
+            backgroundColor: AppColors.whiteColor,
+            child: ClipOval(
+              child: CachedNetworkImageWidget(
+                imageUrl: profileUrl,
+                width: 44,
+                height: 44,
+                fit: BoxFit.contain,
+                errorWidget: Image.asset(ImageConst.prfImg),
+              ),
+            ));
       }
     } else {
-     
       return CircleAvatar(
-        radius: 22,
-        backgroundColor: AppColors.geryColor,
-        child: (widget.profilePic.isNotEmpty)
-            ? ClipOval(
-                child: CachedNetworkImageWidget(
-                  imageUrl: widget.profilePic,
-                  width: 44,
-                  height: 44,
-                  fit: BoxFit.cover,
-                ),
-              )
-            : const Icon(Icons.person, color: AppColors.whiteColor),
-      );
+          radius: 22,
+          backgroundColor: AppColors.primaryColor,
+          child: ClipOval(
+            child: CachedNetworkImageWidget(
+              imageUrl: widget.profilePic,
+              width: 44,
+              height: 44,
+              fit: BoxFit.cover,
+              errorWidget: Image.asset(ImageConst.prfImg),
+            ),
+          ));
     }
   }
 
@@ -113,7 +114,7 @@ class _JobListingApplicantsMessegeState
                         itemCount: vm.messages.length,
                         itemBuilder: (context, index) {
                           final JobApplicantMessage msg = vm.messages[index];
-                          final bool isMe = msg.messageFrom == widget.userId;
+                          final bool isMe = msg.senderId == widget.userId;
                           final avatarWidget = _buildAvatar(isMe);
 
                           return Padding(
@@ -141,14 +142,14 @@ class _JobListingApplicantsMessegeState
                                     if (isMe) const SizedBox(width: 6),
                                     if (isMe) avatarWidget,
                                     if (isMe)
-                                    if (msg.deletedStatus == false)
-                                      _MessegeMenu(
-                                          context,
-                                          vm,
-                                          msg.id ?? "",
-                                          widget.applicantId,
-                                          vm.messageController.text,
-                                          msg.message ?? ""),
+                                      if (msg.deletedStatus == false)
+                                        _MessegeMenu(
+                                            context,
+                                            vm,
+                                            msg.id ?? "",
+                                            widget.applicantId,
+                                            vm.messageController.text,
+                                            msg.message ?? ""),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
@@ -219,7 +220,7 @@ class _JobListingApplicantsMessegeState
                           if (text.isNotEmpty) {
                             if (vm.editMessage) {
                               vm.updateApplicantMessage(
-                                  context, widget.applicantId);
+                                  context, widget.applicantId, widget.jobEnquiryId ?? "");
                               vm.messageController.clear();
                             } else {
                               vm.sendApplicantMessage(
@@ -228,7 +229,10 @@ class _JobListingApplicantsMessegeState
                                   text,
                                   widget.typeName != null
                                       ? widget.typeName
-                                      : "");
+                                      : "",
+                                  widget.receiverId ?? "",
+                                  widget.receiverType ?? "",
+                                  widget.jobId, widget.jobEnquiryId ?? "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
@@ -264,7 +268,7 @@ class _JobListingApplicantsMessegeState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-          vm.deleteapplicantMessage(context, id, applicantId, true);
+          vm.deleteapplicantMessage(context, id, applicantId, true, widget.jobEnquiryId ?? "");
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(id, vm.messageController.text);

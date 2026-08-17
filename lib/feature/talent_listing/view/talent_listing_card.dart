@@ -104,9 +104,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final profileId = jobProfiles?.jobProfilesId??"";
-                        final jobId =
-                            jobProfiles?.id??"";
+                        final profileId = jobProfiles?.jobProfilesId ?? "";
+                        final jobId = jobProfiles?.id ?? "";
                         if (profileId.isEmpty || jobId.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -118,12 +117,17 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                         final userId = await LocalStorage.getStringVal(
                             LocalStorageConst.userId);
                         navigationService.navigateToWithParams(
-                          RouteList.TalentListingMessageScreen,
+                          RouteList.jobProfileTalentMessage,
                           params: {
-                            "jobId": jobId,
-                            "applicantId": profileId,
+                            "id": jobProfiles?.id ?? "",
+                            "talent_enquiry_id": jobProfiles
+                                    ?.talentEnquiriesFindSupplier?.id ??
+                                jobProfiles?.talentEnquiriesFindSupplier?.id ??
+                                "",
                             "userId": userId,
                             "userImg": profileImageUrl ?? "",
+                            "dental_professional_id": jobProfiles?.dentalProfessionalId ?? "",
+                            "talentId": jobProfiles?.jobProfilesId ?? "",
                           },
                         );
                       },
@@ -133,8 +137,9 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                     InkWell(
                         onTap: () async {
                           await vm.getSelfTalentEnquiry(
-                              context, jobProfiles?.jobProfilesId??"");
-                          if (vm.selfTalentEnquiryData?.talentEnquiries?.length ==
+                              context, jobProfiles?.jobProfilesId ?? "");
+                          if (vm.selfTalentEnquiryData?.talentEnquiries
+                                  ?.length ==
                               0) {
                             scaffoldMessenger("No Enquiries found");
                             return;
@@ -282,7 +287,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         break;
       case "cancelled":
         bgColor = const Color.fromARGB(22, 174, 174, 174);
-        textColor =AppColors.redColor;
+        textColor = AppColors.redColor;
         break;
       default:
         bgColor = const Color.fromRGBO(253, 245, 229, 1);
@@ -346,7 +351,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
           final talentId = jobProfiles?.id ?? "";
           await vm.updateTalentListingStatus(context, talentId);
           vm.getMyTalentListingData(context);
-
         }
       },
       itemBuilder: (context) => [

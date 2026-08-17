@@ -386,13 +386,13 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchApplicantMessages(String jobId) async {
+  Future<void> fetchApplicantMessages(String jobId, String jobEnquiryId) async {
     try {
       isLoading = true;
 
-      final res = await repo.fetchApplicantMessages(jobId);
+      final res = await repo.fetchApplicantMessages(jobId, jobEnquiryId);
       if (res.messages != null) {
-        messages = res.messages!;
+        messages = res.messages?.reversed.toList() ?? [];
       }
     } catch (e) {
       errorMessage = e.toString();
@@ -403,12 +403,12 @@ class JobListingsViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteapplicantMessage(BuildContext context, String Id,
-      String applicantId, bool deletedStatus) async {
+      String applicantId, bool deletedStatus, String jobEnquiryId) async {
     try {
       isLoading = true;
       final res = await repo.deleteApplicantMessage(Id, deletedStatus);
       if (res != null) {
-        await fetchApplicantMessages(applicantId);
+        await fetchApplicantMessages(applicantId, jobEnquiryId);
         scaffoldMessenger("Message deleted successfully");
       }
     } catch (e) {
@@ -429,7 +429,7 @@ class JobListingsViewModel extends ChangeNotifier {
   }
 
   Future<void> updateApplicantMessage(
-      BuildContext context, String applicantId) async {
+      BuildContext context, String applicantId, String jobEnquiryId) async {
     try {
       isLoading = true;
 
@@ -437,7 +437,7 @@ class JobListingsViewModel extends ChangeNotifier {
           editMessageId, messageController.text);
       if (res != null) {
         setEditMessage(false);
-        await fetchApplicantMessages(applicantId);
+        await fetchApplicantMessages(applicantId, jobEnquiryId);
         scaffoldMessenger("Message updated successfully");
       }
     } catch (e) {
@@ -448,8 +448,15 @@ class JobListingsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> sendApplicantMessage(BuildContext context, String applicantId,
-      String message, String? typeName) async {
+  Future<void> sendApplicantMessage(
+      BuildContext context,
+      String applicantId,
+      String message,
+      String? typeName,
+      String receiverId,
+      String receiverType,
+      String messageJobId,
+      String jobEnquiryId) async {
     if (message.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;
@@ -458,26 +465,29 @@ class JobListingsViewModel extends ChangeNotifier {
     try {
       Loaders.circularShowLoader(context);
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
-      final res = await repo.sendApplicantMessage({
-        "job_applicant_id": applicantId,
-        "message": message,
-        "message_from": userId,
-      }, typeName ?? "");
+      final variables = {
+        "object": {
+          "message": message,
+          if (typeName == "")  "job_applicant_id" : applicantId,
+          if (typeName == "enquiry") "job_enquiry_id" : jobEnquiryId,
+          "job_id": messageJobId, 
+          "sender_id": userId,
+          "sender_type": type,
+          "receiver_id": receiverId, 
+          "receiver_type": receiverType,
+        }
+      };
+
+      print("*****$variables");
+
+      final res = await repo.sendApplicantMessage(variables);
 
       if (res != null) {
         scaffoldMessenger("Message sent successfully");
         messageController.clear();
-        /*messages.add(
-          JobApplicantMessage(
-            id: res, // backend ID
-            jobApplicantId: applicantId,
-            message: message,
-            messageFrom: "me", // mark current user
-            createdAt: DateTime.now().toIso8601String(),
-          ),
-        );*/
-        fetchApplicantMessages(applicantId);
+        fetchApplicantMessages(applicantId, jobEnquiryId);
       } else {
         scaffoldMessenger("Failed to send message");
       }

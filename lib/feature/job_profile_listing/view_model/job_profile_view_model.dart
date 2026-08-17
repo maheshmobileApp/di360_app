@@ -211,6 +211,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
           "_and": [
             {
               "_or": [
+                if (jobId.isNotEmpty)
                 {
                   "jobhirings_id": {"_eq": jobId}
                 },
@@ -296,6 +297,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
           "jobhirings_id": jobHiringId
         }
       };
+
+      print("************talentProfileMsgPayload $variables");
 
       final res = await repo.sendTalentMessage(variables);
 

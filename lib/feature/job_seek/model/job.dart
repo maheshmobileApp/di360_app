@@ -53,6 +53,8 @@ class Jobs {
   JobEnquiriesAggregate? jobEnquiriesAggregate;
   DentalSupplier? dentalSupplier;
   DentalPractice? dentalPractice;
+  String? userRole;
+  String? createdById;
   Jobs({
     this.id,
     this.title,
@@ -100,6 +102,8 @@ class Jobs {
     this.jobEnquiriesAggregate,
     this.dentalSupplier,
     this.dentalPractice,
+    this.userRole,
+    this.createdById,
   });
 
   Jobs.fromJson(Map<String, dynamic> json) {
@@ -201,6 +205,8 @@ class Jobs {
     dentalPractice = json['dental_practice'] != null
         ? new DentalPractice.fromJson(json['dental_practice'])
         : null;
+    userRole = json['user_role'];
+    createdById = json['created_by_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -263,10 +269,12 @@ class Jobs {
       data['dental_practice'] = this.dentalPractice!.toJson();
     }
 
+    data['user_role'] = userRole;
+    data['created_by_id'] = createdById;
+
     return data;
   }
 }
-
 
 class ClinicLogo {
   String? url;

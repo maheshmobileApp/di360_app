@@ -267,6 +267,8 @@ class TalentListingViewModel extends ChangeNotifier {
       "limit": _talentLimit,
       "offset": _talentOffset,
     };
+
+    
     try {
       if (!loadMore) {
         await fetchTalentListingStatusCounts();

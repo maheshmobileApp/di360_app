@@ -29,7 +29,8 @@ class JobListingRepoImpl extends JobListingRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<List<Jobs>?> getMyJobListing(List<String>? listingStatus, String? activeStatus,int limit, int offset ) async {
+  Future<List<Jobs>?> getMyJobListing(List<String>? listingStatus,
+      String? activeStatus, int limit, int offset) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
@@ -67,13 +68,11 @@ class JobListingRepoImpl extends JobListingRepository {
   @override
   Future<dynamic> updateJobListing(String? id, String status) async {
     final variables = {
-    "id": id,
-    "fields": {
-        "active_status": status
-    }
-};
-    final jobListingStatusData = await http
-        .mutation(updateJobListingStatus, variables);
+      "id": id,
+      "fields": {"active_status": status}
+    };
+    final jobListingStatusData =
+        await http.mutation(updateJobListingStatus, variables);
     return jobListingStatusData;
   }
 
@@ -93,8 +92,9 @@ class JobListingRepoImpl extends JobListingRepository {
         "dental_practice_id": {"_eq": userId}
       };
     }
-    final String query =
-        (type == UserRole.supplier.value) ? getJobStatusCount : getJobStatusCountPractice;
+    final String query = (type == UserRole.supplier.value)
+        ? getJobStatusCount
+        : getJobStatusCountPractice;
 
     final data = await http.query(query, variables: variables);
     final result = JobStatusCountData.fromJson(data);
@@ -104,11 +104,11 @@ class JobListingRepoImpl extends JobListingRepository {
   @override
   Future<List<JobApplicants>?> getJobApplicants(
       List<String>? listingStatusforapplicants, String jobId) async {
-    final andList = <Map<String, dynamic>>[
-      {
-        "job_id": {"_eq": jobId}
-      },
-      {
+    final variables = {
+      "limit": 5,
+      "offset": 0,
+      "where": {
+        "job_id": {"_eq": jobId},
         "status": {
           "_in": listingStatusforapplicants?.isEmpty == true
               ? [
@@ -121,12 +121,12 @@ class JobListingRepoImpl extends JobListingRepository {
                 ]
               : listingStatusforapplicants
         }
-      },
-    ];
+      }
+    };
 
     final lisingdataforapplicants = await http.query(
       getJobApplicantsQuary,
-      variables: {"andList": andList},
+      variables: variables,
     );
     final result = JobApplicantsData.fromJson(lisingdataforapplicants);
     return result.jobApplicants ?? [];
@@ -152,9 +152,28 @@ class JobListingRepoImpl extends JobListingRepository {
 
   @override
   Future<JobListingApplicantsMessageResponse> fetchApplicantMessages(
-      String jobId) async {
-    final data = await http.query(jobListingApplicantMessge,
-        variables: {"job_applicant_id": jobId});
+      String jobId, String jobEnquiryId) async {
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "_or": [
+              {
+                "job_applicant_id": {"_eq": jobId}
+              },
+              if (jobEnquiryId.isNotEmpty == true)
+                {
+                  "job_enquiry_id": {"_eq": jobEnquiryId}
+                }
+            ]
+          }
+        ]
+      },
+      "limit": 20
+    };
+    print("*****************Variables $variables");
+    final data =
+        await http.query(jobListingApplicantMessge, variables: variables);
 
     final result = JobListingApplicantsMessageResponse.fromJson(data);
     return result;
@@ -162,12 +181,10 @@ class JobListingRepoImpl extends JobListingRepository {
 
   @override
   Future<String?> sendApplicantMessage(
-      Map<String, dynamic> variables, String typeName) async {
+      Map<String, dynamic> variables) async {
     try {
-      final data = await http
-          .mutation(typeName != "applicant" ? talentMessge : applicantMessge, {
-        "object": variables,
-      });
+      final data = await http.mutation(
+           applicantMessge, variables);
 
       // Return the ID of the new message
       return data['insert_job_applicant_messages_one']?['id'] as String?;
