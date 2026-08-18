@@ -21,17 +21,19 @@ class JobProfileTalentMessage extends StatefulWidget with BaseContextHelpers {
   final String? profilePic;
   final String? userId;
   final String? talentEnquiryId;
+  final String? type;
 
-  const JobProfileTalentMessage(
-      {super.key,
-      this.id,
-      this.dentalSupplierId,
-      this.dentalPracticeId,
-      this.dentalProfessionalId,
-      this.talentId,
-      this.profilePic,
-      this.userId,
-      this.talentEnquiryId});
+  const JobProfileTalentMessage({
+    super.key,
+    this.id,
+    this.dentalSupplierId,
+    this.dentalPracticeId,
+    this.dentalProfessionalId,
+    this.talentId,
+    this.profilePic,
+    this.userId,
+    this.talentEnquiryId,
+  this.type});
 
   @override
   State<JobProfileTalentMessage> createState() =>
@@ -236,7 +238,8 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
                                           ? UserRole.practice.value
                                           : UserRole.professional.value,
                                   widget.id ?? "",
-                                  widget.talentEnquiryId ?? "");
+                                  widget.talentEnquiryId ?? "",
+                                  widget.type ?? "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {

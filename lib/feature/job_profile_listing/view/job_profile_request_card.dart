@@ -60,17 +60,23 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _logoWithTitle(
                     profileImageUrl ?? "",
-                    jobsListingData?.dentalSupplier?.name ?? '',
-                    jobsListingData?.dentalSupplier?.directories?.email ?? "",
-                    jobsListingData?.dentalSupplier?.directories?.phone ?? "",
+                    jobsListingData?.dentalSupplier?.name ?? jobsListingData?.dentalPractice?.name ?? '',
+                    jobsListingData?.dentalSupplier?.directories?.email ?? jobsListingData?.dentalPractice?.directories?.email ?? "",
+                    jobsListingData?.dentalSupplier?.directories?.phone ?? jobsListingData?.dentalPractice?.directories?.phone ?? "",
                   ),
                 ),
                 Row(
                   children: [
                     JobTimeChip(time: time),
                     const SizedBox(width: 4),
-                    menuWidget(context, index, jobsListingData?.id ?? '',
-                        jobsListingData?.hiringStatus ?? '', vm, type ?? "", professionalId?? ""),
+                    menuWidget(
+                        context,
+                        index,
+                        jobsListingData?.id ?? '',
+                        jobsListingData?.hiringStatus ?? '',
+                        vm,
+                        type ?? "",
+                        professionalId ?? ""),
                   ],
                 ),
               ],
@@ -100,14 +106,14 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                     }
                     final userId = await LocalStorage.getStringVal(
                         LocalStorageConst.userId);
-                     navigationService.navigateToWithParams(
+                    navigationService.navigateToWithParams(
                       RouteList.jobProfileTalentMessage,
                       params: {
                         "id": jobsListingData?.id,
                         "dental_supplier_id": jobsListingData?.dentalSupplierId,
-                        "dental_practice_id": jobsListingData?.dentalPracticeId ,
+                        "dental_practice_id": jobsListingData?.dentalPracticeId,
                         "talentId": jobsListingData?.jobProfilesId,
-                        "userId" : userId
+                        "userId": userId
                       },
                     );
                   },
@@ -152,19 +158,18 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
           child: CircleAvatar(
             radius: 24,
             backgroundColor: AppColors.whiteColor,
-            child:  ClipOval(
-                    child: CachedNetworkImageWidget(
-                      width: 48,
-                      height: 48,
-                      imageUrl: imageUrl,
-                      errorWidget:  CircleAvatar(
-                        child: Text("${name[0]}", style: TextStyles.bold3(color: AppColors.whiteColor),),
-                    radius: 24,
-                    backgroundColor: AppColors.primaryColor,
-                  ),
-                    ),
-                  )
-                ,
+            child: ClipOval(
+              child: CachedNetworkImageWidget(
+                width: 48,
+                height: 48,
+                imageUrl: imageUrl,
+                errorWidget: CircleAvatar(
+                  child: Image.asset(ImageConst.prfImg),
+                  radius: 24,
+                  backgroundColor: AppColors.primaryColor,
+                ),
+              ),
+            ),
           ),
         ),
         addHorizontal(6),
@@ -198,36 +203,38 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-      
-     
-     
-  Widget menuWidget(BuildContext context, int index, String id,
-      String activeStatus, JobProfileListingViewModel vm, String type, String professionalId) {
+  Widget menuWidget(
+      BuildContext context,
+      int index,
+      String id,
+      String activeStatus,
+      JobProfileListingViewModel vm,
+      String type,
+      String professionalId) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
       onSelected: (value) async {
         if (value == "Interested") {
-          vm.updateTalentRequestStatus(context, id, "APPROVE",professionalId );
-          
-        } else if (value == "Not Interested") { 
-          vm.updateTalentRequestStatus(context, id, "REJECT",professionalId );
+          vm.updateTalentRequestStatus(context, id, "APPROVE", professionalId);
+        } else if (value == "Not Interested") {
+          vm.updateTalentRequestStatus(context, id, "REJECT", professionalId);
         }
       },
       itemBuilder: (context) {
         final items = <PopupMenuEntry<String>>[
-            if (type == "NotInterested" || type == "")
-          PopupMenuItem(
+          if (type == "NotInterested" || type == "")
+            PopupMenuItem(
               value: "Interested",
               child: _buildRow(Icons.check, AppColors.black, "Interested"),
-          ),
-            if (type == "Interested" || type == "")
-          PopupMenuItem(
-              value:
-                  "Not Interested",
-              child: _buildRow(Icons.close, AppColors.redColor, "Not Interested"),
-          ),
+            ),
+          if (type == "Interested" || type == "")
+            PopupMenuItem(
+              value: "Not Interested",
+              child:
+                  _buildRow(Icons.close, AppColors.redColor, "Not Interested"),
+            ),
         ];
         return items;
       },

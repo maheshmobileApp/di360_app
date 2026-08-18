@@ -162,7 +162,8 @@ class Routes {
             talentId: args['talentId'],
             profilePic: args['profile_pic'],
             userId : args['userId'],
-            talentEnquiryId : args["talent_enquiry_id"]);
+            talentEnquiryId : args["talent_enquiry_id"],
+            type : args["type"]);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =

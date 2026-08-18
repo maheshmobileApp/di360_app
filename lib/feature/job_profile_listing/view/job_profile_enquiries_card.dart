@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -27,7 +28,8 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobsListingData.createdAt ?? '');
-    final String? profileImageUrl = jobsListingData.dentalSuppliers?.logo?.url ?? '';
+    final String? profileImageUrl =
+        jobsListingData.dentalSuppliers?.logo?.url ?? '';
     final vm = Provider.of<JobProfileListingViewModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -46,11 +48,19 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 Expanded(
                   child: _logoWithTitle(
-                    jobsListingData.dentalSuppliers?.logo?.url ?? "",
-                    jobsListingData.dentalSuppliers?.name ?? '',
+                    jobsListingData.dentalSuppliers?.logo?.url ??
+                        jobsListingData.dentalPractices?.logo?.url ??
+                        "",
+                    jobsListingData.dentalSuppliers?.name ??
+                        jobsListingData.dentalPractices?.name ??
+                        '',
                     jobsListingData.dentalSuppliers?.directories?.first.email ??
+                        jobsListingData
+                            .dentalPractices?.directories?.first.email ??
                         "",
                     jobsListingData.dentalSuppliers?.directories?.first.phone ??
+                        jobsListingData
+                            .dentalPractices?.directories?.first.phone ??
                         "",
                   ),
                 ),
@@ -82,12 +92,17 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                     navigationService.navigateToWithParams(
                       RouteList.jobProfileTalentMessage,
                       params: {
-                         "id": jobsListingData.jobhiringsFindSupplier?.id??jobsListingData.jobhiringsFindSupplier?.id??"",
-                        "dental_supplier_id": jobsListingData.dentalSuppliers?.id,
-                        "dental_practice_id": jobsListingData.dentalPractices?.id,
+                        "id": jobsListingData.jobhiringsFindSupplier?.id ??
+                            jobsListingData.jobhiringsFindSupplier?.id ??
+                            "",
+                        "dental_supplier_id":
+                            jobsListingData.dentalSuppliers?.id,
+                        "dental_practice_id":
+                            jobsListingData.dentalPractices?.id,
                         "talentId": jobsListingData.talentId,
-                        "userId" : userId,
-                        "talent_enquiry_id" : jobsListingData.id ?? ""
+                        "userId": userId,
+                        "talent_enquiry_id": jobsListingData.id ?? "",
+                        'type': "enquiry"
                       },
                     );
                   },
@@ -96,7 +111,10 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 addHorizontal(10),
                 InkWell(
                     onTap: () async {
-                      await vm.getJobProfileEnquiry(context,vm.jobProfileId??"",jobsListingData.enquirySenderId??"");
+                      await vm.getJobProfileEnquiry(
+                          context,
+                          vm.jobProfileId ?? "",
+                          jobsListingData.enquirySenderId ?? "");
                       if (vm.jobPrilfeEnquiryData == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -111,8 +129,8 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                               BorderRadius.vertical(top: Radius.circular(20)),
                         ),
                         builder: (context) => JobProfileEnquiriesView(
-                          applicant: vm.jobPrilfeEnquiryData,   
-                          profileImageUrl: profileImageUrl,// safe now
+                          applicant: vm.jobPrilfeEnquiryData,
+                          profileImageUrl: profileImageUrl, // safe now
                         ),
                       );
                     },
@@ -152,10 +170,10 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       ),
                     ),
                   )
-                :  CircleAvatar(
+                : CircleAvatar(
                     radius: 24,
                     backgroundColor: AppColors.primaryColor,
-                    child: Text(name[0].toUpperCase(), style: TextStyles.bold4(color: AppColors.whiteColor),),
+                    child: Image.asset(ImageConst.prfImg),
                   ),
           ),
         ),

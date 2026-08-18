@@ -178,6 +178,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.getAllTalentsRequest(variables);
     hiringTalentList = res;
+    print("***********hiringTalentList length ${hiringTalentList?.jobhirings?.length}");
     await getRequestCount(context);
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -212,9 +213,9 @@ class JobProfileListingViewModel extends ChangeNotifier {
             {
               "_or": [
                 if (jobId.isNotEmpty)
-                {
-                  "jobhirings_id": {"_eq": jobId}
-                },
+                  {
+                    "jobhirings_id": {"_eq": jobId}
+                  },
                 if (talentEnquiryId.isNotEmpty)
                   {
                     "talent_enquiry_id": {"_eq": talentEnquiryId}
@@ -251,7 +252,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateApplicantMessage(BuildContext context, String id, String talentEnquiryId) async {
+  Future<void> updateApplicantMessage(
+      BuildContext context, String id, String talentEnquiryId) async {
     try {
       isLoading = true;
 
@@ -274,8 +276,14 @@ class JobProfileListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> sendApplicantMessage(BuildContext context, String talentId,
-      String receiverId, String receiverType, String jobHiringId, String talentEnquiryId) async {
+  Future<void> sendApplicantMessage(
+      BuildContext context,
+      String talentId,
+      String receiverId,
+      String receiverType,
+      String jobHiringId,
+      String talentEnquiryId,
+      String messageType) async {
     if (messageController.text.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;
@@ -294,7 +302,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
           "sender_type": type,
           "receiver_id": receiverId,
           "receiver_type": receiverType,
-          "jobhirings_id": jobHiringId
+          if (messageType == "") "jobhirings_id": jobHiringId,
+          if (messageType == "enquiry") "talent_enquiry_id": talentEnquiryId
         }
       };
 
@@ -318,8 +327,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteapplicantMessage(
-      BuildContext context, String messageId, String id, String talentEnquiryId) async {
+  Future<void> deleteapplicantMessage(BuildContext context, String messageId,
+      String id, String talentEnquiryId) async {
     try {
       isLoading = true;
       final variables = {"id": messageId, "deleted_status": true};
