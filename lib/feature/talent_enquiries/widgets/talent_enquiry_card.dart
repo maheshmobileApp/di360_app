@@ -103,7 +103,7 @@ class TalentEnquiryCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final profileId = jobProfiles?.talentId?? "";
+                        final profileId = jobProfiles?.talentId ?? "";
                         final jobId = jobProfiles?.id ?? "";
                         if (profileId.isEmpty || jobId.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -116,12 +116,18 @@ class TalentEnquiryCard extends StatelessWidget with BaseContextHelpers {
                         final userId = await LocalStorage.getStringVal(
                             LocalStorageConst.userId);
                         navigationService.navigateToWithParams(
-                          RouteList.TalentListingMessageScreen,
+                          RouteList.jobProfileTalentMessage,
                           params: {
-                            "jobId": jobId,
-                            "applicantId": profileId,
+                            "talent_enquiry_id": jobProfiles?.id ?? "",
+                            "id": jobProfiles
+                                    ?.jobhiringsFindSupplier?.id ??
+                                jobProfiles?.jobhiringsFindPractice?.id ??
+                                "",
                             "userId": userId,
                             "userImg": profileImageUrl ?? "",
+                            "dental_professional_id":
+                                jobProfiles?.jobProfiles?.dentalProfessionalId ?? "",
+                            "talentId": jobProfiles?.talentId ?? "",
                           },
                         );
                       },

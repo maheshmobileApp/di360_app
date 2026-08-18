@@ -146,7 +146,10 @@ class Routes {
             userId: args['userId'],
             profilePic: args['profilePic'] ?? "",
             applicant: args['applicant'],
-            typeName: args['type']);
+            typeName: args['type'],
+            receiverId: args['receiverId'],
+            receiverType: args['receiverType'],
+            jobEnquiryId: args['jobEnquiryId']);
       },
       RouteList.jobProfileTalentMessage: (context) {
         final args =
@@ -155,10 +158,12 @@ class Routes {
             id: args['id'],
             dentalSupplierId: args['dental_supplier_id'],
             dentalPracticeId: args['dental_practice_id'],
+            dentalProfessionalId: args['dental_professional_id'],
             talentId: args['talentId'],
             profilePic: args['profile_pic'],
             userId : args['userId'],
-            talentEnquiryId : args["talent_enquiry_id"]);
+            talentEnquiryId : args["talent_enquiry_id"],
+            type : args["type"]);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =

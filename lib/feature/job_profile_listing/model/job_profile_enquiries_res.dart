@@ -50,7 +50,7 @@ class TalentEnquiriesData {
   String? enquiryDescription;
   String? enquiryFrom;
   String? enquirySenderId;
-  dynamic dentalPractices;
+  DentalSuppliers?  dentalPractices;
   DentalSuppliers? dentalSuppliers;
   JobhiringsFindSupplier? jobhiringsFindPractice;
   JobhiringsFindSupplier? jobhiringsFindSupplier;
@@ -76,7 +76,9 @@ class TalentEnquiriesData {
     talentId = json['talent_id'];
     enquiryFrom = json['enquiry_from'];
     enquirySenderId = json['enq_sender_id'];
-    dentalPractices = json['dental_practices'];
+    dentalPractices = json['dental_practices'] != null
+        ? new DentalSuppliers.fromJson(json['dental_practices'])
+        : null;
     dentalSuppliers = json['dental_suppliers'] != null
         ? new DentalSuppliers.fromJson(json['dental_suppliers'])
         : null;
@@ -98,7 +100,9 @@ class TalentEnquiriesData {
     data['talent_id'] = this.talentId;
     data['enquiry_from'] = this.enquiryFrom;
     data['enq_sender_id'] = this.enquirySenderId;
-    data['dental_practices'] = this.dentalPractices;
+    if (this.dentalPractices != null) {
+      data['dental_practices'] = this.dentalPractices!.toJson();
+    }
     if (this.dentalSuppliers != null) {
       data['dental_suppliers'] = this.dentalSuppliers!.toJson();
     }

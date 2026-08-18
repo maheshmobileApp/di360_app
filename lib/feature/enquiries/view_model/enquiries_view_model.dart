@@ -20,10 +20,10 @@ class EnquiriesViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
-      "limit": 5,
+      "limit": 10,
       "offset": 0,
       "where": {
-        "enquiry_userid": {"_eq": userId}
+        "enq_sender_id": {"_eq": userId}
       }
     };
     final res = await repo.getMyEnquiryJobData(variables);
@@ -32,7 +32,7 @@ class EnquiriesViewModel extends ChangeNotifier {
     notifyListeners();
     return res;
   }
-
+  
   Future<ApplicantEnquiryData?> getApplicantEnquiryData(
       BuildContext context, String jobId) async {
     Loaders.circularShowLoader(context);

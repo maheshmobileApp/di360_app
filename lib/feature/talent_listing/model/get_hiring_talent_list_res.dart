@@ -51,10 +51,10 @@ class Jobhirings {
   String? jobProfilesId;
   dynamic dentalPracticeId;
   DentalSupplier? dentalSupplier;
-  dynamic dentalPractice;
+  DentalSupplier? dentalPractice;
   HiringJobProfiles? jobProfiles;
-  dynamic talentEnquiriesFindPractice;
-  dynamic talentEnquiriesFindSupplier;
+  TalentEnquiriesFindSupplier? talentEnquiriesFindPractice;
+  TalentEnquiriesFindSupplier? talentEnquiriesFindSupplier;
   Directories? directories;
   String? sTypename;
 
@@ -87,12 +87,20 @@ class Jobhirings {
     dentalSupplier = json['dental_supplier'] != null
         ? new DentalSupplier.fromJson(json['dental_supplier'])
         : null;
-    dentalPractice = json['dental_practice'];
+    dentalPractice = json['dental_practice'] != null
+        ? new DentalSupplier.fromJson(json['dental_practice'])
+        : null;
     jobProfiles = json['job_profiles'] != null
         ? new HiringJobProfiles.fromJson(json['job_profiles'])
         : null;
-    talentEnquiriesFindPractice = json['talent_enquiries_find_practice'];
-    talentEnquiriesFindSupplier = json['talent_enquiries_find_supplier'];
+    talentEnquiriesFindPractice = json['talent_enquiries_find_practice'] != null
+        ? new TalentEnquiriesFindSupplier.fromJson(
+            json['talent_enquiries_find_practice'])
+        : null;
+    talentEnquiriesFindSupplier = json['talent_enquiries_find_supplier'] != null
+        ? new TalentEnquiriesFindSupplier.fromJson(
+            json['talent_enquiries_find_supplier'])
+        : null;
     directories = json['directories'] != null
         ? new Directories.fromJson(json['directories'])
         : null;
@@ -112,12 +120,20 @@ class Jobhirings {
     if (this.dentalSupplier != null) {
       data['dental_supplier'] = this.dentalSupplier!.toJson();
     }
-    data['dental_practice'] = this.dentalPractice;
+    if (this.dentalPractice != null) {
+      data['dental_practice'] = this.dentalPractice!.toJson();
+    }
     if (this.jobProfiles != null) {
       data['job_profiles'] = this.jobProfiles!.toJson();
     }
-    data['talent_enquiries_find_practice'] = this.talentEnquiriesFindPractice;
-    data['talent_enquiries_find_supplier'] = this.talentEnquiriesFindSupplier;
+    if (this.talentEnquiriesFindPractice != null) {
+      data['talent_enquiries_find_practice'] =
+          this.talentEnquiriesFindPractice?.toJson();
+    }
+    if (this.talentEnquiriesFindSupplier != null) {
+      data['talent_enquiries_find_supplier'] =
+          this.talentEnquiriesFindSupplier?.toJson();
+    }
     if (this.directories != null) {
       data['directories'] = this.directories!.toJson();
     }
@@ -135,7 +151,12 @@ class DentalSupplier {
   String? sTypename;
 
   DentalSupplier(
-      {this.id, this.name, this.directories, this.profileImage, this.logo, this.sTypename});
+      {this.id,
+      this.name,
+      this.directories,
+      this.profileImage,
+      this.logo,
+      this.sTypename});
 
   DentalSupplier.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -145,7 +166,7 @@ class DentalSupplier {
       if (json['directories'] is List) {
         // If it's a list, take the first item or handle as needed
         final dirList = json['directories'] as List;
-        directories = dirList.isNotEmpty 
+        directories = dirList.isNotEmpty
             ? DirectoriesList.fromJson(dirList[0] as Map<String, dynamic>)
             : null;
       } else if (json['directories'] is Map<String, dynamic>) {
@@ -166,6 +187,25 @@ class DentalSupplier {
     if (this.logo != null) {
       data['logo'] = this.logo!.toJson();
     }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class TalentEnquiriesFindSupplier {
+  String? id;
+  String? sTypename;
+
+  TalentEnquiriesFindSupplier({this.id, this.sTypename});
+
+  TalentEnquiriesFindSupplier.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -363,8 +403,7 @@ class Directories {
   }
 }
 
-
-class DirectoriesList  {
+class DirectoriesList {
   String? id;
   String? email;
   String? phone;
@@ -377,7 +416,6 @@ class DirectoriesList  {
     email = json['email'];
     phone = json['phone'];
     typename = json['__typename'];
-    
   }
 
   Map<String, dynamic> toJson() {

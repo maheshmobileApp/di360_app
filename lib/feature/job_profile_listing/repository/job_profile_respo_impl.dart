@@ -62,6 +62,7 @@ class JobProfileRepoImpl implements JobProfileRepository {
         "talent_id": {"_eq": jobProfileId}
       }
     };
+    
     final response =
         await http.query(getMyEnquiryJobDataQuery, variables: variables);
     final output = JobProfileEnquiriesResList.fromJson(response);
