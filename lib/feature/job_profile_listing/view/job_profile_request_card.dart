@@ -113,7 +113,8 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                         "dental_supplier_id": jobsListingData?.dentalSupplierId,
                         "dental_practice_id": jobsListingData?.dentalPracticeId,
                         "talentId": jobsListingData?.jobProfilesId,
-                        "userId": userId
+                        "userId": userId, 
+                        "talent_enquiry_id": jobsListingData?.talentEnquiriesFindSupplier?.id ?? jobsListingData?.talentEnquiriesFindPractice?.id ?? ""
                       },
                     );
                   },
@@ -121,7 +122,18 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                 ),
                 addHorizontal(10),
                 GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      await vm.getJobProfileEnquiry(
+                          context,
+                          vm.jobProfileId ?? "",
+                          jobsListingData?.dentalSupplierId ?? jobsListingData?.dentalPracticeId ?? "");
+                      if (vm.jobPrilfeEnquiryData == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Applicant data not available")),
+                        );
+                        return;
+                      }
                       showModalBottomSheet(
                         context: context,
                         shape: const RoundedRectangleBorder(

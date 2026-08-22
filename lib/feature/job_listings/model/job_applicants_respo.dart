@@ -54,6 +54,7 @@ class JobApplicants {
   DentalProfessional? dentalProfessional;
   List<ApplicantsMessage>? jobApplicantMessages;
   List<JobEnquiries>? jobEnquiries;
+  JobEnquiriesFind? jobEnquiriesFind;
 
   JobApplicants({
     this.id,
@@ -66,6 +67,7 @@ class JobApplicants {
     this.dentalProfessional,
     this.jobApplicantMessages,
     this.jobEnquiries,
+    this.jobEnquiriesFind,
   });
 
   JobApplicants.fromJson(Map<String, dynamic> json) {
@@ -115,6 +117,9 @@ class JobApplicants {
     } else {
       jobEnquiries = <JobEnquiries>[];
     }
+    jobEnquiriesFind = json['job_enquiries_find'] != null
+        ? new JobEnquiriesFind.fromJson(json['job_enquiries_find'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -136,6 +141,9 @@ class JobApplicants {
     }
     if (jobEnquiries != null) {
       data['job_enquiries'] = jobEnquiries!.map((v) => v.toJson()).toList();
+    }
+    if (this.jobEnquiriesFind != null) {
+      data['job_enquiries_find'] = this.jobEnquiriesFind?.toJson();
     }
     return data;
   }
@@ -311,6 +319,25 @@ class ApplicantsMessage {
     data['message_from'] = this.messageFrom;
     data['job_applicant_id'] = this.jobApplicantId;
     data['job_enquiry_id'] = this.jobEnquiryId;
+    return data;
+  }
+}
+
+class JobEnquiriesFind {
+  String? id;
+  String? sTypename;
+
+  JobEnquiriesFind({this.id, this.sTypename});
+
+  JobEnquiriesFind.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }

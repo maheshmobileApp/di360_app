@@ -15,7 +15,8 @@ import 'package:provider/provider.dart';
 
 const googleApiKey = "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70";
 
-class JobProfileLocation extends StatelessWidget with BaseContextHelpers,ValidationMixins {
+class JobProfileLocation extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   const JobProfileLocation({super.key});
 
   @override
@@ -63,31 +64,37 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers,Validat
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           GooglePlaceAutoCompleteTextField(
-                            textEditingController: jobProfileVM.locationController,
-                            googleAPIKey: ApiConst.googleAPIKey,
+                            textEditingController:
+                                jobProfileVM.locationController,
+                            googleAPIKey: ApiConst.staticGoogleAPIKey,
                             inputDecoration: InputDecoration(
                               hintText: "Search Location",
-                              hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
+                              hintStyle: TextStyles.regular4(
+                                  color: AppColors.dropDownHint),
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
                               errorBorder: InputBorder.none,
                               disabledBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 12),
                               isDense: true,
                             ),
                             debounceTime: 800,
                             isLatLngRequired: true,
-                            getPlaceDetailWithLatLng: (Prediction prediction) {},
+                            getPlaceDetailWithLatLng:
+                                (Prediction prediction) {},
                             itemClick: (Prediction prediction) async {
                               final placeId = prediction.placeId;
                               if (placeId != null) {
                                 await getPlaceDetails(placeId, jobProfileVM);
-                                field.didChange(jobProfileVM.locationController.text);
+                                field.didChange(
+                                    jobProfileVM.locationController.text);
                                 field.validate();
                               }
                             },
-                            itemBuilder: (context, index, Prediction prediction) {
+                            itemBuilder:
+                                (context, index, Prediction prediction) {
                               return Container(
                                 color: AppColors.whiteColor,
                                 padding: EdgeInsets.all(10),
@@ -96,7 +103,8 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers,Validat
                                     Icon(Icons.location_on),
                                     addHorizontal(7),
                                     Expanded(
-                                        child: Text("${prediction.description ?? ""}"))
+                                        child: Text(
+                                            "${prediction.description ?? ""}"))
                                   ],
                                 ),
                               );
@@ -109,7 +117,8 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers,Validat
                             const SizedBox(height: 5),
                             Text(
                               field.errorText ?? '',
-                              style: const TextStyle(color: Colors.red, fontSize: 12),
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
                             ),
                           ],
                         ],
@@ -134,8 +143,9 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers,Validat
                 hintText: "Enter state",
                 title: "State",
                 isRequired: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter state' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter state'
+                    : null,
               ),
               addVertical(16),
               InputTextField(
@@ -196,8 +206,7 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers,Validat
           jobProfileVM.cityPostCodeController.text = postalCode ?? "";
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Widget _sectionHeader(String title) {

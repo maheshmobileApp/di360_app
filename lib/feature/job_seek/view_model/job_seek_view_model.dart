@@ -40,6 +40,7 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isJobApplied = false;
   List<Jobs> jobs = [];
   List<Jobs> filteredJobs = [];
+  List<Jobs> jobDetailsById = [];
   int _jobSeekLimit = 10;
   int _currentPage = 0;
   bool _hasMoreJobs = true;
@@ -323,6 +324,7 @@ class JobSeekViewModel extends ChangeNotifier {
 
     try {
       await repo.applyJob(applyJobRequest);
+      if(applyJobRequest.message.isNotEmpty)
       sendMessage(applyJobRequest.message, generatedID);
       return true;
     } catch (_) {
@@ -357,15 +359,26 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> jobEnquire(String jobId) async {
+  Future<bool> jobEnquire(
+      String jobId, String receiverId, String receiverType) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    var enquireData = EnquireRequest(
-      enquiryDescription: enquiryData ?? '',
-      jobId: jobId,
-      enquiryUserId: userId,
-    );
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    final variables = {
+      "object": {
+        "enquiry_description": enquiryData ?? '',
+        "job_id": jobId,
+        "enq_sender_id": userId,
+        "enq_sender_type": userType,
+        "enq_receiver_id":
+            receiverId, // "bf9d2549-abb4-4eff-8abd-98a2b5fbfdce",
+        "enq_receiver_type": receiverType, // "SUPPLIER"
+      }
+    };
+
+    print("Variables $variables");
     try {
-      await repo.enquire(enquireData);
+      await repo.enquire(variables);
       return true;
     } catch (_) {
       return false;
@@ -388,7 +401,20 @@ class JobSeekViewModel extends ChangeNotifier {
     try {
       final variables = {
         "limit": _jobSeekLimit,
-        "offset": _currentPage * _jobSeekLimit
+        "offset": _currentPage * _jobSeekLimit,
+        "where": {
+          "_and": [
+            {
+              "status": {"_eq": "APPROVE"}
+            },
+            {
+              "active_status": {"_eq": "ACTIVE"}
+            }
+          ]
+        },
+        "order_by": [
+          {"created_at": "desc"}
+        ]
       };
       var jobData = await repo.getPopularJobs(variables);
       final result = jobData.jobs ?? [];
@@ -592,6 +618,21 @@ class JobSeekViewModel extends ChangeNotifier {
     final response = await repo.getBanners(variables);
     if (response != null) {
       getBannersData = response;
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> getJobDetails(String id, BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+
+    final variables = {"id": id, "loginID": userId};
+
+    final response = await repo.getJobDetails(variables);
+    if (response != []) {
+      jobDetailsById = response;
+      Loaders.circularHideLoader(context);
     }
 
     notifyListeners();

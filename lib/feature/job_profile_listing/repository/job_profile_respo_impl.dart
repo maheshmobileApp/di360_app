@@ -81,7 +81,6 @@ class JobProfileRepoImpl implements JobProfileRepository {
       "limit": 20
     };
 
-    print("******************$variables");
 
     final response =
         await http.query(getProfileEnquiryQuery, variables: variables);

@@ -513,146 +513,152 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Stack(alignment: Alignment.center, children: [
-              CircleAvatar(
-                backgroundColor: AppColors.greyLightcolor,
-                radius: 26.5,
-                child: (imageUrl != null && imageUrl.isNotEmpty)
-                    ? SizedBox(
-                        height: 52,
-                        width: 52,
-                        child: ClipOval(
-                            child: CachedNetworkImageWidget(
-                                imageUrl: logoAvailable
-                                    ? newsfeeds?.communityOwner?.logo?.url ?? ''
-                                    : imageUrl,
-                                fit: BoxFit.contain,
-                                errorWidget:
-                                    Image.asset(ImageConst.directorProfile))),
-                      )
-                    : Text(
-                        getFirstLetter(
-                            newsfeeds?.communityOwner?.businessName ??
-                                name ??
-                                'Dental Interface'),
-                        style: TextStyles.bold5(color: AppColors.whiteColor),
-                      ),
-              ),
-              if (logoAvailable)
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    backgroundColor: AppColors.greyLight,
-                    radius: 16,
-                    child: (newsfeeds?.communityOwner?.logo?.url?.isNotEmpty ==
-                            true)
-                        ? SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: ClipOval(
-                                child: CachedNetworkImageWidget(
-                                    imageUrl: imageUrl ?? '',
-                                    fit: BoxFit.cover,
-                                    errorWidget: Image.asset(
-                                        ImageConst.directorProfile))),
-                          )
-                        : Text(
-                            getFirstLetter(name),
-                            style:
-                                TextStyles.bold5(color: AppColors.whiteColor),
-                          ),
-                  ),
+        Expanded(
+          child: Row(
+            children: [
+              Stack(alignment: Alignment.center, children: [
+                CircleAvatar(
+                  backgroundColor: AppColors.greyLightcolor,
+                  radius: 26.5,
+                  child: (imageUrl != null && imageUrl.isNotEmpty)
+                      ? SizedBox(
+                          height: 52,
+                          width: 52,
+                          child: ClipOval(
+                              child: CachedNetworkImageWidget(
+                                  imageUrl: logoAvailable
+                                      ? newsfeeds?.communityOwner?.logo?.url ?? ''
+                                      : imageUrl,
+                                  fit: BoxFit.contain,
+                                  errorWidget:
+                                      Image.asset(ImageConst.directorProfile))),
+                        )
+                      : Text(
+                          getFirstLetter(
+                              newsfeeds?.communityOwner?.businessName ??
+                                  name ??
+                                  'Dental Interface'),
+                          style: TextStyles.bold5(color: AppColors.whiteColor),
+                        ),
                 ),
-            ]),
-            addHorizontal(10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    if (newsfeeds?.userRole != UserRole.admin.value) {
-                      if (logoAvailable) {
-                        newsCommunityVM.listingStatus = "PUBLISHED";
-                        newsCommunityVM
-                            .setNewsFeedCommunityId(communityId ?? "");
-                        newsCommunityVM.setentryNewsFeedId(newsfeeds?.id ?? "");
-                        newsCommunityVM.setProfCommunityId(
-                            communityId ?? "", "");
-                        newsCommunityVM.getBannerUrl(context);
-                        newsCommunityVM.getCommunityMemberDirectorIds(
-                            communityId: communityId ?? "");
-                        navigationService.navigateToWithParams(
-                            RouteList.newsFeedCommunityView,
-                            params: {"newsfeedId": newsfeeds?.id});
-                      } else {
-                        Loaders.circularShowLoader(context);
-
-                        await directoryVM.GetDirectorDetails(id ?? "");
-                        await directoryVM.getDirectory(id ?? "");
-
-                        Loaders.circularHideLoader(context);
-
-                        navigationService
-                            .navigateTo(RouteList.directoryDetailsScreen);
-                      }
-                    } else {
-                      scaffoldMessenger("Admin feed");
-                    }
-                  },
-                  child: Text(
-                      logoAvailable
-                          ? newsfeeds?.communityOwner?.businessName ?? ""
-                          : name ?? 'Dental Interface',
-                      style: TextStyles.clashMedium(
-                          fontSize: 16, color: AppColors.black)),
-                ),
-                if (!logoAvailable)
-                  Text(
-                      DateFormatUtils.formatTwoDateTime(
-                        date ?? "",
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyles.regular1(color: AppColors.lightGeryColor)),
                 if (logoAvailable)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          Loaders.circularShowLoader(context);
-
-                          await directoryVM.GetDirectorDetails(userId ?? "");
-                          await directoryVM.getDirectory(userId ?? "");
-
-                          Loaders.circularHideLoader(context);
-
-                          navigationService
-                              .navigateTo(RouteList.directoryDetailsScreen);
-                        },
-                        child: Text(name ?? "",
-                            style: TextStyles.regular1(
-                                color: Colors.black, fontSize: 14)),
-                      ),
-                      const SizedBox(width: 8),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: CircleAvatar(
+                      backgroundColor: AppColors.greyLight,
+                      radius: 16,
+                      child: (newsfeeds?.communityOwner?.logo?.url?.isNotEmpty ==
+                              true)
+                          ? SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: ClipOval(
+                                  child: CachedNetworkImageWidget(
+                                      imageUrl: imageUrl ?? '',
+                                      fit: BoxFit.cover,
+                                      errorWidget: Image.asset(
+                                          ImageConst.directorProfile))),
+                            )
+                          : Text(
+                              getFirstLetter(name),
+                              style:
+                                  TextStyles.bold5(color: AppColors.whiteColor),
+                            ),
+                    ),
+                  ),
+              ]),
+              addHorizontal(10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        if (newsfeeds?.userRole != UserRole.admin.value) {
+                          if (logoAvailable) {
+                            newsCommunityVM.listingStatus = "PUBLISHED";
+                            newsCommunityVM
+                                .setNewsFeedCommunityId(communityId ?? "");
+                            newsCommunityVM.setentryNewsFeedId(newsfeeds?.id ?? "");
+                            newsCommunityVM.setProfCommunityId(
+                                communityId ?? "", "");
+                            newsCommunityVM.getBannerUrl(context);
+                            newsCommunityVM.getCommunityMemberDirectorIds(
+                                communityId: communityId ?? "");
+                            navigationService.navigateToWithParams(
+                                RouteList.newsFeedCommunityView,
+                                params: {"newsfeedId": newsfeeds?.id});
+                          } else {
+                            Loaders.circularShowLoader(context);
+                                  
+                            await directoryVM.GetDirectorDetails(id ?? "");
+                            await directoryVM.getDirectory(id ?? "");
+                                  
+                            Loaders.circularHideLoader(context);
+                                  
+                            navigationService
+                                .navigateTo(RouteList.directoryDetailsScreen);
+                          }
+                        } else {
+                          scaffoldMessenger("Admin feed");
+                        }
+                      },
+                      child: Text(
+                          logoAvailable
+                              ? newsfeeds?.communityOwner?.businessName ?? ""
+                              : name ?? 'Dental Interface',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: TextStyles.clashMedium(
+                              fontSize: 16, color: AppColors.black)),
+                    ),
+                    if (!logoAvailable)
                       Text(
                           DateFormatUtils.formatTwoDateTime(
                             date ?? "",
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyles.regular1(
-                              color: AppColors.lightGeryColor)),
-                    ],
-                  ),
-              ],
-            ),
-          ],
+                          style:
+                              TextStyles.regular1(color: AppColors.lightGeryColor)),
+                    if (logoAvailable)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              Loaders.circularShowLoader(context);
+                
+                              await directoryVM.GetDirectorDetails(userId ?? "");
+                              await directoryVM.getDirectory(userId ?? "");
+                
+                              Loaders.circularHideLoader(context);
+                
+                              navigationService
+                                  .navigateTo(RouteList.directoryDetailsScreen);
+                            },
+                            child: Text(name ?? "",
+                                style: TextStyles.regular1(
+                                    color: Colors.black, fontSize: 14)),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                              DateFormatUtils.formatTwoDateTime(
+                                date ?? "",
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyles.regular1(
+                                  color: AppColors.lightGeryColor)),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         NewsMenuWidget(newsfeeds: newsfeeds)
       ],

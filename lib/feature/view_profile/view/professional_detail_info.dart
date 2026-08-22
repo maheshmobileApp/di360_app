@@ -72,9 +72,9 @@ class ProfessionalDetailInfo extends StatelessWidget
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),
       items: items,
-      hintText: "Select category",
+      hintText: "Select type",
       validator: (value) =>
-          viewVM.selectedBusineestype == null ? 'Please select category' : null,
+          viewVM.selectedBusineestype == null ? 'Please select type' : null,
     );
   }
 }

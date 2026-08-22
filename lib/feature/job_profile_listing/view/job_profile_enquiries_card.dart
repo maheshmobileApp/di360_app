@@ -93,7 +93,7 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       RouteList.jobProfileTalentMessage,
                       params: {
                         "id": jobsListingData.jobhiringsFindSupplier?.id ??
-                            jobsListingData.jobhiringsFindSupplier?.id ??
+                            jobsListingData.jobhiringsFindPractice?.id ??
                             "",
                         "dental_supplier_id":
                             jobsListingData.dentalSuppliers?.id,

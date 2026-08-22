@@ -178,7 +178,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.getAllTalentsRequest(variables);
     hiringTalentList = res;
-    print("***********hiringTalentList length ${hiringTalentList?.jobhirings?.length}");
+    print(
+        "***********hiringTalentList length ${hiringTalentList?.jobhirings?.length}");
     await getRequestCount(context);
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -226,6 +227,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
         },
         "limit": 20
       };
+
+      print("talent message payload $variables");
 
       final res = await repo.fetchTalentMessages(variables);
       if (res.talentsMessage != null) {

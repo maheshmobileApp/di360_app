@@ -346,7 +346,7 @@ class CatalogueViewModel extends ChangeNotifier {
               {
                 "dental_supplier_id": {"_eq": userId}
               },
-              if (UserRole.professional.value == userType && communityIdCatalouge?.isNotEmpty == false)
+              if (UserRole.professional.value == userType && communityIdCatalouge?.isNotEmpty == false && myCommunityIds.isNotEmpty)
                 {
                   "community_id": {
                     "_in": ["${myCommunityIds.first}"]

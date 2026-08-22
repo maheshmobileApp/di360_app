@@ -13,6 +13,7 @@
         },
         {
           "title": "My Directory",
+          "permission": "DIRECTORY_MODULE",
           "subTitle": [
             {
               "title": "My Directory",
@@ -22,6 +23,7 @@
         },
         {
           "title": "JobSeek",
+          "permission": "POPULAR_JOBS_MODULE",
           "subTitle": [
             {
               "title": "JobProfile",
@@ -39,6 +41,7 @@
         },
         {
           "title": "Learning Hub",
+          "permission": "LEARNING_HUB_MODULE",
           "subTitle": [
             {
               "title": "My Learning Hub",
@@ -70,6 +73,7 @@
         },
         {
           "title": "My Directory",
+          "permission": "DIRECTORY_MODULE",
           "subTitle": [
             {
               "title": "My Directory",
@@ -88,6 +92,7 @@
         },
         {
           "title": "JobSeek",
+          "permission": "POPULAR_JOBS_MODULE",
           "subTitle": [
             {
               "title": "Job Listings",
@@ -105,6 +110,7 @@
         },
         {
           "title": "Learning Hub",
+          "permission": "LEARNING_HUB_MODULE",
           "subTitle": [
             {
               "title": "My Learning Hub",
@@ -165,6 +171,7 @@
         },
         {
           "title": "My Directory",
+          "permission": "DIRECTORY_MODULE",
           "subTitle": [
             {
               "title": "My Directory",
@@ -183,6 +190,7 @@
         },
         {
           "title": "JobSeek",
+          "permission": "POPULAR_JOBS_MODULE",
           "subTitle": [
             {
               "title": "Job Listings",
@@ -200,6 +208,7 @@
         },
         {
           "title": "Catalogues",
+          "permission": "CATALOGUES_MODULE",
           "subTitle": [
             {
               "title": "Catalogues",
@@ -209,6 +218,7 @@
         },
         {
           "title": "Learning Hub",
+          "permission": "LEARNING_HUB_MODULE",
           "subTitle": [
             {
               "title": "Learning Hub",
@@ -222,6 +232,7 @@
         },
         {
           "title": "Banners",
+          "permission": "BANNERS_MODULE",
           "subTitle": [
             {
               "title": "Banners",
@@ -231,6 +242,7 @@
         },
         {
           "title": "Marketing",
+          "permission": "MARKETING_MODULE",
           "subTitle": [
             {
               "title": "Marketing",
@@ -240,6 +252,7 @@
         },
          {
           "title": "Team Members",
+          "permission": "TEAM_MEMBERS_MODULE",
           "subTitle": [
             
             {

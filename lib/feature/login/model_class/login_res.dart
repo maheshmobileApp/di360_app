@@ -208,15 +208,17 @@ class LoginApi {
 
 class Subscription {
   String? status;
-  String? planId;
+  String? subscriptionPlanId;
+  String? currentSubscriptionPlanId;
   String? planName;
   String? planType;
 
-  Subscription({this.status, this.planId, this.planName, this.planType});
+  Subscription({this.status, this.subscriptionPlanId, this.currentSubscriptionPlanId, this.planName, this.planType});
 
   Subscription.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    planId = json['planId'];
+    subscriptionPlanId = json['subscriptionPlanId'];
+    currentSubscriptionPlanId = json['currentSubscriptionId'];
     planName = json['planName'];
     planType = json['planType'];
   }
@@ -224,7 +226,8 @@ class Subscription {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
-    data['planId'] = this.planId;
+    data['currentSubscriptionId'] = this.currentSubscriptionPlanId;
+    data['subscriptionPlanId'] = this.subscriptionPlanId;
     data['planName'] = this.planName;
     data['planType'] = this.planType;
     return data;

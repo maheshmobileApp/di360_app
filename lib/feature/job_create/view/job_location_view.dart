@@ -48,7 +48,7 @@ class JobLocationView extends StatelessWidget with ValidationMixins {
                 SizedBox(height: 10),
                 GooglePlaceAutoCompleteTextField(
                   textEditingController: jobCreateVM.locationSearchController,
-                  googleAPIKey: ApiConst.googleAPIKey,
+                  googleAPIKey: ApiConst.staticGoogleAPIKey,
                   inputDecoration: InputDecoration(
                     hintText: "Search Location",
                     hintStyle:
@@ -65,8 +65,8 @@ class JobLocationView extends StatelessWidget with ValidationMixins {
                   // countries: ["in", "fr"], // optional by default null is set
                   isLatLngRequired:
                       true, // if you required coordinates from place detail
-                  getPlaceDetailWithLatLng: (Prediction prediction) {
-                  }, // this callback is called when isLatLngRequired is true
+                  getPlaceDetailWithLatLng: (Prediction
+                      prediction) {}, // this callback is called when isLatLngRequired is true
                   itemClick: (Prediction prediction) async {
                     final placeId = prediction.placeId;
                     if (placeId != null) {
@@ -180,12 +180,9 @@ class JobLocationView extends StatelessWidget with ValidationMixins {
           jobCreateVM.countryController.text = country ?? "";
           jobCreateVM.stateController.text = state ?? "";
           jobCreateVM.cityPostCodeController.text = postalCode ?? "";
-        } else {
-         
-        }
+        } else {}
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Widget _sectionHeader(String title) {

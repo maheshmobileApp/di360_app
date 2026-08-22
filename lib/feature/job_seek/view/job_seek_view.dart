@@ -95,11 +95,15 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                       BannerUtils.calculateBannerIndices(vm.jobs.length),
                   itemBuilder: (context, dataIndex) {
                     final jobData = vm.jobs[dataIndex];
+                    final jobId = vm.jobs[dataIndex].id ?? "";
+
                     return InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        await vm.getJobDetails(jobId, context);
+                        if (vm.jobDetailsById != [])
                         navigationService.navigateToWithParams(
                           RouteList.jobdetailsScreen,
-                          params: jobData,
+                          params: vm.jobDetailsById.first,
                         );
                       },
                       child: JobSeekCard(jobsData: jobData),

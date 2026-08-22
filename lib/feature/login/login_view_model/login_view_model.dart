@@ -109,6 +109,8 @@ class LoginViewModel extends ChangeNotifier {
 
           await LocalStorage.setStringList(LocalStorageConst.permissions,
               loginData.navigation?.permissions ?? []);
+          await LocalStorage.setStringVal(LocalStorageConst.subscriptionStatus,
+              loginData.subscription?.status ?? "");
 
           /*if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {
@@ -283,7 +285,6 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> getSuppliers(String id) async {
     final res = await repo.getSuppliers(id);
     supplerData = res;
-    notifyListeners();
   }
 
   Future<void> getSupplierCommunityOwner(String id) async {
@@ -312,7 +313,6 @@ class LoginViewModel extends ChangeNotifier {
       await LocalStorage.setStringVal(
           LocalStorageConst.businessName, supplier?.businessName ?? "");
     }
-    notifyListeners();
   }
 
   Future<void> getMyCommunityData(String userId) async {
@@ -325,7 +325,6 @@ class LoginViewModel extends ChangeNotifier {
       await LocalStorage.setStringList(
           LocalStorageConst.myCommunityIds, communityIds);
     }
-    notifyListeners();
   }
 }
 

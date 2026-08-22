@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/account/account_model/account_model.dart';
@@ -66,6 +68,7 @@ class ProfileViewModel extends ChangeNotifier {
       default:
         _visibleSections = [];
     }
+    await _filterSectionsByPermissions();
   }
 
   void _updateSupplierOptions(bool communityStatus) async {
@@ -75,7 +78,8 @@ class ProfileViewModel extends ChangeNotifier {
         ? _visibleSections = _visibleSections.map((section) {
             if (section.title == "Community") {
               return ProfileCategory(
-                title: "${communityName}Community", // new title
+                title: "${communityName}Community",
+                permission: section.permission, // new title
                 subTitle: section.subTitle,
               );
             }
@@ -83,6 +87,7 @@ class ProfileViewModel extends ChangeNotifier {
             if (section.title == "News Feed") {
               return ProfileCategory(
                 title: section.title,
+                permission: section.permission,
                 subTitle: section.subTitle.map((subItem) {
                   if (subItem.title.toLowerCase().contains("community")) {
                     return SubTitle(
@@ -101,5 +106,23 @@ class ProfileViewModel extends ChangeNotifier {
         _visibleSections.removeWhere((section) => section.title == "Community");
 
     notifyListeners();
+  }
+
+  Future<void> _filterSectionsByPermissions() async {
+    final permissionsList = await LocalStorage.getStringList(
+      LocalStorageConst.permissions,
+    );
+
+    _visibleSections = _visibleSections.where((section) {
+    // Permission key is not present in JSON
+    // → Show by default
+    if (section.permission == null) {
+      return true;
+    }
+
+    // Permission key exists
+    // → User must have the permission
+    return permissionsList.contains(section.permission);
+  }).toList();
   }
 }

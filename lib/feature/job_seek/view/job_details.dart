@@ -21,7 +21,6 @@ import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -60,7 +59,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 if (provider.enquiryData != null) {
                   navigationService.goBack();
                   await Provider.of<JobSeekViewModel>(context, listen: false)
-                      .jobEnquire(widget.job.id!);
+                      .jobEnquire(
+                          widget.job.id ?? "",
+                          widget.job.createdById ?? "",
+                          widget.job.userRole ?? "");
                   ToastMessage.show('Enquiry sent successfully!');
                 } else {
                   ToastMessage.show('Please enter enquiry message');

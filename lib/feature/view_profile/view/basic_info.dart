@@ -114,37 +114,81 @@ class BasicInfo extends StatelessWidget
   }
 
   Widget _buildBusineestype(ViewProfileViewModel viewVM) {
-    final items = <DropdownMenuItem<Object>>[];
+    final items = <DropdownMenuItem<DirectoryCategories>>[];
 
-    for (var bt in viewVM.directoryBusinessTypes) {
-      items.add(DropdownMenuItem<Object>(
-        enabled: false,
-        value: bt.name,
-        child: Text(bt.name ?? '',
-            style: TextStyles.medium3(color: AppColors.black)),
-      ));
-      for (var cat in bt.directoryCategories ?? []) {
-        items.add(DropdownMenuItem<Object>(
-          value: cat,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(cat.name ?? '',
-                style: TextStyles.regular3(color: AppColors.secondaryColor)),
+    for (final bt in viewVM.directoryBusinessTypes) {
+      // Business Type Header
+      items.add(
+        DropdownMenuItem<DirectoryCategories>(
+          enabled: false,
+          value: null,
+          child: Text(
+            bt.name ?? '',
+            style: TextStyles.medium3(
+              color: AppColors.black,
+            ),
           ),
-        ));
+        ),
+      );
+
+      // Business Type Categories
+      for (final cat in bt.directoryCategories ?? []) {
+        items.add(
+          DropdownMenuItem<DirectoryCategories>(
+            value: cat,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(
+                cat.name ?? '',
+                style: TextStyles.regular3(
+                  color: AppColors.secondaryColor,
+                ),
+              ),
+            ),
+          ),
+        );
       }
     }
 
-    return CustomDropDown(
-      value: viewVM.selectedBusineestype,
+    // ------------------------------------------------------------
+    // Make sure selected value belongs to the current dropdown list
+    // ------------------------------------------------------------
+
+    DirectoryCategories? selectedValue;
+
+    final currentSelected = viewVM.selectedBusineestype;
+
+    if (currentSelected != null) {
+      final matchingItems = items
+          .where(
+            (item) =>
+                item.value != null && item.value!.id == currentSelected.id,
+          )
+          .toList();
+
+      if (matchingItems.length == 1) {
+        selectedValue = matchingItems.first.value;
+      }
+    }
+
+    return CustomDropDown<DirectoryCategories>(
+      value: selectedValue,
       title: "Business Type",
       isRequired: true,
-      onChanged: (v) =>
-          viewVM.setSelectedBusineestype(v as DirectoryCategories),
+      onChanged: (value) {
+        if (value != null) {
+          viewVM.setSelectedBusineestype(value);
+        }
+      },
       items: items,
-      hintText: "Select category",
-      validator: (value) =>
-          viewVM.selectedBusineestype == null ? 'Please select category' : null,
+      hintText: "Select Type",
+      validator: (value) {
+        if (value == null) {
+          return 'Please select type';
+        }
+
+        return null;
+      },
     );
   }
 }

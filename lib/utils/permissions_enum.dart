@@ -3,7 +3,7 @@ enum ModulePermission {
   newsfeedMarketplace('NEWSFEED_MARKETPLACE'),
   directoryMarketplace('DIRECTORY_MARKETPLACE'),
   learningHubMarketplace('LEARNING_HUB_MARKETPLACE'),
-  jobSeekMarketplace('JOB_SEEK_MARKETPLACE'),
+  jobSeekMarketplace('POPULAR_JOBS_MARKETPLACE'),
   catalogueMarketplace('CATALOGUE_MARKETPLACE'),
   suppliesMarketplace('SUPPLIES_MARKETPLACE'),
 

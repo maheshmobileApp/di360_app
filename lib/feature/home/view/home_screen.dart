@@ -34,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
       (item) => permissions.contains(item.permission.value),
     ).toList();
     
-
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(

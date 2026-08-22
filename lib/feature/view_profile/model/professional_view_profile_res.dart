@@ -57,11 +57,12 @@ class DentalProfessionalsByPk {
   DirectoryCategories? professiontype;
   String? directoryCategoryId;
   String? proDetailsAphraRegistrationNumber;
+  String? aphraRegistrationNumber;
   BankDetails? bankDetails; //Todo remove this in feature
   String? dateOfBirth;
   String? salutation;
-  dynamic drivingLicence; // Todo 
-  ProfileImage? profileImage; // Todo 
+  dynamic drivingLicence; // Todo
+  ProfileImage? profileImage; // Todo
   String? gender;
   String? type;
   String? address;
@@ -72,7 +73,7 @@ class DentalProfessionalsByPk {
   String? addressLineOne;
   String? addressLineTwo;
   String? landMark;
-  Clients? clients;// table name is clients
+  Clients? clients; // table name is clients
   List<Directories>? directories;
   String? sTypename;
 
@@ -91,6 +92,7 @@ class DentalProfessionalsByPk {
       this.professiontype,
       this.directoryCategoryId,
       this.proDetailsAphraRegistrationNumber,
+      this.aphraRegistrationNumber,
       this.bankDetails,
       this.dateOfBirth,
       this.salutation,
@@ -128,6 +130,7 @@ class DentalProfessionalsByPk {
     directoryCategoryId = json['directory_category_id'];
     proDetailsAphraRegistrationNumber =
         json['pro_details_aphra_registration_number'];
+    aphraRegistrationNumber = json['aphra_registration_number'];
     bankDetails = json['bank_details'] != null
         ? new BankDetails.fromJson(json['bank_details'])
         : null;
@@ -173,7 +176,8 @@ class DentalProfessionalsByPk {
     data['alt_email'] = this.altEmail;
     data['alt_phone'] = this.altPhone;
     data['profession_type'] = this.professionType;
-    data['professionType'] = this.professiontype!.toJson(); 
+    data['professionType'] = this.professiontype!.toJson();
+    data['aphra_registration_number'] = this.aphraRegistrationNumber;
     data['pro_details_aphra_registration_number'] =
         this.proDetailsAphraRegistrationNumber;
     if (this.bankDetails != null) {
@@ -311,7 +315,7 @@ class Directories {
   ProfileImage? profileImage;
   String? address;
   String? professionType;
-  String? sTypename;// not need can remove this
+  String? sTypename; // not need can remove this
 
   Directories(
       {this.id,

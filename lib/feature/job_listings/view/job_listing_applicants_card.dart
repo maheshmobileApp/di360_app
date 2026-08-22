@@ -172,9 +172,11 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                           "jobId": applicant.jobId ?? "",
                           "applicantId": applicant.id ?? "",
                           "userId": userId,
-                          "type": "applicant",
+                          "type": "",
                           "receiverId": applicant.dentalProfessionalId,
-                          "receiverType": "PROFESSIONAL"
+                          "receiverType": "PROFESSIONAL",
+                          "jobEnquiryId": applicant.jobEnquiriesFind?.id?? "",
+                          
                         },
                       );
                     },

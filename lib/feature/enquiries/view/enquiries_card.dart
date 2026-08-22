@@ -22,7 +22,8 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
   final JobEnquiries? enquiry;
   final int? index;
 
-  const EnquiriesCard({
+  const 
+  EnquiriesCard({
     super.key,
     required this.enquiry,
     this.index,

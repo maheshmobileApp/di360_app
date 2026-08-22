@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/enquiries/query/get_job_enquiry_details.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_filter_request.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
@@ -21,7 +22,7 @@ class JobSeekRepoImpl extends JobSeekRepository {
 
   @override
   Future<JobdList> getPopularJobs(dynamic variables) async {
-    final jobsData = await _http.query(job_list_request,variables: variables);
+    final jobsData = await _http.query(job_list_request, variables: variables);
     return JobdList.fromJson(jobsData);
   }
 
@@ -34,11 +35,9 @@ class JobSeekRepoImpl extends JobSeekRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> enquire(EnquireRequest request) {
-    return _http.mutation(
-      enquiryMutation,
-      {'object': request.toJson()},
-    );
+  Future<Map<String, dynamic>> enquire(dynamic variables) async {
+    final res = await _http.mutation(enquiryMutation, variables);
+    return res;
   }
 
   @override
@@ -117,6 +116,14 @@ class JobSeekRepoImpl extends JobSeekRepository {
   Future<GetBannerData> getBanners(variables) async {
     final res = await _http.query(getBannerQuery, variables: variables);
     return GetBannerData.fromJson(res);
+  }
+
+  @override
+  Future<List<Jobs>> getJobDetails(variables) async {
+    final result = await _http.query(getJobDetailsQuery, variables: variables);
+    final jobsJson = result['jobs'] as List<dynamic>? ?? [];
+    final response = jobsJson.map((e) => Jobs.fromJson(e)).toList();
+    return response;
   }
 }
 

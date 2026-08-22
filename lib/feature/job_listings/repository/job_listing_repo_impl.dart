@@ -105,7 +105,7 @@ class JobListingRepoImpl extends JobListingRepository {
   Future<List<JobApplicants>?> getJobApplicants(
       List<String>? listingStatusforapplicants, String jobId) async {
     final variables = {
-      "limit": 5,
+      "limit": 10,
       "offset": 0,
       "where": {
         "job_id": {"_eq": jobId},
@@ -152,12 +152,13 @@ class JobListingRepoImpl extends JobListingRepository {
 
   @override
   Future<JobListingApplicantsMessageResponse> fetchApplicantMessages(
-      String jobId, String jobEnquiryId) async {
+      String jobId, String jobEnquiryId, String messageType) async {
     final variables = {
       "where": {
         "_and": [
           {
             "_or": [
+              if (messageType != "enquiry")
               {
                 "job_applicant_id": {"_eq": jobId}
               },

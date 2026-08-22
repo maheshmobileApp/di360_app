@@ -15,7 +15,7 @@ class ApiConst {
       "AIzaSyA5vRiUsDawykjIT0GpCKgJ_20f-6eHWFA";
 
   static const String staticGoogleAPIKey =
-      "AIzaSyAzaYcSFRWOySuMNQMzAYPIVhvvF3eieDY";
+      "AIzaSyAQ6RHTkmhYqcy04ONj52cMhntKBQrIC7I";
 
   static String get googleAPIKey =>
       Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;

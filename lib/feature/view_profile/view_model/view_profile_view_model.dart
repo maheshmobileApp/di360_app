@@ -61,7 +61,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   String? gender;
 
   DentalSuppliersByPk? supplierViewProfileData;
-  DentalSuppliersByPk? practiceViewProfileData;
+  DentalPracticesByPk? practiceViewProfileData;
   DentalProfessionalsByPk? professionalViewProfileData;
   File? logoFile;
 
@@ -108,6 +108,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setSelectedBusineestype(DirectoryCategories? emp) {
+    print("******************$emp");
     selectedBusineestype = emp;
     notifyListeners();
   }
@@ -128,7 +129,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.getViewProfileData();
     if (res != null) {
       supplierViewProfileData = res;
-      loadViewProfileData(supplierViewProfileData);
+      loadSupplierViewProfileData(supplierViewProfileData);
     }
     notifyListeners();
   }
@@ -136,8 +137,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> getPracticeViewProfileData() async {
     final res = await repo.getPracticeViewProfileData();
     if (res != null) {
-      practiceViewProfileData = res;
-      loadViewProfileData(practiceViewProfileData);
+      practiceViewProfileData = res.dentalPracticesByPk;
+      loadPracticeViewProfileData(practiceViewProfileData);
     }
     notifyListeners();
   }
@@ -151,7 +152,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void loadViewProfileData(DentalSuppliersByPk? viewProfile) async {
+  void loadSupplierViewProfileData(DentalSuppliersByPk? viewProfile) async {
+    print("********businessType${viewProfile?.professiontype?.name}");
     nameController.text = viewProfile?.name ?? "";
     emailController.text = viewProfile?.email ?? "";
     final phone = viewProfile?.phone ?? "";
@@ -167,7 +169,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     businessNameController.text = viewProfile?.businessName ?? "";
     businessEmailController.text = viewProfile?.businessEmail ?? "";
-    businessPhoneNoController.text = viewProfile?.phone ?? "";
+    businessPhoneNoController.text = viewProfile?.businessPhone ?? "";
     websiteUrlController.text = viewProfile?.websiteLink ?? "";
     abnNumberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
@@ -185,21 +187,53 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     countryController.text = viewProfile?.country ?? "";
     stateController.text = viewProfile?.state ?? "";
     zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
-    final allCategories = directoryBusinessTypes
-        .expand((bt) => bt.directoryCategories ?? [])
-        .toList();
-    final businessType = allCategories.firstWhere(
-      (cat) => cat.name == viewProfile?.professiontype?.name,
-      orElse: () => null,
-    );
-    if (businessType != null) {
-      setSelectedBusineestype(businessType);
-    }
+    setBusinessType(viewProfile?.professiontype?.name);
     logoUrl = viewProfile?.logo?.url ?? "";
     userName = viewProfile?.businessName ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
-    //await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
+    notifyListeners();
+  }
+
+  void loadPracticeViewProfileData(DentalPracticesByPk? viewProfile) async {
+    nameController.text = viewProfile?.name ?? "";
+    emailController.text = viewProfile?.email ?? "";
+    final phone = viewProfile?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      phoneNoController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      phoneNoController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    businessNameController.text = viewProfile?.businessName ?? "";
+    businessEmailController.text = viewProfile?.businessEmail ?? "";
+    businessPhoneNoController.text = viewProfile?.businessPhone ?? "";
+    websiteUrlController.text = viewProfile?.websiteLink ?? "";
+    abnNumberController.text = viewProfile?.abnNumber ?? "";
+    firstNameController.text =
+        viewProfile?.firstName ?? viewProfile?.name ?? "";
+    middleNameController.text = viewProfile?.middleName ?? "";
+    lastNameController.text = viewProfile?.lastName ?? "";
+    faxNumberController.text = viewProfile?.faxNumber ?? "";
+    alternateEmailController.text = viewProfile?.altEmail ?? "";
+    alternatePhoneNoController.text = viewProfile?.altPhone ?? "";
+    addressController.text = viewProfile?.address ?? "";
+    addressLineOneController.text = viewProfile?.addressLineOne ?? "";
+    addressLineTwoController.text = viewProfile?.addressLineTwo ?? "";
+    cityController.text = viewProfile?.city ?? "";
+    landmarkController.text = viewProfile?.landMark ?? "";
+    countryController.text = viewProfile?.country ?? "";
+    stateController.text = viewProfile?.state ?? "";
+    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
+    setBusinessType(viewProfile?.professiontype?.name);
+    logoUrl = viewProfile?.logo?.url ?? "";
+    userName = viewProfile?.businessName ?? "";
+    await LocalStorage.setStringVal(
+        LocalStorageConst.profilePic, logoUrl ?? '');
     notifyListeners();
   }
 
@@ -247,7 +281,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
             viewProfile.gender!.substring(1).toLowerCase()
         : null;
     aphraNumberController.text =
-        viewProfile?.proDetailsAphraRegistrationNumber ?? '';
+        viewProfile?.aphraRegistrationNumber ?? '';
     final allCategories = directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
@@ -369,7 +403,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "alt_email": alternateEmailController.text,
         "alt_phone": alternatePhoneNoController.text,
         "profession_type": selectedBusineestype?.name,
-        'professiontype': selectedBusineestype,
+        'professionType': selectedBusineestype,
         "profile_completed": true
       };
     } else if (type == UserRole.professional.value) {
@@ -386,7 +420,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "country": countryController.text,
         "zipcode": int.tryParse(zipCodeController.text),
         "profession_type": selectedBusineestype?.name,
-        "pro_details_aphra_registration_number": aphraNumberController.text,
+        "aphra_registration_number": aphraNumberController.text,
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "middle_name": middleNameController.text,
@@ -394,7 +428,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "date_of_birth": dateOfBirthController.text,
         "salutation": selectedSalutation,
         "profile_completed": true,
-        'professiontype': selectedBusineestype,
+        'professionType': selectedBusineestype,
       };
     } else {
       requestData["supplierObj"] = {
@@ -422,7 +456,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "alt_phone": alternatePhoneNoController.text,
         "profession_type": selectedBusineestype?.name,
         "profile_completed": true,
-        'professiontype': selectedBusineestype,
+        'professionType': selectedBusineestype,
       };
     }
 
@@ -743,6 +777,31 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.updateRecord(requestData);
     if (res != null) {
       print(res);
+    }
+  }
+
+  void setBusinessType(String? professionName) {
+    final name = professionName?.trim().toLowerCase();
+
+    if (name == null || name.isEmpty) {
+      setSelectedBusineestype(null);
+      return;
+    }
+
+    final allCategories = directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+
+    final matchingCategories = allCategories
+        .where(
+          (cat) => (cat.name ?? '').trim().toLowerCase() == name,
+        )
+        .toList();
+
+    if (matchingCategories.length == 1) {
+      setSelectedBusineestype(matchingCategories.first);
+    } else {
+      setSelectedBusineestype(null);
     }
   }
 

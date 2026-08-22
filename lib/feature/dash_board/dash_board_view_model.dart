@@ -12,6 +12,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/subscription_expired_dialog.dart';
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
@@ -25,6 +26,7 @@ import 'package:di360_flutter/feature/splash/repository/app_config_repo_impl.dar
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/foundation.dart';
@@ -106,11 +108,60 @@ class DashBoardViewModel extends ChangeNotifier {
     }
   }
 
-  void setIndex(int index, BuildContext context) {
-    if (index < 0 || index >= _pages.length) return;
+  Future<void> setIndex(
+    int index,
+    BuildContext context,
+  ) async {
+    if (index < 0 || index >= _pages.length) {
+      return;
+    }
+
+    bool isSubscriptionExempt = false;
+
+    if (userType == UserRole.supplier.value) {
+      isSubscriptionExempt = [0, 5].contains(index);
+    } else if (userType == UserRole.practice.value) {
+      isSubscriptionExempt = [0, 4].contains(index);
+    } else if (userType == UserRole.professional.value) {
+      isSubscriptionExempt = [0, 5].contains(index);
+    }
+
+    if (!isSubscriptionExempt) {
+      final subscriptionStatus = await LocalStorage.getStringVal(
+        LocalStorageConst.subscriptionStatus,
+      );
+
+      if (subscriptionStatus == "EXPIRED") {
+        _showInactivePopup(context);
+        return;
+      }
+
+      if (subscriptionStatus == "PENDING") {
+        scaffoldMessenger(
+          "Your subscription is currently pending. "
+          "Please wait while we process your subscription.",
+        );
+        return;
+      }
+    }
+
     _currentIndex = index;
-    updateIndex(index, context);
+
+    await updateIndex(index, context);
+
     notifyListeners();
+  }
+
+  void _showInactivePopup(BuildContext context) {
+    SubscriptionExpiredDialog.show(
+      context,
+      onAction: () {
+        scaffoldMessenger(
+          "To view and manage your subscription or purchase credit packs, "
+          "please log in through the web.",
+        );
+      },
+    );
   }
 
   updateIndex(int index, BuildContext context) async {
@@ -120,7 +171,7 @@ class DashBoardViewModel extends ChangeNotifier {
           break;
         case 1: // News Feed
           await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
-           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
+          context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
           await context.read<JobSeekViewModel>().fetchJobs(context);
@@ -130,7 +181,9 @@ class DashBoardViewModel extends ChangeNotifier {
               .read<CommunityViewModel>()
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
-          await context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
+          await context
+              .read<NewsFeedCommunityViewModel>()
+              .getBannerUrl(context);
           await context.read<NewsFeedCommunityViewModel>().initialStateData();
           context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
           context.read<NewsFeedCommunityViewModel>().setentryNewsFeedId("");
@@ -151,7 +204,7 @@ class DashBoardViewModel extends ChangeNotifier {
           break;
         case 1: // News Feed
           await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
-           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
+          context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
           await context.read<JobSeekViewModel>().fetchJobs(context);

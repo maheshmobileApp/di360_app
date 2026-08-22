@@ -49,7 +49,7 @@ class _JobListingApplicantsMessegeState
   void initState() {
     super.initState();
     final vm = Provider.of<JobListingsViewModel>(context, listen: false);
-    vm.fetchApplicantMessages(widget.applicantId ?? "", widget.jobEnquiryId?? "");
+    vm.fetchApplicantMessages(widget.applicantId ?? "", widget.jobEnquiryId?? "", widget.typeName?? "");
   }
 
   String formatDateTime(String? time) {
@@ -220,7 +220,7 @@ class _JobListingApplicantsMessegeState
                           if (text.isNotEmpty) {
                             if (vm.editMessage) {
                               vm.updateApplicantMessage(
-                                  context, widget.applicantId, widget.jobEnquiryId ?? "");
+                                  context, widget.applicantId, widget.jobEnquiryId ?? "", widget.typeName?? "");
                               vm.messageController.clear();
                             } else {
                               vm.sendApplicantMessage(
@@ -232,7 +232,7 @@ class _JobListingApplicantsMessegeState
                                       : "",
                                   widget.receiverId ?? "",
                                   widget.receiverType ?? "",
-                                  widget.jobId, widget.jobEnquiryId ?? "");
+                                  widget.jobId, widget.jobEnquiryId ?? "", widget.typeName?? "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
@@ -268,7 +268,7 @@ class _JobListingApplicantsMessegeState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-          vm.deleteapplicantMessage(context, id, applicantId, true, widget.jobEnquiryId ?? "");
+          vm.deleteapplicantMessage(context, id, applicantId, true, widget.jobEnquiryId ?? "", widget.typeName?? "");
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(id, vm.messageController.text);
