@@ -143,6 +143,7 @@ class _JobListingScreenState extends State<TeamMembersListingView>
             ],
           ),
         ),
-        floatingActionButton: floatingActionButton);
+        //floatingActionButton: floatingActionButton
+        );
   }
 }

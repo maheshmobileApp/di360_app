@@ -139,22 +139,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         Row(
           children: [
             ClipOval(
-              child: widget.job.logo != null && widget.job.logo!.isNotEmpty
-                  ? CachedNetworkImageWidget(
-                      imageUrl: widget.job.logo!,
+              child: CachedNetworkImageWidget(
+                      imageUrl: widget.job.logo?.url ?? "",
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
+                      errorWidget: Image.asset(ImageConst.directorProfile),
                     )
-                  : Container(
-                      width: 50,
-                      height: 50,
-                      color: Colors.grey.shade300,
-                      child: Image.asset(
-                        ImageConst.directorProfile,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
+                  
             ),
             const SizedBox(width: 12),
             Expanded(

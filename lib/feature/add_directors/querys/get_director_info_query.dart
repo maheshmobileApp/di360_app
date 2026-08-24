@@ -5,7 +5,10 @@ query getUeserPracDirectory($id: uuid!) {
     description
     name
     email
+    business_email
+    business_name
     phone
+    mobile_number
     address
     latitude
     longitude
@@ -13,17 +16,16 @@ query getUeserPracDirectory($id: uuid!) {
     type
     abn_acn
     company_name
-    business_email
-    mobile_number
     profession_type
-    professiontype
     directory_category_id
     logo
     banner_image
-    phone_visibility
-    email_visibility
-    directory_documents {
+    dental_practice {
       id
+      business_name
+      __typename
+    }
+    directory_documents {
       name
       attachment
       __typename
@@ -42,7 +44,6 @@ query getUeserPracDirectory($id: uuid!) {
       name
       image
       description
-      show_in_appointments
       __typename
     }
     directory_certifications {
@@ -68,9 +69,8 @@ query getUeserPracDirectory($id: uuid!) {
       image
       phone
       email
-      location
-      show_in_our_team
-      show_in_appointments
+      subrub
+      state
       __typename
     }
     directory_gallery_posts {
@@ -87,7 +87,6 @@ query getUeserPracDirectory($id: uuid!) {
     directory_testimonials {
       id
       profile_image
-      role
       name
       message
       msg_pic
@@ -105,31 +104,30 @@ query getUeserPracDirectory($id: uuid!) {
 ''';
 
 const String getSuppilerDirectorInfoQuery = r'''
-query getUeserPracDirectory($id: uuid!) {
+query getUeserSupDirectory($id: uuid!) {
   directories(where: {dental_supplier_id: {_eq: $id}}) {
     id
     description
     name
+    type
+    abn_acn
+    community_status
+    community_id
+    company_name
+    profession_type
+    professiontype
+    directory_category_id
     email
+    business_email
+    business_name
     phone
     address
     latitude
     longitude
     alt_phone
-    type
-    abn_acn
-    business_email
-    mobile_number
-    company_name
-    profession_type
-    professiontype
-    directory_category_id
-    logo
     banner_image
-    phone_visibility
-    email_visibility
+    logo
     directory_documents {
-      id
       name
       attachment
       __typename
@@ -148,7 +146,6 @@ query getUeserPracDirectory($id: uuid!) {
       name
       image
       description
-      show_in_appointments
       __typename
     }
     directory_certifications {
@@ -174,9 +171,9 @@ query getUeserPracDirectory($id: uuid!) {
       image
       phone
       email
+      subrub
+      state
       location
-      show_in_our_team
-      show_in_appointments
       __typename
     }
     directory_gallery_posts {
@@ -193,16 +190,20 @@ query getUeserPracDirectory($id: uuid!) {
     directory_testimonials {
       id
       profile_image
-      role
       name
       message
       msg_pic
+      role
       __typename
     }
     directory_faqs {
       id
       question
       answer
+      __typename
+    }
+    dental_supplier {
+      business_name
       __typename
     }
     __typename

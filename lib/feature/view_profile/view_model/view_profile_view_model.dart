@@ -153,7 +153,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void loadSupplierViewProfileData(DentalSuppliersByPk? viewProfile) async {
-    print("********businessType${viewProfile?.professiontype?.name}");
+    print("********pincode${viewProfile?.zipcode}");
     nameController.text = viewProfile?.name ?? "";
     emailController.text = viewProfile?.email ?? "";
     final phone = viewProfile?.phone ?? "";

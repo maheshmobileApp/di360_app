@@ -55,7 +55,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _logoWithTitle(
                     context,
-                    enquiry?.jobs?.logo ?? '',
+                    enquiry?.jobs?.logo?.url ?? '',
                     enquiry?.jobs?.title ?? '',
                     enquiry?.jobs?.jRole ?? '',
                     enquiry?.jobs?.companyName ?? '',

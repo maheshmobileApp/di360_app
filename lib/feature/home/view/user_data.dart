@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -82,7 +83,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(userName ?? homeViewModel.profileName ?? '',
+                    Text(userName ?? homeViewModel.profileName ?? "",
                         style: TextStyles.clashMedium(
                             fontSize: 20, color: AppColors.black)),
                     if (homeViewModel.subSupplierName != "")

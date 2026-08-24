@@ -122,7 +122,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                             "id": jobProfiles?.id ?? "",
                             "talent_enquiry_id": jobProfiles
                                     ?.talentEnquiriesFindSupplier?.id ??
-                                jobProfiles?.talentEnquiriesFindSupplier?.id ??
+                                jobProfiles?.talentEnquiriesFindPractice?.id ??
                                 "",
                             "userId": userId,
                             "userImg": profileImageUrl ?? "",

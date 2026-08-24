@@ -80,8 +80,11 @@ class LoginViewModel extends ChangeNotifier {
         final result = LoginApi.fromJson(res);
         final loginData = result;
 
-        if (loginData.status == 'ACTIVE' || loginData.status == 'UNBLOCKED') {
+        if (loginData.status == 'ACTIVE' ||
+            loginData.status == 'UNBLOCKED' ||
+            loginData.status == 'VERIFIED') {
           final userId = loginData.id ?? '';
+          final ownerId = loginData.ownerId ?? '';
           final isSupplier = loginData.type == UserRole.supplier.value;
           _http.setToken(loginData.accessToken ?? '');
           //_modulePermissions(loginData?.subscriptionPermissions?.modules ?? []);
@@ -133,7 +136,7 @@ class LoginViewModel extends ChangeNotifier {
             try {
               await Future.wait([
                 // APIs
-                if (isSupplier) getSuppliers(userId),
+                if (isSupplier) getSuppliers(ownerId),
                 if (isSupplier) getSupplierCommunityOwner(userId),
                 getMyCommunityData(userId),
                 updateDevieToken(userId, loginData.type ?? ''),
@@ -164,8 +167,8 @@ class LoginViewModel extends ChangeNotifier {
                 LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
                 LocalStorage.setStringVal(LocalStorageConst.refreshToken,
                     loginData.refreshToken ?? ''),
-                     LocalStorage.setStringVal(
-          LocalStorageConst.professionId, loginData.professiontype?.id ?? '')
+                LocalStorage.setStringVal(LocalStorageConst.professionId,
+                    loginData.professiontype?.id ?? '')
               ]);
             } catch (e) {
               debugPrint("Post login error: $e");
@@ -280,11 +283,16 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   GetSupplierData? supplerData;
+  String? businessName;
   GetSupplierCommunityOwnerData? supplerCommunityOwner;
 
   Future<void> getSuppliers(String id) async {
     final res = await repo.getSuppliers(id);
     supplerData = res;
+    businessName = supplerData?.dentalSuppliersByPk?.businessName ?? "";
+    await LocalStorage.setStringVal(
+        LocalStorageConst.businessName, businessName ?? "");
+    notifyListeners();
   }
 
   Future<void> getSupplierCommunityOwner(String id) async {

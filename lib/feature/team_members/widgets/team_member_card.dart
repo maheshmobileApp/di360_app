@@ -71,7 +71,7 @@ class TeamMemberCard extends StatelessWidget {
                   icon: const Icon(Icons.more_vert),
                   onSelected: (value) => onMenuAction?.call(value, id),
                   itemBuilder: (context) => [
-                    _popupItem("Edit", Icons.edit, AppColors.blueColor),
+                    //_popupItem("Edit", Icons.edit, AppColors.blueColor),
                     _popupItem("Delete", Icons.delete, AppColors.redColor),
                   ],
                 ),

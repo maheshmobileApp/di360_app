@@ -57,7 +57,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                     Expanded(
                       child: _logoWithTitle(
                         context,
-                        jobsListingData?.logo ?? '',
+                        jobsListingData?.logo?.url ?? '',
                         jobsListingData?.title ?? '',
                         jobsListingData?.companyName ?? '',
                         jobsListingData?.status ?? '',
@@ -236,7 +236,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               radius: 30,
               child: ClipOval(
                 child: CachedNetworkImageWidget(
-                    imageUrl: logo ?? '',
+                    imageUrl: logo,
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,

@@ -52,7 +52,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _logoWithTitle(
                     context,
-                    job?.logo ?? '',
+                    job?.logo?.url ?? '',
                     job?.title ?? '',
                     job?.jRole ?? '',
                     job?.companyName ?? '',

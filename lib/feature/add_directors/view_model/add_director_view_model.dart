@@ -354,7 +354,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       return;
     }
     final basic = getBasicInfoData.first;
-    CompanyNameController.text = basic.companyName ?? '';
+    CompanyNameController.text = type == UserRole.professional.value?  basic.companyName ?? '': basic.businessName ?? '';
     nameController.text = basic.name ?? '';
     emailController.text = basic.email ?? '';
     ABNNumberController.text = basic.abnAcn ?? '';
