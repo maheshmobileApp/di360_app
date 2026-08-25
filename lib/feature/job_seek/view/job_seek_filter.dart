@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_seek/widget/collasible_section.dart';
 import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.dart';
@@ -27,7 +28,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             child: Column(
               children: [
                 addVertical(10),
-                _buildLocationSearchBar(context,model),
+                _buildLocationSearchBar(context, model),
                 addVertical(10),
                 Expanded(
                   child: SingleChildScrollView(
@@ -114,6 +115,8 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                                 },
                               ),
                             ),
+                            Divider(),
+                            _buildLocumDateSection(context, model)
                           ],
                         ),
                       ),
@@ -130,8 +133,8 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                         height: 40,
                         width: 150,
                         onTap: () async {
-                          model.clearSelections();
-                           await model.fetchFilteredJobs(context);
+                          model.clearSelections(context);
+                          await model.fetchFilteredJobs(context);
                         },
                       ),
                       AppButton(

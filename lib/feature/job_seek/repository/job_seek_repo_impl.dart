@@ -12,8 +12,12 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job_types_list_res.dart';
+import 'package:di360_flutter/feature/job_seek/model/jobs_role_list.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
+import 'package:di360_flutter/feature/job_seek/queries/get_all_job_role_names.dart';
 import 'package:di360_flutter/feature/job_seek/queries/get_banners_query.dart';
+import 'package:di360_flutter/feature/job_seek/queries/get_job_emp_type_names.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 import 'package:flutter/services.dart';
 
@@ -76,24 +80,20 @@ class JobSeekRepoImpl extends JobSeekRepository {
   }
 
   @override
-  Future<List<JobsRoleList>> getJobRoles() async {
+  Future<JobRoleData> getJobRoles() async {
     try {
-      final response = await rootBundle.loadString('assets/getprofession.json');
-      final data = json.decode(response);
-      final model = JobSeekFilterProfessionModel.fromJson(data);
-      return model.data?.jobsRoleList ?? [];
+      final res = await _http.query(getAllJobRoleNames);
+      return JobRoleData.fromJson(res);
     } catch (e) {
       throw Exception('Failed to load job roles from local asset: $e');
     }
   }
 
   @override
-  Future<List<JobTypes>> getJobWorkTypes() async {
+  Future<JobsTypesData> getJobWorkTypes() async {
     try {
-      final response = await rootBundle.loadString('assets/getworktype.json');
-      final data = json.decode(response);
-      final model = JobSeekFilterWorktypeModel.fromJson(data);
-      return model.data?.jobTypes ?? [];
+      final res = await _http.query(getJobEmpTypeNames);
+      return JobsTypesData.fromJson(res);
     } catch (e) {
       throw Exception('Failed to load work types from local asset: $e');
     }

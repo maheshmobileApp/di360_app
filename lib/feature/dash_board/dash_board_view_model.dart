@@ -174,6 +174,7 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
+          await context.read<JobSeekViewModel>().initializeFilterOptions();
           await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Community
@@ -208,6 +209,7 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
+          await context.read<JobSeekViewModel>().initializeFilterOptions();
           await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Catalogue
@@ -245,6 +247,7 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
+          await context.read<JobSeekViewModel>().initializeFilterOptions();
           await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Community
