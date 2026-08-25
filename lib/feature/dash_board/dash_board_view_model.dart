@@ -191,6 +191,7 @@ class DashBoardViewModel extends ChangeNotifier {
           break;
         case 4: // Catalogue
           context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          context.read<CatalogueViewModel>().clearSelections(context);
           await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
@@ -211,6 +212,7 @@ class DashBoardViewModel extends ChangeNotifier {
           break;
         case 3: // Catalogue
           context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          context.read<CatalogueViewModel>().clearSelections(context);
           await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
@@ -255,6 +257,7 @@ class DashBoardViewModel extends ChangeNotifier {
           break;
         case 4: // Catalogue
           context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          context.read<CatalogueViewModel>().clearSelections(context);
           await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);

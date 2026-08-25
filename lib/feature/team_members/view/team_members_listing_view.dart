@@ -82,7 +82,7 @@ class _JobListingScreenState extends State<TeamMembersListingView>
           child: Column(
             children: [
               Expanded(
-                child: viewModel.teamMembersData?.clients?.isEmpty ?? true
+                child: viewModel.teamMembersData?.supplierAccess?.isEmpty ?? true
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -96,9 +96,9 @@ class _JobListingScreenState extends State<TeamMembersListingView>
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        itemCount: (viewModel.teamMembersData?.clients?.length ?? 0) + (viewModel.hasMoreTeamMembers ? 1 : 0),
+                        itemCount: (viewModel.teamMembersData?.supplierAccess?.length ?? 0) + (viewModel.hasMoreTeamMembers ? 1 : 0),
                         itemBuilder: (context, index) {
-                          if (index == viewModel.teamMembersData?.clients?.length) {
+                          if (index == viewModel.teamMembersData?.supplierAccess?.length) {
                             return Center(
                               child: Padding(
                                 padding: EdgeInsets.all(16),
@@ -107,12 +107,12 @@ class _JobListingScreenState extends State<TeamMembersListingView>
                             );
                           }
                           final teamMemberData =
-                              viewModel.teamMembersData?.clients?[index];
+                              viewModel.teamMembersData?.supplierAccess?[index];
                           return TeamMemberCard(
                             id: teamMemberData?.id ?? "",
-                            userName: teamMemberData?.businessName ?? "",
-                            email: teamMemberData?.email ?? "",
-                            status: teamMemberData?.status ?? "",
+                            userName: teamMemberData?.name ?? "",
+                            email: teamMemberData?.clients?.email ?? "",
+                            status: teamMemberData?.clients?.status ?? "",
                             onMenuAction: (action, id) async {
                               switch (action) {
                                 case "Edit":

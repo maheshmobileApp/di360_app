@@ -117,21 +117,21 @@ class TeamMembersViewModel extends ChangeNotifier {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
       "where": {
-        "supplier_access_id": {"_eq": id}
+        "owner_id": {"_eq": id}
       },
       "limit": _teamMemberLimit,
       "offset": _teamMembersOffset
     };
     final res = await repo.getTeamMembers(variables);
 
-    if (res.clients != null) {
+    if (res.supplierAccess != null) {
       if (loadMore) {
-        teamMembersData?.clients?.addAll(res.clients!);
+        teamMembersData?.supplierAccess?.addAll(res.supplierAccess!);
       } else {
         teamMembersData = res;
       }
-      _hasMoreTeamMembers = (res.clients?.length ?? 0) == _teamMemberLimit;
-      _teamMembersOffset += res.clients?.length ?? 0;
+      _hasMoreTeamMembers = (res.supplierAccess?.length ?? 0) == _teamMemberLimit;
+      _teamMembersOffset += res.supplierAccess?.length ?? 0;
     } else {
       if (!loadMore) {
         teamMembersData = res;

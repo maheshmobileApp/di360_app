@@ -1,6 +1,6 @@
 const String getTeamMembersQuery =
-    r'''query getAccessRequests($where: clients_bool_exp!, $limit: Int!, $offset: Int!) {
-  clients(
+    r'''query getAccessRequests($where: supplier_access_bool_exp!, $limit: Int!, $offset: Int!) {
+  supplier_access(
     where: $where
     limit: $limit
     offset: $offset
@@ -8,17 +8,17 @@ const String getTeamMembersQuery =
   ) {
     id
     name
-    email
-    type
-    status
+    phone
     created_at
-    sub_type
-    supplier_access_id
-    business_name
-    name
+    clients {
+      email
+      type
+      status
+      __typename
+    }
     __typename
   }
-  clients_aggregate(where: $where) {
+  supplier_access_aggregate(where: $where) {
     aggregate {
       count
       __typename

@@ -54,7 +54,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       if (viewModel.communityStatus) {
         await viewModel.getAllNewsFeeds(context);
         final communityVM =
-            Provider.of<CommunityViewModel>(context, listen: false);
+            Provider.of<CommunityViewModel>(context);
         Future.wait([
           communityVM.getNewsFeedCategories(context, type: "Community"),
           viewModel.getCommunityMemberDirectorIds(),

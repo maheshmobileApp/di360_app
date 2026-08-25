@@ -187,7 +187,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
               child: Center(
                 child: Text(
                   "${vm.hiringTalentList?.jobhirings?.length ?? 0} requests, "
-                  "${jobsListingData.talentEnquiries?.length ?? 0} enquiry for this job profile",
+                  "${vm.myEnquiryJobData?.talentEnquiries?.length ?? 0} enquiry for this job profile",
                   style: TextStyles.medium1(color: AppColors.black),
                 ),
               ),

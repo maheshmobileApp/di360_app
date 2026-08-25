@@ -57,7 +57,7 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                     height: 40,
                     width: 150,
                     onTap: () async {
-                      filterProvider.printSelectedItems();
+                      filterProvider.printSelectedItemsCatalouge();
                       await filterProvider.fetchCatalogue(context);
                       navigationService.goBack();
                     },

@@ -399,7 +399,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             value: "Edit",
             child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
           ),*/
-        if (status == "DRAFT" || status == "REJECT" || status == "PENDING")
+        /*if (status == "DRAFT" || status == "REJECT" || status == "PENDING")
           PopupMenuItem(
             value: "Delete",
             child:
@@ -416,7 +416,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             value: "Active",
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
-          ),
+          ),*/
         /*if (status == "EXPIRED")
           PopupMenuItem(
             value: "Re-Listing",
