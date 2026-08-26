@@ -65,12 +65,11 @@ String enquiryMutation =
 } ''';
 
 String GetJobProfileFilterData = r'''
-query getTalentList($limit: Int, $offset: Int, $where: job_profiles_bool_exp, $order_by: [job_profiles_order_by!]) {
+query getMarketPlaceTalents($limit: Int, $offset: Int, $where: job_profiles_bool_exp, $order_by: [job_profiles_order_by!], $loginId: uuid!) {
   job_profiles(where: $where, order_by: $order_by, limit: $limit, offset: $offset) {
     id
     created_at
     updated_at
-    skills
     jobexperiences
     job_designation
     dental_professional_id
@@ -78,30 +77,25 @@ query getTalentList($limit: Int, $offset: Int, $where: job_profiles_bool_exp, $o
     admin_status
     profile_image
     full_name
-    mobile_number
     work_type
     profession_type
     location
     country
     city
     state
-    availabilityOption
-    availabilityDate
-    fromDate
     availabilityDay
     Year_of_experiance
-    skills
     percentage
     about_yourself
-    location
-    availabilityType
-    unavailabilityDate
     dental_professional {
       id
       gender
       __typename
     }
-    jobhirings {
+    jobhirings(
+      where: {_or: [{dental_supplier_id: {_eq: $loginId}}, {dental_practice_id: {_eq: $loginId}}]}
+      order_by: {created_at: desc}
+    ) {
       id
       dental_supplier_id
       hiring_status

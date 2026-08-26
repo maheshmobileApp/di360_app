@@ -27,7 +27,7 @@ class TalentsViewModel extends ChangeNotifier {
   bool _hasMoreTalents = true;
   bool _isLoadingMore = false;
   bool isLoading = false;
-  final int _talentLimit = 10;
+  final int _talentLimit = 15;
 
   bool get hasMoreTalents => _hasMoreTalents;
   bool get isLoadingMore => _isLoadingMore;
@@ -79,12 +79,10 @@ class TalentsViewModel extends ChangeNotifier {
     "Sunday"
   ];
   final List<String> employmentTypeList = [
-    "Contractor",
-    "Temporary Contractor",
-    "Locum",
-    "Full Time",
+    "Casual",
     "Part Time",
-    "Casual"
+    "Contractor",
+    "Full Time"
   ];
   final List<String> jobRoles = [
     "Surgeon",
@@ -270,6 +268,8 @@ class TalentsViewModel extends ChangeNotifier {
 
   Future<void> fetchFilteredJobs(BuildContext context,
       {bool loadMore = false}) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
     if (loadMore && (_isLoadingMore || !_hasMoreTalents)) return;
 
     if (loadMore) {
@@ -346,14 +346,21 @@ class TalentsViewModel extends ChangeNotifier {
       final variables = {
         "limit": _talentLimit,
         "offset": _currentPage * _talentLimit,
-        "where": {"_and": whereConditions}
+        "where": {"_and": whereConditions},
+        "loginId": userId
       };
 
       if (selectedSort != null) {
         variables["order_by"] = [
           {"full_name": selectedSort == 'A to Z' ? 'asc' : 'desc'}
         ];
+      } else {
+        variables["order_by"] = [
+          {"created_at": "desc"}
+        ];
       }
+
+      print("Talent Filter Variables $variables");
 
       final result = await repo.getJobProfileFilterData(variables);
 
