@@ -268,11 +268,10 @@ class JobSeekViewModel extends ChangeNotifier {
         "offset": _currentPage * _jobSeekLimit,
         "where": {"_and": andConditions},
         "order_by": [
-          {"created_at": (selectedSort == 'A to Z') ? "asc" : "desc"}
+          (selectedSort == 'A to Z') ? {"title": "asc"} : {"created_at": "desc"}
         ]
       };
 
-      print("************$variables");
 
       final result = await repo.fetchFilteredJobs(variables);
 
@@ -582,7 +581,6 @@ class JobSeekViewModel extends ChangeNotifier {
       final items = filterOptions[section];
       if (items != null && indices.isNotEmpty) {
         for (final i in indices) {
-          updateJobSeekFilterApply(true);
           final id = items[i].name;
           if (section == "profession") {
             selectedProfessions.add(id);

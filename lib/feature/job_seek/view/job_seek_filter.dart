@@ -116,7 +116,10 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                               ),
                             ),
                             Divider(),
-                            _buildLocumDateSection(context, model)
+                            _buildDropdownSection(
+                                title: "Availability Date",
+                                dropdown:
+                                    _buildLocumDateSection(context, model))
                           ],
                         ),
                       ),
@@ -142,6 +145,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                         height: 40,
                         width: 150,
                         onTap: () async {
+                          model.updateJobSeekFilterApply(true);
                           model.printSelectedItems();
                           await model.fetchFilteredJobs(context);
                           navigationService.goBack();

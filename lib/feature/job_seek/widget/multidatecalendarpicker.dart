@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -212,12 +214,12 @@ class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
       readOnly: true,
       onTap: () => _openMultiSelectDialog(context),
       decoration: InputDecoration(
-        labelText: widget.title,
+        //labelText: widget.title,
         prefixIcon: const Icon(Icons.calendar_today_outlined, size: 20),
         suffixIcon: const Icon(Icons.arrow_drop_down),
         contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
         hintText: "Select dates",
-        hintStyle: const TextStyle(color: Colors.grey),
+        hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(width: 1.5, color: Colors.grey),
