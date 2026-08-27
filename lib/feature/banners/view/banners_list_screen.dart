@@ -1,15 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/banners/widgets/banners_card.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class BannersListScreen extends StatefulWidget {
@@ -114,15 +110,15 @@ class _BannersListScreenState extends State<BannersListScreen>
             )
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () async {
-            bannersVM.clearAddBannerData();
+            bannersVM.clearAddBannerData();   
             await navigationService.navigateTo(RouteList.addBanners);
             _loadData();
           },
           child: SvgPicture.asset(ImageConst.addFeed),
-        ));
+        )*/);
   }
 
   @override

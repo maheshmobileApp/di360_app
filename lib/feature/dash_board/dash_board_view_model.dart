@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
@@ -120,24 +119,26 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
-          context.read<NewsFeedViewModel>().updateApplyCatageories(false);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
-          context.read<JobSeekViewModel>().fetchJobs(context);
+          await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Community
-          context
+          await context
               .read<CommunityViewModel>()
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
-          context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
-          context.read<NewsFeedCommunityViewModel>().initialStateData();
+          await context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
+          await context.read<NewsFeedCommunityViewModel>().initialStateData();
           context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
+          context.read<NewsFeedCommunityViewModel>().setentryNewsFeedId("");
 
           break;
         case 4: // Catalogue
-          context
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
@@ -149,14 +150,15 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
-          context.read<NewsFeedViewModel>().updateApplyCatageories(false);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
-          context.read<JobSeekViewModel>().fetchJobs(context);
+          await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Catalogue
-          context
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
@@ -168,7 +170,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Catalogue
@@ -184,21 +186,23 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
-          context.read<JobSeekViewModel>().fetchJobs(context);
+          await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Community
-          context
+          await context
               .read<CommunityViewModel>()
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
           context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
+          context.read<NewsFeedCommunityViewModel>().setentryNewsFeedId("");
           break;
         case 4: // Catalogue
-          context
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
           break;

@@ -1,5 +1,5 @@
-const String getMyCatalogueQuery = r'''
-query catalogues($limit: Int, $offset: Int, $where: catalogues_bool_exp!) {
+const String getMyCatalogueQuery =
+    r'''query catalogues($limit: Int, $offset: Int, $where: catalogues_bool_exp!) {
   catalogues(
     order_by: {updated_at: desc}
     limit: $limit

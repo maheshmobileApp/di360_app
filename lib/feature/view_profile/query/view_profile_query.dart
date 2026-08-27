@@ -1,48 +1,33 @@
-const String viewProfileQuery = r'''
-query supplierDisplay($id: uuid!) {
+const String viewProfileQuery = r'''query supplierDisplayV2($id: uuid!) {
   dental_suppliers_by_pk(id: $id) {
     id
-    email
+    first_name
+    last_name
     name
-    logo
+    email
     phone
-    address
-    city
-    zipcode
     state
-    country
-    land_mark
-    address_line_one
-    address_line_two
-    pro_details_aphra_registration_number
-    bank_details
+    professionType
     business_name
-    abn_number
     business_email
     business_phone
-    mobile_number
-    website_link
     fax_number
-    alt_email
-    alt_phone
-    profession_type
-    professiontype
-    tga_number
-    second_hand
-    sell_products
-    first_name
+    abn_number
+    logo
+    directory_business_type_id
     middle_name
-    last_name
+    address
+    address_line_one
+    address_line_two
+    city
+    zipcode
+    land_mark
+    website_link
     type
-    secondary_contact
+    directory_category_id
+    profile_completed
     directories {
       id
-      name
-      email
-      phone
-      profile_image
-      address
-      profession_type
       __typename
     }
     __typename

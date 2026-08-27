@@ -66,6 +66,10 @@ class LoginApi {
   String? subType;
   String? ownerId;
   Professiontype? professiontype;
+  String? expiresAt;
+  Subscription? subscription;
+  Navigation? navigation;
+
 
   LoginApi(
       {this.id,
@@ -96,7 +100,10 @@ class LoginApi {
       this.subscriptionPermissions,
       this.subType,
       this.professiontype,
-      this.ownerId});
+      this.ownerId,
+      this.expiresAt,
+      this.subscription,
+      this.navigation});
 
   LoginApi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -110,9 +117,15 @@ class LoginApi {
     message = json['message'];
     profileCompleted = json['profile_completed'];
     paymentCompleted = json['payment_completed'];
-    profileImage = json['profile_image'] != null
-        ? new ProfileImage.fromJson(json['profile_image'])
-        : null;
+    if (json['profile_image'] != null) {
+      if (json['profile_image'] is String) {
+        profileImage = ProfileImage(url: json['profile_image']);
+      } else if (json['profile_image'] is Map<String, dynamic>) {
+        profileImage = ProfileImage.fromJson(json['profile_image']);
+      }
+    } else {
+      profileImage = null;
+    }
     type = json['type'];
     address = json['address'];
     directoryCategoryId = json['directory_category_id'];
@@ -131,8 +144,15 @@ class LoginApi {
         : null;
     subType = json['sub_type'];
     ownerId = json['owner_id'];
-    professiontype = json['professiontype'] != null
-        ? new Professiontype.fromJson(json['professiontype'])
+    professiontype = json['professionType'] != null
+        ? new Professiontype.fromJson(json['professionType'])
+        : null;
+    expiresAt = json['expiresAt'];
+    subscription = json['subscription'] != null
+        ? new Subscription.fromJson(json['subscription'])
+        : null;
+    navigation = json['navigation'] != null
+        ? new Navigation.fromJson(json['navigation'])
         : null;
   }
 
@@ -172,9 +192,57 @@ class LoginApi {
     }
     data['sub_type'] = this.subType;
     data['owner_id'] = this.ownerId;
-     if (this.professiontype != null) {
-      data['professiontype'] = this.professiontype!.toJson();
+    if (this.professiontype != null) {
+      data['professionType'] = this.professiontype!.toJson();
     }
+    data['expiresAt'] = this.expiresAt;
+     if (this.subscription != null) {
+      data['subscription'] = this.subscription?.toJson();
+    }
+    if (this.navigation != null) {
+      data['navigation'] = this.navigation?.toJson();
+    }
+    return data;
+  }
+}
+
+class Subscription {
+  String? status;
+  String? planId;
+  String? planName;
+  String? planType;
+
+  Subscription({this.status, this.planId, this.planName, this.planType});
+
+  Subscription.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    planId = json['planId'];
+    planName = json['planName'];
+    planType = json['planType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['planId'] = this.planId;
+    data['planName'] = this.planName;
+    data['planType'] = this.planType;
+    return data;
+  }
+}
+
+class Navigation {
+  List<String>? permissions;
+
+  Navigation({this.permissions});
+
+  Navigation.fromJson(Map<String, dynamic> json) {
+    permissions = json['permissions'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['permissions'] = this.permissions;
     return data;
   }
 }

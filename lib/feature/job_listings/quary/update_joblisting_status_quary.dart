@@ -1,9 +1,9 @@
 const String updateJobListingStatus= r'''
-mutation UpdateJobStatus($id: uuid!, $status: String!) {
-  update_jobs_by_pk(pk_columns: {id: $id}, _set: {status: $status}) {
+mutation updateRecord($id: uuid!, $fields: jobs_set_input!) {
+  update_jobs_by_pk(pk_columns: {id: $id}, _set: $fields) {
     id
-    active_status
     __typename
   }
-}''';
+}
+''';
 

@@ -1,7 +1,11 @@
 //import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/request_count_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_respo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -9,6 +13,9 @@ import 'package:flutter/material.dart';
 
 class JobProfileListingViewModel extends ChangeNotifier {
   final JobProfileRepoImpl repo = JobProfileRepoImpl();
+
+  final TextEditingController messageController = TextEditingController();
+  bool editMessage = false;
 
   final List<String> statuses = [
     'DRAFT',
@@ -30,6 +37,13 @@ class JobProfileListingViewModel extends ChangeNotifier {
   List<JobProfiles> allJobProfiles = [];
   String? jobProfileId;
   bool editProfileEnable = false;
+  String? jobProfileStatus;
+  String? requestType;
+
+  void setRequestType(String val) {
+    requestType = val;
+    notifyListeners();
+  }
 
   bool isLoading = false;
 
@@ -107,7 +121,6 @@ class JobProfileListingViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Failed to remove JobListingData');
     }
-
     notifyListeners();
   }
 
@@ -118,7 +131,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
       {required String id}) async {
     final res = await repo.getMyEnquiryJobData(id);
     myEnquiryJobData = res;
-  
+
     notifyListeners();
     return res;
   }
@@ -129,17 +142,19 @@ class JobProfileListingViewModel extends ChangeNotifier {
     final res = await repo.getJobProfileEnquiry(profileId, enquiryId);
     jobPrilfeEnquiryData = res;
     Loaders.circularHideLoader(context);
-      notifyListeners();
+    notifyListeners();
     return res;
   }
 
-  Future updateTalentRequestStatus(
-      BuildContext context) async {
+  Future updateTalentRequestStatus(BuildContext context, String id,
+      String status, String professionalId) async {
     Loaders.circularShowLoader(context);
-    final variables = {};
+    final variables = {"id": id, "status": status};
     final res = await repo.updateTalentListing(variables);
     if (res != null) {
       scaffoldMessenger("Talent request status updated successfully");
+      await getAllTalentsRequest(
+          context, professionalId, status == "APPROVE" ? "REJECT" : "APPROVE");
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
@@ -151,20 +166,167 @@ class JobProfileListingViewModel extends ChangeNotifier {
   HiringTalentList? hiringTalentList;
 
   Future<HiringTalentList> getAllTalentsRequest(
-      BuildContext context, String professionalId) async {
+      BuildContext context, String professionalId, String status) async {
     final variables = {
       "where": {
         "dental_professional_id": {"_eq": professionalId},
-        "hiring_status": {"_eq": "PENDING"}
+        "hiring_status": {"_eq": status}
       },
-      "limit": 3,
+      "limit": 20,
       "offset": 0
     };
     Loaders.circularShowLoader(context);
     final res = await repo.getAllTalentsRequest(variables);
     hiringTalentList = res;
+    await getRequestCount(context);
     Loaders.circularHideLoader(context);
-      notifyListeners();
+    notifyListeners();
     return res;
+  }
+
+  RequestCountData? requestCountData;
+
+  Future<void> getRequestCount(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "where": {
+        "dental_professional_id": {"_eq": userId}
+      }
+    };
+    Loaders.circularShowLoader(context);
+    final res = await repo.getRequestCount(variables);
+    requestCountData = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  List<TalentsMessage>? messages = [];
+
+  Future<void> fetchTalentMessages(String jobId) async {
+    try {
+      isLoading = true;
+
+      final variables = {
+        "where": {
+          "_and": [
+            {
+              "_or": [
+                {
+                  "jobhirings_id": {"_eq": jobId}
+                }
+              ]
+            }
+          ]
+        },
+        "limit": 20
+      };
+
+      final res = await repo.fetchTalentMessages(variables);
+      if (res.talentsMessage != null) {
+        messages = res.talentsMessage?.reversed.toList() ?? [];
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void setEditMessage(bool value) {
+    editMessage = value;
+    notifyListeners();
+  }
+
+  String newmessage = "";
+  String editMessageId = "";
+
+  void setEditMessageDetails(String id, String message) {
+    editMessageId = id;
+    newmessage = message;
+    notifyListeners();
+  }
+
+  Future<void> updateApplicantMessage(
+      BuildContext context, String id) async {
+    try {
+      isLoading = true;
+
+      final variables = {
+        "id": editMessageId,
+        "message": messageController.text,
+        "updated_at": DateTime.now().toUtc().toIso8601String(),
+      };
+
+      final res = await repo.updateTalentMessage(variables);
+      if (res != null) {
+        setEditMessage(false);
+        await fetchTalentMessages(id);
+        scaffoldMessenger("Message updated successfully");
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> sendApplicantMessage(BuildContext context, String talentId, String receiverId,String receiverType, String jobHiringId) async {
+    if (messageController.text.isEmpty) {
+      scaffoldMessenger("Message cannot be empty");
+      return;
+    }
+
+    try {
+      Loaders.circularShowLoader(context);
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+      final variables = {
+        "object": {
+          "message": messageController.text,
+          "talent_id": talentId,
+          "sender_id": userId,
+          "sender_type": type,
+          "receiver_id": receiverId,
+          "receiver_type": receiverType,
+          "jobhirings_id": jobHiringId
+        }
+      };
+
+      final res = await repo.sendTalentMessage(variables);
+
+      if (res != null) {
+        scaffoldMessenger("Message sent successfully");
+        messageController.clear();
+       
+        fetchTalentMessages(jobHiringId);
+      } else {
+        scaffoldMessenger("Failed to send message");
+      }
+    } catch (e) {
+      scaffoldMessenger("Error: $e");
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteapplicantMessage(BuildContext context, String messageId, String id ) async {
+    try {
+      isLoading = true;
+      final variables = {
+        "id": messageId,
+        "deleted_status": true
+      };
+      final res = await repo.deleteTalentMessage(variables);
+      if (res != null) {
+        await fetchTalentMessages(id);
+        scaffoldMessenger("Message deleted successfully");
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

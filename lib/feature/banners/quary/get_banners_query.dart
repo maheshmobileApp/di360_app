@@ -6,22 +6,23 @@ query getBannersDatas($where: banners_bool_exp, $limit: Int, $offset: Int) {
     offset: $offset
     order_by: {created_at: desc}
   ) {
+    id
     status
-    expiry_date
+    active_status
     image
-    schedule_date
+    views
+    banner_clicks
     banner_name
-    category_name
     company_name
+    category_name
     created_at
     updated_at
+    expiry_date
+    schedule_date
     from_id
-    id
-    views
     dental_suppliers {
       id
-      name
-      type
+      business_name
       __typename
     }
     __typename

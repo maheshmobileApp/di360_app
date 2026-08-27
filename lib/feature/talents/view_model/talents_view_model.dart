@@ -140,6 +140,7 @@ class TalentsViewModel extends ChangeNotifier {
 
   Future<void> fetchTalentProfiles(BuildContext context,
       {bool loadMore = false}) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     if (loadMore && (_isLoadingMore || !_hasMoreTalents)) return;
 
     if (loadMore) {
@@ -155,7 +156,21 @@ class TalentsViewModel extends ChangeNotifier {
     try {
       final variables = {
         "limit": _talentLimit,
-        "offset": _currentPage * _talentLimit
+        "offset": _currentPage * _talentLimit,
+        "where": {
+          "_and": [
+            {
+              "admin_status": {"_eq": "APPROVE"}
+            },
+            {
+              "active_status": {"_eq": "ACTIVE"}
+            }
+          ]
+        },
+        "order_by": [
+          {"created_at": "desc"}
+        ],
+        "loginId": userId
       };
       final result = await repo.getTalentDetails(variables);
 

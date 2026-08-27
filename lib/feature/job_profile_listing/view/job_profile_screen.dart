@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_card.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -28,6 +29,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<JobProfileListingViewModel>(context);
+    final jobCreateProfileVM =  Provider.of<JobProfileCreateViewModel>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       floatingActionButton: FloatingActionButton.extended(
@@ -79,6 +81,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
                           return JobProfileCard(
                             jobsListingData: jobData,
                             vm: vm,
+                            jobCreateProfileVM: jobCreateProfileVM,
                             index: index,
                             parmas: {},
                           );

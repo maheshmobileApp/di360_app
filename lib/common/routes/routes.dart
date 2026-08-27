@@ -40,7 +40,9 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_s
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/interested_screen.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_talent_message.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/my_job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
@@ -75,6 +77,10 @@ import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/supplies/view/order_request_review_view.dart';
+import 'package:di360_flutter/feature/supplies/view/supplies_cart_view.dart';
+import 'package:di360_flutter/feature/supplies/view/supplies_details_view.dart';
+import 'package:di360_flutter/feature/supplies/view/supplies_marketplace_view.dart';
 import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
 import 'package:di360_flutter/feature/support/view/support_view.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view/talent_enquiries_view.dart';
@@ -141,6 +147,17 @@ class Routes {
             profilePic: args['profilePic'] ?? "",
             applicant: args['applicant'],
             typeName: args['type']);
+      },
+      RouteList.jobProfileTalentMessage: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return JobProfileTalentMessage(
+            id: args['id'],
+            dentalSupplierId: args['dental_supplier_id'],
+            dentalPracticeId: args['dental_practice_id'],
+            talentId: args['talentId'],
+            profilePic: args['profile_pic'],
+            userId : args['userId'],);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =
@@ -270,6 +287,16 @@ class Routes {
       RouteList.termsAndConditionsDetails: (context) =>
           TermsAndConditionsDetails(),
       RouteList.clientScreen: (context) => ClientsScreen(),
+      RouteList.interestedScreen: (context) => InterestedScreen(),
+      RouteList.suppliesMarketPlace: (context) => SuppliesMarketplaceView(),
+      RouteList.suppliesDetailsView: (context) => SuppliesDetailsView(),
+      RouteList.suppliesCartView: (context) => SuppliesCartView(),
+      RouteList.orderRequestReviewView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return OrderRequestReviewView(
+            selectedProducts: args['selected_products'] ?? {});
+      },
     };
   }
 }

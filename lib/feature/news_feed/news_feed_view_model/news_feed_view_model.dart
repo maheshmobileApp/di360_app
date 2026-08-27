@@ -32,7 +32,7 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void> _init() async {
     await getUserId();
-    await getFilterCategories();
+    //await getFilterCategories();
   }
 
   List<NewsfeedCategories>? newsfeedCategories;
@@ -178,7 +178,7 @@ class NewsFeedViewModel extends ChangeNotifier {
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
         allNewsFeedsData = result;
-        getAllStatusCounts();
+        await getAllStatusCounts();
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);

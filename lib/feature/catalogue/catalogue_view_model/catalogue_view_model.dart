@@ -41,6 +41,12 @@ class CatalogueViewModel extends ChangeNotifier {
   String? selectedUserId;
   bool? cataloguesLoading;
   bool? catalogFilterApply;
+  String? communityIdCatalouge = "";
+
+  void setCommunityIdCatalouge(String val) {
+    communityIdCatalouge = val;
+    notifyListeners();
+  }
 
   void updateCatalogFilterApply(bool val) {
     catalogFilterApply = val;
@@ -103,7 +109,7 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchCatalogue(BuildContext context,
-      {bool? isCommunityCatalogue, String? communityId}) async {
+      {bool? isCommunityCatalogue,}) async {
     cataloguesLoading = true;
     Loaders.circularShowLoader(context);
     var res = await repo.getCatalogue(searchController.text, type, catagroies,
@@ -118,7 +124,7 @@ class CatalogueViewModel extends ChangeNotifier {
           name: "All",
         ),
       );
-      getCataloguesList("", communityId: communityId);
+      getCataloguesList("");
       initializeExpanded(catalogueCategories);
       Loaders.circularHideLoader(context);
       for (var cat in catalogueCategories) {
@@ -302,7 +308,7 @@ class CatalogueViewModel extends ChangeNotifier {
 
   CatalougesListData? catalougesListData;
   Future<void> getCataloguesList(String categoryId,
-      {String? communityId}) async {
+      ) async {
     final myCommunityIds =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -323,10 +329,10 @@ class CatalogueViewModel extends ChangeNotifier {
         },
         "schedulerDay": {"_lte": date},
         "_and": [
-          if (communityId?.isNotEmpty == true)
+          if (communityIdCatalouge?.isNotEmpty == true)
             {
               "community_id": {
-                "_in": [communityId]
+                "_in": [communityIdCatalouge]
               }
             },
           {
@@ -340,16 +346,16 @@ class CatalogueViewModel extends ChangeNotifier {
               {
                 "dental_supplier_id": {"_eq": userId}
               },
-              if (UserRole.professional.value == userType && communityId?.isNotEmpty == false)
+              if (UserRole.professional.value == userType && communityIdCatalouge?.isNotEmpty == false)
                 {
                   "community_id": {
                     "_in": ["${myCommunityIds.first}"]
                   }
                 },
-              if (communityId?.isNotEmpty == true)
+              if (communityIdCatalouge?.isNotEmpty == true)
                 {
                   "community_id": {
-                    "_in": [communityId]
+                    "_in": [communityIdCatalouge]
                   }
                 },
             ]

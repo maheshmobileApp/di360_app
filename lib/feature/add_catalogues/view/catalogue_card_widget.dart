@@ -80,7 +80,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
                       bottomRight: Radius.circular(10))),
               child: Text(
                 item?.status == "APPROVED"
-                    ? "${item?.catalogueStatus} & ${item?.status}"
+                    ? "${item?.catalogueStatus}"
                     : "${item?.status}",
                 style: TextStyles.medium3(
                     color: item?.status == 'APPROVED'
@@ -238,12 +238,12 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               value: "sendApproval",
               child: _buildRow(Icons.send_rounded, AppColors.primaryColor,
                   "Send for Approval")),
-        if (vm.userType != UserRole.admin.value &&
+        /*if (vm.userType != UserRole.admin.value &&
             status != 'EXPIRED' )
           PopupMenuItem(
               value: "Edit",
               child:
-                  _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
+                  _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),*/
         if (vm.userType == UserRole.admin.value &&
             (item?.status == 'PENDING_APPROVAL' || item?.status == 'REJECTED'))
           PopupMenuItem(
@@ -258,10 +258,10 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
         PopupMenuItem(
             value: "Edit",
             child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),*/
-        if (status == 'EXPIRED')
+       /* if (status == 'EXPIRED')
         PopupMenuItem(
             value: "Relist",
-            child: _buildRow(Icons.rotate_right_sharp, AppColors.blueColor, "Relist")),
+            child: _buildRow(Icons.rotate_right_sharp, AppColors.blueColor, "Relist")),*/
         if (vm.selectedStatus == 'Draft' || vm.selectedStatus == 'Pending Approval')
         PopupMenuItem(
             value: "Delete",

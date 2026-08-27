@@ -334,7 +334,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
       padding: EdgeInsets.all(0),
       onSelected: (value)  async{
         if (value == "Edit") {
-          // vm.getCatalogueView(context, id);
           jobCreateVM.setJobEditOption(true);
           jobCreateVM.setJobId(jobsListingData?.id ?? "");
 
@@ -395,12 +394,12 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           value: "Preview",
           child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
         ),
-        if (status != "EXPIRED")
+        /*if (status != "EXPIRED")
           PopupMenuItem(
             value: "Edit",
             child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
-          ),
-        if (status == "DRAFT" || status == "REJECT")
+          ),*/
+        if (status == "DRAFT" || status == "REJECT" || status == "PENDING")
           PopupMenuItem(
             value: "Delete",
             child:
@@ -418,12 +417,12 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
           ),
-        if (status == "EXPIRED")
+        /*if (status == "EXPIRED")
           PopupMenuItem(
             value: "Re-Listing",
             child: _buildRow(
                 Icons.edit_outlined, AppColors.blueColor, "Re-Listing"),
-          ),
+          ),*/
       ],
     );
   }

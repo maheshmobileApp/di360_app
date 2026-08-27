@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:dio/dio.dart';
@@ -21,7 +22,7 @@ class BaseApiClient {
   //   final isLogIn = await LocalStorage.getBoolValue(LocalStorageConst.isAuth);
   //   if (isLogIn) client.interceptors.add(CustomInterceptor());
   // }
-  
+
   Future<dynamic> getCall(String endPoint) async {
     final url = '${ApiConst.baseUrl}$endPoint';
     final token = await LocalStorage.getStringVal(LocalStorageConst.token);
@@ -38,13 +39,15 @@ class BaseApiClient {
     }
   }
 
-  Future<dynamic> postCall(String endPoint, {dynamic payload}) async {
-    final url = '${ApiConst.baseUrl}$endPoint';
+  Future<dynamic> postCall(String endPoint, {dynamic payload, bool isTokenRequired = false}) async {
+    final url = '${AppConfig.serverBaseUrl}$endPoint';
     final token = await LocalStorage.getStringVal(LocalStorageConst.token);
+
     var headersPayload = {
-      'Authorization': 'Bearer $token',
-      'Content-Type': ApiConst.contentType
+      if (isTokenRequired)'Authorization': 'Bearer $token',
+      'x-client-type': 'mobile',
     };
+
     try {
       var respone = await client.post(url,
           options: Options(headers: headersPayload), data: payload);

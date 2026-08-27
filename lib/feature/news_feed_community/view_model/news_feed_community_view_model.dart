@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
@@ -54,6 +55,12 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   List<CoursesListingDetails> upComingCoursesList = [];
   String? userType;
   String? newsfeedCommunityId = "";
+  String? entryNewsFeedId = "";
+
+  void setentryNewsFeedId(String value) {
+    entryNewsFeedId = value;
+    notifyListeners();
+  }
 
   void setNewsFeedCommunityId(String value) {
     newsfeedCommunityId = value;
@@ -319,13 +326,58 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
                 "status": {"_eq": "ACTIVE"}
               }
             }
-          }
+          },
+          if (entryNewsFeedId?.isNotEmpty == true)
+            {
+              "id": {"_neq": entryNewsFeedId}
+            }
         ]
       },
       "userId": userId,
-      "includeEntryFeed": false
+      "includeEntryFeed": entryNewsFeedId?.isNotEmpty == true ? true : false,
+      if (entryNewsFeedId?.isNotEmpty == true)
+        "entryFeedWhere": {
+          "_and": [
+            {
+              "status": {"_eq": listingStatus}
+            },
+            {
+              "community_id": {"_eq": selectedCommunity}
+            },
+            {
+              "community_type": {
+                "_in": ["BOTH", "COMMUNITY_USER"]
+              }
+            },
+            {
+              "_not": {
+                "newsfeed_user_actions": {
+                  "created_by_id": {"_eq": userId},
+                  "entity_type": {"_eq": "POST"},
+                  "action": {
+                    "_in": ["HIDE", "REPORT"]
+                  },
+                  "status": {"_eq": "ACTIVE"}
+                }
+              }
+            },
+            {
+              "_not": {
+                "blocked_by_user_actions": {
+                  "created_by_id": {"_eq": userId},
+                  "entity_type": {"_eq": "PROFILE"},
+                  "action": {"_eq": "BLOCK"},
+                  "status": {"_eq": "ACTIVE"}
+                }
+              }
+            },
+            if (entryNewsFeedId?.isNotEmpty == true)
+              {
+                "id": {"_eq": entryNewsFeedId}
+              }
+          ]
+        }
     };
-    print("************$variables");
 
     final res = await repo.getAllNewsFeeds(variables);
 
@@ -505,30 +557,22 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       }
     }
 
-    final Map<String, dynamic> fields = {
+    final variables = {
       "description": descriptionController.text,
       "category_type": selectedCategory?.id,
-      "community_type": "COMMUNITY_USER",
       "video_url": videoLinkController.text,
       "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
       "user_role": type,
       "user_id": userId,
-      "status": (type == UserRole.professional.value) ? "PENDING" : "PUBLISHED",
-      "feed_type": "NEWSFEED",
+      if (type == UserRole.supplier.value) "dental_supplier_id": userId,
+      if (type == UserRole.professional.value) "dental_professional_id": userId,
+      "status": "",
+      if (type == UserRole.supplier.value) "comments_enabled": enableComments,
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
-      if (type == UserRole.supplier.value) "comments_enabled": enableComments,
+      "newsfeedType": "COMMUNITY_NEWSFEED",
     };
-
-    if (type == UserRole.professional.value) {
-      fields["dental_professional_id"] = userId;
-    } else {
-      fields["dental_supplier_id"] = userId;
-    }
-
-    final variables = {"fields": fields};
-    print("**********addNFCommunity: $variables");
 
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
@@ -924,6 +968,22 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   Future<void> getUserType() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     setUserType(type);
+  }
+
+  NewsFeedCommentData? newsFeedComments;
+
+  Future<void> getComments(BuildContext context, String feedId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"feedId": feedId, "limit": 10, "offset": 0};
+    try {
+      var res = await repo.getComments(variables);
+      newsFeedComments = res;
+    } catch (e) {
+      print("Error fetching comments: $e");
+      scaffoldMessenger(e.toString());
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
   }
 
   void setUserType(String type) {
