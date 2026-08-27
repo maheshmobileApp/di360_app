@@ -42,6 +42,28 @@ class ProfessionalData {
   }
 }
 
+class Professiontype {
+  String? id;
+  String? name;
+  String? sTypename;
+
+  Professiontype({this.id, this.name, this.sTypename});
+
+  Professiontype.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
 class DentalProfessionalsByPk {
   String? id;
   String? email;
@@ -53,7 +75,7 @@ class DentalProfessionalsByPk {
   bool? secondHand;
   String? altEmail;
   dynamic altPhone;
-  String? professionType;
+  Professiontype? professionType;
   DirectoryCategories? professiontype;
   String? directoryCategoryId;
   String? proDetailsAphraRegistrationNumber;
@@ -76,6 +98,7 @@ class DentalProfessionalsByPk {
   Clients? clients; // table name is clients
   List<Directories>? directories;
   String? sTypename;
+  String? directoryBusinessTypeId;
 
   DentalProfessionalsByPk(
       {this.id,
@@ -110,7 +133,8 @@ class DentalProfessionalsByPk {
       this.landMark,
       this.clients,
       this.directories,
-      this.sTypename});
+      this.sTypename,
+      this.directoryBusinessTypeId});
 
   DentalProfessionalsByPk.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -123,7 +147,10 @@ class DentalProfessionalsByPk {
     secondHand = json['second_hand'];
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new Professiontype.fromJson(json['professionType'])
+        : null;
+
     professiontype = json['professionType'] != null
         ? new DirectoryCategories.fromJson(json['professionType'])
         : null;
@@ -161,6 +188,7 @@ class DentalProfessionalsByPk {
       });
     }
     sTypename = json['__typename'];
+    directoryBusinessTypeId = json['directory_business_type_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -175,7 +203,10 @@ class DentalProfessionalsByPk {
     data['second_hand'] = this.secondHand;
     data['alt_email'] = this.altEmail;
     data['alt_phone'] = this.altPhone;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['professionType'] = this.professiontype!.toJson();
     data['aphra_registration_number'] = this.aphraRegistrationNumber;
     data['pro_details_aphra_registration_number'] =
@@ -206,6 +237,7 @@ class DentalProfessionalsByPk {
       data['directories'] = this.directories!.map((v) => v.toJson()).toList();
     }
     data['__typename'] = this.sTypename;
+    data['directory_business_type_id'] = this.directoryBusinessTypeId;
     return data;
   }
 }
@@ -314,7 +346,7 @@ class Directories {
   String? phone;
   ProfileImage? profileImage;
   String? address;
-  String? professionType;
+  Professiontype? professionType;
   String? sTypename; // not need can remove this
 
   Directories(
@@ -336,7 +368,10 @@ class Directories {
         ? new ProfileImage.fromJson(json['profile_image'])
         : null;
     address = json['address'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new Professiontype.fromJson(json['professionType'])
+        : null;
+
     sTypename = json['__typename'];
   }
 
@@ -350,7 +385,10 @@ class Directories {
       data['profile_image'] = this.profileImage!.toJson();
     }
     data['address'] = this.address;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['__typename'] = this.sTypename;
     return data;
   }

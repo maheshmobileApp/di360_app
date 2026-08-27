@@ -205,7 +205,7 @@ class LoginViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     await context.read<ViewProfileViewModel>().getBusinessTypes();
-    await context.read<ViewProfileViewModel>().getTheViewProfileData();
+    await context.read<ViewProfileViewModel>().getTheViewProfileData(context);
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, true);
     Loaders.circularHideLoader(context);

@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/model/certificates.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
 
 class JobProfile {
@@ -21,7 +22,7 @@ class JobProfile {
   final String? mobileNumber;
   final String? emailAddress;
   final List<String> workType;
-  final String? professionType;
+  final DirectoryCategories? professionType;
   final String? location;
   final String? country;
   final String? city;
@@ -172,7 +173,7 @@ class JobProfile {
       mobileNumber: json['mobile_number']?.toString(),
       emailAddress: json['email_address']?.toString(),
       workType: normalizeStringList(json['work_type']),
-      professionType: json['profession_type']?.toString(),
+      professionType: json['professionType'],
       location: json['location']?.toString(),
       country: json['country']?.toString(),
       city: json['city']?.toString(),
@@ -228,7 +229,7 @@ class JobProfile {
         'mobile_number': mobileNumber,
         'email_address': emailAddress,
         'work_type': workType,
-        'profession_type': professionType,
+        'professionType': professionType,
         'location': location,
         'country': country,
         'city': city,

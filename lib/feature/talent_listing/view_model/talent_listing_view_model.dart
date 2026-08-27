@@ -249,7 +249,7 @@ class TalentListingViewModel extends ChangeNotifier {
     if (selectedRole != null && selectedRole!.isNotEmpty) {
       whereConditions.add({
         "job_profiles": {
-          "profession_type": {"_ilike": "%$selectedRole%"}
+          "professionType": {"_ilike": "%$selectedRole%"}
         }
       });
     }
@@ -439,12 +439,6 @@ class TalentListingViewModel extends ChangeNotifier {
   List<JobProfiles> talentPreviewData = [];
   Future<void> getTalentPreviewData(
       BuildContext context, String profileId, String professionType) async {
-    /*final variables = {
-      "profession_type": professionType,
-      "limit": 10,
-      "offset": 0,
-      "excludeId": profileId
-    };*/
     final variables = {"id": profileId};
     Loaders.circularShowLoader(context);
 

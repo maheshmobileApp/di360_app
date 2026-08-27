@@ -5,6 +5,8 @@ import 'package:di360_flutter/feature/view_profile/model/practice_view_profile_r
 import 'package:di360_flutter/feature/view_profile/model/professional_view_profile_res.dart';
 import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart';
 import 'package:di360_flutter/feature/view_profile/query/delete_account_querys.dart';
+import 'package:di360_flutter/feature/view_profile/query/directory_insert_record.dart';
+import 'package:di360_flutter/feature/view_profile/query/directory_update_record.dart';
 import 'package:di360_flutter/feature/view_profile/query/insert_directors_querys.dart';
 import 'package:di360_flutter/feature/view_profile/query/pratice_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/professional_view_profile_query.dart';
@@ -113,11 +115,23 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
     final res = await http.mutation(updateClientQuery, variables);
     return res;
   }
-  
+
   @override
   Future<dynamic> updateRecord(variables) async {
     print("*********************$variables");
-     final res = await http.mutation(updateRecordQuery, variables);
+    final res = await http.mutation(updateRecordQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> directoryInsertRecord(variables) async {
+    final res = await http.mutation(directoryInsertRecordQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> directoryUpdateRecord(variables) async {
+    final res = await http.mutation(directoryUpdateRecordQuery, variables);
     return res;
   }
 }

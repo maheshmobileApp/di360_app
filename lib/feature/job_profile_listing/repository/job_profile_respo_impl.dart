@@ -28,7 +28,7 @@ class JobProfileRepoImpl implements JobProfileRepository {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final response = await http.query(
       jobProfileListing,
-      variables: {"dental_professional_id": userId},
+      variables: {"professionalId": userId},
     );
     final result = TalentsResData.fromJson(response);
     return result.jobProfiles ?? [];

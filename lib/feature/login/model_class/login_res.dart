@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class LogInRes {
   LogInData? data;
 
@@ -52,7 +54,7 @@ class LoginApi {
   String? type;
   dynamic address; //Not required in response
   dynamic directoryCategoryId;
-  String? professionType;
+  DirectoryCategories? professionType;
   bool? secondHand;
   String? businessName;
   String? abnNumber;
@@ -129,7 +131,10 @@ class LoginApi {
     type = json['type'];
     address = json['address'];
     directoryCategoryId = json['directory_category_id'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     secondHand = json['second_hand'];
     businessName = json['business_name'];
     abnNumber = json['abn_number'];
@@ -144,9 +149,6 @@ class LoginApi {
         : null;
     subType = json['sub_type'];
     ownerId = json['owner_id'];
-    professiontype = json['professionType'] != null
-        ? new Professiontype.fromJson(json['professionType'])
-        : null;
     expiresAt = json['expiresAt'];
     subscription = json['subscription'] != null
         ? new Subscription.fromJson(json['subscription'])
@@ -177,7 +179,10 @@ class LoginApi {
     data['type'] = this.type;
     data['address'] = this.address;
     data['directory_category_id'] = this.directoryCategoryId;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['second_hand'] = this.secondHand;
     data['business_name'] = this.businessName;
     data['abn_number'] = this.abnNumber;

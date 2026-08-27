@@ -13,4 +13,6 @@ abstract class ViewProfileRepository {
   Future<dynamic> updateDirectoryFromViewProfile(dynamic variable);
   Future<dynamic> updateClient(dynamic variables);
   Future<dynamic> updateRecord(dynamic variables);
+  Future<dynamic> directoryUpdateRecord(dynamic variables);
+  Future<dynamic> directoryInsertRecord(dynamic variables);
 }

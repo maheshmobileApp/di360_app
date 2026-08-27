@@ -12,7 +12,7 @@ String talentsRequest =
     profile_image
     full_name
     work_type
-    profession_type
+    professionType
     location
     country
     city
@@ -78,7 +78,7 @@ query getMarketPlaceTalents($limit: Int, $offset: Int, $where: job_profiles_bool
     profile_image
     full_name
     work_type
-    profession_type
+    professionType
     location
     country
     city

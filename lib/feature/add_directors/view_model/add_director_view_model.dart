@@ -377,7 +377,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == basic.professionType,
+      (cat) => cat.name == basic.professionType?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -395,7 +395,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   assignSupplierViewProfileData(BuildContext context) async {
     final viewProfileVM = context.read<ViewProfileViewModel>();
-    await viewProfileVM.getTheViewProfileData();
+    await viewProfileVM.getTheViewProfileData(context);
     final data = viewProfileVM.supplierViewProfileData;
 
     final phone = data?.phone ?? "";
@@ -413,7 +413,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == data?.professiontype?.name,
+      (cat) => cat.name == data?.professionType?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -430,7 +430,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   assignPracticeViewProfileData(BuildContext context) async {
     final viewProfileVM = context.read<ViewProfileViewModel>();
-    await viewProfileVM.getTheViewProfileData();
+    await viewProfileVM.getTheViewProfileData(context);
     final data = viewProfileVM.practiceViewProfileData;
 
     final phone = data?.phone ?? "";
@@ -448,7 +448,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == data?.professiontype?.name,
+      (cat) => cat.name == data?.professionType?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -598,8 +598,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "business_email":
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "mobile_number": businessPhoneCntr.text,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "phone_visibility":
             VisibilityType.fromDisplayName(phoneVisibility)?.name ??
                 VisibilityType.PRIVATE.name,
@@ -646,8 +645,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "description": descController.text,
         "banner_image":
             banner == null ? getBasicInfoData.first.bannerImage : banner,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "directory_business_type_id":
             getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "directory_category_id": selectedBusineestype?.id,
@@ -681,8 +679,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "address": addressController.text,
         "type": type,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "directory_business_type_id":
             getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "description": descController.text,
@@ -710,8 +707,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "address": addressController.text,
         "type": type,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "directory_business_type_id":
             getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "description": descController.text,
@@ -724,10 +720,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             VisibilityType.fromDisplayName(emailVisibility)?.name ??
                 VisibilityType.PRIVATE.name,
         "alt_phone": null,
-        "profile_image": {
-          "url": "assets/images/social/male_avatar.png",
-          "type": "STATIC"
-        },
+        "profile_image": logo ,
         "university_school": null,
         "designation": null,
         "hobbies": null,
@@ -753,14 +746,16 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> updateViewProfileData() async {
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     await addDirectorRepositoryImpl.updateViewProfileData({
       "id": userId,
       "changes": {
         "name": nameController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
+         "directory_business_type_id": getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "business_email":
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "business_name": CompanyNameController.text,
@@ -1247,8 +1242,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "name": nameController.text,
         "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "business_email":
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "business_name": CompanyNameController.text,
@@ -1261,12 +1255,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "name": nameController.text,
         "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
-        "profile_image": {
-          "url": "assets/images/social/male_avatar.png",
-          "type": "STATIC"
-        }
+        "professionType": selectedBusineestype,
+        "profile_image":logo == null ? getBasicInfoData.first.logo : logo,
       };
     }
 
@@ -1290,8 +1280,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$phoneCode${MobileNumberController.text}',
-        "professionType": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "business_name": CompanyNameController.text,
       };
     }
@@ -1301,8 +1290,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$phoneCode${MobileNumberController.text}',
-        "professionType": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
       };
     }
     final res = await addDirectorRepositoryImpl.updateClient(requestData);

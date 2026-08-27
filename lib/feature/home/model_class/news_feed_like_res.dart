@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class NewsfeedsLikes {
   String? dentalAdminId;
   NewsLikeAdminUser? adminUser;
@@ -78,7 +80,7 @@ class NewsFeedLikePractice {
   String? name;
   DentalPracticeLogo? logo;
   String? type;
-  dynamic professionType;
+  DirectoryCategories? professionType;
   String? sTypename;
 
   NewsFeedLikePractice(
@@ -96,7 +98,7 @@ class NewsFeedLikePractice {
         ? new DentalPracticeLogo.fromJson(json['logo'])
         : null;
     type = json['type'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'];
     sTypename = json['__typename'];
   }
 
@@ -108,7 +110,7 @@ class NewsFeedLikePractice {
       data['logo'] = this.logo!.toJson();
     }
     data['type'] = this.type;
-    data['profession_type'] = this.professionType;
+    data['professionType'] = this.professionType;
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -168,7 +170,7 @@ class NewsFeedLikeSupplier {
   String? name;
   DentalSupplierLogo? logo;
   String? type;
-  dynamic professionType;
+  DirectoryCategories? professionType;
   String? sTypename;
 
   NewsFeedLikeSupplier(
@@ -186,7 +188,7 @@ class NewsFeedLikeSupplier {
         ? new DentalSupplierLogo.fromJson(json['logo'])
         : null;
     type = json['type'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'];
     sTypename = json['__typename'];
   }
 
@@ -198,7 +200,7 @@ class NewsFeedLikeSupplier {
       data['logo'] = this.logo!.toJson();
     }
     data['type'] = this.type;
-    data['profession_type'] = this.professionType;
+    data['professionType'] = this.professionType;
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -256,7 +258,7 @@ class DentalSupplierLogo {
 class NewsFeedLikeProfessional {
   String? id;
   String? name;
-  dynamic professionType;
+  DirectoryCategories? professionType;
   String? type;
   ProfileImage? profileImage;
   String? sTypename;
@@ -272,7 +274,7 @@ class NewsFeedLikeProfessional {
   NewsFeedLikeProfessional.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'];
     type = json['type'];
     profileImage = json['profile_image'] != null
         ? new ProfileImage.fromJson(json['profile_image'])
@@ -284,7 +286,7 @@ class NewsFeedLikeProfessional {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['profession_type'] = this.professionType;
+    data['professionType'] = this.professionType;
     data['type'] = this.type;
     if (this.profileImage != null) {
       data['profile_image'] = this.profileImage!.toJson();

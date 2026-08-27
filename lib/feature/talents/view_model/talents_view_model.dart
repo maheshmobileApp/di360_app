@@ -315,7 +315,7 @@ class TalentsViewModel extends ChangeNotifier {
 
       if (selectedProfessions.isNotEmpty) {
         whereConditions.add({
-          "profession_type": {"_in": selectedProfessions}
+          "professionType": {"_in": selectedProfessions}
         });
       }
 

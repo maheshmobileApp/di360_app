@@ -67,7 +67,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                     context,
                     profileImageUrl,
                     jobProfiles?.jobProfiles?.fullName ?? '',
-                    jobProfiles?.jobProfiles?.professionType ?? '',
+                    jobProfiles?.jobProfiles?.professionType?.name ?? '',
                   ),
                 ),
                 Column(
@@ -163,7 +163,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                   onTap: () async {
                     final profileId = jobProfiles?.jobProfiles?.id ?? "";
                     final professionType =
-                        jobProfiles?.jobProfiles?.professionType ?? "";
+                        jobProfiles?.jobProfiles?.professionType?.name ?? "";
 
                     await vm.getTalentPreviewData(
                         context, profileId, professionType);
@@ -333,7 +333,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
       onSelected: (value) async {
         if (value == "Preview") {
           final profileId = jobProfiles?.jobProfiles?.id ?? "";
-          final professionType = jobProfiles?.jobProfiles?.professionType ?? "";
+          final professionType = jobProfiles?.jobProfiles?.professionType?.name ?? "";
 
           await vm.getTalentPreviewData(context, profileId, professionType);
 

@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class GetHiringTalentListRes {
   HiringTalentList? data;
 
@@ -263,7 +265,7 @@ class Logo {
 class HiringJobProfiles {
   String? id;
   String? fullName;
-  String? professionType;
+  DirectoryCategories? professionType;
   String? state;
   ProfileImage? profileImage;
   List<String>? workType;
@@ -287,7 +289,10 @@ class HiringJobProfiles {
   HiringJobProfiles.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fullName = json['full_name'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     state = json['state'];
     profileImage = json['profile_image'] != null &&
             json['profile_image'] is List &&
@@ -308,7 +313,10 @@ class HiringJobProfiles {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['full_name'] = this.fullName;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['state'] = this.state;
     if (this.profileImage != null) {
       data['profile_image'] = this.profileImage!.toJson();

@@ -42,7 +42,7 @@ class DirectoriesByPk {
   List<String>? education;
   List<String>? universitySchool;
   List<String>? hobbies;
-  String? professionType;
+  DirectoryCategories? professionType;
   dynamic designation;
   String? phoneVisibility;
   String? emailVisibility;
@@ -166,7 +166,10 @@ class DirectoriesByPk {
         }
       });
     }
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     designation = json['designation'];
     phoneVisibility = json['phone_visibility'];
     emailVisibility = json['email_visibility'];
@@ -313,6 +316,30 @@ class DentalSupplier {
     return data;
   }
 }
+
+class DirectoryCategories {
+  String? id;
+  String? name;
+  String? sTypename;
+
+  DirectoryCategories({this.id, this.name, this.sTypename});
+
+  DirectoryCategories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+
 class BannerImage {
   String? url;
   String? name;

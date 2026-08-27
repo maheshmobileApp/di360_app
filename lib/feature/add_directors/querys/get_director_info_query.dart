@@ -16,7 +16,7 @@ query getUeserPracDirectory($id: uuid!) {
     type
     abn_acn
     company_name
-    profession_type
+    professionType
     directory_category_id
     logo
     banner_image
@@ -114,7 +114,7 @@ query getUeserSupDirectory($id: uuid!) {
     community_status
     community_id
     company_name
-    profession_type
+    professionType
     professiontype
     directory_category_id
     email

@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/model/certificates.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 
 class TalentsRes {
@@ -214,7 +215,7 @@ class JobProfiles {
       mobileNumber: json['mobile_number']?.toString(),
       emailAddress: json['email_address']?.toString(),
       workType: normalizeStringList(json['work_type']),
-      professionType: json['profession_type']?.toString(),
+      professionType: json['profession_type'],
       location: json['location']?.toString(),
       country: json['country']?.toString(),
       city: json['city']?.toString(),

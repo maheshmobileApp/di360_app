@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class GetFilteredEnquiryRes {
   FilteredEnquiryData? data;
 
@@ -199,7 +201,7 @@ class JobProfiles {
   ProfileImage? profileImage;
   String? fullName;
   List<ProfileImage>? uploadResume;
-  String? professionType;
+  DirectoryCategories? professionType;
   String? location;
   dynamic country;
   String? sTypename;
@@ -224,7 +226,7 @@ class JobProfiles {
         uploadResume!.add(new ProfileImage.fromJson(v));
       });
     }
-    professionType = json['profession_type'];
+    professionType = json['professionType'];
     location = json['location'];
     country = json['country'];
     sTypename = json['__typename'];
@@ -240,7 +242,7 @@ class JobProfiles {
       data['upload_resume'] =
           this.uploadResume!.map((v) => v.toJson()).toList();
     }
-    data['profession_type'] = this.professionType;
+    data['professionType'] = this.professionType;
     data['location'] = this.location;
     data['country'] = this.country;
     data['__typename'] = this.sTypename;

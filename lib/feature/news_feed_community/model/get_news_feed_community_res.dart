@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 import '../../home/model_class/get_all_news_feeds.dart';
 
 class GetNewsFeedCommunityRes {
@@ -283,7 +285,7 @@ class DentalSupplier {
   String? id;
   Logo? logo;
   String? businessName;
-  String? professionType;
+  DirectoryCategories? professionType;
   String? email;
   String? phone;
   String? name;
@@ -307,7 +309,10 @@ class DentalSupplier {
     id = json['id'];
     logo = json['logo'] != null ? Logo.fromJson(json['logo']) : null;
     businessName = json['business_name'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     email = json['email'];
     phone = json['phone'];
     name = json['name'];
@@ -328,7 +333,10 @@ class DentalSupplier {
       data['logo'] = this.logo!.toJson();
     }
     data['business_name'] = this.businessName;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['email'] = this.email;
     data['phone'] = this.phone;
     data['name'] = this.name;
@@ -436,7 +444,7 @@ class Logo {
 class DentalProfessional {
   String? id;
   String? name;
-  String? professionType;
+  DirectoryCategories? professionType;
   Logo? profileImage;
   String? email;
   String? phone;
@@ -456,7 +464,10 @@ class DentalProfessional {
   DentalProfessional.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     profileImage = json['profile_image'] != null
         ? new Logo.fromJson(json['profile_image'])
         : null;
@@ -470,7 +481,10 @@ class DentalProfessional {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     if (this.profileImage != null) {
       data['profile_image'] = this.profileImage!.toJson();
     }

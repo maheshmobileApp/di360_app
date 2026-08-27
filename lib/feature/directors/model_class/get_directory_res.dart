@@ -71,7 +71,7 @@ class DirectoriesById {
   String? communityId;
   String? type;
   String? education;
-  String? professionType;
+  DirectoryCategories? professionType;
   String? designation;
   String? workingAt;
   BannerImage? bannerImage;
@@ -251,11 +251,10 @@ class DirectoriesById {
             ? null
             : (json['education'] as List).join(', ')
         : json['education']?.toString();
-    professionType = json['profession_type'] is List
-        ? (json['profession_type'] as List).isEmpty
-            ? null
-            : (json['profession_type'] as List).join(', ')
-        : json['profession_type']?.toString();
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     designation = json['designation'] is List
         ? (json['designation'] as List).isEmpty
             ? null
@@ -320,7 +319,10 @@ class DirectoriesById {
     data['community_id'] = this.communityId;
     data['type'] = this.type;
     data['education'] = this.education;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['designation'] = this.designation;
     data['working_at'] = this.workingAt;
     if (this.bannerImage != null) {
@@ -460,6 +462,29 @@ class DentalSupplier {
     return data;
   }
 }
+
+class DirectoryCategories {
+  String? id;
+  String? name;
+  String? sTypename;
+
+  DirectoryCategories({this.id, this.name, this.sTypename});
+
+  DirectoryCategories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
 
 class CommunityMembers {
   String? status;

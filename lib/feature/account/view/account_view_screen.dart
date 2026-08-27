@@ -76,7 +76,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.read<ViewProfileViewModel>().getTheViewProfileData();
+      context.read<ViewProfileViewModel>().getTheViewProfileData(context);
       final t = await LocalStorage.getStringVal(LocalStorageConst.type);
       setState(() => type = t);
     });
@@ -208,7 +208,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .getBusinessTypes();
                             await context
                                 .read<ViewProfileViewModel>()
-                                .getTheViewProfileData();
+                                .getTheViewProfileData(context);
                             Loaders.circularHideLoader(context);
                             type == UserRole.professional.value
                                 ? await navigationService.navigateTo(

@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_profile_role_response.dart';
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repo_impl.dart';
@@ -973,11 +974,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> updateJobProfile(
-    BuildContext context,
-    bool isDraft,
-    String jobProfileId,
-    {String? status}
-  ) async {
+      BuildContext context, bool isDraft, String jobProfileId,
+      {String? status}) async {
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {};
 

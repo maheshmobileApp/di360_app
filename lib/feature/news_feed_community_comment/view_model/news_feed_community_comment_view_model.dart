@@ -643,7 +643,7 @@ const String getNewsfeedQuery = '''
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -661,7 +661,7 @@ const String getNewsfeedQuery = '''
     dental_professional {
       id
       name
-      profession_type
+      professionType
       profile_image
       email
       phone
@@ -672,7 +672,7 @@ const String getNewsfeedQuery = '''
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -704,7 +704,7 @@ const String getNewsfeedQuery = '''
         name
         logo
         type
-        profession_type
+        professionType
         __typename
       }
       dental_supplier {
@@ -712,13 +712,13 @@ const String getNewsfeedQuery = '''
         name
         logo
         type
-        profession_type
+        professionType
         __typename
       }
       dental_professional {
         id
         name
-        profession_type
+        professionType
         type
         profile_image
         __typename

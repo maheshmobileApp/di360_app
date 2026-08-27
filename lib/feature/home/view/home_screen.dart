@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     viewModel.getFollowersCount(context);
     context.read<NotificationViewModel>().getNotificationsCount();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.read<ViewProfileViewModel>().getTheViewProfileData();
+      context.read<ViewProfileViewModel>().getTheViewProfileData(context);
       final t = await LocalStorage.getStringVal(LocalStorageConst.type);
       setState(() => type = t);
     });

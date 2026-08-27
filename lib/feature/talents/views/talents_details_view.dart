@@ -457,7 +457,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
           addVertical(4),
           ExerinaceInfoIcons(
             icon: Icons.work_history_outlined,
-            text: widget.talentList!.professionType!,
+            text: widget.talentList!.professionType ?? "",
           ),
         ],
         if (widget.talentList?.abnNumber?.isNotEmpty == true) ...[

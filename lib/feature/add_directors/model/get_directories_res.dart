@@ -1,6 +1,4 @@
-import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
-
-import '../../directors/model_class/get_directories_details_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 
 class GetDirectoriesRes {
   GetDirectoriesData? data;
@@ -46,8 +44,7 @@ class GetDirectories {
   String? businessName;
   String? businessEmail;
   String? mobileNumber;
-  String? professionType;
-  DirectoryCategories? professiontype;
+  DirectoryCategories? professionType;
   String? directoryCategoryId;
   Logo? logo;
   BannerLogo? bannerImage; // logo
@@ -88,7 +85,6 @@ class GetDirectories {
       this.businessEmail,
       this.mobileNumber,
       this.professionType,
-      this.professiontype,
       this.directoryCategoryId,
       this.workingAt,
       this.education,
@@ -128,9 +124,8 @@ class GetDirectories {
     businessName = json['business_name'];
     businessEmail = json['business_email'];
     mobileNumber = json['mobile_number'];
-    professionType = json['profession_type'];
-    professiontype = json['professiontype'] != null
-        ? new DirectoryCategories.fromJson(json['professiontype'])
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
         : null;
     directoryCategoryId = json['directory_category_id'];
     if (json['working_at'] != null) {

@@ -63,8 +63,7 @@ class DentalSuppliersByPk {
   String? faxNumber;
   String? altEmail;
   String? altPhone;
-  String? professionType;
-  DirectoryCategories? professiontype;
+  DirectoryCategories? professionType;
   String? tgaNumber;
   bool? secondHand;
   bool? sellProducts;
@@ -77,6 +76,7 @@ class DentalSuppliersByPk {
   String? sTypename;
   String? websiteLink;
   String? mobileNumber;
+  String? directoryBusinessTypeId;
 
   DentalSuppliersByPk(
       {this.id,
@@ -102,7 +102,6 @@ class DentalSuppliersByPk {
       this.altEmail,
       this.altPhone,
       this.professionType,
-      this.professiontype,
       this.tgaNumber,
       this.secondHand,
       this.sellProducts,
@@ -114,7 +113,8 @@ class DentalSuppliersByPk {
       this.websiteLink,
       this.mobileNumber,
       this.directories,
-      this.sTypename});
+      this.sTypename,
+      this.directoryBusinessTypeId});
 
   DentalSuppliersByPk.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -142,8 +142,7 @@ class DentalSuppliersByPk {
     faxNumber = json['fax_number'];
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
-    professionType = json['profession_type'];
-    professiontype = json['professionType'] != null
+    professionType = json['professionType'] != null
         ? new DirectoryCategories.fromJson(json['professionType'])
         : null;
     tgaNumber = json['tga_number'];
@@ -165,6 +164,7 @@ class DentalSuppliersByPk {
       });
     }
     sTypename = json['__typename'];
+    directoryBusinessTypeId = json['directory_business_type_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -196,8 +196,7 @@ class DentalSuppliersByPk {
     data['fax_number'] = this.faxNumber;
     data['alt_email'] = this.altEmail;
     data['alt_phone'] = this.altPhone;
-    data['profession_type'] = this.professionType;
-    data['professionType'] = this.professiontype!.toJson();
+    data['professionType'] = this.professionType;
     data['tga_number'] = this.tgaNumber;
     data['second_hand'] = this.secondHand;
     data['sell_products'] = this.sellProducts;
@@ -214,6 +213,7 @@ class DentalSuppliersByPk {
       data['directories'] = this.directories!.map((v) => v.toJson()).toList();
     }
     data['__typename'] = this.sTypename;
+    data['directory_business_type_id'] = directoryBusinessTypeId;
     return data;
   }
 }
@@ -318,7 +318,7 @@ class Directories {
   String? phone;
   dynamic profileImage;
   String? address;
-  String? professionType;
+  DirectoryCategories? professionType;
   String? sTypename;
 
   Directories(
@@ -338,7 +338,7 @@ class Directories {
     phone = json['phone'];
     profileImage = json['profile_image'];
     address = json['address'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'];
     sTypename = json['__typename'];
   }
 
@@ -350,7 +350,7 @@ class Directories {
     data['phone'] = this.phone;
     data['profile_image'] = this.profileImage;
     data['address'] = this.address;
-    data['profession_type'] = this.professionType;
+    data['professionType'] = this.professionType;
     data['__typename'] = this.sTypename;
     return data;
   }
