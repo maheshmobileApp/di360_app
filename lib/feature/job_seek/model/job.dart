@@ -133,7 +133,14 @@ class Jobs {
     dentalSupplierId = json['dental_supplier_id'];
     activeStatus = json['active_status'];
     location = json['location'];
-    logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
+    final logoJson = json['logo'];
+    if (logoJson is Map<String, dynamic>) {
+      logo = Logo.fromJson(logoJson);
+    } else if (logoJson is String) {
+      logo = Logo(url: logoJson);
+    } else {
+      logo = null;
+    }
     state = json['state'];
     city = json['city'];
     salary = json['salary'];

@@ -85,7 +85,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 '',
                             newsfeeds?.courses?.isNotEmpty == true
                                 ? newsfeeds?.courses?.first.type ?? ''
-                                : ""),
+                                : "",newsfeeds?.communityType?? ""),
                         addVertical(8),
                         _buildHeader(
                             newsfeeds?.dentalSupplier != null
@@ -426,7 +426,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _tagWidget(String? feedType, String userName, String courseType) {
+  Widget _tagWidget(String? feedType, String userName, String courseType, String communityUser) {
     String tagText = '';
 
     switch (feedType) {
@@ -450,8 +450,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
             colors: [
-              Colors.white,
-              Colors.grey.shade300,
+             (communityUser == "COMMUNITY_USER")? Colors.grey.shade300: Colors.white,
+             (communityUser == "COMMUNITY_USER")? Colors.orange.shade300: Colors.grey.shade300,
             ],
           ),
         ),
