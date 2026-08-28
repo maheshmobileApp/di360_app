@@ -116,7 +116,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   void setScheduleDate(DateTime date) {
     scheduleDate = date;
     dateOfBirthController.text =
-        di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(date.toString());
+        di360_date_utils.DateFormatUtils.formatMMDDYYYY(date.toString());
     notifyListeners();
   }
 
@@ -205,7 +205,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     landmarkController.text = viewProfile?.landMark ?? "";
     countryController.text = viewProfile?.country ?? "";
     stateController.text = viewProfile?.state ?? "";
-    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
+    zipCodeController.text =
+        (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
     setBusinessType(viewProfile?.professionType?.name);
     logoUrl = viewProfile?.logo?.url ?? "";
     userName = viewProfile?.businessName ?? "";
@@ -251,7 +252,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     landmarkController.text = viewProfile?.landMark ?? "";
     countryController.text = viewProfile?.country ?? "";
     stateController.text = viewProfile?.state ?? "";
-    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
+    zipCodeController.text =
+        (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
     setBusinessType(viewProfile?.professionType?.name);
     logoUrl = viewProfile?.logo?.url ?? "";
     userName = viewProfile?.businessName ?? "";
@@ -262,6 +264,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   void loadProfessionalViewProfileData(
       DentalProfessionalsByPk? viewProfile) async {
+    print("postcode**************${viewProfile?.zipcode ?? ""}");
     setDirectoryBusinessTypeId(viewProfile?.directoryBusinessTypeId ?? "");
     setDirectoryExists((viewProfile?.directories?.isNotEmpty == true)
         ? viewProfile?.directories?.first.id ?? ""
@@ -292,10 +295,12 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     landmarkController.text = viewProfile?.landMark ?? "";
     countryController.text = viewProfile?.country ?? "";
     stateController.text = viewProfile?.state ?? "";
-    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
+    zipCodeController.text =
+        (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
     if (viewProfile?.dateOfBirth != null) {
       final date = DateTime.parse(viewProfile?.dateOfBirth ?? "");
-      dateOfBirthController.text = di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(date.toString());
+      dateOfBirthController.text =
+          di360_date_utils.DateFormatUtils.formatMMDDYYYY(date.toString());
     } else {
       dateOfBirthController.text = "";
     }
@@ -515,20 +520,20 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
           ? await directoryUpdateRecord(directoryExistsId ?? "", logo)
           : await directoryInsertRecord(logo);
 
-      profileCompleted == false
+      (profileCompleted == false &&
+              (subscriptionStatus != "EXPIRED" &&
+                  permissionsList
+                      .contains(ModulePermission.directoryModule.value)))
           ? showAlertMessage(context,
               'Great Job! 🎉\n\nYou’ve completed your profile. \n\nWant to continue and complete your directory for better visibility?',
               onBack: () {
-                (subscriptionStatus != "EXPIRED" && permissionsList.contains(ModulePermission.directoryModule.value))
-                    ? directorNavigationHandle(context)
-                    : navigationService
-                        .pushNamedAndRemoveUntil(RouteList.dashBoard);
+                directorNavigationHandle(context);
               },
               onCancel: () => navigationService
                   .pushNamedAndRemoveUntil(RouteList.dashBoard),
               yes: "Yes, Let's Go",
               no: "Maybe Later")
-          : navigationService.goBack();
+          : navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
       if (profileCompleted == false) await insertDirectories();
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
