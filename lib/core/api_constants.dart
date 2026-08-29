@@ -29,4 +29,5 @@ class ApiConst {
   static const String adminApproveUser = '/api/v1/event/admin-approve-user/';
   static String refreshToken = '/api/v1/auth/refresh-token_v2';
   static String newsfeedCreation = '/api/v1/newsfeeds';
+  static String creditBalance = '/api/v1/credits/header/';
 }

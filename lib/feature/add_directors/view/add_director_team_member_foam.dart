@@ -70,7 +70,7 @@ class _AddDirectorTeamMemberFoamState extends State<AddDirectorTeamMemberFoam>
             title: " Phone Number ",
             controller: AddDirectorVM.teamNumberCntr,
             isRequired: true,
-            maxLength: 9,
+            maxLength: 10,
             keyboardType: TextInputType.number,
             validator: validatePhoneNumber),
         addVertical(12),

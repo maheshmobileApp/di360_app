@@ -9,12 +9,14 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/subscription_expired_dialog.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_data_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -195,13 +197,36 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
                 borderRadius: BorderRadius.circular(100)),
             backgroundColor: AppColors.primaryColor,
             onPressed: () async {
-              await addNewsFeedVM.fetchNewsfeedCategories();
-              addNewsFeedVM.clearFeedNews();
-              addNewsFeedVM.getUserType();
-              addNewsFeedVM.setEnableComments(true);
-              navigationService.navigateTo(RouteList.addNewsFeed);
+              await addNewsFeedVM.getCreditBalance(context);
+              final totalCredits =
+                  addNewsFeedVM.creditBalance?.totalCredits ?? 0;
+              if (totalCredits >= 80) {
+                await addNewsFeedVM.fetchNewsfeedCategories();
+                addNewsFeedVM.clearFeedNews();
+                addNewsFeedVM.getUserType();
+                addNewsFeedVM.setEnableComments(true);
+                navigationService.navigateTo(RouteList.addNewsFeed);
+              } else {
+                _showCreditsPopup(context);
+              }
             },
             child: SvgPicture.asset(ImageConst.addFeed)));
+  }
+
+  void _showCreditsPopup(BuildContext context) {
+    SubscriptionExpiredDialog.show(
+      context,
+      title: "Insufficient Credits",
+      message: "You do not have enough credits to perform this action. "
+          "Please purchase additional credits or upgrade your subscription.",
+      icon: Icons.account_balance_wallet_outlined,
+      onAction: () {
+        scaffoldMessenger(
+          "To view and manage your credit packs, "
+          "please log in through the web.",
+        );
+      },
+    );
   }
 
   SizedBox communityStatusWidget(NewsFeedViewModel newsFeedVM) {

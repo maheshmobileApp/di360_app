@@ -97,7 +97,7 @@ class _SignupScreenState extends State<SignupScreen>
                           hintText: "Enter business name",
                           isRequired: true,
                           keyboardType: TextInputType.text,
-                          validator: validateCompanyName),
+                          validator: validateBusinessName),
                       addVertical(16)
                     ],
                     InputTextField(
@@ -105,7 +105,7 @@ class _SignupScreenState extends State<SignupScreen>
                         controller: viewModel.nameController,
                         hintText: "Enter your name",
                         isRequired: true,
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.text,
                         validator: validateName),
                     addVertical(16),
                     if (viewModel.selectedType?['type'] ==
@@ -113,10 +113,10 @@ class _SignupScreenState extends State<SignupScreen>
                       InputTextField(
                           title: 'Business Name',
                           controller: viewModel.companyNameController,
-                          hintText: "Enter dental practice name",
+                          hintText: "Enter business name",
                           keyboardType: TextInputType.text,
                           isRequired: true,
-                          validator: validatePracticeName),
+                          validator: validateBusinessName),
                       addVertical(16)
                     ],
                     InputTextField(

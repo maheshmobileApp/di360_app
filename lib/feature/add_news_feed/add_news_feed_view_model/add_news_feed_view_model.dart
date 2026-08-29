@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_news_feed/model_class/credits_balance_res.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/add_news_feed/repository/add_news_feed_repo_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
@@ -34,6 +35,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   List existingImages = [];
   bool enableComments = true;
   String? userType;
+  creditsBalanceRes? creditBalance;
 
   void setEnableComments(bool value) {
     enableComments = value;
@@ -153,7 +155,6 @@ class AddNewsFeedViewModel extends ChangeNotifier {
         if (type == UserRole.supplier.value) "comments_enabled": enableComments,
       };
 
-
       final res = await repo.addNewsFeed(variables);
 
       if (res.isNotEmpty) {
@@ -246,6 +247,22 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   void setUserType(String type) {
     userType = type;
     notifyListeners();
+  }
+
+  Future<void> getCreditBalance(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    try {
+      final creditId =
+          await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final res = await repo.getCreditsBalance(creditId);
+      if (res != null) {
+        creditBalance = res;
+      }
+    } catch (e) {
+      print('Error fetching credit balance: $e');
+    } finally {
+      Loaders.circularHideLoader(context);
+    }
   }
 
   clearFeedNews() {

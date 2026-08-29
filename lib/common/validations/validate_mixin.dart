@@ -20,14 +20,18 @@ mixin ValidationMixins {
       return "Please enter your Mobile Number";
     if (value.startsWith('0'))
       return 'Please enter the mobile number without the leading 0.';
-    if (!validateAusMobileNumber(value)) return 'Mobile number must start with 4';
+    if (value.length != 9)
+      return 'Please enter 9 digits.';
+    if (!validateAusMobileNumber(value))
+      return 'Mobile number must start with 4';
     return null;
   }
 
   bool isValidAusPhoneNumber(String? value) {
     if (value == null || value.isEmpty) return false;
     String phone = value.trim();
-    if (phone.startsWith('+61')) phone = phone.substring(3);
+    if (phone.startsWith('+61'))
+      phone = phone.substring(3);
     else if (phone.startsWith('61')) phone = phone.substring(2);
     return validateAusMobileNumber(phone);
   }
@@ -102,10 +106,14 @@ mixin ValidationMixins {
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) return "Please enter password";
     if (value.length < 6) return "Password must be at least 6 characters";
-    if (!RegExp(r'[A-Z]').hasMatch(value)) return "Must contain at least one capital letter";
-    if (!RegExp(r'[a-z]').hasMatch(value)) return "Must contain at least one lowercase letter";
-    if (!RegExp(r'[0-9]').hasMatch(value)) return "Must contain at least one number";
-    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-+=\[\]\\/;~`]').hasMatch(value)) return "Must contain at least one symbol";
+    if (!RegExp(r'[A-Z]').hasMatch(value))
+      return "Must contain at least one capital letter";
+    if (!RegExp(r'[a-z]').hasMatch(value))
+      return "Must contain at least one lowercase letter";
+    if (!RegExp(r'[0-9]').hasMatch(value))
+      return "Must contain at least one number";
+    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-+=\[\]\\/;~`]').hasMatch(value))
+      return "Must contain at least one symbol";
     return null;
   }
 
@@ -115,7 +123,16 @@ mixin ValidationMixins {
   }
 
   String? validateName(String? value) {
-    if (value == null || value.isEmpty) return "Please enter your name";
+    if (value == null || value.trim().isEmpty) {
+      return "Please enter your name";
+    }
+
+    final nameRegex = RegExp(r'^[a-zA-Z ]+$');
+
+    if (!nameRegex.hasMatch(value.trim())) {
+      return "Name should contain letters and spaces only";
+    }
+
     return null;
   }
 
@@ -141,12 +158,30 @@ mixin ValidationMixins {
   }
 
   String? validateBusinessName(String? value) {
-    if (value == null || value.isEmpty) return "Please enter business name";
+    if (value == null || value.trim().isEmpty) {
+      return "Please enter business name";
+    }
+
+    final nameRegex = RegExp(r'^[a-zA-Z ]+$');
+
+    if (!nameRegex.hasMatch(value.trim())) {
+      return "Name should contain letters and spaces only";
+    }
+
     return null;
   }
 
   String? validatePracticeName(String? value) {
-    if (value == null || value.isEmpty) return "Please enter practice name";
+    if (value == null || value.trim().isEmpty) {
+      return "Please enter your name";
+    }
+
+    final nameRegex = RegExp(r'^[a-zA-Z ]+$');
+
+    if (!nameRegex.hasMatch(value.trim())) {
+      return "Name should contain letters and spaces only";
+    }
+
     return null;
   }
 

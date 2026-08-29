@@ -5,12 +5,12 @@ class SubscriptionExpiredDialog extends StatelessWidget {
   const SubscriptionExpiredDialog({
     super.key,
     this.title = "Subscription Expired",
-    this.message =
-        "Your current subscription has expired. Please renew "
+    this.message = "Your current subscription has expired. Please renew "
         "or upgrade your subscription to continue using this feature.",
     this.cancelText = "Cancel",
     this.actionText = "View Plans",
     this.onAction,
+    this.icon,
   });
 
   final String title;
@@ -18,6 +18,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
   final String cancelText;
   final String actionText;
   final VoidCallback? onAction;
+  final IconData? icon;
 
   static Future<void> show(
     BuildContext context, {
@@ -26,6 +27,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
     String? cancelText,
     String? actionText,
     VoidCallback? onAction,
+    IconData? icon,
   }) {
     return showDialog(
       context: context,
@@ -39,6 +41,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
           cancelText: cancelText ?? "Cancel",
           actionText: actionText ?? "View Plans",
           onAction: onAction,
+          icon: icon,
         );
       },
     );
@@ -64,8 +67,8 @@ class SubscriptionExpiredDialog extends StatelessWidget {
                 color: Color(0xFFFFF4E5),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.event_busy_outlined,
+              child:  Icon(
+                 icon ?? Icons.event_busy_outlined,
                 size: 30,
                 color: Color(0xFFFF7A00),
               ),
@@ -122,9 +125,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 14),
-
                 Expanded(
                   child: SizedBox(
                     height: 40,
