@@ -11,6 +11,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
     this.actionText = "View Plans",
     this.onAction,
     this.icon,
+    this.action = true,
   });
 
   final String title;
@@ -19,6 +20,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
   final String actionText;
   final VoidCallback? onAction;
   final IconData? icon;
+  final bool? action;
 
   static Future<void> show(
     BuildContext context, {
@@ -28,6 +30,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
     String? actionText,
     VoidCallback? onAction,
     IconData? icon,
+    bool? action,
   }) {
     return showDialog(
       context: context,
@@ -42,6 +45,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
           actionText: actionText ?? "View Plans",
           onAction: onAction,
           icon: icon,
+          action: action,
         );
       },
     );
@@ -55,20 +59,20 @@ class SubscriptionExpiredDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+        padding: const EdgeInsets.fromLTRB(12, 28, 12, 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Icon
             Container(
-              width: 40,
-              height: 40,
+              width: 50,
+              height: 50,
               decoration: const BoxDecoration(
                 color: Color(0xFFFFF4E5),
                 shape: BoxShape.circle,
               ),
-              child:  Icon(
-                 icon ?? Icons.event_busy_outlined,
+              child: Icon(
+                icon ?? Icons.event_busy_outlined,
                 size: 30,
                 color: Color(0xFFFF7A00),
               ),
@@ -80,10 +84,10 @@ class SubscriptionExpiredDialog extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyles.bold6(),
+              style: TextStyles.bold3(),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 12),
 
             // Message
             Text(
@@ -92,7 +96,9 @@ class SubscriptionExpiredDialog extends StatelessWidget {
               style: TextStyles.medium2(),
             ),
 
-            const SizedBox(height: 28),
+            const SizedBox(height: 10),
+            const Divider(),
+            const SizedBox(height: 10),
 
             // Buttons
             Row(
@@ -125,41 +131,42 @@ class SubscriptionExpiredDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        onAction?.call();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF6B00),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                if (action ?? false) const SizedBox(width: 14),
+                if (action ?? false)
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          onAction?.call();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF6B00),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          actionText,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            actionText,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ],

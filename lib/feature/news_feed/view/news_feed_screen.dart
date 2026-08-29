@@ -216,16 +216,12 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
   void _showCreditsPopup(BuildContext context) {
     SubscriptionExpiredDialog.show(
       context,
-      title: "Insufficient Credits",
-      message: "You do not have enough credits to perform this action. "
-          "Please purchase additional credits or upgrade your subscription.",
+      title: "Additional Credits Required",
+      message: "Additional credits are required to complete this action. \n"
+          "\n"
+          "Credit purchases and subscription upgrades are available through the web application.",
       icon: Icons.account_balance_wallet_outlined,
-      onAction: () {
-        scaffoldMessenger(
-          "To view and manage your credit packs, "
-          "please log in through the web.",
-        );
-      },
+      action: false
     );
   }
 
