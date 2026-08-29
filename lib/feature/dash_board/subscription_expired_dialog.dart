@@ -4,23 +4,20 @@ import 'package:flutter/material.dart';
 class SubscriptionExpiredDialog extends StatelessWidget {
   const SubscriptionExpiredDialog({
     super.key,
-    this.title = "Subscription Expired",
-    this.message = "Your current subscription has expired. Please renew "
-        "or upgrade your subscription to continue using this feature.",
-    this.cancelText = "Cancel",
-    this.actionText = "View Plans",
+    this.title,
+    this.message,
+    this.cancelText,
+    this.actionText,
     this.onAction,
     this.icon,
-    this.action = true,
   });
 
-  final String title;
-  final String message;
-  final String cancelText;
-  final String actionText;
+  final String? title;
+  final String? message;
+  final String? cancelText;
+  final String? actionText;
   final VoidCallback? onAction;
   final IconData? icon;
-  final bool? action;
 
   static Future<void> show(
     BuildContext context, {
@@ -30,7 +27,6 @@ class SubscriptionExpiredDialog extends StatelessWidget {
     String? actionText,
     VoidCallback? onAction,
     IconData? icon,
-    bool? action,
   }) {
     return showDialog(
       context: context,
@@ -39,13 +35,11 @@ class SubscriptionExpiredDialog extends StatelessWidget {
         return SubscriptionExpiredDialog(
           title: title ?? "Subscription Expired",
           message: message ??
-              "Your current subscription has expired. Please renew "
-                  "or upgrade your subscription to continue using this feature.",
+              "Your current subscription has ended. \n \n To continue using this feature, please visit the web application to renew your plan or explore available upgrade options.",
           cancelText: cancelText ?? "Cancel",
           actionText: actionText ?? "View Plans",
           onAction: onAction,
           icon: icon,
-          action: action,
         );
       },
     );
@@ -82,7 +76,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
 
             // Title
             Text(
-              title,
+              title ?? "",
               textAlign: TextAlign.center,
               style: TextStyles.bold3(),
             ),
@@ -91,7 +85,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
 
             // Message
             Text(
-              message,
+              message ?? "",
               textAlign: TextAlign.center,
               style: TextStyles.medium2(),
             ),
@@ -120,7 +114,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        cancelText,
+                        cancelText ?? "",
                         maxLines: 1,
                         style: const TextStyle(
                           fontSize: 14,
@@ -131,9 +125,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (action ?? false) const SizedBox(width: 14),
-                if (action ?? false)
-                  Expanded(
+                  /*Expanded(
                     child: SizedBox(
                       height: 40,
                       child: ElevatedButton(
@@ -166,7 +158,7 @@ class SubscriptionExpiredDialog extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
               ],
             ),
           ],

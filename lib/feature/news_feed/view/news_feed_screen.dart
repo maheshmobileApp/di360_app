@@ -16,7 +16,6 @@ import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_v
 import 'package:di360_flutter/feature/news_feed/view/news_feed_data_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -221,7 +220,6 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
           "\n"
           "Credit purchases and subscription upgrades are available through the web application.",
       icon: Icons.account_balance_wallet_outlined,
-      action: false
     );
   }
 

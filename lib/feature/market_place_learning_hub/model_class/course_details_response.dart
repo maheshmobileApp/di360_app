@@ -228,11 +228,19 @@ class CoursesByPk {
     eventType = json['event_type'];
     image = json['image'];
     learningObjectives = json['learning_objectives'];
-    if (json['module_section'] != null) {
+    final moduleSectionJson = json['module_section'];
+    if (moduleSectionJson is List) {
       moduleSection = <ModuleSection>[];
-      json['module_section'].forEach((v) {
-        moduleSection!.add(new ModuleSection.fromJson(v));
-      });
+      for (final section in moduleSectionJson) {
+        if (section is Map) {
+          moduleSection!
+              .add(ModuleSection.fromJson(Map<String, dynamic>.from(section)));
+        }
+      }
+    } else if (moduleSectionJson is Map) {
+      moduleSection = <ModuleSection>[
+        ModuleSection.fromJson(Map<String, dynamic>.from(moduleSectionJson))
+      ];
     }
     if (json['question_section'] != null) {
       questionSection = <QuestionSection>[];

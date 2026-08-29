@@ -89,17 +89,6 @@ class _SignupScreenState extends State<SignupScreen>
                           value == null ? 'Please select type' : null,
                     ),
                     addVertical(16),
-                    if (viewModel.selectedType?['type'] ==
-                        UserRole.supplier.value) ...[
-                      InputTextField(
-                          title: 'Business Name',
-                          controller: viewModel.companyNameController,
-                          hintText: "Enter business name",
-                          isRequired: true,
-                          keyboardType: TextInputType.text,
-                          validator: validateBusinessName),
-                      addVertical(16)
-                    ],
                     InputTextField(
                         title: 'Full name',
                         controller: viewModel.nameController,
@@ -109,7 +98,8 @@ class _SignupScreenState extends State<SignupScreen>
                         validator: validateName),
                     addVertical(16),
                     if (viewModel.selectedType?['type'] ==
-                        UserRole.practice.value) ...[
+                        UserRole.practice.value || viewModel.selectedType?['type'] ==
+                        UserRole.supplier.value) ...[
                       InputTextField(
                           title: 'Business Name',
                           controller: viewModel.companyNameController,
