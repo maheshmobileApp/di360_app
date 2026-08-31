@@ -128,7 +128,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                   height: 100,
                   width: 100,
                   child: CachedNetworkImageWidget(
-                      imageUrl: viewProfileVM.logoUrl ?? '',
+                      imageUrl: viewProfileVM.logoUrl ?? vm.profilePic?? "",
                       fit: BoxFit.contain,
                       errorWidget: type == UserRole.professional.value
                           ? viewProfileVM.gender?.toLowerCase() == "male"
@@ -209,6 +209,9 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             await context
                                 .read<ViewProfileViewModel>()
                                 .getTheViewProfileData(context);
+                            await context
+                                .read<AddDirectoryViewModel>()
+                                .getDirectories();
                             Loaders.circularHideLoader(context);
                             type == UserRole.professional.value
                                 ? await navigationService.navigateTo(
@@ -305,7 +308,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.talentEnquiriesView);
                           } else if (item.title == 'My Directory') {
-                           if (!await _checkSubscriptionStatus(
+                            if (!await _checkSubscriptionStatus(
                               context,
                             )) {
                               return;
@@ -400,7 +403,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.joinRequestView);
                           } else if (item.title == "Partnership Request") {
-                           if (!await _checkSubscriptionStatus(
+                            if (!await _checkSubscriptionStatus(
                               context,
                             )) {
                               return;
@@ -431,7 +434,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService.navigateTo(
                                 RouteList.partnershipRegistrationView);
                           } else if (item.title == "News Feed Categories") {
-                           if (!await _checkSubscriptionStatus(
+                            if (!await _checkSubscriptionStatus(
                               context,
                             )) {
                               return;

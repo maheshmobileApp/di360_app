@@ -21,6 +21,7 @@ query practiceDisplayV2($id: uuid!) {
     address_line_one
     address_line_two
     city
+    logo
     zipcode
     land_mark
     website_link

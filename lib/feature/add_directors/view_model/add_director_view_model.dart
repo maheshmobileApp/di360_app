@@ -114,6 +114,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   File? galleryFile;
   List<File>? galleryFiles;
   File? partnerImgFile;
+  String? serverLogo;
 
   List<String>? serverGalleryFiles;
   void setServerGalleryFiles(List<String>? value) {
@@ -297,6 +298,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         _currentStep = 0;
         getBasicInfoData = res;
         await context.read<DirectoryViewModel>().getFollowersCount(userId);
+        await LocalStorage.setStringVal(
+            LocalStorageConst.directoryId, getBasicInfoData.first.id ?? "");
         await editVM.getAppointments(this);
         Loaders.circularHideLoader(context);
         type == UserRole.professional.value
@@ -354,7 +357,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       return;
     }
     final basic = getBasicInfoData.first;
-    CompanyNameController.text = type == UserRole.professional.value?  basic.companyName ?? '': basic.businessName ?? '';
+    CompanyNameController.text = type == UserRole.professional.value
+        ? basic.companyName ?? ''
+        : basic.businessName ?? '';
+    serverLogo = basic.logo?.url ?? "";
+    logoFile = null;
     nameController.text = basic.name ?? '';
     emailController.text = basic.email ?? '';
     ABNNumberController.text = basic.abnAcn ?? '';
@@ -397,6 +404,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     final viewProfileVM = context.read<ViewProfileViewModel>();
     await viewProfileVM.getTheViewProfileData(context);
     final data = viewProfileVM.supplierViewProfileData;
+    logoFile = null;
 
     final phone = data?.phone ?? "";
     if (phone.startsWith('+61')) {
@@ -569,6 +577,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     var logo = logoFile?.path != null && logoFile!.path.isNotEmpty
         ? await addDirectorRepositoryImpl.http.uploadImage(logoFile!.path)
         : null;
+
+    final logoUrl = logo?["url"];
     var banner = bannerFile?.path != null && bannerFile!.path.isNotEmpty
         ? await addDirectorRepositoryImpl.http.uploadImage(bannerFile!.path)
         : null;
@@ -614,8 +624,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
           LocalStorageConst.directoryComplete, true);
       await LocalStorage.setBoolValue(
           LocalStorageConst.firstNavigationDirectory, true);
+      await LocalStorage.setStringVal(LocalStorageConst.profilePic, logoUrl);
       scaffoldMessenger('BasicInfo added successfully');
-      await updateViewProfileData();
+      await updateRecord(logo);
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -630,8 +641,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         await await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     var logo = logoFile == null
-        ? null
+        ? getBasicInfoData.first.logo
         : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+    final logoUrl = logo["url"];
     var banner = bannerFile == null
         ? null
         : await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
@@ -649,7 +661,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "directory_business_type_id":
             getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "directory_category_id": selectedBusineestype?.id,
-        "logo": logo == null ? getBasicInfoData.first.logo : logo,
+        "logo": logo,
         "alt_phone": alternateNumberController.text,
         "name": nameController.text,
         "abn_acn": ABNNumberController.text,
@@ -720,7 +732,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             VisibilityType.fromDisplayName(emailVisibility)?.name ??
                 VisibilityType.PRIVATE.name,
         "alt_phone": null,
-        "profile_image": logo ,
+        "profile_image": logo,
         "university_school": null,
         "designation": null,
         "hobbies": null,
@@ -734,11 +746,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
           LocalStorageConst.directoryComplete, true);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Updated Basic Information successfully');
-      await updateRecord();
-      await updateClient();
+      await updateRecord(logo);
+      await LocalStorage.setStringVal(LocalStorageConst.profilePic, logoUrl);
       await LocalStorage.setStringVal(
           LocalStorageConst.professionId, selectedBusineestype?.id ?? "");
-      await updateViewProfileData();
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -755,7 +766,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
         "professionType": selectedBusineestype,
-         "directory_business_type_id": getDirectoryBusinessTypeId(selectedBusineestype?.id),
+        "directory_business_type_id":
+            getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "business_email":
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "business_name": CompanyNameController.text,
@@ -1227,14 +1239,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  Future<void> updateRecord() async {
+  Future<void> updateRecord(dynamic logo) async {
     print("**************update record calling");
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    var logo = logoFile == null
-        ? null
-        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
 
     Map<String, dynamic> requestData = {"id": userId};
     if (type == UserRole.supplier.value || type == UserRole.practice.value) {
@@ -1247,7 +1256,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "business_name": CompanyNameController.text,
         "mobile_number": "",
-        "logo": logo == null ? getBasicInfoData.first.logo : logo,
+        "logo": logo,
         "abn_number": ABNNumberController.text,
       };
     } else {
@@ -1256,7 +1265,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
         "professionType": selectedBusineestype,
-        "profile_image":logo == null ? getBasicInfoData.first.logo : logo,
+        "profile_image": logo,
       };
     }
 

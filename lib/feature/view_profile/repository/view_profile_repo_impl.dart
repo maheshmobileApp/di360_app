@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/view_profile/query/pratice_view_profile_qu
 import 'package:di360_flutter/feature/view_profile/query/professional_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_client.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_director_to_view_profile_query.dart';
+import 'package:di360_flutter/feature/view_profile/query/update_directory_logo.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_profile_logo.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_record_query.dart';
@@ -54,6 +55,12 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
                 ? updateProfessProfileLogoQuery
                 : updateProfileLogoQuery,
         data);
+    return res;
+  }
+
+   @override
+  Future updateDirectoryLogo(dynamic variables) async {
+    final res = await http.mutation(updateDirectoryLogoQuery, variables);
     return res;
   }
 

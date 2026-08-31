@@ -130,45 +130,55 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     if (userType == UserRole.practice.value) {
-      await getPracticeViewProfileData();
+      await getPracticeViewProfileData(context);
     } else if (userType == UserRole.professional.value) {
-      await getProfessionalViewProfileData();
+      await getProfessionalViewProfileData(context);
     } else {
-      await getSuppilerViewProfileData();
+      await getSuppilerViewProfileData(context);
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
-  Future<void> getSuppilerViewProfileData() async {
+  Future<void> getSuppilerViewProfileData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final res = await repo.getViewProfileData();
     if (res != null) {
       supplierViewProfileData = res;
       loadSupplierViewProfileData(supplierViewProfileData);
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
-  Future<void> getPracticeViewProfileData() async {
+  Future<void> getPracticeViewProfileData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
     final res = await repo.getPracticeViewProfileData();
     if (res != null) {
       practiceViewProfileData = res.dentalPracticesByPk;
       loadPracticeViewProfileData(practiceViewProfileData);
     }
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 
-  Future<void> getProfessionalViewProfileData() async {
+  Future<void> getProfessionalViewProfileData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
     final res = await repo.getProfessionalViewProfile();
     if (res != null) {
       professionalViewProfileData = res;
       loadProfessionalViewProfileData(professionalViewProfileData);
     }
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 
   void loadSupplierViewProfileData(DentalSuppliersByPk? viewProfile) async {
-    print("********pincode${viewProfile?.zipcode}");
+    print("********logo${viewProfile?.logo?.url}");
     setDirectoryBusinessTypeId(viewProfile?.directoryBusinessTypeId ?? "");
     setDirectoryExists((viewProfile?.directories?.isNotEmpty == true)
         ? viewProfile?.directories?.first.id ?? ""
@@ -209,6 +219,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
     setBusinessType(viewProfile?.professionType?.name);
     logoUrl = viewProfile?.logo?.url ?? "";
+    logoFile = null;
     userName = viewProfile?.businessName ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
@@ -216,6 +227,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void loadPracticeViewProfileData(DentalPracticesByPk? viewProfile) async {
+        print("********practice-logo${viewProfile?.logo?.url}");
+
     setDirectoryBusinessTypeId(viewProfile?.directoryBusinessTypeId ?? "");
     setDirectoryExists((viewProfile?.directories?.isNotEmpty == true)
         ? viewProfile?.directories?.first.id ?? ""
@@ -256,6 +269,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
     setBusinessType(viewProfile?.professionType?.name);
     logoUrl = viewProfile?.logo?.url ?? "";
+    logoFile = null;
     userName = viewProfile?.businessName ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
@@ -323,6 +337,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       setSelectedBusineestype(businessType);
     }
     logoUrl = viewProfile?.profileImage?.url ?? "";
+    logoFile = null;
     userName = viewProfile?.name ?? "";
     gender = viewProfile?.gender ?? "";
 
@@ -340,23 +355,30 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> pickLogoImage(ImageSource source, BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
     if (pickedFile != null) {
       logoFile = File(pickedFile.path);
       navigationService.goBack();
-      /*type == UserRole.professional.value
-          ? uploadProfessLogo(context)
-          : uploadBussinessLogo(context);*/
+      var logo = logoFile == null
+          ? null
+          : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+      type == UserRole.professional.value
+          ? await uploadProfessLogo(context, logo)
+          : await uploadBussinessLogo(context, logo);
+      await updateDirectoryLogo(context, logo);
+      logoUrl = logo?['url'] ?? "";
+      await LocalStorage.setStringVal(LocalStorageConst.profilePic, logo?['url'] ?? "");
+      Loaders.circularHideLoader(context);
       notifyListeners();
     }
   }
 
-  Future<void> uploadBussinessLogo(BuildContext context) async {
+  Future<void> uploadBussinessLogo(BuildContext context, dynamic logo) async {
     Loaders.circularShowLoader(context);
-    var logo = logoFile == null
-        ? null
-        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -376,17 +398,29 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> uploadProfessLogo(BuildContext context) async {
+  Future<void> updateDirectoryLogo(BuildContext context, dynamic logo) async {
     Loaders.circularShowLoader(context);
-    var logo = logoFile == null
-        ? null
-        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+    final id = await LocalStorage.getStringVal(LocalStorageConst.directoryId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    final variables = {
+      "id": id,
+      "dirObj": type == UserRole.professional.value ? {"profile_image": logo }: {"logo": logo}
+    };
+
+    await repo.updateDirectoryLogo(variables);
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> uploadProfessLogo(BuildContext context, dynamic logo) async {
+    Loaders.circularShowLoader(context);
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final result = await repo.uploadLogo({
       "id": id,
       "userImage": {
         "profile_image":
-            logo ?? professionalViewProfileData?.profileImage?.toJson()
+            logo
       }
     });
     Loaders.circularHideLoader(context);
@@ -410,9 +444,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final permissionsList = await LocalStorage.getStringList(
       LocalStorageConst.permissions,
     );
-    type == UserRole.professional.value
-        ? await uploadProfessLogo(context)
-        : await uploadBussinessLogo(context);
+
     var logo = logoFile == null
         ? null
         : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
@@ -511,10 +543,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
     if (result[responseKey]?['id'] != null || result[responseKey] != null) {
       type == UserRole.practice.value
-          ? await getPracticeViewProfileData()
+          ? await getPracticeViewProfileData(context)
           : type == UserRole.professional.value
-              ? await getProfessionalViewProfileData()
-              : await getSuppilerViewProfileData();
+              ? await getProfessionalViewProfileData(context)
+              : await getSuppilerViewProfileData(context);
       //Directory Flow
       (directoryExistsId != "")
           ? await directoryUpdateRecord(directoryExistsId ?? "", logo)

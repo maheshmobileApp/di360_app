@@ -157,9 +157,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           LogoContainer(
             title: "Logo",
             imageFile: addDirectorVM.logoFile,
-            serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
-                ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
-                : '',
+            serverImg: addDirectorVM.serverLogo,
             onTap: () => imagePickerSelection(
               context,
               () => addDirectorVM.pickLogoImage(ImageSource.gallery),
