@@ -14,14 +14,13 @@ query practiceDisplayV2($id: uuid!) {
     business_phone
     fax_number
     abn_number
-    profile_image
+    logo
     directory_business_type_id
     middle_name
     address
     address_line_one
     address_line_two
     city
-    logo
     zipcode
     land_mark
     website_link
