@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
@@ -19,6 +20,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
@@ -72,6 +74,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   TextEditingController businessEmailCntr = TextEditingController();
   TextEditingController businessPhoneCntr = TextEditingController();
   final FocusNode addressFocusNode = FocusNode();
+  final FocusNode locationFocusNode = FocusNode();
 
   double? latitude;
   double? longitude;
@@ -643,7 +646,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     var logo = logoFile == null
         ? getBasicInfoData.first.logo
         : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
-    final logoUrl = logo["url"];
+    final logoUrl = logoFile == null ? getBasicInfoData.first.logo?.url : logo["url"];
     var banner = bannerFile == null
         ? null
         : await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
@@ -1373,5 +1376,44 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     appointmentShowVal = false;
     ourTeamShowVal = false;
     notifyListeners();
+  }
+
+  Future<void> getPlaceDetails(String placeId) async {
+    final String apiKey = ApiConst.staticGoogleAPIKey;
+    final String url =
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
+
+    try {
+      final response = await Dio().get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data["status"] == "OK") {
+          final result = data["result"];
+
+          String? city;
+          String? state;
+          String? country;
+          String? postalCode;
+
+          for (var component in result["address_components"]) {
+            var types = component["types"] as List;
+            if (types.contains("locality")) {
+              city = component["long_name"];
+            } else if (types.contains("administrative_area_level_1")) {
+              state = component["long_name"];
+            } else if (types.contains("country")) {
+              country = component["long_name"];
+            } else if (types.contains("postal_code")) {
+              postalCode = component["long_name"];
+            }
+          }
+
+          teamLocationCntr.text = city ?? '';
+          
+        } else {}
+      }
+    } catch (e) {}
   }
 }

@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/address_auto_fill_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -154,7 +155,7 @@ class _AddDirectorTeamMemberFoamState extends State<AddDirectorTeamMemberFoam>
           )
         ],
         addVertical(12),
-        InputTextField(
+        /*InputTextField(
           hintText: "Enter  location",
           title: "Location",
           controller: AddDirectorVM.teamLocationCntr,
@@ -162,7 +163,12 @@ class _AddDirectorTeamMemberFoamState extends State<AddDirectorTeamMemberFoam>
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter your location '
               : null,
-        ),
+        ),*/
+        AddressAutoFillWidget(
+              controller: AddDirectorVM.teamLocationCntr,
+              focusNode: AddDirectorVM.locationFocusNode,
+              itemClick: (val) async =>
+                  await AddDirectorVM.getPlaceDetails(val.placeId ?? '')),
         addVertical(12),
         Text("Show in Appointments", style: TextStyles.regular2()),
         addVertical(6),

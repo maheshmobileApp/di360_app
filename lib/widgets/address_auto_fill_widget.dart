@@ -10,6 +10,7 @@ class AddressAutoFillWidget extends StatelessWidget {
   final FocusNode? focusNode;
   final Function(Prediction)? getPlaceDetailWithLatLng;
   final Function(Prediction)? itemClick;
+  final String? title;
 
   const AddressAutoFillWidget({
     super.key,
@@ -17,6 +18,7 @@ class AddressAutoFillWidget extends StatelessWidget {
     this.focusNode,
     this.getPlaceDetailWithLatLng,
     this.itemClick,
+    this.title,
   });
 
   @override
@@ -27,7 +29,7 @@ class AddressAutoFillWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Address',
+              title ?? 'Address',
               style: TextStyles.regular3(color: AppColors.black),
             ),
             const Text(

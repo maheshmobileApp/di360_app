@@ -359,6 +359,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final id = await LocalStorage.getStringVal(LocalStorageConst.directoryId);
 
     if (pickedFile != null) {
       logoFile = File(pickedFile.path);
@@ -369,7 +370,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       type == UserRole.professional.value
           ? await uploadProfessLogo(context, logo)
           : await uploadBussinessLogo(context, logo);
-      await updateDirectoryLogo(context, logo);
+      if (id != "") {
+        await updateDirectoryLogo(context, logo);
+      }
       logoUrl = logo?['url'] ?? "";
       await LocalStorage.setStringVal(LocalStorageConst.profilePic, logo?['url'] ?? "");
       Loaders.circularHideLoader(context);
@@ -846,6 +849,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "phone": '$countryCode${phoneNoController.text}',
         "mobile_number": businessPhoneNoController.text,
         "professionType": selectedBusineestype,
+        "logo" : profileImage,
         "address": addressController.text,
         if (type == UserRole.practice.value) "dental_practice_id": userId,
         if (type == UserRole.supplier.value) "dental_supplier_id": userId,

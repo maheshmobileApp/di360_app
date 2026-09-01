@@ -45,7 +45,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           addVertical(16),
           if (directionalVM.directorDetails?.directoryPartners?.isNotEmpty ??
               false)
-            sectionTitle('Our Partners', _partnercard(directionalVM, context),
+            sectionTitle('OUR PARTNERS', _partnercard(directionalVM, context),
                 key: directionalVM.sectionKeys['Partner']),
           if ((directionalVM
                       .directorDetails?.directoryGalleryPosts?.isNotEmpty ??
@@ -303,7 +303,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,12 +313,34 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                 children: [
                   Expanded(
                     child: Text(partner.name ?? '',
-                        style: TextStyles.bold6(color: AppColors.black)),
+                        style: TextStyles.bold4(color: AppColors.black)),
                   ),
-                  GestureDetector(
-                    onTap: () => navigationService.goBack(),
-                    child:
-                        const Icon(Icons.close, color: AppColors.primaryColor),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => navigationService.push(
+                        ImageViewerScreen(postImage: partner.attachments)),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(4)),
+                          padding: const EdgeInsets.all(2),
+                          child: const Icon(
+                            size: 20,
+                            Icons.visibility_outlined,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      GestureDetector(
+                        onTap: () => navigationService.goBack(),
+                        child: const Icon(
+                          Icons.close,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
