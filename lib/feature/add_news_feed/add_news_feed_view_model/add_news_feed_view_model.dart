@@ -1,8 +1,9 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/add_news_feed/model_class/credits_balance_res.dart';
-import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
+import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/model_class/credit_cost_res.dart';
+import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/model_class/credits_balance_res.dart';
+import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/add_news_feed/repository/add_news_feed_repo_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
@@ -36,6 +37,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   bool enableComments = true;
   String? userType;
   creditsBalanceRes? creditBalance;
+  List<creditsCostsRes> creditCosts = [];
 
   void setEnableComments(bool value) {
     enableComments = value;
@@ -247,6 +249,30 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   void setUserType(String type) {
     userType = type;
     notifyListeners();
+  }
+
+  Future<bool> checkPermission(String permission) async {
+    final permissions =
+        await LocalStorage.getStringList(LocalStorageConst.permissions);
+    if (permissions.contains(permission)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> getCreditCost(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    try {
+      final res = await repo.getCreditsCost();
+      if (res != null) {
+        creditCosts = res;
+      }
+    } catch (e) {
+      print('Error fetching credit cost: $e');
+    } finally {
+      Loaders.circularHideLoader(context);
+    }
   }
 
   Future<void> getCreditBalance(BuildContext context) async {

@@ -2,7 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
+import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/add_news_feed/widget/enable_comment_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';

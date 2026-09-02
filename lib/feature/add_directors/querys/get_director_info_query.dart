@@ -120,6 +120,7 @@ query getUeserSupDirectory($id: uuid!) {
     email
     business_email
     business_name
+    mobile_number
     phone
     address
     latitude

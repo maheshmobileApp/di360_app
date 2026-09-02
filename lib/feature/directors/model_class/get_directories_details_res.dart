@@ -34,6 +34,7 @@ class DirectoriesByPk {
   String? altPhone;
   dynamic abnAcn;
   String? companyName;
+  String? businessName;
   String? businessEmail;
   String? mobileNumber;
   dynamic profession;
@@ -80,6 +81,7 @@ class DirectoriesByPk {
       this.universitySchool,
       this.abnAcn,
       this.companyName,
+      this.businessName,
       this.businessEmail,
       this.mobileNumber,
       this.profession,
@@ -122,6 +124,7 @@ class DirectoriesByPk {
     altPhone = json['alt_phone'];
     abnAcn = json['abn_acn'];
     companyName = json['company_name'];
+    businessName = json['business_name'];
     businessEmail = json['business_email'];
     mobileNumber = json['mobile_number'];
     profession = json['profession'];
@@ -259,7 +262,6 @@ class DirectoriesByPk {
   }
 }
 
-
 class DentalSupplier {
   String? firstName;
   String? lastName;
@@ -338,7 +340,6 @@ class DirectoryCategories {
     return data;
   }
 }
-
 
 class BannerImage {
   String? url;

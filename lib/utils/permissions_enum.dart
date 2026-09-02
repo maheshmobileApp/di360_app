@@ -22,7 +22,15 @@ enum ModulePermission {
   accountPayRequestsModule('ACCOUNT_PAY_REQUESTS_MODULE'),
   supportRequestModule('SUPPORT_REQUEST_MODULE'),
   teamMembersModule('TEAM_MEMBERS_MODULE'),
-  marketingModule('MARKETING_MODULE');
+  marketingModule('MARKETING_MODULE'),
+
+  // Enforce
+
+  enforceNewsfeedCredits('ENFORCE_NEWSFEED_CREDITS'),
+  enforceCatalogueCredits('ENFORCE_CATALOGUE_CREDITS'),
+  enforceLearningHubCredits('ENFORCE_LEARNING_HUB_CREDITS'),
+  enforceBannerCredits('ENFORCE_BANNER_CREDITS'),
+  enforceJobCredits('ENFORCE_JOB_CREDITS');
 
   const ModulePermission(this.value);
 

@@ -436,6 +436,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     ABNNumberController.text = data?.abnNumber ?? '';
     alternateNumberController.text = data?.altPhone ?? '';
     addressController.text = data?.address ?? '';
+    businessPhoneCntr.text = data?.mobileNumber?? "";
     notifyListeners();
   }
 

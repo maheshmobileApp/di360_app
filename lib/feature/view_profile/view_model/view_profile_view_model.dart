@@ -198,7 +198,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     businessNameController.text = viewProfile?.businessName ?? "";
     businessEmailController.text = viewProfile?.businessEmail ?? "";
-    businessPhoneNoController.text = viewProfile?.businessPhone ?? "";
+    businessPhoneNoController.text = viewProfile?.mobileNumber ?? "";
     websiteUrlController.text = viewProfile?.websiteLink ?? "";
     abnNumberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
@@ -248,7 +248,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     businessNameController.text = viewProfile?.businessName ?? "";
     businessEmailController.text = viewProfile?.businessEmail ?? "";
-    businessPhoneNoController.text = viewProfile?.businessPhone ?? "";
+    businessPhoneNoController.text = viewProfile?.mobileNumber ?? "";
     websiteUrlController.text = viewProfile?.websiteLink ?? "";
     abnNumberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
@@ -977,7 +977,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     firstNameController.clear();
     middleNameController.clear();
     lastNameController.clear();
-    businessPhoneNoController.clear();
     faxNumberController.clear();
     alternateEmailController.clear();
     alternatePhoneNoController.clear();

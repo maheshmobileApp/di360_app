@@ -24,7 +24,7 @@ class BaseApiClient {
   // }
 
   Future<dynamic> getCall(String endPoint) async {
-    final url = '${ApiConst.baseUrl}$endPoint';
+    final url = '${AppConfig.serverBaseUrl}$endPoint';
     final token = await LocalStorage.getStringVal(LocalStorageConst.token);
     var headersPayload = {
       'Authorization': 'Bearer $token',

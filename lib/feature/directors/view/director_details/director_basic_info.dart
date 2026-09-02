@@ -28,7 +28,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (directionalVM.directorDetails?.description != null)
-            sectionTitle('BASIC INFO',
+            sectionTitle('ABOUT US',
                 _description(directionalVM.directorDetails?.description ?? ''),
                 key: directionalVM.sectionKeys['Basic Info']),
           HobbiesEducationWorkatWidget(),
@@ -82,7 +82,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   .directorDetails?.directoryTestimonials?.isNotEmpty ??
               false)
             sectionTitle(
-                'HOW TESTLS HAS HELPED OTHERS', _testimonialCard(directionalVM),
+                'HOW ${directionalVM.directorDetails?.businessName?.toUpperCase() ?? ''} HAS HELPED OTHERS', _testimonialCard(directionalVM),
                 key: directionalVM.sectionKeys['Testimonials']),
           if (directionalVM.directorDetails?.directoryFaqs?.isNotEmpty ?? false)
             sectionTitle('FAQ', _faqSection(directionalVM),
@@ -317,7 +317,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   ),
                   Row(
                     children: [
-                      GestureDetector(
+                      /*GestureDetector(
                         onTap: () => navigationService.push(
                         ImageViewerScreen(postImage: partner.attachments)),
                         child: Container(
@@ -331,7 +331,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                             color: AppColors.whiteColor,
                           ),
                         ),
-                      ),
+                      ),*/
                       const SizedBox(width: 16),
                       GestureDetector(
                         onTap: () => navigationService.goBack(),

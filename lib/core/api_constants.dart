@@ -30,4 +30,5 @@ class ApiConst {
   static String refreshToken = '/api/v1/auth/refresh-token_v2';
   static String newsfeedCreation = '/api/v1/newsfeeds';
   static String creditBalance = '/api/v1/credits/header/';
+  static String creditCost = '/api/v1/credit-events';
 }
