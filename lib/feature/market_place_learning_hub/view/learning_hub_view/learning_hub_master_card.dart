@@ -1,17 +1,21 @@
+import 'dart:async';
+
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_button.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/sold_out_button.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ListingHubMasterCard extends StatelessWidget {
+class ListingHubMasterCard extends StatefulWidget {
   final String? feedId;
-  final String imageUrl;
+  final List<CourseBannerImage>? imageUrls;
   final String companyName;
   final String description;
   final String date;
@@ -19,6 +23,7 @@ class ListingHubMasterCard extends StatelessWidget {
   final String location;
   final bool isFree;
   final VoidCallback onTap;
+  final List<Presenters>? presenters;
   final String profilePic;
   final String presenterName;
   final VoidCallback registerTap;
@@ -33,7 +38,7 @@ class ListingHubMasterCard extends StatelessWidget {
   const ListingHubMasterCard({
     super.key,
     required this.feedId,
-    required this.imageUrl,
+    required this.imageUrls,
     required this.companyName,
     required this.description,
     required this.date,
@@ -42,6 +47,7 @@ class ListingHubMasterCard extends StatelessWidget {
     this.isFree = true,
     required this.onTap,
     required this.profilePic,
+    required this.presenters,
     required this.presenterName,
     required this.registerTap,
     required this.afterWardsPrice,
@@ -54,9 +60,80 @@ class ListingHubMasterCard extends StatelessWidget {
   });
 
   @override
+  State<ListingHubMasterCard> createState() => _ListingHubMasterCardState();
+}
+
+class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
+  final PageController _imagePageController = PageController();
+  final PageController _presenterPageController = PageController();
+
+  Timer? _imageTimer;
+  Timer? _presenterTimer;
+
+  int _currentImageIndex = 0;
+  int _currentPresenterIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    if ((widget.imageUrls?.length ?? 0) > 1) {
+      _imageTimer = Timer.periodic(
+        const Duration(seconds: 3),
+        (_) {
+          if (!_imagePageController.hasClients) return;
+
+          int nextIndex = _currentImageIndex + 1;
+
+          if (nextIndex >= widget.imageUrls!.length) {
+            nextIndex = 0;
+          }
+
+          _imagePageController.animateToPage(
+            nextIndex,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        },
+      );
+    }
+
+    if ((widget.presenters?.length ?? 0) > 1) {
+      _presenterTimer = Timer.periodic(
+        const Duration(seconds: 3),
+        (_) {
+          if (!_presenterPageController.hasClients) return;
+
+          int nextIndex = _currentPresenterIndex + 1;
+
+          if (nextIndex >= widget.presenters!.length) {
+            nextIndex = 0;
+          }
+
+          _presenterPageController.animateToPage(
+            nextIndex,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _imageTimer?.cancel();
+    _presenterTimer?.cancel();
+
+    _imagePageController.dispose();
+    _presenterPageController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: widget.onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.only(top: 6.0),
@@ -80,15 +157,30 @@ class ListingHubMasterCard extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  GestureDetector(
-                    onTap: onTap,
-                    child: CachedNetworkImageWidget(
-                      imageUrl: imageUrl,
-                      height: 140,
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorWidget: const Icon(Icons.broken_image,
-                          size: 50, color: AppColors.lightGeryColor),
+                  SizedBox(
+                    height: 140,
+                    width: double.infinity,
+                    child: PageView.builder(
+                      controller: _imagePageController,
+                      itemCount: widget.imageUrls?.length ?? 0,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentImageIndex = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return CachedNetworkImageWidget(
+                          imageUrl: widget.imageUrls?[index].url ?? '',
+                          height: 140,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                          errorWidget: const Icon(
+                            Icons.broken_image,
+                            size: 50,
+                            color: AppColors.lightGeryColor,
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Positioned(
@@ -104,9 +196,9 @@ class ListingHubMasterCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20)),
                       child: Text(
                           getSeatStatus(
-                            noOfSeats: noOfSeats,
-                            registerCount: registerCount,
-                            afterWardsPrice: afterWardsPrice,
+                            noOfSeats: widget.noOfSeats,
+                            registerCount: widget.registerCount,
+                            afterWardsPrice: widget.afterWardsPrice,
                           ),
                           style: const TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
@@ -131,37 +223,57 @@ class ListingHubMasterCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: AppColors.geryColor,
-                                radius: 15,
-                                child: ClipOval(
-                                  child: CachedNetworkImageWidget(
-                                      imageUrl: profilePic,
-                                      width: 30,
-                                      height: 30,
-                                      fit: BoxFit.cover,
-                                      errorWidget:
-                                          Image.asset(ImageConst.prfImg)),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  presenterName.toUpperCase(),
-                                  maxLines: 2,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4)
-                            ],
+                          child: SizedBox(
+                            height: 45,
+                            child: PageView.builder(
+                              controller: _presenterPageController,
+                              itemCount: widget.presenters?.length ?? 0,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _currentPresenterIndex = index;
+                                });
+                              },
+                              itemBuilder: (context, index) {
+                                final presenter = widget.presenters![index];
+
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor: AppColors.geryColor,
+                                      radius: 15,
+                                      child: ClipOval(
+                                        child: CachedNetworkImageWidget(
+                                          imageUrl:
+                                              presenter.presentedByImage?.url ??
+                                                  ImageConst.prfImg,
+                                          width: 30,
+                                          height: 30,
+                                          fit: BoxFit.cover,
+                                          errorWidget: Image.asset(
+                                            ImageConst.prfImg,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        presenter.presentedByName
+                                                ?.toUpperCase() ??
+                                            '',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
                         Row(
@@ -173,13 +285,13 @@ class ListingHubMasterCard extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 8),
                                 size: 20,
-                                feedId: feedId ?? ""),
+                                feedId: widget.feedId ?? ""),
                           ],
                         ),
                       ],
                     ),
                     const Divider(),
-                    Text(companyName,
+                    Text(widget.companyName,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -188,23 +300,23 @@ class ListingHubMasterCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(type ?? '',
+                        Text(widget.type ?? '',
                             style: TextStyles.medium2(color: AppColors.black)),
                         Row(
                           children: [
                             Icon(Icons.access_time,
                                 color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 6),
-                            Text("CPD HOURS: ${cpdHours}",
+                            Text("CPD HOURS: ${widget.cpdHours}",
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 style:
                                     TextStyles.medium2(color: AppColors.black)),
                           ],
                         ),
-                        if (isRegistered &&
-                            type == "Online Academy" &&
-                            courseStatus != "EXPIRED")
+                        if (widget.isRegistered &&
+                            widget.type == "Online Academy" &&
+                            widget.courseStatus != "EXPIRED")
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -216,7 +328,7 @@ class ListingHubMasterCard extends StatelessWidget {
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  (courseStatus == "PENDING")
+                                  (widget.courseStatus == "PENDING")
                                       ? "You purchased this course"
                                       : "You purchased this course ${_expiryLabel()}",
                                   maxLines: 2,
@@ -228,7 +340,7 @@ class ListingHubMasterCard extends StatelessWidget {
                             ],
                           ),
                         const SizedBox(height: 4),
-                        (location.isEmpty)
+                        (widget.location.isEmpty)
                             ? SizedBox.shrink()
                             : Row(
                                 children: [
@@ -237,7 +349,9 @@ class ListingHubMasterCard extends StatelessWidget {
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
-                                      (location.isEmpty) ? "" : "${location}",
+                                      (widget.location.isEmpty)
+                                          ? ""
+                                          : "${widget.location}",
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyles.medium2(
@@ -247,7 +361,7 @@ class ListingHubMasterCard extends StatelessWidget {
                                 ],
                               ),
                         const SizedBox(height: 4),
-                        (date.isEmpty)
+                        (widget.date.isEmpty)
                             ? SizedBox.shrink()
                             : Row(
                                 children: [
@@ -255,10 +369,10 @@ class ListingHubMasterCard extends StatelessWidget {
                                       color: AppColors.primaryColor, size: 20),
                                   const SizedBox(width: 6),
                                   Text(
-                                      (date.isEmpty)
+                                      (widget.date.isEmpty)
                                           ? "------"
-                                          : DateFormat("dd MMM")
-                                              .format(DateTime.parse(date)),
+                                          : DateFormat("dd MMM").format(
+                                              DateTime.parse(widget.date)),
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyles.medium2(
@@ -271,22 +385,24 @@ class ListingHubMasterCard extends StatelessWidget {
                 ),
               ),
               (getSeatStatus(
-                          noOfSeats: noOfSeats,
-                          registerCount: registerCount,
-                          afterWardsPrice: afterWardsPrice) ==
+                          noOfSeats: widget.noOfSeats,
+                          registerCount: widget.registerCount,
+                          afterWardsPrice: widget.afterWardsPrice) ==
                       "SOLD OUT")
                   ? SoldOutButton()
                   : RegisterButton(
-                      courseStatus: courseStatus ?? "",
-                      text: isRegistered && courseStatus != "EXPIRED"
-                          ? (type == "Online Academy")
-                              ? courseStatus == "PENDING"
+                      courseStatus: widget.courseStatus ?? "",
+                      text: widget.isRegistered &&
+                              widget.courseStatus != "EXPIRED"
+                          ? (widget.type == "Online Academy")
+                              ? widget.courseStatus == "PENDING"
                                   ? "Awaiting Approval"
                                   : "View Course Details"
                               : "Already Registered"
                           : 'Register Now',
-                      onTap: registerTap,
-                      isRegistered: isRegistered && courseStatus != "EXPIRED")
+                      onTap: widget.registerTap,
+                      isRegistered: widget.isRegistered &&
+                          widget.courseStatus != "EXPIRED")
             ],
           ),
         ),
@@ -318,10 +434,10 @@ class ListingHubMasterCard extends StatelessWidget {
   }
 
   String _expiryLabel() {
-    if (expiryDateCount == "Life Time") {
+    if (widget.expiryDateCount == "Life Time") {
       return '';
     }
-    final count = int.tryParse(expiryDateCount ?? '0') ?? 0;
+    final count = int.tryParse(widget.expiryDateCount ?? '0') ?? 0;
     if (count == 0) return '- Access expires today';
     if (count == 1) return '- Access expires tomorrow';
     return '- Access expires in $count day';

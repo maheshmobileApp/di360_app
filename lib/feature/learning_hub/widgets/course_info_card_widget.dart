@@ -1,15 +1,17 @@
+import 'dart:async';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/media_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
-class CourseInfoCardWidget extends StatelessWidget {
+class CourseInfoCardWidget extends StatefulWidget {
   final String address;
   final String courseName;
-  final String presentByName;
+  final List<Presenters>? presenters;
   final String cpdHours;
   final String platform;
   final String webinar;
@@ -31,7 +33,7 @@ class CourseInfoCardWidget extends StatelessWidget {
       {super.key,
       required this.address,
       required this.courseName,
-      required this.presentByName,
+      required this.presenters,
       required this.cpdHours,
       required this.platform,
       required this.webinar,
@@ -48,6 +50,40 @@ class CourseInfoCardWidget extends StatelessWidget {
       this.registerStatus,
       this.courseStatus,
       this.expiryDate});
+
+  @override
+  State<CourseInfoCardWidget> createState() => _CourseInfoCardWidgetState();
+}
+
+class _CourseInfoCardWidgetState extends State<CourseInfoCardWidget> {
+  final PageController _presenterPageController = PageController();
+  int _currentPresenterIndex = 0;
+  Timer? _presenterTimer;
+  @override
+  void initState() {
+    super.initState();
+
+    if ((widget.presenters?.length ?? 0) > 1) {
+      _presenterTimer = Timer.periodic(
+        const Duration(seconds: 3),
+        (_) {
+          if (!_presenterPageController.hasClients) return;
+
+          int nextIndex = _currentPresenterIndex + 1;
+
+          if (nextIndex >= widget.presenters!.length) {
+            nextIndex = 0;
+          }
+
+          _presenterPageController.animateToPage(
+            nextIndex,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +103,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${courseName}",
+                    Text("${widget.courseName}",
                         maxLines: 2,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
@@ -88,7 +124,9 @@ class CourseInfoCardWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (registerStatus == true && courseStatus != "PENDING" && courseStatus != "EXPIRED")
+                      if (widget.registerStatus == true &&
+                          widget.courseStatus != "PENDING" &&
+                          widget.courseStatus != "EXPIRED")
                         Text("Already Registered",
                             style: TextStyles.medium2(
                                 color: AppColors.greenColor)),
@@ -111,25 +149,64 @@ class CourseInfoCardWidget extends StatelessWidget {
                           const SizedBox(height: 2),
                           Row(
                             children: [
-                              ClipOval(
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  color: AppColors.geryColor,
-                                  child: CachedNetworkImageWidget(
-                                      imageUrl: profilePic,
-                                      fit: BoxFit.cover,
-                                      errorWidget:
-                                          Image.asset(ImageConst.prfImg)),
+                              Expanded(
+                                child: SizedBox(
+                                  height: 50,
+                                  child: PageView.builder(
+                                    controller: _presenterPageController,
+                                    itemCount: widget.presenters?.length ?? 0,
+                                    onPageChanged: (index) {
+                                      setState(() {
+                                        _currentPresenterIndex = index;
+                                      });
+                                    },
+                                    itemBuilder: (context, index) {
+                                      final presenter =
+                                          widget.presenters![index];
+
+                                      return Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor:
+                                                AppColors.geryColor,
+                                            radius: 15,
+                                            child: ClipOval(
+                                              child: CachedNetworkImageWidget(
+                                                imageUrl: presenter
+                                                        .presentedByImage
+                                                        ?.url ??
+                                                    ImageConst.prfImg,
+                                                width: 30,
+                                                height: 30,
+                                                fit: BoxFit.cover,
+                                                errorWidget: Image.asset(
+                                                  ImageConst.prfImg,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              presenter.presentedByName
+                                                      ?.toUpperCase() ??
+                                                  '',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                child: Text("${presentByName}".toUpperCase(),
-                                    maxLines: 2,
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              )
                             ],
                           ),
                         ],
@@ -139,13 +216,13 @@ class CourseInfoCardWidget extends StatelessWidget {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                          if (platform == "Online Academy" &&
-                              registerStatus == true &&
-                              courseStatus != "PENDING" &&
-                              courseStatus != "EXPIRED" &&
-                              expiryDate != '')
-                            Text("Expires on : $expiryDate"),
-                          if (platform != "Online Academy")
+                          if (widget.platform == "Online Academy" &&
+                              widget.registerStatus == true &&
+                              widget.courseStatus != "PENDING" &&
+                              widget.courseStatus != "EXPIRED" &&
+                              widget.expiryDate != '')
+                            Text("Expires on : ${widget.expiryDate}"),
+                          if (widget.platform != "Online Academy")
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -153,16 +230,18 @@ class CourseInfoCardWidget extends StatelessWidget {
                                 Icon(Icons.calendar_month_outlined,
                                     color: AppColors.primaryColor, size: 20),
                                 const SizedBox(width: 4),
-                                if (startDate.isNotEmpty && endDate.isNotEmpty)
+                                if (widget.startDate.isNotEmpty &&
+                                    widget.endDate.isNotEmpty)
                                   Flexible(
                                       child: Text(
                                           DateFormatUtils.formatDateRange(
-                                              startDate, endDate),
+                                              widget.startDate, widget.endDate),
                                           maxLines: 2)),
                               ],
                             ),
                           const SizedBox(height: 4),
-                          if (startTime.isNotEmpty && endTime.isNotEmpty)
+                          if (widget.startTime.isNotEmpty &&
+                              widget.endTime.isNotEmpty)
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -172,7 +251,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Flexible(
                                     child: Text(
-                                        '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
+                                        '${DateFormatUtils.formatTime(widget.startTime)}  –  ${DateFormatUtils.formatTime(widget.endTime)}',
                                         maxLines: 2)),
                               ],
                             ),
@@ -193,14 +272,15 @@ class CourseInfoCardWidget extends StatelessWidget {
                           _InfoTextWidget(
                             label: "CPD Hours",
                             first: true,
-                            value: "${cpdHours}",
+                            value: "${widget.cpdHours}",
                           ),
                           const SizedBox(height: 6),
                           _InfoTextWidget(
                             label: "Price",
                             first: true,
-                            value: (totalPrice == 0)?
-                                "\$${totalPrice != null ? double.tryParse(totalPrice!)?.toStringAsFixed(0) ?? totalPrice : ''}": "FREE",
+                            value: (widget.totalPrice == 0)
+                                ? "\$${widget.totalPrice != null ? double.tryParse(widget.totalPrice!)?.toStringAsFixed(0) ?? widget.totalPrice : ''}"
+                                : "FREE",
                           ),
                         ],
                       ),
@@ -216,21 +296,24 @@ class CourseInfoCardWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           _InfoTextWidget(
-                              label: "How", first: false, value: "${platform}"),
+                              label: "How",
+                              first: false,
+                              value: "${widget.platform}"),
                           const SizedBox(height: 6),
                           _InfoTextWidget(
                               label: "Where",
                               first: false,
-                              value:
-                                  address.isNotEmpty ? "${address}" : "Online"),
+                              value: widget.address.isNotEmpty
+                                  ? "${widget.address}"
+                                  : "Online"),
                         ],
                       ),
                     ),
                   ],
                 ),
-                if (bannerUrl.isNotEmpty) ...[
+                if (widget.bannerUrl.isNotEmpty) ...[
                   const SizedBox(height: 10),
-                  MediaWidget(url: bannerUrl, name: bannerName)
+                  MediaWidget(url: widget.bannerUrl, name: widget.bannerName)
                 ],
                 const SizedBox(height: 10)
               ],
