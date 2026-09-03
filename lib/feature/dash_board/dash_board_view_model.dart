@@ -39,6 +39,7 @@ class DashBoardViewModel extends ChangeNotifier {
   int _currentIndex = 0;
   // int? _pendingIndex;
   List<Widget> _pages = [];
+  final Set<int> _pendingIndexes = <int>{};
   String _userType = '';
   bool _isInitialized = false;
 
@@ -116,6 +117,21 @@ class DashBoardViewModel extends ChangeNotifier {
       return;
     }
 
+    if (!_pendingIndexes.add(index)) {
+      return;
+    }
+
+    try {
+      await _setIndex(index, context);
+    } finally {
+      _pendingIndexes.remove(index);
+    }
+  }
+
+  Future<void> _setIndex(
+    int index,
+    BuildContext context,
+  ) async {
     bool isSubscriptionExempt = false;
 
     if (userType == UserRole.supplier.value) {

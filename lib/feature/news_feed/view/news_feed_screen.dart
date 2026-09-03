@@ -243,7 +243,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
       title: "Additional Credits Required",
       message: "Additional credits are required to complete this action. \n"
           "\n"
-          "Credit purchases and subscription upgrades are available through the web application.",
+          "Please log in to the web application using your existing account to purchase additional Credits or upgrade your subscription.",
       icon: Icons.account_balance_wallet_outlined,
     );
   }

@@ -128,7 +128,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                   height: 100,
                   width: 100,
                   child: CachedNetworkImageWidget(
-                      imageUrl: viewProfileVM.logoUrl ?? vm.profilePic?? "",
+                      imageUrl: viewProfileVM.logoUrl ?? vm.profilePic ?? "",
                       fit: BoxFit.contain,
                       errorWidget: type == UserRole.professional.value
                           ? viewProfileVM.gender?.toLowerCase() == "male"
@@ -198,7 +198,10 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                               return;
                             }
                             await navigationService
-                                .navigateTo(RouteList.myCatalogueScreen);
+                                .runOnce(RouteList.myCatalogueScreen, () async {
+                              await navigationService
+                                  .navigateTo(RouteList.myCatalogueScreen);
+                            });
                           } else if (item.title == 'View Profile') {
                             Loaders.circularShowLoader(context);
                             final type = await LocalStorage.getStringVal(
@@ -224,20 +227,25 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             )) {
                               return;
                             }
-                            Loaders.circularShowLoader(context);
-                            context.read<JobListingsViewModel>().listingStatus =
-                                [];
-                            context.read<JobListingsViewModel>().activeStatus =
-                                "";
-                            await context
-                                .read<JobListingsViewModel>()
-                                .getMyJobListingData(context);
-                            context
-                                .read<JobListingsViewModel>()
-                                .updateSelectedStatus("All");
-                            Loaders.circularHideLoader(context);
                             await navigationService
-                                .navigateTo(RouteList.JobListingScreen);
+                                .runOnce(RouteList.JobListingScreen, () async {
+                              Loaders.circularShowLoader(context);
+                              context
+                                  .read<JobListingsViewModel>()
+                                  .listingStatus = [];
+                              context
+                                  .read<JobListingsViewModel>()
+                                  .activeStatus = "";
+                              await context
+                                  .read<JobListingsViewModel>()
+                                  .getMyJobListingData(context);
+                              context
+                                  .read<JobListingsViewModel>()
+                                  .updateSelectedStatus("All");
+                              Loaders.circularHideLoader(context);
+                              await navigationService
+                                  .navigateTo(RouteList.JobListingScreen);
+                            });
                           } else if (item.title == 'JobProfile') {
                             if (!await _checkSubscriptionStatus(
                               context,
@@ -322,47 +330,53 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             )) {
                               return;
                             }
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<CourseListingViewModel>()
-                                .getCoursesListingData(context);
-                            Loaders.circularHideLoader(context);
-                            context
-                                .read<CourseListingViewModel>()
-                                .searchBarOpen = false;
-                            context
-                                .read<CourseListingViewModel>()
-                                .searchController
-                                .text = "";
-                            navigationService
-                                .navigateTo(RouteList.learningHubScreen);
+                            await navigationService
+                                .runOnce(RouteList.learningHubScreen, () async {
+                              Loaders.circularShowLoader(context);
+                              await context
+                                  .read<CourseListingViewModel>()
+                                  .getCoursesListingData(context);
+                              Loaders.circularHideLoader(context);
+                              context
+                                  .read<CourseListingViewModel>()
+                                  .searchBarOpen = false;
+                              context
+                                  .read<CourseListingViewModel>()
+                                  .searchController
+                                  .text = "";
+                              await navigationService
+                                  .navigateTo(RouteList.learningHubScreen);
+                            });
                           } else if (item.title == 'My Learning Hub') {
                             if (!await _checkSubscriptionStatus(
                               context,
                             )) {
                               return;
                             }
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<MyLearningHubViewModel>()
-                                .getCoursesWithMyRegistrations(context);
+                            await navigationService.runOnce(
+                                RouteList.myLearningHubScreen, () async {
+                              Loaders.circularShowLoader(context);
+                              await context
+                                  .read<MyLearningHubViewModel>()
+                                  .getCoursesWithMyRegistrations(context);
 
-                            Loaders.circularHideLoader(context);
-                            context
-                                .read<MyLearningHubViewModel>()
-                                .searchBarOpen = false;
-                            context
-                                .read<MyLearningHubViewModel>()
-                                .searchController
-                                .text = "";
-                            context
-                                .read<NewCourseViewModel>()
-                                .fetchCourseCategory();
-                            context
-                                .read<NewCourseViewModel>()
-                                .fetchCourseType();
-                            navigationService
-                                .navigateTo(RouteList.myLearningHubScreen);
+                              Loaders.circularHideLoader(context);
+                              context
+                                  .read<MyLearningHubViewModel>()
+                                  .searchBarOpen = false;
+                              context
+                                  .read<MyLearningHubViewModel>()
+                                  .searchController
+                                  .text = "";
+                              context
+                                  .read<NewCourseViewModel>()
+                                  .fetchCourseCategory();
+                              context
+                                  .read<NewCourseViewModel>()
+                                  .fetchCourseType();
+                              await navigationService
+                                  .navigateTo(RouteList.myLearningHubScreen);
+                            });
                           } else if (item.title == "Banners") {
                             if (!await _checkSubscriptionStatus(
                               context,

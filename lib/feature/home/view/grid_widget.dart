@@ -85,17 +85,22 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       if (subscriptionStatus == "EXPIRED") {
         _showInactivePopup(context);
       } else {
-        Loaders.circularShowLoader(context);
-        context.read<MarketPlaceLearningHubViewModel>().searchBarOpen = false;
-        context.read<MarketPlaceLearningHubViewModel>().searchController.text =
-            "";
-        context.read<NewCourseViewModel>().fetchCourseCategory();
-        context.read<NewCourseViewModel>().fetchCourseType();
-        await context
-            .read<MarketPlaceLearningHubViewModel>()
-            .getAllLearningHubData(context, isCommunityLearningHub: false);
-        Loaders.circularHideLoader(context);
-        await navigationService.navigateTo(RouteList.learningHubMasterView);
+        await navigationService.runOnce(RouteList.learningHubMasterView,
+            () async {
+          Loaders.circularShowLoader(context);
+          context.read<MarketPlaceLearningHubViewModel>().searchBarOpen = false;
+          context
+              .read<MarketPlaceLearningHubViewModel>()
+              .searchController
+              .text = "";
+          context.read<NewCourseViewModel>().fetchCourseCategory();
+          context.read<NewCourseViewModel>().fetchCourseType();
+          await context
+              .read<MarketPlaceLearningHubViewModel>()
+              .getAllLearningHubData(context, isCommunityLearningHub: false);
+          Loaders.circularHideLoader(context);
+          await navigationService.navigateTo(RouteList.learningHubMasterView);
+        });
       }
     } else if (title == 'Clients') {
       if (subscriptionStatus == "EXPIRED") {
