@@ -64,32 +64,35 @@ class ListingHubMasterCard extends StatefulWidget {
 }
 
 class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
-  final PageController _imagePageController = PageController();
-  final PageController _presenterPageController = PageController();
+  final PageController _imagePageController = PageController(initialPage: 1000);
+
+  final PageController _presenterPageController =
+      PageController(initialPage: 1000);
 
   Timer? _imageTimer;
   Timer? _presenterTimer;
 
-  int _currentImageIndex = 0;
-  int _currentPresenterIndex = 0;
+  int _currentImagePage = 1000;
+  int _currentPresenterPage = 1000;
   @override
   void initState() {
     super.initState();
 
+    // Image auto scroll
     if ((widget.imageUrls?.length ?? 0) > 1) {
       _imageTimer = Timer.periodic(
         const Duration(seconds: 3),
         (_) {
-          if (!_imagePageController.hasClients) return;
-
-          int nextIndex = _currentImageIndex + 1;
-
-          if (nextIndex >= widget.imageUrls!.length) {
-            nextIndex = 0;
+          if (!mounted ||
+              !_imagePageController.hasClients ||
+              (widget.imageUrls?.isEmpty ?? true)) {
+            return;
           }
 
+          _currentImagePage++;
+
           _imagePageController.animateToPage(
-            nextIndex,
+            _currentImagePage,
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
@@ -97,20 +100,21 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
       );
     }
 
+    // Presenter auto scroll
     if ((widget.presenters?.length ?? 0) > 1) {
       _presenterTimer = Timer.periodic(
         const Duration(seconds: 3),
         (_) {
-          if (!_presenterPageController.hasClients) return;
-
-          int nextIndex = _currentPresenterIndex + 1;
-
-          if (nextIndex >= widget.presenters!.length) {
-            nextIndex = 0;
+          if (!mounted ||
+              !_presenterPageController.hasClients ||
+              (widget.presenters?.isEmpty ?? true)) {
+            return;
           }
 
+          _currentPresenterPage++;
+
           _presenterPageController.animateToPage(
-            nextIndex,
+            _currentPresenterPage,
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
@@ -162,15 +166,17 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
                     width: double.infinity,
                     child: PageView.builder(
                       controller: _imagePageController,
-                      itemCount: widget.imageUrls?.length ?? 0,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentImageIndex = index;
-                        });
-                      },
                       itemBuilder: (context, index) {
+                        final images = widget.imageUrls ?? [];
+
+                        if (images.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final actualIndex = index % images.length;
+
                         return CachedNetworkImageWidget(
-                          imageUrl: widget.imageUrls?[index].url ?? '',
+                          imageUrl: images[actualIndex].url ?? '',
                           height: 140,
                           width: double.infinity,
                           fit: BoxFit.contain,
@@ -180,6 +186,13 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
                             color: AppColors.lightGeryColor,
                           ),
                         );
+                      },
+                      onPageChanged: (index) {
+                        if (!mounted) return;
+
+                        setState(() {
+                          _currentImagePage = index;
+                        });
                       },
                     ),
                   ),
@@ -227,14 +240,15 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
                             height: 45,
                             child: PageView.builder(
                               controller: _presenterPageController,
-                              itemCount: widget.presenters?.length ?? 0,
-                              onPageChanged: (index) {
-                                setState(() {
-                                  _currentPresenterIndex = index;
-                                });
-                              },
                               itemBuilder: (context, index) {
-                                final presenter = widget.presenters![index];
+                                final presenters = widget.presenters ?? [];
+
+                                if (presenters.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                final actualIndex = index % presenters.length;
+                                final presenter = presenters[actualIndex];
 
                                 return Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -272,6 +286,13 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
                                     ),
                                   ],
                                 );
+                              },
+                              onPageChanged: (index) {
+                                if (!mounted) return;
+
+                                setState(() {
+                                  _currentPresenterPage = index;
+                                });
                               },
                             ),
                           ),

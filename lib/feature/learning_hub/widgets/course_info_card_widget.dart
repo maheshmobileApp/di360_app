@@ -56,33 +56,34 @@ class CourseInfoCardWidget extends StatefulWidget {
 }
 
 class _CourseInfoCardWidgetState extends State<CourseInfoCardWidget> {
-  final PageController _presenterPageController = PageController();
-  int _currentPresenterIndex = 0;
+  final PageController _presenterPageController =
+    PageController(initialPage: 1000);
+  int _currentPresenterPage = 1000;
   Timer? _presenterTimer;
   @override
   void initState() {
     super.initState();
 
-    if ((widget.presenters?.length ?? 0) > 1) {
-      _presenterTimer = Timer.periodic(
-        const Duration(seconds: 3),
-        (_) {
-          if (!_presenterPageController.hasClients) return;
+     if ((widget.presenters?.length ?? 0) > 1) {
+    _presenterTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) {
+        if (!mounted ||
+            !_presenterPageController.hasClients ||
+            (widget.presenters?.isEmpty ?? true)) {
+          return;
+        }
 
-          int nextIndex = _currentPresenterIndex + 1;
+        _currentPresenterPage++;
 
-          if (nextIndex >= widget.presenters!.length) {
-            nextIndex = 0;
-          }
-
-          _presenterPageController.animateToPage(
-            nextIndex,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-          );
-        },
-      );
-    }
+        _presenterPageController.animateToPage(
+          _currentPresenterPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      },
+    );
+  }
   }
 
   @override
@@ -154,15 +155,22 @@ class _CourseInfoCardWidgetState extends State<CourseInfoCardWidget> {
                                   height: 50,
                                   child: PageView.builder(
                                     controller: _presenterPageController,
-                                    itemCount: widget.presenters?.length ?? 0,
                                     onPageChanged: (index) {
                                       setState(() {
-                                        _currentPresenterIndex = index;
+                                        _currentPresenterPage = index;
                                       });
                                     },
                                     itemBuilder: (context, index) {
-                                      final presenter =
-                                          widget.presenters![index];
+                                      final presenters =
+                                          widget.presenters ?? [];
+
+                                      if (presenters.isEmpty) {
+                                        return const SizedBox.shrink();
+                                      }
+
+                                      final actualIndex =
+                                          index % presenters.length;
+                                      final presenter = presenters[actualIndex];
 
                                       return Row(
                                         crossAxisAlignment:
