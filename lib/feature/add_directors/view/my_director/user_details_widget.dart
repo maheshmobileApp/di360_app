@@ -82,10 +82,10 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                   if (name != null)
                    Text(name ?? '',
                   style: TextStyles.clashMedium(
-                      fontSize: 14, color: AppColors.black)),
-                  Text(userName ?? homeViewModel.userName ?? '',
+                      fontSize: 20, color: AppColors.black)),
+                  /*Text(userName ?? homeViewModel.userName ?? '',
                       style: TextStyles.clashMedium(
-                          fontSize: 20, color: AppColors.black)),
+                          fontSize: 20, color: AppColors.black)),*/
                 ],
               ),
             ),

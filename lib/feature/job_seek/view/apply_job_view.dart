@@ -167,7 +167,12 @@ class _ApplyJobsViewState extends State<ApplyJobsView> with ValidationMixins {
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               focusNode: _emailFocus,
-              validator: validateEmail,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter your email';
+                }
+                return validateEmail(value);
+              },
             ),
             SizedBox(height: 16),
             InputTextField(
