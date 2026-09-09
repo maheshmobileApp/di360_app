@@ -47,6 +47,16 @@ class JobProfileListingViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
+  JobProfiles? getProfileById;
+
+  Future<void> getProfileByIdNew(BuildContext context, String Id) async {
+    Loaders.circularShowLoader(context);
+    final response = await repo.getProfileById(Id);
+    getProfileById = response.jobProfilesByPk;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
   Future<void> fetchJobProfiles(BuildContext context) async {
     isLoading = true;
     final response = await repo.getJobProfiles();

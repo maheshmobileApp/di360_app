@@ -548,7 +548,7 @@ class AddCourse extends StatelessWidget
 
   Future<void> getPlaceDetails(
       String placeId, NewCourseViewModel jobCreateVM) async {
-    final String apiKey = googleApiKey;
+    final String apiKey = ApiConst.staticGoogleAPIKey;;
     final String url =
         "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
 

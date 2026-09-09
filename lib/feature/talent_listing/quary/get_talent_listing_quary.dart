@@ -30,7 +30,7 @@ const String getTalentListingQuery = r'''query getFilteredHiringRequests($where:
     job_profiles {
       id
       full_name
-      professionType
+      profession_type
       state
       profile_image
       work_type

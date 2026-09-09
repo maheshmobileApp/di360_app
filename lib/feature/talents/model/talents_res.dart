@@ -1,5 +1,4 @@
 import 'package:di360_flutter/common/model/certificates.dart';
-import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 
 class TalentsRes {

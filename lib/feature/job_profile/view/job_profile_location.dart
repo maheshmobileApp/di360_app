@@ -13,7 +13,6 @@ import 'package:google_places_flutter/model/place_type.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:provider/provider.dart';
 
-const googleApiKey = "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70";
 
 class JobProfileLocation extends StatelessWidget
     with BaseContextHelpers, ValidationMixins {
@@ -168,7 +167,7 @@ class JobProfileLocation extends StatelessWidget
 
   Future<void> getPlaceDetails(
       String placeId, JobProfileCreateViewModel jobProfileVM) async {
-    final String apiKey = googleApiKey;
+    final String apiKey = ApiConst.staticGoogleAPIKey;
     final String url =
         "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
 

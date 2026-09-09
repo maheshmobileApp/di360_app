@@ -19,7 +19,7 @@ const String getTalentListByIdQuery =
     current_ctc
     post_anonymously
     work_type
-    professionType
+    profession_type
     location
     country
     city

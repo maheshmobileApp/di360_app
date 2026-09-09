@@ -12,7 +12,7 @@ String talentsRequest =
     profile_image
     full_name
     work_type
-    professionType
+    profession_type
     location
     country
     city
