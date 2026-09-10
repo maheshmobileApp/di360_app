@@ -338,7 +338,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == "Delete") {
           showAlertMessage(context, 'Are you sure you want to delete this job?',
               onBack: () async {
@@ -364,12 +364,15 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             },
           );
         } else if (value == "Preview") {
+          await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
+          final profileData = vm.getProfileById;
           navigationService.navigateToWithParams(
             RouteList.talentdetailsScreen,
-            params: jobsListingData,
+            params: profileData,
           );
         } else if (value == "Edit") {
-          final profileData = vm.allJobProfiles.first;
+          await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
+          final profileData = vm.getProfileById;
           vm.setEditProfileEnable(true);
           jobCreateVM.setJobProfileStatus(adminStatus);
           navigationService

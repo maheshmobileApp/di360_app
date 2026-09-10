@@ -54,6 +54,11 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateAboutYourself(String? value) {
+    if (value == null || value.isEmpty) return "Please enter about yourself";
+    return null;
+  }
+
   String? validateAphraNumber(String? value) {
     if (value == null || value.isEmpty) return null;
     if (value.length != 13) {

@@ -12,9 +12,11 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart' as htmlParser;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -168,7 +170,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   void setFromDate(DateTime date) {
     fromDateController.text =
-        di360_date_utils.DateFormatUtils.formatToYyyyMmDd(date);
+         DateFormatUtils.formatMMDDYYYY(date.toIso8601String());
     notifyListeners();
   }
 
@@ -1191,7 +1193,10 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         .join(", ");
     //isJoiningImmediate = profile?.i
 
-    aboutMeController.text = profile?.aboutYourself ?? "";
+    aboutMeController.text = htmlParser.parse( profile?.aboutYourself ?? "").body?.text ?? '';
+    fromDateController.text = profile?.fromDate.isNotEmpty == true
+        ? DateFormatUtils.formatMMDDYYYY(profile?.fromDate.first ?? "")
+        : "";
 
     notifyListeners();
   }
