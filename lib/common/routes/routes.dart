@@ -77,6 +77,7 @@ import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/supplies/view/add_news_address_view.dart';
 import 'package:di360_flutter/feature/supplies/view/order_request_review_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_cart_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_details_view.dart';
@@ -157,8 +158,8 @@ class Routes {
             dentalPracticeId: args['dental_practice_id'],
             talentId: args['talentId'],
             profilePic: args['profile_pic'],
-            userId : args['userId'],
-            talentEnquiryId : args["talent_enquiry_id"]);
+            userId: args['userId'],
+            talentEnquiryId: args["talent_enquiry_id"]);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =
@@ -298,6 +299,7 @@ class Routes {
         return OrderRequestReviewView(
             selectedProducts: args['selected_products'] ?? {});
       },
+      RouteList.addNewsAddressView: (context) => AddNewsAddressView(),
     };
   }
 }

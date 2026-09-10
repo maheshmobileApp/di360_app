@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 
@@ -9,4 +10,5 @@ abstract class SuppliesRepository {
   Future<getSupplyData> getSuppliesDetails(dynamic variables);
   Future<SupplyCartData> getSupplyCarts();
   Future<dynamic> deleteCartItem(dynamic variables);
+  Future<DentalProfessionalAddressesData> dentalProfessionalAddress();
 }

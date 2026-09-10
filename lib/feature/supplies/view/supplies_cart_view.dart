@@ -63,171 +63,183 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
               "Cart",
               style: TextStyles.bold3(),
             )),
-        body: supplierEntries.length == 0 ? Center(child: Text("No Items", style: TextStyles.medium2(),)): Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: ListView(controller: scrollController, children: [
-              if (supplierEntries.length > 1)
-                Card(
-                  color: const Color.fromARGB(255, 237, 236, 235),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "You have selected Multiple Items From Multiple Vendors !",
-                          style: TextStyles.semiBold(
-                              fontSize: 12, color: AppColors.redColor),
-                        ),
-                        Text(
-                          "You can place order from one vendor at once",
-                          style: TextStyles.medium1(color: AppColors.redColor),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 6),
-              ...supplierEntries.map(
-                (supplier) {
-                  return Card(
-                    color: Colors.grey.shade100,
-                    child: Column(
-                      children: [
-                        Row(
+        body: supplierEntries.length == 0
+            ? Center(
+                child: Text(
+                "No Items",
+                style: TextStyles.medium2(),
+              ))
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: ListView(controller: scrollController, children: [
+                  if (supplierEntries.length > 1)
+                    Card(
+                      color: const Color.fromARGB(255, 237, 236, 235),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
+                            Text(
+                              "You have selected Multiple Items From Multiple Vendors !",
+                              style: TextStyles.semiBold(
+                                  fontSize: 12, color: AppColors.redColor),
+                            ),
+                            Text(
+                              "You can place order from one vendor at once",
+                              style:
+                                  TextStyles.medium1(color: AppColors.redColor),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 6),
+                  ...supplierEntries.map(
+                    (supplier) {
+                      return Card(
+                        color: Colors.grey.shade100,
+                        child: Column(
+                          children: [
+                            Row(
                               children: [
-                                Row(
+                                Column(
                                   children: [
-                                    Checkbox(
-                                      activeColor: AppColors.primaryColor,
-                                      tristate: true,
-                                      value:
-                                          vm.isSupplierSelected(supplier.key),
-                                      onChanged: (value) {
-                                        vm.toggleSupplier(
+                                    Row(
+                                      children: [
+                                        Checkbox(
+                                          activeColor: AppColors.primaryColor,
+                                          tristate: true,
+                                          value: vm
+                                              .isSupplierSelected(supplier.key),
+                                          onChanged: (value) {
+                                            vm.toggleSupplier(
+                                              supplier.key,
+                                              value ?? false,
+                                            );
+                                          },
+                                        ),
+                                        Text(
                                           supplier.key,
-                                          value ?? false,
-                                        );
-                                      },
-                                    ),
-                                    Text(
-                                      supplier.key,
-                                      style: TextStyles.bold2(),
+                                          style: TextStyles.bold2(),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
+                                Spacer(),
+                                SizedBox(
+                                  width: 120,
+                                  child: AppButton(
+                                    backgroundColor:
+                                        vm.isSupplierSelected(supplier.key)
+                                            ? AppColors.primaryColor
+                                            : AppColors.greyLight,
+                                    borderColor:
+                                        vm.isSupplierSelected(supplier.key)
+                                            ? AppColors.primaryColor
+                                            : AppColors.greysecond,
+                                    textColor:
+                                        vm.isSupplierSelected(supplier.key)
+                                            ? AppColors.whiteColor
+                                            : AppColors.black,
+                                    height: 40,
+                                    title: "Proceed",
+                                    onPressed: () async {
+                                      if (vm.isSupplierSelected(supplier.key)) {
+                                        await vm.getDentalProfessionalAddress(
+                                            context);
+                                        navigationService.navigateToWithParams(
+                                            RouteList.orderRequestReviewView,
+                                            params: {
+                                              "selected_products":
+                                                  vm.selectedProducts
+                                            });
+                                      }
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 16)
                               ],
                             ),
-                            Spacer(),
-                            SizedBox(
-                              width: 120,
-                              child: AppButton(
-                                backgroundColor:
-                                    vm.isSupplierSelected(supplier.key)
-                                        ? AppColors.primaryColor
-                                        : AppColors.greyLight,
-                                borderColor: vm.isSupplierSelected(supplier.key)
-                                    ? AppColors.primaryColor
-                                    : AppColors.greysecond,
-                                textColor: vm.isSupplierSelected(supplier.key)
-                                    ? AppColors.whiteColor
-                                    : AppColors.black,
-                                height: 40,
-                                title: "Proceed",
-                                onPressed: () {
-                                  if (vm.isSupplierSelected(supplier.key)) {
-                                    navigationService.navigateToWithParams(
-                                        RouteList.orderRequestReviewView,
-                                        params: {
-                                          "selected_products":
-                                              vm.selectedProducts
-                                        });
+
+                            const SizedBox(height: 4),
+
+                            /// Products
+                            ...supplier.value.map(
+                              (item) => ProductCartCard(
+                                item: item,
+                                isSelected: vm.isProductSelected(item.id!),
+                                imageUrl: item.supply?.image?.isNotEmpty == true
+                                    ? item.supply!.image!.first.url ?? ""
+                                    : "",
+                                productId: item.supplyVariant?.skuCode ?? "",
+                                productName: item.supply?.name ?? "",
+                                price: item.supplyVariant?.sellingPrice
+                                        ?.toString() ??
+                                    "",
+                                quantity: item.quantity ?? 0,
+                                onChecked: (value) {
+                                  vm.toggleProduct(
+                                    item,
+                                    value ?? false,
+                                  );
+                                },
+                                onMenuSelected: (action) async {
+                                  switch (action) {
+                                    case 'delete':
+                                      showAlertMessage(context,
+                                          "Are you really want to delete this cart item ?",
+                                          no: "No",
+                                          yes: "Yes", onBack: () async {
+                                        await vm.deleteCartItem(
+                                            context, item.id ?? "");
+                                      });
+
+                                      break;
                                   }
+                                },
+                                onDecrease: () async {
+                                  await vm.decreaseQuantityById(
+                                      context, item.id ?? "");
+                                },
+                                onIncrease: () async {
+                                  await vm.increaseQuantityById(
+                                      context, item.id ?? "", 1);
                                 },
                               ),
                             ),
-                            SizedBox(width: 16)
+                            const SizedBox(height: 4),
+                            if (vm.isSupplierSelected(supplier.key))
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "Selected Items: ${vm.selectedProducts.length}",
+                                      style: TextStyles.medium2(
+                                          color: AppColors.geryColor),
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "Selected Total: AUD ${vm.selectedProductsTotalPrice}",
+                                      style: TextStyles.medium2(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            const SizedBox(height: 4),
                           ],
                         ),
-
-                        const SizedBox(height: 4),
-
-                        /// Products
-                        ...supplier.value.map(
-                          (item) => ProductCartCard(
-                            item: item,
-                            isSelected: vm.isProductSelected(item.id!),
-                            imageUrl: item.supply?.image?.isNotEmpty == true
-                                ? item.supply!.image!.first.url ?? ""
-                                : "",
-                            productId: item.supplyVariant?.skuCode ?? "",
-                            productName: item.supply?.name ?? "",
-                            price:
-                                item.supplyVariant?.sellingPrice?.toString() ??
-                                    "",
-                            quantity: item.quantity ?? 0,
-                            onChecked: (value) {
-                              vm.toggleProduct(
-                                item,
-                                value ?? false,
-                              );
-                            },
-                            onMenuSelected: (action) async {
-                              switch (action) {
-                                case 'delete':
-                                  showAlertMessage(context,
-                                      "Are you really want to delete this cart item ?",
-                                      no: "No", yes: "Yes", onBack: () async {
-                                    await vm.deleteCartItem(
-                                        context, item.id ?? "");
-                                  });
-
-                                  break;
-                              }
-                            },
-                            onDecrease: () async {
-                              await vm.decreaseQuantityById(
-                                  context, item.id ?? "");
-                            },
-                            onIncrease: () async {
-                              await vm.increaseQuantityById(
-                                  context, item.id ?? "", 1);
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        if (vm.isSupplierSelected(supplier.key))
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "Selected Items: ${vm.selectedProducts.length}",
-                                  style: TextStyles.medium2(
-                                      color: AppColors.geryColor),
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  "Selected Total: AUD ${vm.selectedProductsTotalPrice}",
-                                  style: TextStyles.medium2(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        const SizedBox(height: 4),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              CartSummaryCard(
-                totalSuppliers: supplierEntries.length,
-                totalActiveItems: cartItems.length,
-                totalSelectedItems: vm.selectedProducts.length,
-              )
-            ])));
+                      );
+                    },
+                  ),
+                  CartSummaryCard(
+                    totalSuppliers: supplierEntries.length,
+                    totalActiveItems: cartItems.length,
+                    totalSelectedItems: vm.selectedProducts.length,
+                  )
+                ])));
   }
 }

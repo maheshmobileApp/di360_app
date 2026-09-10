@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
+import 'package:di360_flutter/feature/supplies/widgets/delivery_and_notes_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/order_summary_card.dart';
+import 'package:di360_flutter/feature/supplies/widgets/payment_mode_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_cart_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -83,12 +85,14 @@ final freightCharges = "0.00";
                       value ?? false,
                     );
                   },
-                  onMenuSelected: (action) {},
+                  menuOptions: false,
                 );
               }
               
               ),
               SizedBox(height: 10,),
+              //DeliveryAndNotesCard(address: vm.dentalProfessionalAddress),
+              PaymentModeCard(),
               OrderSummaryCard(supplier: supplier,
               subTotal: subTotal.toString(),discount: discount,itemsCount: itemsCount.toString(),estimatedTotal: subTotal.toString(),freightCharges: freightCharges,)
             ])));

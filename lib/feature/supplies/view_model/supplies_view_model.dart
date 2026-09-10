@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dart';
@@ -11,6 +12,22 @@ class SuppliesViewModel extends ChangeNotifier {
   getSupplyData? supplyData;
   Supplies? suppliesDetailsData;
   SupplyCartData? suppliesCartData;
+  DentalProfessionalAddressesData? dentalProfessionalAddress;
+
+  final locationController = TextEditingController();
+  final nameController = TextEditingController();
+  final addressline1Controller = TextEditingController();
+  final addressline2Controller = TextEditingController();
+  final landmarkController = TextEditingController();
+  final cityController = TextEditingController();
+  final companyNameController = TextEditingController();
+  final postcodeController = TextEditingController();
+  final compNameController = TextEditingController();
+  final compCompanyNameController = TextEditingController();
+  final accountNumberController = TextEditingController();
+  final emailController = TextEditingController();
+
+
 
   int _supplyLimit = 20;
   int _supplyOffset = 0;
@@ -251,6 +268,16 @@ class SuppliesViewModel extends ChangeNotifier {
 
     final res = await repo.getSupplyCarts();
     suppliesCartData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> getDentalProfessionalAddress(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final res = await repo.dentalProfessionalAddress();
+    dentalProfessionalAddress = res;
     Loaders.circularHideLoader(context);
 
     notifyListeners();

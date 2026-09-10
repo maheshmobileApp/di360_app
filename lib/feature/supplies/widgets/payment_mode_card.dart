@@ -3,24 +3,12 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/quantity_stepper.dart';
+import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class OrderSummaryCard extends StatelessWidget {
-  final String supplier;
-  final String itemsCount;
-  final String subTotal;
-  final String discount;
-  final String freightCharges;
-  final String estimatedTotal;
-
-  const OrderSummaryCard({
-    required this.supplier,
-    required this.itemsCount,
-    required this.subTotal,
-    required this.discount,
-    required this.freightCharges,
-    required this.estimatedTotal,
+class PaymentModeCard extends StatelessWidget {
+  const PaymentModeCard({
     super.key,
   });
 
@@ -49,10 +37,41 @@ class OrderSummaryCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Order Summary',
+                   Text('Payment Mode',
                       style: TextStyles.clashSemiBold(fontSize: 18)),
-                  _infoDetailColumn(supplier, itemsCount, subTotal, discount,
-                      freightCharges, estimatedTotal)
+                  SizedBox(height: 8),
+                  InputTextField(
+                    controller: vm.compNameController,
+                    hintText: "Enter Name",
+                    keyboardType: TextInputType.name,
+                    title: "Name",
+                    maxLength: 70,
+                    isRequired: true,
+                  ),
+                  InputTextField(
+                    controller: vm.compCompanyNameController,
+                    hintText: "Enter company name",
+                    keyboardType: TextInputType.name,
+                    title: "Company Name",
+                    maxLength: 70,
+                    isRequired: true,
+                  ),
+                  InputTextField(
+                    controller: vm.accountNumberController,
+                    hintText: "Enter account number",
+                    keyboardType: TextInputType.name,
+                    title: "Account number",
+                    maxLength: 70,
+                    isRequired: true,
+                  ),
+                  InputTextField(
+                    controller: vm.emailController,
+                    hintText: "Enter email",
+                    keyboardType: TextInputType.name,
+                    title: "Email",
+                    maxLength: 70,
+                    isRequired: true,
+                  ),
                 ]),
           )),
     );
