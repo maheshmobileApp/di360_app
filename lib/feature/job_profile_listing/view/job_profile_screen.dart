@@ -29,7 +29,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<JobProfileListingViewModel>(context);
-    
+
     final jobCreateProfileVM =
         Provider.of<JobProfileCreateViewModel>(context, listen: false);
     return Scaffold(
@@ -45,12 +45,15 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           style: const TextStyle(color: Colors.white),
         ),
         onPressed: () async {
-          await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
           if (vm.allJobProfiles.isEmpty) {
             vm.setEditProfileEnable(false);
-            jobCreateProfileVM.setJobProfileStatus(vm.allJobProfiles.first.adminStatus ?? "");
+
             await navigationService.navigateTo(RouteList.JobProfileView);
           } else {
+            jobCreateProfileVM
+                .setJobProfileStatus(vm.allJobProfiles.first.adminStatus ?? "");
+            await vm.getProfileByIdNew(
+                context, vm.allJobProfiles.first.id ?? "");
             final profileData = vm.getProfileById;
             vm.setEditProfileEnable(true);
             await navigationService

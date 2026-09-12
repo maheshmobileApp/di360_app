@@ -178,6 +178,7 @@ class _JobProfileViewState extends State<JobProfileView> {
               ),
             ),
           if (!isFirstStep) const SizedBox(width: 16),
+          if (!jobProfileListVM.editProfileEnable)
           Expanded(
             child: CustomRoundedButton(
               fontSize: 12,
