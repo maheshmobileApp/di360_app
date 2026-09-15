@@ -150,14 +150,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                     ExerinaceInfoIcons(
                         icon: Icons.email,
                         text: widget.talentList!.emailAddress!),
-                  if (widget.talentList?.emailAddress?.isNotEmpty == true)
-                    addVertical(12),
-                  if (widget.talentList?.languagesSpoken.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                      icon: Icons.language,
-                      text: widget.talentList!.languagesSpoken.join(", "),
-                    ),
-                  if (widget.talentList?.languagesSpoken.isNotEmpty == true)
+                  if (widget.talentList?.emailAddress?.isNotEmpty == true)                  
                     addVertical(12),
                   if (widget.talentList?.areasExpertise.isNotEmpty == true)
                     ExerinaceInfoIcons(
@@ -171,15 +164,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               // Professional Details Section
               if (_hasAnyProfessionalData()) _buildProfessionalSection(),
 
-              // Skills Section
-              if (widget.talentList?.skills?.isNotEmpty == true) ...[
-                addVertical(10),
-                _sectionHeader("Skills"),
-                addVertical(6),
-                CustomChipView(typesList: widget.talentList!.skills!),
-              ],
-
-              // Work Type Section
+               // Work Type Section
               if (widget.talentList?.workType.isNotEmpty == true) ...[
                 addVertical(10),
                 _sectionHeader("Work Type"),
@@ -187,10 +172,34 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 CustomChipView(typesList: widget.talentList!.workType),
               ],
 
+               // Skills Section
+              if (widget.talentList?.skills?.isNotEmpty == true) ...[
+                addVertical(10),
+                _sectionHeader("Skills"),
+                addVertical(6),
+                CustomChipView(typesList: widget.talentList!.skills!),
+              ],
+
+               // Skills Section
+              if (widget.talentList?.languagesSpoken?.isNotEmpty == true) ...[
+                addVertical(10),
+                _sectionHeader("Languages"),
+                addVertical(6),
+                CustomChipView(typesList: widget.talentList!.languagesSpoken!),
+              ],
+
+               // Skills Section
+              if (widget.talentList?.areasExpertise?.isNotEmpty == true) ...[
+                addVertical(10),
+                _sectionHeader("Areas of Expertise"),
+                addVertical(6),
+                CustomChipView(typesList: widget.talentList!.areasExpertise!),
+              ],
+
               // About Section
               if (widget.talentList?.aboutYourself?.isNotEmpty == true) ...[
                 const Divider(),
-                _sectionHeader("About me / Profile Summary"),
+                _sectionHeader("About me"),
                 _sectionText(widget.talentList!.aboutYourself!),
               ],
 
