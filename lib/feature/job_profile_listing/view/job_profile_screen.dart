@@ -50,11 +50,14 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
 
             await navigationService.navigateTo(RouteList.JobProfileView);
           } else {
-            jobCreateProfileVM
-                .setJobProfileStatus(vm.allJobProfiles.first.adminStatus ?? "");
             await vm.getProfileByIdNew(
                 context, vm.allJobProfiles.first.id ?? "");
             final profileData = vm.getProfileById;
+            print(
+                "adminStatus from update:************ ${profileData?.adminStatus ?? ""}");
+
+            jobCreateProfileVM
+                .setJobProfileStatus(profileData?.adminStatus ?? "");
             vm.setEditProfileEnable(true);
             await navigationService
                 .navigateToWithParams(RouteList.JobProfileView, params: {

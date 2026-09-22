@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
@@ -11,6 +12,7 @@ import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/certificates_view.dart';
@@ -18,6 +20,7 @@ import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/exerinace_info_icons.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
+import 'package:di360_flutter/widgets/talent_preview_data_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +37,14 @@ class TalentsDetailsView extends StatefulWidget with BaseContextHelpers {
 
 class _TalentsDetailsViewState extends State<TalentsDetailsView>
     with BaseContextHelpers {
+  String _educationSummary(Education education) {
+    final finishDate = DateTime.tryParse(education.finishDate ?? '');
+    final qualification = education.qualification;
+
+    if (finishDate == null) return qualification ?? "No qualification specified";
+    return '$qualification - ${finishDate.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final talentViewModel = Provider.of<TalentsViewModel>(context);
@@ -75,6 +86,10 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
 
   Widget _buildBodyContent(
       BuildContext context, TalentsViewModel talentViewmodel) {
+    if (widget.talentList == null) {
+      return const Center(child: Text('Talent details unavailable'));
+    }
+
     String profleImage = '';
     if (widget.talentList!.profileImage.isNotEmpty) {
       profleImage = widget.talentList!.profileImage.first.url ?? '';
@@ -82,23 +97,30 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: LogoWithTitle(
+                  title: widget.talentList?.fullName ?? "",
+                  showTime: false,
+                  createdAt: widget.talentList?.createdAt ?? "",
+                  role: widget.talentList?.jobDesignation ?? "",
+                  imageUrl: profleImage,
+                  postAnonymously: widget.talentList?.postAnonymously ?? false,
+                ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Expanded(
-                    child: LogoWithTitle(
-                      title: widget.talentList?.fullName ?? "",
-                      showTime: false,
-                      createdAt: widget.talentList?.createdAt ?? "",
-                      role: widget.talentList?.professionType ?? "",
-                      imageUrl: profleImage,
-                      postAnonymously:
-                          widget.talentList?.postAnonymously ?? false,
-                    ),
-                  ),
+                  if (widget.talentList?.yearOfExperience != null)
+                    _tagWidget(
+                        "Experience : ${widget.talentList?.yearOfExperience} Years" ??
+                            ""),
+                  addVertical(10),
                   if ((widget.talentList?.uploadResume.isNotEmpty ?? false))
                     CustomRoundedButton(
                       height: 36,
@@ -117,124 +139,163 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                     ),
                 ],
               ),
-              addVertical(16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (widget.talentList?.yearOfExperience != null)
-                    ExerinaceInfoIcons(
-                        icon: Icons.work,
-                        text:
-                            '${widget.talentList?.yearOfExperience} Yrs Experience'),
-                  if (widget.talentList?.yearOfExperience != null)
-                    addVertical(12),
-                  if (widget.talentList?.location?.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                        icon: Icons.location_on,
-                        text: widget.talentList?.location ?? ""),
-                  if (widget.talentList?.location?.isNotEmpty == true)
-                    addVertical(12),
-                  if (widget.talentList?.mobileNumber?.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                        icon: Icons.call,
-                        text: widget.talentList?.mobileNumber ?? ""),
-                  if (widget.talentList?.mobileNumber?.isNotEmpty == true)
-                    addVertical(12),
-                  if (widget.talentList?.currentCompany?.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                        icon: Icons.business,
-                        text: widget.talentList!.currentCompany!),
-                  if (widget.talentList?.currentCompany?.isNotEmpty == true)
-                    addVertical(12),
-                  if (widget.talentList?.emailAddress?.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                        icon: Icons.email,
-                        text: widget.talentList!.emailAddress!),
-                  if (widget.talentList?.emailAddress?.isNotEmpty == true)                  
-                    addVertical(12),
-                  if (widget.talentList?.areasExpertise.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                      icon: Icons.build,
-                      text: widget.talentList!.areasExpertise.join(", "),
-                    ),
-                ],
-              ),
-              Divider(color: AppColors.geryColor),
-
-              // Professional Details Section
-              if (_hasAnyProfessionalData()) _buildProfessionalSection(),
-
-               // Work Type Section
-              if (widget.talentList?.workType.isNotEmpty == true) ...[
-                addVertical(10),
-                _sectionHeader("Work Type"),
-                addVertical(6),
-                CustomChipView(typesList: widget.talentList!.workType),
-              ],
-
-               // Skills Section
-              if (widget.talentList?.skills?.isNotEmpty == true) ...[
-                addVertical(10),
-                _sectionHeader("Skills"),
-                addVertical(6),
-                CustomChipView(typesList: widget.talentList!.skills!),
-              ],
-
-               // Skills Section
-              if (widget.talentList?.languagesSpoken?.isNotEmpty == true) ...[
-                addVertical(10),
-                _sectionHeader("Languages"),
-                addVertical(6),
-                CustomChipView(typesList: widget.talentList!.languagesSpoken!),
-              ],
-
-               // Skills Section
-              if (widget.talentList?.areasExpertise?.isNotEmpty == true) ...[
-                addVertical(10),
-                _sectionHeader("Areas of Expertise"),
-                addVertical(6),
-                CustomChipView(typesList: widget.talentList!.areasExpertise!),
-              ],
-
-              // About Section
-              if (widget.talentList?.aboutYourself?.isNotEmpty == true) ...[
-                const Divider(),
-                _sectionHeader("About me"),
-                _sectionText(widget.talentList!.aboutYourself!),
-              ],
-
-              // Work Experience Section
-              if (widget.talentList?.jobExperiences.isNotEmpty == true) ...[
-                const Divider(),
-                _sectionHeader("Work Experience"),
-                addVertical(10),
-                _buildJobExperiencesList(talentViewmodel),
-              ],
-
-              // Certifications Section
-              if (widget.talentList?.certificate.isNotEmpty == true) ...[
-                addVertical(16),
-                _sectionHeader("Certifications"),
-                CertificatesView(certificates: widget.talentList?.certificate),
-              ],
-
-              // Cover Letter Section
-              if (widget.talentList?.coverLetter.isNotEmpty == true) ...[
-                addVertical(16),
-                _sectionHeader("Cover Letter"),
-                CertificatesView(certificates: widget.talentList?.coverLetter),
-              ],
-
-              // Location Section
-              if (widget.talentList?.location?.isNotEmpty == true) ...[
-                addVertical(16),
-                _sectionHeader('Job Location'),
-                Text(widget.talentList!.location!),
-                locationView(context),
-              ],
-            ]),
+            ],
+          ),
+          addVertical(16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (widget.talentList?.professionType?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Profession Type",
+                  value: widget.talentList?.professionType ?? "",
+                ),
+              if (widget.talentList?.currentCompany?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Current Company",
+                  value: widget.talentList?.currentCompany ?? "",
+                ),
+              if (widget.talentList?.emailAddress?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Email Address",
+                  value: widget.talentList?.emailAddress ?? "",
+                ),
+              if (widget.talentList?.mobileNumber?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Mobile Number",
+                  value: widget.talentList?.mobileNumber ?? "",
+                ),
+              if (widget.talentList?.willingToTravel == true)
+                TalentPreviewDataWidget(
+                  head: "Willing to Travel",
+                  value: "Yes",
+                ),
+              if (widget.talentList?.travelDistance != null)
+                TalentPreviewDataWidget(
+                  head: "Travel Distance",
+                  value: widget.talentList?.travelDistance.toString() ?? "",
+                ),
+              if (widget.talentList?.abnNumber?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "ABN Number",
+                  value: widget.talentList?.abnNumber.toString() ?? "",
+                ),
+              if (widget.talentList?.workRights?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Work Rights",
+                  value: widget.talentList?.workRights ?? "",
+                ),
+              if (widget.talentList?.salaryAmount != 0 && widget.talentList?.salaryAmount != null)
+                TalentPreviewDataWidget(
+                  head: "Salary Amount",
+                  value: widget.talentList?.salaryAmount.toString() ?? "",
+                ),
+              if (widget.talentList?.salaryType?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Salary Type",
+                  value: widget.talentList?.salaryType ?? "",
+                ),
+            ],
+          ),
+          if (widget.talentList?.availabilityOption?.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Available from"),
+            _sectionText(widget.talentList!.availabilityOption == "fromDate1"
+                ? DateFormatUtils.formatDate(widget.talentList?.fromDate ?? "")
+                : "Immediately"),
           ],
-        ),
+          if (widget.talentList?.availabilityDay.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Available Days"),
+            _sectionText(widget.talentList!.availabilityDay.join(", ")),
+          ],
+
+          if (widget.talentList?.availabilityDate.isNotEmpty == true) ...[
+            Divider(),
+            _sectionHeader("Available Dates"),
+            _sectionText(
+              widget.talentList!.availabilityDate
+                  .map((date) => DateFormatUtils.formatDateToDmy(date))
+                  .join(", "),
+            ),
+          ],
+
+          // Professional Details Section
+          //if (_hasAnyProfessionalData()) _buildProfessionalSection(),
+
+          // Work Type Section
+          if (widget.talentList?.workType.isNotEmpty == true) ...[
+            _sectionHeader("Work Type"),
+            addVertical(6),
+            CustomChipView(typesList: widget.talentList!.workType),
+          ],
+
+          // Skills Section
+          if (widget.talentList?.skills?.isNotEmpty == true) ...[
+            _sectionHeader("Skills"),
+            addVertical(6),
+            CustomChipView(typesList: widget.talentList!.skills!),
+          ],
+
+          // Skills Section
+          if (widget.talentList?.languagesSpoken?.isNotEmpty == true) ...[
+            _sectionHeader("Languages"),
+            addVertical(6),
+            CustomChipView(typesList: widget.talentList!.languagesSpoken!),
+          ],
+
+          // Skills Section
+          if (widget.talentList?.areasExpertise?.isNotEmpty == true) ...[
+            _sectionHeader("Areas of Expertise"),
+            addVertical(6),
+            CustomChipView(typesList: widget.talentList!.areasExpertise!),
+          ],
+
+          // About Section
+          if (widget.talentList?.aboutYourself?.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("About me"),
+            _sectionText(widget.talentList!.aboutYourself!),
+          ],
+
+          if (widget.talentList?.educations?.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Education"),
+            _sectionText(widget.talentList?.educations.isNotEmpty == true
+                ? _educationSummary(widget.talentList!.educations.first)
+                : ""),
+          ],
+
+          // Work Experience Section
+          if (widget.talentList?.jobExperiences.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Work Experience"),
+            addVertical(10),
+            _buildJobExperiencesList(talentViewmodel),
+          ],
+
+          // Certifications Section
+          if (widget.talentList?.certificate.isNotEmpty == true) ...[
+            addVertical(16),
+            _sectionHeader("Certifications"),
+            CertificatesView(certificates: widget.talentList?.certificate),
+          ],
+
+          // Cover Letter Section
+          if (widget.talentList?.coverLetter.isNotEmpty == true) ...[
+            addVertical(16),
+            _sectionHeader("Cover Letter"),
+            CertificatesView(certificates: widget.talentList?.coverLetter),
+          ],
+
+          // Location Section
+          if (widget.talentList?.location?.isNotEmpty == true) ...[
+            addVertical(16),
+            _sectionHeader('Job Location'),
+            Text(widget.talentList!.location!),
+            locationView(context),
+          ],
+        ]),
       ),
     );
   }
@@ -397,15 +458,10 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (item.companyName?.isNotEmpty ?? false)
+              if (item.companyName?.isNotEmpty == true)
                 Text(
-                  item.companyName!,
+                  "${item.jobTitle ?? 'Role'} at ${item.companyName}",
                   style: TextStyles.medium2(),
-                ),
-              if (item.jobTitle?.isNotEmpty ?? false)
-                Text(
-                  item.jobTitle!,
-                  style: TextStyles.regular1(),
                 ),
               Text(
                 "${item.startMonth ?? ''} ${item.startYear ?? ''} - "
@@ -497,6 +553,30 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
           ),
         ],
       ],
+    );
+  }
+
+  Widget _tagWidget(String? tagText) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: Text(tagText ?? "",
+            style: TextStyles.semiBold(
+              color: AppColors.black,
+            )),
+      ),
     );
   }
 

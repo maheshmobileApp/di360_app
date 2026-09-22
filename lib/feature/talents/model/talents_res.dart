@@ -74,7 +74,7 @@ class JobProfiles {
   final String? abnNumber;
   final String? availabilityOption;
   final List<String> availabilityDate;
-  final List<String> fromDate;
+  final String? fromDate;
   final List<String> availabilityDay;
   final String? workRights;
   final String? yearOfExperience;
@@ -225,7 +225,7 @@ class JobProfiles {
       abnNumber: json['abn_number']?.toString(),
       availabilityOption: json['availabilityOption']?.toString(),
       availabilityDate: normalizeStringList(json['availabilityDate']),
-      fromDate: normalizeStringList(json['fromDate']),
+      fromDate: json['fromDate']?.toString() ?? '',
       availabilityDay: normalizeStringList(json['availabilityDay']),
       workRights: json['work_rights']?.toString(),
       yearOfExperience: json['Year_of_experiance']?.toString(),
@@ -372,7 +372,12 @@ class JobHiring {
   final String? hiringStatus;
   final String? typeName;
 
-  JobHiring({this.id, this.dentalSupplierId, this.dentalPracticeId, this.hiringStatus, this.typeName});
+  JobHiring(
+      {this.id,
+      this.dentalSupplierId,
+      this.dentalPracticeId,
+      this.hiringStatus,
+      this.typeName});
 
   factory JobHiring.fromJson(Map<String, dynamic> json) => JobHiring(
         id: json['id'],

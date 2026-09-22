@@ -19,7 +19,7 @@ const String getTalentEnqPreviewQuery = r'''query getTalentPreview($id: uuid!) {
     mobile_number
     email_address
     work_type
-    professionType
+    profession_type
     location
     country
     city

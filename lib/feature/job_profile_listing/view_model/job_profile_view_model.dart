@@ -37,7 +37,6 @@ class JobProfileListingViewModel extends ChangeNotifier {
   List<JobProfiles> allJobProfiles = [];
   String? jobProfileId;
   bool editProfileEnable = false;
-  String? jobProfileStatus;
   String? requestType;
 
   void setRequestType(String val) {
@@ -63,7 +62,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
     allJobProfiles = response ?? [];
     if (allJobProfiles.isNotEmpty) {
       setJobProfileId(allJobProfiles.first.id ?? "");
-      getMyEnquiryJobData(context, id: allJobProfiles.first.id ?? "");
+      getMyEnquiryJobData(context, id: allJobProfiles.first.id ?? ""); 
     }
     /*try {
       final response = await repo.getJobProfiles();

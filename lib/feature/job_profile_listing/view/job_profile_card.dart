@@ -371,10 +371,12 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             params: profileData,
           );
         } else if (value == "Edit") {
+          print("adminStatus from edit:************ $adminStatus");
+           jobCreateVM.setJobProfileStatus(adminStatus);
           await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
           final profileData = vm.getProfileById;
           vm.setEditProfileEnable(true);
-          jobCreateVM.setJobProfileStatus(adminStatus);
+         
           navigationService
               .navigateToWithParams(RouteList.JobProfileView, params: {
             "profileData": profileData,
@@ -392,25 +394,38 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             value: "Edit",
             child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
           ),
-          PopupMenuItem(
-            value: "Delete",
-            child:
-                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
-          ),
+          if (adminStatus.toUpperCase() == "PENDING")
+            PopupMenuItem(
+              value: "Delete",
+              child:
+                  _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
+            ),
+            if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "ACTIVE")
+          (PopupMenuItem(
+            value: "Inactive",
+            child: _buildRow(
+                Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
+          )),
+          if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "INACTIVE")
+          (PopupMenuItem(
+            value: "Active",
+            child: _buildRow(
+                Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
+          ))
         ];
-        if (activeStatus.toUpperCase() == "ACTIVE") {
+        /*if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "ACTIVE") {
           items.add(PopupMenuItem(
             value: "Inactive",
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
           ));
-        } else if (activeStatus.toUpperCase() == "INACTIVE") {
+        } else if (adminStatus.toUpperCase() == "APPROVE" &&activeStatus.toUpperCase() == "INACTIVE") {
           items.add(PopupMenuItem(
             value: "Active",
             child: _buildRow(
                 Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
           ));
-        }
+        }*/
         return items;
       },
     );

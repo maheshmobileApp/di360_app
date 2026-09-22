@@ -170,7 +170,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   void setFromDate(DateTime date) {
     fromDateController.text =
-         DateFormatUtils.formatMMDDYYYY(date.toIso8601String());
+        DateFormatUtils.formatMMDDYYYY(date.toIso8601String());
     notifyListeners();
   }
 
@@ -178,7 +178,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? jobProfileStatus;
 
   void setJobProfileStatus(String val) {
-    print("******************$val");
     jobProfileStatus = val;
     notifyListeners();
   }
@@ -975,8 +974,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> updateJobProfile(
-      BuildContext context, bool isDraft, String jobProfileId,
-      {String? status}) async {
+    BuildContext context,
+    bool isDraft,
+    String jobProfileId,
+  ) async {
+    print("**************//******************$jobProfileStatus");
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {};
 
@@ -1063,7 +1065,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         "availabilityOption": selectedAvailabilityType,
         "current_ctc": "100000",
         "post_anonymously": isPostAnonymous,
-        "admin_status": status == "APPROVE" ? "APPROVE" : "PENDING",
+        "admin_status": jobProfileStatus == "APPROVE" ? "APPROVE" : "PENDING",
         "jobexperiences": experiences
             .map((e) => {
                   "company_name": e.companyName,
@@ -1136,6 +1138,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   setTheProfileUpdateData(JobProfiles? profile) {
+    jobProfileStatus = profile?.adminStatus;
     mobileNumberController.text = profile?.mobileNumber ?? "";
     togglePostAnonymous(profile?.postAnonymously ?? false);
     emailAddressController.text = profile?.emailAddress ?? "";
@@ -1162,7 +1165,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     experiences = profile?.jobExperiences ?? [];
     aphraRegistrationNumberController.text = profile?.aphraNumber ?? "";
     educations = profile?.educations ?? [];
-
     isWillingToTravel = profile?.willingToTravel ?? false;
     DistanceController.text = profile?.travelDistance ?? "";
     serverProfileFile = profile?.profileImage.isNotEmpty == true
@@ -1193,9 +1195,10 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         .join(", ");
     //isJoiningImmediate = profile?.i
 
-    aboutMeController.text = htmlParser.parse( profile?.aboutYourself ?? "").body?.text ?? '';
-    fromDateController.text = profile?.fromDate.isNotEmpty == true
-        ? DateFormatUtils.formatMMDDYYYY(profile?.fromDate.first ?? "")
+    aboutMeController.text =
+        htmlParser.parse(profile?.aboutYourself ?? "").body?.text ?? '';
+    fromDateController.text = profile?.fromDate?.isNotEmpty == true
+        ? DateFormatUtils.formatMMDDYYYY(profile?.fromDate ?? "")
         : "";
 
     notifyListeners();
@@ -1304,7 +1307,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         availabilityDay: selectedDays,
         availabilityDate:
             availabilityDates.map((d) => d.toIso8601String()).toList(),
-        fromDate: joiningDate != null ? [joiningDate!.toIso8601String()] : [],
+        fromDate: joiningDate != null
+            ? DateFormatUtils.formatMMDDYYYY(joiningDate!.toIso8601String())
+            : "",
         unavailabilityDate: [],
         jobHirings: []);
 
