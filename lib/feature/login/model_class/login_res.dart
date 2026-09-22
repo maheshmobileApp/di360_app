@@ -148,6 +148,9 @@ class LoginApi {
         ? new SubscriptionPermissions.fromJson(json['subscription_permissions'])
         : null;
     subType = json['sub_type'];
+    professiontype = json['professionType'] != null
+        ? new Professiontype.fromJson(json['professionType'])
+        : null;
     ownerId = json['owner_id'];
     expiresAt = json['expiresAt'];
     subscription = json['subscription'] != null
