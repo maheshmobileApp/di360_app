@@ -1,12 +1,14 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/get_profile_by_id_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_talent_messages_response.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/request_count_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/talent_messages_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_all_talents_request_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_my_enquiry_job_data.dart';
+import 'package:di360_flutter/feature/job_profile_listing/quary/get_profile_by_id.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_profile_enquiry_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_request_count_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_deleted_quary.dart';
@@ -28,7 +30,7 @@ class JobProfileRepoImpl implements JobProfileRepository {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final response = await http.query(
       jobProfileListing,
-      variables: {"dental_professional_id": userId},
+      variables: {"professionalId": userId},
     );
     final result = TalentsResData.fromJson(response);
     return result.jobProfiles ?? [];
@@ -62,6 +64,7 @@ class JobProfileRepoImpl implements JobProfileRepository {
         "talent_id": {"_eq": jobProfileId}
       }
     };
+
     final response =
         await http.query(getMyEnquiryJobDataQuery, variables: variables);
     final output = JobProfileEnquiriesResList.fromJson(response);
@@ -79,8 +82,6 @@ class JobProfileRepoImpl implements JobProfileRepository {
       },
       "limit": 20
     };
-
-    print("******************$variables");
 
     final response =
         await http.query(getProfileEnquiryQuery, variables: variables);
@@ -122,18 +123,23 @@ class JobProfileRepoImpl implements JobProfileRepository {
     final res = await http.mutation(deleteTalentMessageQuery, variables);
     return res;
   }
-  
 
   @override
   Future<dynamic> sendTalentMessage(variables) async {
     final res = await http.mutation(sendTalentMessageQuery, variables);
     return res;
   }
-  
 
   @override
   Future<dynamic> updateTalentMessage(variables) async {
     final res = await http.mutation(updateTalentMessageQuery, variables);
     return res;
+  }
+
+  @override
+  Future<getProfileByIdData> getProfileById(String id) async {
+    final variables = {"id": id};
+    final res = await http.query(getProfileByIdQuery, variables : variables);
+    return getProfileByIdData.fromJson(res);
   }
 }

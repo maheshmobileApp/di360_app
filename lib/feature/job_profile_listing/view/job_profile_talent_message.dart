@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
-import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -17,21 +16,24 @@ class JobProfileTalentMessage extends StatefulWidget with BaseContextHelpers {
   final String? id;
   final String? dentalSupplierId;
   final String? dentalPracticeId;
+  final String? dentalProfessionalId;
   final String? talentId;
   final String? profilePic;
   final String? userId;
   final String? talentEnquiryId;
+  final String? type;
 
-  const JobProfileTalentMessage(
-      {super.key,
-      this.id,
-      this.dentalSupplierId,
-      this.dentalPracticeId,
-      this.talentId,
-      this.profilePic,
-      this.userId,
-      this.talentEnquiryId
-      });
+  const JobProfileTalentMessage({
+    super.key,
+    this.id,
+    this.dentalSupplierId,
+    this.dentalPracticeId,
+    this.dentalProfessionalId,
+    this.talentId,
+    this.profilePic,
+    this.userId,
+    this.talentEnquiryId,
+  this.type});
 
   @override
   State<JobProfileTalentMessage> createState() =>
@@ -45,7 +47,7 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
   void initState() {
     super.initState();
     final vm = Provider.of<JobProfileListingViewModel>(context, listen: false);
-    vm.fetchTalentMessages(widget.id ?? "", widget.talentEnquiryId?? "");
+    vm.fetchTalentMessages(widget.id ?? "", widget.talentEnquiryId ?? "");
   }
 
   String formatDateTime(String? time) {
@@ -144,10 +146,9 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
                                             context,
                                             vm,
                                             msg.id ?? "",
-                                            widget.id?? "",
+                                            widget.id ?? "",
                                             vm.messageController.text,
-                                            msg.message ?? ""
-                                            ),
+                                            msg.message ?? ""),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
@@ -215,10 +216,12 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
                         icon: const Icon(Icons.send),
                         onPressed: () async {
                           final text = vm.messageController.text.trim();
-                          if (text.isNotEmpty)  {
+                          if (text.isNotEmpty) {
                             if (vm.editMessage) {
-                              await vm.updateApplicantMessage(context, 
-                                  widget.id?? "", widget.talentEnquiryId?? "");
+                              await vm.updateApplicantMessage(
+                                  context,
+                                  widget.id ?? "",
+                                  widget.talentEnquiryId ?? "");
                               vm.messageController.clear();
                             } else {
                               await vm.sendApplicantMessage(
@@ -226,11 +229,17 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
                                   widget.talentId ?? "",
                                   widget.dentalSupplierId ??
                                       widget.dentalPracticeId ??
+                                      widget.dentalProfessionalId ??
                                       "",
-                                  widget.dentalSupplierId != ""
+                                  widget.dentalSupplierId?.isNotEmpty == true
                                       ? UserRole.supplier.value
-                                      : UserRole.practice.value,
-                                  widget.id ?? "",widget.talentEnquiryId?? "");
+                                      : widget.dentalPracticeId?.isNotEmpty ==
+                                              true
+                                          ? UserRole.practice.value
+                                          : UserRole.professional.value,
+                                  widget.id ?? "",
+                                  widget.talentEnquiryId ?? "",
+                                  widget.type ?? "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
@@ -258,12 +267,13 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
   }
 
   Widget _MessegeMenu(
-      BuildContext context,
-      JobProfileListingViewModel vm,
-      String messageId,
-      String id,
-      String message,
-      String oldMessage,) {
+    BuildContext context,
+    JobProfileListingViewModel vm,
+    String messageId,
+    String id,
+    String message,
+    String oldMessage,
+  ) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -271,7 +281,8 @@ class _JobProfileTalentMessageState extends State<JobProfileTalentMessage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-          vm.deleteapplicantMessage(context, messageId, id, widget.talentEnquiryId?? "");
+          vm.deleteapplicantMessage(
+              context, messageId, id, widget.talentEnquiryId ?? "");
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(messageId, vm.messageController.text);

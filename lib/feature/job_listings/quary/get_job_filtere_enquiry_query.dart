@@ -25,7 +25,7 @@ const String getFilteredEnquiryQuery =
       profile_image
       full_name
       upload_resume
-      profession_type
+      professionType
       location
       country
       __typename

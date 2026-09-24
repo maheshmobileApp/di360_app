@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/repositorys/add_profess_director_repository_impl.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
@@ -233,7 +234,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "email": emailController.text,
         "address": addressController.text,
         "alt_phone": alternateNumberController.text,
-        "profession_type": addDirectorVM.selectedBusineestype?.name,
+        "professionType": addDirectorVM.selectedBusineestype,
         "description": descController.text,
         "directory_category_id": addDirectorVM.selectedBusineestype?.id,
         "directory_business_type_id": addDirectorVM
@@ -283,10 +284,14 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       goToNextStep();
       scaffoldMessenger('Add BasicInfo successfully');
       await updateViewProfile(
-          addDirectorVM.selectedBusineestype?.name ?? '',
+          addDirectorVM.selectedBusineestype,
           profile == null
               ? addDirectorVM.getBasicInfoData.first.profileImage
-              : profile);
+              : profile,
+          '$_countryCode${mobileNumberCntr.text}',
+          addDirectorVM.getDirectoryBusinessTypeId(
+                  addDirectorVM.selectedBusineestype?.id) ??
+              "");
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -313,8 +318,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       "email": emailController.text,
       "address": addressController.text,
       "alt_phone": alternateNumberController.text,
-      "profession_type": addDirectorVM.selectedBusineestype?.name,
-      "professiontype": addDirectorVM.selectedBusineestype,
+      "professionType": addDirectorVM.selectedBusineestype,
       "description": descController.text,
       "directory_category_id": addDirectorVM.selectedBusineestype?.id,
       "directory_business_type_id": addDirectorVM
@@ -348,10 +352,14 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       goToNextStep();
       scaffoldMessenger('Updated Basic Information successfully');
       await updateViewProfile(
-          addDirectorVM.selectedBusineestype?.name ?? '',
+          addDirectorVM.selectedBusineestype,
           profile == null
               ? addDirectorVM.getBasicInfoData.first.profileImage
-              : profile);
+              : profile,
+          '$_countryCode${mobileNumberCntr.text}',
+          addDirectorVM.getDirectoryBusinessTypeId(
+                  addDirectorVM.selectedBusineestype?.id) ??
+              "");
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -360,25 +368,32 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   Future<void> updateRecord(BuildContext context) async {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    print("**************update record calling");
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    var profile = addDirectorVM.logoFile == null
+        ? null
+        : await repository.http.uploadImage(addDirectorVM.logoFile?.path);
 
     Map<String, dynamic> requestData = {"id": userId};
     requestData["changes"] = {
       "name": nameController.text,
       "phone": '$_countryCode${mobileNumberCntr.text}',
       "address": addressController.text,
-      "profession_type": addDirectorVM.selectedBusineestype?.name,
-      "professiontype": addDirectorVM.selectedBusineestype,
-      "profile_image": {
-        "url": "assets/images/social/male_avatar.png",
-        "type": "STATIC"
-      }
+      "professionType": addDirectorVM.selectedBusineestype,
+      "profile_image": profile == null
+          ? addDirectorVM.getBasicInfoData.first.profileImage
+          : profile
     };
 
     final res = await repository.updateRecord(requestData);
     if (res != null) {
-      print(res);
+      final String logoUrl = profile?['url']?.toString() ??
+          addDirectorVM.getBasicInfoData.first.profileImage?.url ??
+          '';
+
+      await LocalStorage.setStringVal(
+        LocalStorageConst.profilePic,
+        logoUrl,
+      );
     }
   }
 
@@ -403,14 +418,17 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     }
   }
 
-  Future<void> updateViewProfile(String profesType, dynamic prfImg) async {
+  Future<void> updateViewProfile(DirectoryCategories? selectedBusineestype,
+      dynamic prfImg, String phone, String id) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     await repository.updateProfesViewProfile({
       "id": userId,
       "changes": {
         "name": nameController.text,
+        "phone": phone,
         "address": addressController.text,
-        "profession_type": profesType,
+        "professionType": selectedBusineestype,
+        "directory_business_type_id": id,
         "profile_image": prfImg
       }
     });
@@ -441,7 +459,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == data.professiontype?.name,
+      (cat) => cat.name == data.professionType?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -468,7 +486,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   assignViewProfileData(BuildContext context) async {
     final viewProfileVM = context.read<ViewProfileViewModel>();
-    await viewProfileVM.getTheViewProfileData();
+    await viewProfileVM.getTheViewProfileData(context);
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     final data = viewProfileVM.professionalViewProfileData;
 

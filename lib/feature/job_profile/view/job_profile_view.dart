@@ -178,6 +178,7 @@ class _JobProfileViewState extends State<JobProfileView> {
               ),
             ),
           if (!isFirstStep) const SizedBox(width: 16),
+          if (!jobProfileListVM.editProfileEnable)
           Expanded(
             child: CustomRoundedButton(
               fontSize: 12,
@@ -187,7 +188,7 @@ class _JobProfileViewState extends State<JobProfileView> {
                 if (!mounted) return;
                 (jobProfileListVM.editProfileEnable)
                     ? await jobProfileVM.updateJobProfile(
-                        context, true, jobProfileListVM.jobProfileId ?? "")
+                        context, true, jobProfileListVM.jobProfileId ?? "",)
                     : await jobProfileVM.createJobProfile(context, true);
                 if (!mounted) return;
                 await jobProfileListVM.fetchJobProfiles(context);
@@ -218,7 +219,7 @@ class _JobProfileViewState extends State<JobProfileView> {
                     (jobProfileListVM.editProfileEnable)
                         ? await jobProfileVM.updateJobProfile(
                             context, false, jobProfileListVM.jobProfileId ?? "",
-                            status: jobProfileVM.jobProfileStatus)
+                            )
                         : await jobProfileVM.createJobProfile(context, false);
                     if (!mounted) return;
                     await jobProfileListVM.fetchJobProfiles(context);

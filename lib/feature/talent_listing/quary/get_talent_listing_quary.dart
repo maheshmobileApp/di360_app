@@ -1,5 +1,4 @@
-const String getTalentListingQuery = r'''
-query getHiringTalentList($where: jobhirings_bool_exp, $limit: Int, $offset: Int) {
+const String getTalentListingQuery = r'''query getFilteredHiringRequests($where: jobhirings_bool_exp, $limit: Int, $offset: Int) {
   jobhirings(
     where: $where
     limit: $limit
@@ -60,6 +59,5 @@ query getHiringTalentList($where: jobhirings_bool_exp, $limit: Int, $offset: Int
     __typename
   }
 }
-
 ''';
 

@@ -17,6 +17,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
+import 'package:di360_flutter/utils/permissions_enum.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -59,9 +60,11 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   String? logoUrl;
   String? userName;
   String? gender;
+  String? directoryBusinessTypeId;
+  String? directoryExistsId;
 
   DentalSuppliersByPk? supplierViewProfileData;
-  DentalSuppliersByPk? practiceViewProfileData;
+  DentalPracticesByPk? practiceViewProfileData;
   DentalProfessionalsByPk? professionalViewProfileData;
   File? logoFile;
 
@@ -96,6 +99,16 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  void setDirectoryBusinessTypeId(String value) {
+    directoryBusinessTypeId = value;
+    notifyListeners();
+  }
+
+  void setDirectoryExists(String id) {
+    directoryExistsId = id;
+    notifyListeners();
+  }
+
   String? selectedSalutation;
   String? selectedGender;
   DateTime? scheduleDate;
@@ -103,55 +116,73 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   void setScheduleDate(DateTime date) {
     scheduleDate = date;
     dateOfBirthController.text =
-        di360_date_utils.DateFormatUtils.formatToYyyyMmDd(date);
+        di360_date_utils.DateFormatUtils.formatMMDDYYYY(date.toString());
     notifyListeners();
   }
 
   void setSelectedBusineestype(DirectoryCategories? emp) {
+    print("******************$emp");
     selectedBusineestype = emp;
     notifyListeners();
   }
 
-  Future<void> getTheViewProfileData() async {
+  Future<void> getTheViewProfileData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     if (userType == UserRole.practice.value) {
-      await getPracticeViewProfileData();
+      await getPracticeViewProfileData(context);
     } else if (userType == UserRole.professional.value) {
-      await getProfessionalViewProfileData();
+      await getProfessionalViewProfileData(context);
     } else {
-      await getSuppilerViewProfileData();
+      await getSuppilerViewProfileData(context);
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
-  Future<void> getSuppilerViewProfileData() async {
+  Future<void> getSuppilerViewProfileData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final res = await repo.getViewProfileData();
     if (res != null) {
       supplierViewProfileData = res;
-      loadViewProfileData(supplierViewProfileData);
+      loadSupplierViewProfileData(supplierViewProfileData);
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
-  Future<void> getPracticeViewProfileData() async {
+  Future<void> getPracticeViewProfileData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
     final res = await repo.getPracticeViewProfileData();
     if (res != null) {
-      practiceViewProfileData = res;
-      loadViewProfileData(practiceViewProfileData);
+      practiceViewProfileData = res.dentalPracticesByPk;
+      loadPracticeViewProfileData(practiceViewProfileData);
     }
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 
-  Future<void> getProfessionalViewProfileData() async {
+  Future<void> getProfessionalViewProfileData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
     final res = await repo.getProfessionalViewProfile();
     if (res != null) {
       professionalViewProfileData = res;
       loadProfessionalViewProfileData(professionalViewProfileData);
     }
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 
-  void loadViewProfileData(DentalSuppliersByPk? viewProfile) async {
+  void loadSupplierViewProfileData(DentalSuppliersByPk? viewProfile) async {
+    print("********logo${viewProfile?.logo?.url}");
+    setDirectoryBusinessTypeId(viewProfile?.directoryBusinessTypeId ?? "");
+    setDirectoryExists((viewProfile?.directories?.isNotEmpty == true)
+        ? viewProfile?.directories?.first.id ?? ""
+        : "");
     nameController.text = viewProfile?.name ?? "";
     emailController.text = viewProfile?.email ?? "";
     final phone = viewProfile?.phone ?? "";
@@ -167,7 +198,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     businessNameController.text = viewProfile?.businessName ?? "";
     businessEmailController.text = viewProfile?.businessEmail ?? "";
-    businessPhoneNoController.text = viewProfile?.phone ?? "";
+    businessPhoneNoController.text = viewProfile?.mobileNumber ?? "";
     websiteUrlController.text = viewProfile?.websiteLink ?? "";
     abnNumberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
@@ -184,27 +215,74 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     landmarkController.text = viewProfile?.landMark ?? "";
     countryController.text = viewProfile?.country ?? "";
     stateController.text = viewProfile?.state ?? "";
-    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
-    final allCategories = directoryBusinessTypes
-        .expand((bt) => bt.directoryCategories ?? [])
-        .toList();
-    final businessType = allCategories.firstWhere(
-      (cat) => cat.name == viewProfile?.professiontype?.name,
-      orElse: () => null,
-    );
-    if (businessType != null) {
-      setSelectedBusineestype(businessType);
-    }
+    zipCodeController.text =
+        (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
+    setBusinessType(viewProfile?.professionType?.name);
     logoUrl = viewProfile?.logo?.url ?? "";
+    logoFile = null;
     userName = viewProfile?.businessName ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
-    //await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
+    notifyListeners();
+  }
+
+  void loadPracticeViewProfileData(DentalPracticesByPk? viewProfile) async {
+        print("********practice-logo${viewProfile?.logo?.url}");
+
+    setDirectoryBusinessTypeId(viewProfile?.directoryBusinessTypeId ?? "");
+    setDirectoryExists((viewProfile?.directories?.isNotEmpty == true)
+        ? viewProfile?.directories?.first.id ?? ""
+        : "");
+    nameController.text = viewProfile?.name ?? "";
+    emailController.text = viewProfile?.email ?? "";
+    final phone = viewProfile?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      phoneNoController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      phoneNoController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    businessNameController.text = viewProfile?.businessName ?? "";
+    businessEmailController.text = viewProfile?.businessEmail ?? "";
+    businessPhoneNoController.text = viewProfile?.mobileNumber ?? "";
+    websiteUrlController.text = viewProfile?.websiteLink ?? "";
+    abnNumberController.text = viewProfile?.abnNumber ?? "";
+    firstNameController.text =
+        viewProfile?.firstName ?? viewProfile?.name ?? "";
+    middleNameController.text = viewProfile?.middleName ?? "";
+    lastNameController.text = viewProfile?.lastName ?? "";
+    faxNumberController.text = viewProfile?.faxNumber ?? "";
+    alternateEmailController.text = viewProfile?.altEmail ?? "";
+    alternatePhoneNoController.text = viewProfile?.altPhone ?? "";
+    addressController.text = viewProfile?.address ?? "";
+    addressLineOneController.text = viewProfile?.addressLineOne ?? "";
+    addressLineTwoController.text = viewProfile?.addressLineTwo ?? "";
+    cityController.text = viewProfile?.city ?? "";
+    landmarkController.text = viewProfile?.landMark ?? "";
+    countryController.text = viewProfile?.country ?? "";
+    stateController.text = viewProfile?.state ?? "";
+    zipCodeController.text =
+        (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
+    setBusinessType(viewProfile?.professionType?.name);
+    logoUrl = viewProfile?.logo?.url ?? "";
+    logoFile = null;
+    userName = viewProfile?.businessName ?? "";
+    await LocalStorage.setStringVal(
+        LocalStorageConst.profilePic, logoUrl ?? '');
     notifyListeners();
   }
 
   void loadProfessionalViewProfileData(
       DentalProfessionalsByPk? viewProfile) async {
+    print("postcode**************${viewProfile?.zipcode ?? ""}");
+    setDirectoryBusinessTypeId(viewProfile?.directoryBusinessTypeId ?? "");
+    setDirectoryExists((viewProfile?.directories?.isNotEmpty == true)
+        ? viewProfile?.directories?.first.id ?? ""
+        : "");
     nameController.text = viewProfile?.name ?? "";
     aboutUsController.text = "";
     emailController.text = viewProfile?.email ?? "";
@@ -231,11 +309,12 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     landmarkController.text = viewProfile?.landMark ?? "";
     countryController.text = viewProfile?.country ?? "";
     stateController.text = viewProfile?.state ?? "";
-    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
+    zipCodeController.text =
+        (viewProfile?.zipcode != 0) ? '${viewProfile?.zipcode ?? ""}' : "";
     if (viewProfile?.dateOfBirth != null) {
       final date = DateTime.parse(viewProfile?.dateOfBirth ?? "");
       dateOfBirthController.text =
-          "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+          di360_date_utils.DateFormatUtils.formatMMDDYYYY(date.toString());
     } else {
       dateOfBirthController.text = "";
     }
@@ -246,8 +325,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         ? viewProfile!.gender![0].toUpperCase() +
             viewProfile.gender!.substring(1).toLowerCase()
         : null;
-    aphraNumberController.text =
-        viewProfile?.proDetailsAphraRegistrationNumber ?? '';
+    aphraNumberController.text = viewProfile?.aphraRegistrationNumber ?? '';
     final allCategories = directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
@@ -259,12 +337,12 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       setSelectedBusineestype(businessType);
     }
     logoUrl = viewProfile?.profileImage?.url ?? "";
+    logoFile = null;
     userName = viewProfile?.name ?? "";
     gender = viewProfile?.gender ?? "";
 
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
-    //await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
     notifyListeners();
   }
 
@@ -277,23 +355,33 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> pickLogoImage(ImageSource source, BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final id = await LocalStorage.getStringVal(LocalStorageConst.directoryId);
+
     if (pickedFile != null) {
       logoFile = File(pickedFile.path);
       navigationService.goBack();
-      /*type == UserRole.professional.value
-          ? uploadProfessLogo(context)
-          : uploadBussinessLogo(context);*/
+      var logo = logoFile == null
+          ? null
+          : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+      type == UserRole.professional.value
+          ? await uploadProfessLogo(context, logo)
+          : await uploadBussinessLogo(context, logo);
+      if (id != "") {
+        await updateDirectoryLogo(context, logo);
+      }
+      logoUrl = logo?['url'] ?? "";
+      await LocalStorage.setStringVal(LocalStorageConst.profilePic, logo?['url'] ?? "");
+      Loaders.circularHideLoader(context);
       notifyListeners();
     }
   }
 
-  Future<void> uploadBussinessLogo(BuildContext context) async {
+  Future<void> uploadBussinessLogo(BuildContext context, dynamic logo) async {
     Loaders.circularShowLoader(context);
-    var logo = logoFile == null
-        ? null
-        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -313,17 +401,29 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> uploadProfessLogo(BuildContext context) async {
+  Future<void> updateDirectoryLogo(BuildContext context, dynamic logo) async {
     Loaders.circularShowLoader(context);
-    var logo = logoFile == null
-        ? null
-        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+    final id = await LocalStorage.getStringVal(LocalStorageConst.directoryId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    final variables = {
+      "id": id,
+      "dirObj": type == UserRole.professional.value ? {"profile_image": logo }: {"logo": logo}
+    };
+
+    await repo.updateDirectoryLogo(variables);
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> uploadProfessLogo(BuildContext context, dynamic logo) async {
+    Loaders.circularShowLoader(context);
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final result = await repo.uploadLogo({
       "id": id,
       "userImage": {
         "profile_image":
-            logo ?? professionalViewProfileData?.profileImage?.toJson()
+            logo
       }
     });
     Loaders.circularHideLoader(context);
@@ -340,9 +440,17 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final profileCompleted =
         await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
-    type == UserRole.professional.value
-        ? await uploadProfessLogo(context)
-        : await uploadBussinessLogo(context);
+    final subscriptionStatus = await LocalStorage.getStringVal(
+      LocalStorageConst.subscriptionStatus,
+    );
+
+    final permissionsList = await LocalStorage.getStringList(
+      LocalStorageConst.permissions,
+    );
+
+    var logo = logoFile == null
+        ? null
+        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
     Map<String, dynamic> requestData = {"id": userId};
     if (type == UserRole.practice.value) {
       requestData["practiceObj"] = {
@@ -368,9 +476,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "fax_number": faxNumberController.text,
         "alt_email": alternateEmailController.text,
         "alt_phone": alternatePhoneNoController.text,
-        "profession_type": selectedBusineestype?.name,
-        'professiontype': selectedBusineestype,
-        "profile_completed": true
+        'professionType': selectedBusineestype,
+        "profile_completed": true,
+        "directory_business_type_id": directoryBusinessTypeId,
       };
     } else if (type == UserRole.professional.value) {
       requestData["_set"] = {
@@ -385,8 +493,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "state": stateController.text,
         "country": countryController.text,
         "zipcode": int.tryParse(zipCodeController.text),
-        "profession_type": selectedBusineestype?.name,
-        "pro_details_aphra_registration_number": aphraNumberController.text,
+        "aphra_registration_number": aphraNumberController.text,
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "middle_name": middleNameController.text,
@@ -394,7 +501,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "date_of_birth": dateOfBirthController.text,
         "salutation": selectedSalutation,
         "profile_completed": true,
-        'professiontype': selectedBusineestype,
+        'professionType': selectedBusineestype,
+        "directory_business_type_id":
+            directoryBusinessTypeId, //"75a5e018-7763-47f7-9743-dbb233917e02",
+        "profile_image": logo
       };
     } else {
       requestData["supplierObj"] = {
@@ -420,9 +530,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "fax_number": faxNumberController.text,
         "alt_email": alternateEmailController.text,
         "alt_phone": alternatePhoneNoController.text,
-        "profession_type": selectedBusineestype?.name,
         "profile_completed": true,
-        'professiontype': selectedBusineestype,
+        'professionType': selectedBusineestype,
+        "directory_business_type_id": directoryBusinessTypeId,
       };
     }
 
@@ -436,19 +546,29 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
     if (result[responseKey]?['id'] != null || result[responseKey] != null) {
       type == UserRole.practice.value
-          ? await getPracticeViewProfileData()
+          ? await getPracticeViewProfileData(context)
           : type == UserRole.professional.value
-              ? await getProfessionalViewProfileData()
-              : await getSuppilerViewProfileData();
-      profileCompleted == false
+              ? await getProfessionalViewProfileData(context)
+              : await getSuppilerViewProfileData(context);
+      //Directory Flow
+      (directoryExistsId != "")
+          ? await directoryUpdateRecord(directoryExistsId ?? "", logo)
+          : await directoryInsertRecord(logo);
+
+      (profileCompleted == false &&
+              (subscriptionStatus != "EXPIRED" &&
+                  permissionsList
+                      .contains(ModulePermission.directoryModule.value)))
           ? showAlertMessage(context,
               'Great Job! 🎉\n\nYou’ve completed your profile. \n\nWant to continue and complete your directory for better visibility?',
-              onBack: () => directorNavigationHandle(context),
+              onBack: () {
+                directorNavigationHandle(context);
+              },
               onCancel: () => navigationService
                   .pushNamedAndRemoveUntil(RouteList.dashBoard),
               yes: "Yes, Let's Go",
               no: "Maybe Later")
-          : navigationService.goBack();
+          : navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
       if (profileCompleted == false) await insertDirectories();
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
@@ -477,7 +597,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "email": emailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "address": addressController.text,
-                  "profession_type": selectedBusineestype?.name,
+                  "professionType": selectedBusineestype,
                   "type": type,
                   "dental_professional_id": userId,
                   "profile_image":
@@ -495,7 +615,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "business_email": businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
-                  "profession_type": selectedBusineestype?.name,
+                  "professionType": selectedBusineestype,
                   "abn_acn": abnNumberController.text,
                   "address": addressController.text,
                   "type": type,
@@ -519,7 +639,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               "email": emailController.text,
               "phone": '$phoneCode${phoneNoController.text}',
               "address": addressController.text,
-              "profession_type": selectedBusineestype?.name,
+              "professionType": selectedBusineestype,
               "type": type,
               "dental_professional_id": userId,
               "profile_image":
@@ -539,7 +659,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                       : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
-                  "profession_type": selectedBusineestype?.name,
+                  "professionType": selectedBusineestype,
                   "abn_acn": abnNumberController.text,
                   "address": addressController.text,
                   "type": type,
@@ -557,7 +677,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                       : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
-                  "profession_type": selectedBusineestype?.name,
+                  "professionType": selectedBusineestype,
                   "abn_acn": abnNumberController.text,
                   "address": addressController.text,
                   "type": type,
@@ -654,9 +774,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
         "state": stateController.text,
-        "professionType": selectedBusineestype?.name,
+        "professionType": selectedBusineestype,
         "postal_code": "",
-        "professiontype": selectedBusineestype,
       };
     } else if (type == UserRole.professional.value) {
       requestData["changes"] = {
@@ -667,10 +786,87 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "state": stateController.text,
         "professionType": selectedBusineestype?.name,
         "postal_code": "",
-        "professiontype": selectedBusineestype,
       };
     }
     final res = await repo.updateClient(requestData);
+    if (res != null) {
+      print(res);
+    }
+  }
+
+  Future<void> directoryUpdateRecord(
+      String directoryId, dynamic profileImage) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    Map<String, dynamic> requestData = {"id": directoryId};
+    if (type == UserRole.practice.value || type == UserRole.supplier.value) {
+      requestData["changes"] = {
+        "type": type,
+        "business_name": businessNameController.text,
+        "business_email": businessEmailController.text,
+        "name": nameController.text,
+        "email": emailController.text,
+        "abn_acn": abnNumberController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "mobile_number": businessPhoneNoController.text,
+        "professionType": selectedBusineestype,
+        "address": addressController.text,
+        if (type == UserRole.practice.value) "dental_practice_id": userId,
+        if (type == UserRole.supplier.value) "dental_supplier_id": userId
+      };
+    } else if (type == UserRole.professional.value) {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "address": addressController.text,
+        "professionType": selectedBusineestype,
+        "type": type,
+        "dental_professional_id": userId,
+        "profile_image": profileImage
+      };
+    }
+    final res = await repo.directoryUpdateRecord(requestData);
+    if (res != null) {
+      print(res);
+    }
+  }
+
+  Future<void> directoryInsertRecord(dynamic profileImage) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    Map<String, dynamic> requestData = {};
+    if (type == UserRole.practice.value || type == UserRole.supplier.value) {
+      requestData["object"] = {
+        "type": type,
+        "business_name": businessNameController.text,
+        "business_email": businessEmailController.text,
+        "name": nameController.text,
+        "email": emailController.text,
+        "abn_acn": abnNumberController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "mobile_number": businessPhoneNoController.text,
+        "professionType": selectedBusineestype,
+        "logo" : profileImage,
+        "address": addressController.text,
+        if (type == UserRole.practice.value) "dental_practice_id": userId,
+        if (type == UserRole.supplier.value) "dental_supplier_id": userId,
+      };
+    } else if (type == UserRole.professional.value) {
+      requestData["object"] = {
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "address": addressController.text,
+        "professionType": selectedBusineestype,
+        "type": type,
+        "dental_professional_id": userId,
+        "profile_image": profileImage
+      };
+    }
+    final res = await repo.directoryInsertRecord(requestData);
     if (res != null) {
       print(res);
     }
@@ -686,6 +882,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         : type == UserRole.practice.value
             ? practiceViewProfileData?.directories?.firstOrNull?.id
             : supplierViewProfileData?.directories?.firstOrNull?.id;
+    var logo = logoFile == null
+        ? null
+        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
 
     if (directoryId == null || directoryId.isEmpty) {
       print("updateRecord: no directory id found, skipping");
@@ -701,8 +900,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "business_email": businessEmailController.text,
         "phone": '$countryCode${phoneNoController.text}',
         "mobile_number": businessPhoneNoController.text,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "abn_acn": abnNumberController.text,
         "address": addressController.text,
         "type": type,
@@ -716,8 +914,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "business_email": businessEmailController.text,
         "phone": '$countryCode${phoneNoController.text}',
         "mobile_number": businessPhoneNoController.text,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "abn_acn": abnNumberController.text,
         "address": addressController.text,
         "type": type,
@@ -729,20 +926,41 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
         "address": addressController.text,
-        "profession_type": selectedBusineestype?.name,
-        "professiontype": selectedBusineestype,
+        "professionType": selectedBusineestype,
         "type": type,
         "dental_professional_id": userId,
-        "profile_image": {
-          "url": "assets/images/social/male_avatar.png",
-          "type": "STATIC"
-        }
+        "profile_image": logo
       };
     }
 
     final res = await repo.updateRecord(requestData);
     if (res != null) {
       print(res);
+    }
+  }
+
+  void setBusinessType(String? professionName) {
+    final name = professionName?.trim().toLowerCase();
+
+    if (name == null || name.isEmpty) {
+      setSelectedBusineestype(null);
+      return;
+    }
+
+    final allCategories = directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+
+    final matchingCategories = allCategories
+        .where(
+          (cat) => (cat.name ?? '').trim().toLowerCase() == name,
+        )
+        .toList();
+
+    if (matchingCategories.length == 1) {
+      setSelectedBusineestype(matchingCategories.first);
+    } else {
+      setSelectedBusineestype(null);
     }
   }
 
@@ -759,7 +977,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     firstNameController.clear();
     middleNameController.clear();
     lastNameController.clear();
-    businessPhoneNoController.clear();
     faxNumberController.clear();
     alternateEmailController.clear();
     alternatePhoneNoController.clear();

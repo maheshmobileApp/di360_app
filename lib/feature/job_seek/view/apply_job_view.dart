@@ -60,10 +60,10 @@ class _ApplyJobsViewState extends State<ApplyJobsView> with ValidationMixins {
   }
   void _submitApplication() async {
     if (_formKey.currentState!.validate()) {
-      /*if (_resumeFile == null) {
+      if (_resumeFile == null) {
         scaffoldMessenger('Please upload your resume');
         return;
-      }*/
+      }
       final dentalProfessionalId =
           await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -167,7 +167,12 @@ class _ApplyJobsViewState extends State<ApplyJobsView> with ValidationMixins {
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               focusNode: _emailFocus,
-              validator: validateEmail,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter your email';
+                }
+                return validateEmail(value);
+              },
             ),
             SizedBox(height: 16),
             InputTextField(

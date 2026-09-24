@@ -121,7 +121,7 @@ class HomeViewModel extends ChangeNotifier {
     final businessName =
         await LocalStorage.getStringVal(LocalStorageConst.businessName);
     final user_id =
-        await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+        await LocalStorage.getStringVal(LocalStorageConst.userId);
     this.userName = name;
     this.subSupplierName = subType == UserRole.subSupplier.value ? name : "";
     this.profileName =

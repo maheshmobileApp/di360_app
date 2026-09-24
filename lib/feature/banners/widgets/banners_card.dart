@@ -217,7 +217,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           ),*/
 
         // ✅ Delete allowed in PENDING, EXPIRED, REJECTED
-        if (item?.status == 'PENDING' ||
+        /*if (item?.status == 'PENDING' ||
             item?.status == 'EXPIRED' ||
             item?.status == 'DRAFT' ||
             item?.status == 'REJECTED')
@@ -228,7 +228,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
               AppColors.redColor,
               "Delete",
             ),
-          ),
+          ),*/
       ],
 
     );

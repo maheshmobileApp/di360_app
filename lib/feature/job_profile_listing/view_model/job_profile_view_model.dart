@@ -37,7 +37,6 @@ class JobProfileListingViewModel extends ChangeNotifier {
   List<JobProfiles> allJobProfiles = [];
   String? jobProfileId;
   bool editProfileEnable = false;
-  String? jobProfileStatus;
   String? requestType;
 
   void setRequestType(String val) {
@@ -47,13 +46,23 @@ class JobProfileListingViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
+  JobProfiles? getProfileById;
+
+  Future<void> getProfileByIdNew(BuildContext context, String Id) async {
+    Loaders.circularShowLoader(context);
+    final response = await repo.getProfileById(Id);
+    getProfileById = response.jobProfilesByPk;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
   Future<void> fetchJobProfiles(BuildContext context) async {
     isLoading = true;
     final response = await repo.getJobProfiles();
     allJobProfiles = response ?? [];
     if (allJobProfiles.isNotEmpty) {
       setJobProfileId(allJobProfiles.first.id ?? "");
-      getMyEnquiryJobData(context, id: allJobProfiles.first.id ?? "");
+      getMyEnquiryJobData(context, id: allJobProfiles.first.id ?? ""); 
     }
     /*try {
       final response = await repo.getJobProfiles();
@@ -178,6 +187,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.getAllTalentsRequest(variables);
     hiringTalentList = res;
+    print(
+        "***********hiringTalentList length ${hiringTalentList?.jobhirings?.length}");
     await getRequestCount(context);
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -211,9 +222,10 @@ class JobProfileListingViewModel extends ChangeNotifier {
           "_and": [
             {
               "_or": [
-                {
-                  "jobhirings_id": {"_eq": jobId}
-                },
+                if (jobId.isNotEmpty)
+                  {
+                    "jobhirings_id": {"_eq": jobId}
+                  },
                 if (talentEnquiryId.isNotEmpty)
                   {
                     "talent_enquiry_id": {"_eq": talentEnquiryId}
@@ -224,6 +236,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
         },
         "limit": 20
       };
+
+      print("talent message payload $variables");
 
       final res = await repo.fetchTalentMessages(variables);
       if (res.talentsMessage != null) {
@@ -250,7 +264,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateApplicantMessage(BuildContext context, String id, String talentEnquiryId) async {
+  Future<void> updateApplicantMessage(
+      BuildContext context, String id, String talentEnquiryId) async {
     try {
       isLoading = true;
 
@@ -273,8 +288,14 @@ class JobProfileListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> sendApplicantMessage(BuildContext context, String talentId,
-      String receiverId, String receiverType, String jobHiringId, String talentEnquiryId) async {
+  Future<void> sendApplicantMessage(
+      BuildContext context,
+      String talentId,
+      String receiverId,
+      String receiverType,
+      String jobHiringId,
+      String talentEnquiryId,
+      String messageType) async {
     if (messageController.text.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;
@@ -293,9 +314,12 @@ class JobProfileListingViewModel extends ChangeNotifier {
           "sender_type": type,
           "receiver_id": receiverId,
           "receiver_type": receiverType,
-          "jobhirings_id": jobHiringId
+          if (messageType == "") "jobhirings_id": jobHiringId,
+          if (messageType == "enquiry") "talent_enquiry_id": talentEnquiryId
         }
       };
+
+      print("************talentProfileMsgPayload $variables");
 
       final res = await repo.sendTalentMessage(variables);
 
@@ -315,8 +339,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteapplicantMessage(
-      BuildContext context, String messageId, String id, String talentEnquiryId) async {
+  Future<void> deleteapplicantMessage(BuildContext context, String messageId,
+      String id, String talentEnquiryId) async {
     try {
       isLoading = true;
       final variables = {"id": messageId, "deleted_status": true};

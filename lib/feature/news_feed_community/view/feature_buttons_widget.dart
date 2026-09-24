@@ -84,35 +84,44 @@ class FeatureButtonsWidget extends StatelessWidget {
 
                     Loaders.circularHideLoader(context);
                   } else if (index == 3) {
-                    final userCommunityId = await LocalStorage.getStringVal(
-                        LocalStorageConst.communityId);
-                    navigationService
-                        .navigateTo(RouteList.learningHubMasterView);
-                    Loaders.circularShowLoader(context);
-                    context
-                        .read<MarketPlaceLearningHubViewModel>()
-                        .searchBarOpen = false;
-                    context
-                        .read<MarketPlaceLearningHubViewModel>()
-                        .searchController
-                        .text = "";
-                    context.read<NewCourseViewModel>().fetchCourseCategory();
-                    context.read<NewCourseViewModel>().fetchCourseType();
-                    await context
-                        .read<MarketPlaceLearningHubViewModel>()
-                        .getAllLearningHubData(context,
-                            isCommunityLearningHub: true,
-                            communityId: communityId ?? userCommunityId);
-                    Loaders.circularHideLoader(context);
+                    await navigationService
+                        .runOnce(RouteList.learningHubMasterView, () async {
+                      final userCommunityId = await LocalStorage.getStringVal(
+                          LocalStorageConst.communityId);
+                      Loaders.circularShowLoader(context);
+                      context
+                          .read<MarketPlaceLearningHubViewModel>()
+                          .searchBarOpen = false;
+                      context
+                          .read<MarketPlaceLearningHubViewModel>()
+                          .searchController
+                          .text = "";
+                      context.read<NewCourseViewModel>().fetchCourseCategory();
+                      context.read<NewCourseViewModel>().fetchCourseType();
+                      await context
+                          .read<MarketPlaceLearningHubViewModel>()
+                          .getAllLearningHubData(context,
+                              isCommunityLearningHub: true,
+                              communityId: communityId ?? userCommunityId);
+                      Loaders.circularHideLoader(context);
+                      await navigationService
+                          .navigateTo(RouteList.learningHubMasterView);
+                    });
                   } else if (index == 4) {
-                    final userCommunityId = await LocalStorage.getStringVal(
-                        LocalStorageConst.communityId);
-                    navigationService.navigateTo(RouteList.catalogueScreen);
-                    context.read<CatalogueViewModel>().setCommunityIdCatalouge(
-                        communityId ?? userCommunityId);
-                    context
-                        .read<CatalogueViewModel>()
-                        .fetchCatalogue(context, isCommunityCatalogue: true);
+                    await navigationService.runOnce(RouteList.catalogueScreen,
+                        () async {
+                      final userCommunityId = await LocalStorage.getStringVal(
+                          LocalStorageConst.communityId);
+                      context
+                          .read<CatalogueViewModel>()
+                          .setCommunityIdCatalouge(
+                              communityId ?? userCommunityId);
+                      await context
+                          .read<CatalogueViewModel>()
+                          .fetchCatalogue(context, isCommunityCatalogue: true);
+                      await navigationService
+                          .navigateTo(RouteList.catalogueScreen);
+                    });
                   }
                 },
                 child: Container(

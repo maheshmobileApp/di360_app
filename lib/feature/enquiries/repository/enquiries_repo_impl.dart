@@ -17,7 +17,6 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
 
   @override
   Future<EnquiriesListResData> getMyEnquiryJobData(dynamic variables) async {
-   
     final res = await http.query(enquiriesListQuery, variables: variables);
     final output = EnquiriesListResData.fromJson(res);
     return output;
@@ -28,9 +27,16 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
       String enquiryId, String jobId) async {
     final variables = {
       "where": {
-        "job_id": {"_eq": jobId},
-        "enquiry_userid": {"_eq": enquiryId}
-      }
+        "_and": [
+          {
+            "job_id": {"_eq": jobId}
+          },
+          {
+            "enq_sender_id": {"_eq": enquiryId}
+          }
+        ]
+      },
+      "limit": 20
     };
     final res =
         await http.query(getApplicantEnquiryQuery, variables: variables);
@@ -66,7 +72,7 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
     return res;
   }
 
-   @override
+  @override
   Future<dynamic> deleteApplicantMessage(variables) async {
     final res = await http.mutation(EnquiryMessageDeleteQuery, variables);
     return res;

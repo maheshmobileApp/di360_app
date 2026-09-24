@@ -135,8 +135,8 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
         return GetDirectorPartners();
       case AddDirectoryStep.Gallery:
         return AddDirectorGallery();
-      case AddDirectoryStep.Appointments:
-        return AddDirectorAppoinment();
+      /*case AddDirectoryStep.Appointments:
+        return AddDirectorAppoinment();*/
       case AddDirectoryStep.Faqs:
         return AddDirectorFqs();
       case AddDirectoryStep.Testimonials:

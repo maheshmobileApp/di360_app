@@ -147,7 +147,7 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                         endDate:  DateFormatUtils.formatDateYear(courseDetails.endDate ?? ""),
                         courseName: courseDetails.courseName ?? "",
                         profilePic: courseDetails.presentedByImage?.url ?? "",
-                        presentByName: courseDetails.presentedByName ?? "",
+                        presenters: [],
                         cpdHours: _safeCpdPointsToString(courseDetails.cpdPoints),
                         platform: courseDetails.type ?? "",
                         webinar: courseDetails.feedType ?? "",

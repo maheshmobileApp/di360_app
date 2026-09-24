@@ -26,6 +26,7 @@ const String viewProfileQuery = r'''query supplierDisplayV2($id: uuid!) {
     type
     directory_category_id
     profile_completed
+    mobile_number
     directories {
       id
       __typename

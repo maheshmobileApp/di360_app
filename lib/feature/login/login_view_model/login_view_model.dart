@@ -80,8 +80,11 @@ class LoginViewModel extends ChangeNotifier {
         final result = LoginApi.fromJson(res);
         final loginData = result;
 
-        if (loginData.status == 'ACTIVE' || loginData.status == 'UNBLOCKED') {
+        if (loginData.status == 'ACTIVE' ||
+            loginData.status == 'UNBLOCKED' ||
+            loginData.status == 'VERIFIED') {
           final userId = loginData.id ?? '';
+          final ownerId = loginData.ownerId ?? '';
           final isSupplier = loginData.type == UserRole.supplier.value;
           _http.setToken(loginData.accessToken ?? '');
           //_modulePermissions(loginData?.subscriptionPermissions?.modules ?? []);
@@ -107,6 +110,11 @@ class LoginViewModel extends ChangeNotifier {
             ],
           );
 
+          /*await LocalStorage.setStringList(LocalStorageConst.permissions,
+              loginData.navigation?.permissions ?? []);*/
+          await LocalStorage.setStringVal(LocalStorageConst.subscriptionStatus,
+              loginData.subscription?.status ?? "");
+
           /*if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {
               homeNavigation(context);
@@ -128,7 +136,7 @@ class LoginViewModel extends ChangeNotifier {
             try {
               await Future.wait([
                 // APIs
-                if (isSupplier) getSuppliers(userId),
+                if (isSupplier) getSuppliers(ownerId),
                 if (isSupplier) getSupplierCommunityOwner(userId),
                 getMyCommunityData(userId),
                 updateDevieToken(userId, loginData.type ?? ''),
@@ -159,8 +167,6 @@ class LoginViewModel extends ChangeNotifier {
                 LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
                 LocalStorage.setStringVal(LocalStorageConst.refreshToken,
                     loginData.refreshToken ?? ''),
-                     LocalStorage.setStringVal(
-          LocalStorageConst.professionId, loginData.professiontype?.id ?? '')
               ]);
             } catch (e) {
               debugPrint("Post login error: $e");
@@ -197,7 +203,7 @@ class LoginViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     await context.read<ViewProfileViewModel>().getBusinessTypes();
-    await context.read<ViewProfileViewModel>().getTheViewProfileData();
+    await context.read<ViewProfileViewModel>().getTheViewProfileData(context);
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, true);
     Loaders.circularHideLoader(context);
@@ -275,11 +281,15 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   GetSupplierData? supplerData;
+  String? businessName;
   GetSupplierCommunityOwnerData? supplerCommunityOwner;
 
   Future<void> getSuppliers(String id) async {
     final res = await repo.getSuppliers(id);
     supplerData = res;
+    businessName = supplerData?.dentalSuppliersByPk?.businessName ?? "";
+    await LocalStorage.setStringVal(
+        LocalStorageConst.businessName, businessName ?? "");
     notifyListeners();
   }
 
@@ -309,7 +319,6 @@ class LoginViewModel extends ChangeNotifier {
       await LocalStorage.setStringVal(
           LocalStorageConst.businessName, supplier?.businessName ?? "");
     }
-    notifyListeners();
   }
 
   Future<void> getMyCommunityData(String userId) async {
@@ -322,7 +331,6 @@ class LoginViewModel extends ChangeNotifier {
       await LocalStorage.setStringList(
           LocalStorageConst.myCommunityIds, communityIds);
     }
-    notifyListeners();
   }
 }
 

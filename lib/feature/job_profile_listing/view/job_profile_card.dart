@@ -186,8 +186,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
               ),
               child: Center(
                 child: Text(
-                  "${jobsListingData.jobHirings.length} requests, "
-                  "${jobsListingData.talentEnquiries?.length ?? 0} enquiry for this job profile",
+                  "${vm.hiringTalentList?.jobhirings?.length ?? 0} requests, "
+                  "${vm.myEnquiryJobData?.talentEnquiries?.length ?? 0} enquiry for this job profile",
                   style: TextStyles.medium1(color: AppColors.black),
                 ),
               ),
@@ -338,7 +338,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == "Delete") {
           showAlertMessage(context, 'Are you sure you want to delete this job?',
               onBack: () async {
@@ -364,14 +364,19 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             },
           );
         } else if (value == "Preview") {
+          await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
+          final profileData = vm.getProfileById;
           navigationService.navigateToWithParams(
             RouteList.talentdetailsScreen,
-            params: jobsListingData,
+            params: profileData,
           );
         } else if (value == "Edit") {
-          final profileData = vm.allJobProfiles.first;
+          print("adminStatus from edit:************ $adminStatus");
+           jobCreateVM.setJobProfileStatus(adminStatus);
+          await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
+          final profileData = vm.getProfileById;
           vm.setEditProfileEnable(true);
-          jobCreateVM.setJobProfileStatus(adminStatus);
+         
           navigationService
               .navigateToWithParams(RouteList.JobProfileView, params: {
             "profileData": profileData,
@@ -389,25 +394,38 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             value: "Edit",
             child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
           ),
-          PopupMenuItem(
-            value: "Delete",
-            child:
-                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
-          ),
+          if (adminStatus.toUpperCase() == "PENDING")
+            PopupMenuItem(
+              value: "Delete",
+              child:
+                  _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
+            ),
+            if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "ACTIVE")
+          (PopupMenuItem(
+            value: "Inactive",
+            child: _buildRow(
+                Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
+          )),
+          if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "INACTIVE")
+          (PopupMenuItem(
+            value: "Active",
+            child: _buildRow(
+                Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
+          ))
         ];
-        if (activeStatus.toUpperCase() == "ACTIVE") {
+        /*if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "ACTIVE") {
           items.add(PopupMenuItem(
             value: "Inactive",
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
           ));
-        } else if (activeStatus.toUpperCase() == "INACTIVE") {
+        } else if (adminStatus.toUpperCase() == "APPROVE" &&activeStatus.toUpperCase() == "INACTIVE") {
           items.add(PopupMenuItem(
             value: "Active",
             child: _buildRow(
                 Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
           ));
-        }
+        }*/
         return items;
       },
     );

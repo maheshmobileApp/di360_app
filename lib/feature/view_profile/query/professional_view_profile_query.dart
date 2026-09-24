@@ -3,6 +3,7 @@ const String professionalViewProfileQuery = r'''query getProfDisplayV2($id: uuid
     id
     first_name
     last_name
+    type
     name
     email
     phone

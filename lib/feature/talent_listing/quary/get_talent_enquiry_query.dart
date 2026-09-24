@@ -18,7 +18,7 @@ query getMyEnquiryJobData($limit: Int, $offset: Int, $where: talent_enquiries_bo
     job_profiles {
       id
       full_name
-      profession_type
+      professionType
       state
       profile_image
       work_type

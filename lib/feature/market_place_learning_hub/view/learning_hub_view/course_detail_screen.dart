@@ -264,12 +264,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         .presentedByImage?.url ??
                                     ""
                                 : "",
-                        presentByName:
-                            courseDetails?.presenters?.isNotEmpty ?? false
-                                ? courseDetails
-                                        ?.presenters?.first.presentedByName ??
-                                    ""
-                                : "",
+                        presenters:
+                            courseDetails?.presenters ?? [],
                         cpdHours:
                             courseDetails?.cpdPoints?.toInt().toString() ?? "0",
                         platform: courseDetails?.type ?? "",

@@ -223,7 +223,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
             value: "View",
             child: _buildRow(
                 Icons.remove_red_eye, AppColors.black, "View Catalogue")),
-        if (catalogueStatus == 'ACTIVE' && status == 'APPROVED')
+       /* if (catalogueStatus == 'ACTIVE' && status == 'APPROVED')
           PopupMenuItem(
               value: "Inactive",
               child: _buildRow(
@@ -237,7 +237,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           PopupMenuItem(
               value: "sendApproval",
               child: _buildRow(Icons.send_rounded, AppColors.primaryColor,
-                  "Send for Approval")),
+                  "Send for Approval")),*/
         /*if (vm.userType != UserRole.admin.value &&
             status != 'EXPIRED' )
           PopupMenuItem(

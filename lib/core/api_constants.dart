@@ -15,7 +15,7 @@ class ApiConst {
       "AIzaSyA5vRiUsDawykjIT0GpCKgJ_20f-6eHWFA";
 
   static const String staticGoogleAPIKey =
-      "AIzaSyAzaYcSFRWOySuMNQMzAYPIVhvvF3eieDY";
+      "AIzaSyAQ6RHTkmhYqcy04ONj52cMhntKBQrIC7I";
 
   static String get googleAPIKey =>
       Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;
@@ -29,4 +29,6 @@ class ApiConst {
   static const String adminApproveUser = '/api/v1/event/admin-approve-user/';
   static String refreshToken = '/api/v1/auth/refresh-token_v2';
   static String newsfeedCreation = '/api/v1/newsfeeds';
+  static String creditBalance = '/api/v1/credits/header/';
+  static String creditCost = '/api/v1/credit-events';
 }

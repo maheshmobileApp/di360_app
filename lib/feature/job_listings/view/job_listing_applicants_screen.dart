@@ -38,7 +38,7 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
         elevation: 0,
         title: _logoWithTitle(
           context,
-          widget.jobsListingData?.logo ?? '',
+          widget.jobsListingData?.logo?.url ?? '',
           widget.jobsListingData?.companyName ?? '',
           widget.jobsListingData?.jRole ?? '',
           widget.jobsListingData?.title ?? '',

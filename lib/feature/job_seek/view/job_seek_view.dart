@@ -50,22 +50,31 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+    final vm = Provider.of<JobSeekViewModel>(context);
     return Consumer<JobSeekViewModel>(
       builder: (context, jobSeekViewModel, _) {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBarWidget(
               searchWidget: false,
-              filterWidget: GestureDetector(
-                onTap: () {
-                  if (jobSeekViewModel.selectedTabIndex == 0) {
-                    navigationService.navigateTo(RouteList.JobSeekFilterScreen);
-                  } else {
-                    navigationService.navigateTo(RouteList.TalentFliterScreen);
-                  }
-                },
-                child:
-                    SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+              filterWidget: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (jobSeekViewModel.selectedTabIndex == 0) {
+                        navigationService.navigateTo(RouteList.JobSeekFilterScreen);
+                      } else {
+                        navigationService.navigateTo(RouteList.TalentFliterScreen);
+                      }
+                    },
+                    child:
+                        SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+                  ),
+                  if (vm.jobSeekFilterApply == true)
+              GestureDetector(
+                  onTap: () => vm.clearSelections(context),
+                  child: Icon(Icons.close, color: AppColors.black))
+                ],
               )),
           body: jobSeekViewModel.selectedTabIndex == 0
               ? _buildJobsList(jobSeekViewModel)
@@ -95,11 +104,15 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                       BannerUtils.calculateBannerIndices(vm.jobs.length),
                   itemBuilder: (context, dataIndex) {
                     final jobData = vm.jobs[dataIndex];
+                    final jobId = vm.jobs[dataIndex].id ?? "";
+
                     return InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        await vm.getJobDetails(jobId, context);
+                        if (vm.jobDetailsById != [])
                         navigationService.navigateToWithParams(
                           RouteList.jobdetailsScreen,
-                          params: jobData,
+                          params: vm.jobDetailsById.first,
                         );
                       },
                       child: JobSeekCard(jobsData: jobData),

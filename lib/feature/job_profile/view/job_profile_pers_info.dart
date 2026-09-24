@@ -120,6 +120,8 @@ class JobProfilePersInfo extends StatelessWidget
                         maxLength: 500,
                         maxLines: 5,
                         title: "About Yourself",
+                        validator: validateAboutYourself,
+                        isRequired: true,
                       ),
                     ],
                   ),

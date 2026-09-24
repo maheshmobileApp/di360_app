@@ -69,7 +69,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                         width: 60,
                         child: CachedNetworkImageWidget(
                             imageUrl:
-                                imageUrl ?? homeViewModel.profilePic ?? '',
+                                homeViewModel.profilePic ?? '',
                             fit: BoxFit.contain,
                             errorWidget: type == UserRole.professional.value
                                 ? gender?.toLowerCase() == 'male'
@@ -82,7 +82,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(userName ?? homeViewModel.profileName ?? '',
+                    Text(userName ?? homeViewModel.profileName ?? "",
                         style: TextStyles.clashMedium(
                             fontSize: 20, color: AppColors.black)),
                     if (homeViewModel.subSupplierName != "")

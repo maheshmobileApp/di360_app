@@ -52,7 +52,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                 backgroundColor: AppColors.whiteColor,
                 radius: 63,
                 child: CircleAvatar(
-                  backgroundColor: AppColors.primaryColor,
+                  backgroundColor: AppColors.whiteColor,
                   radius: 60,
                   child: ClipOval(
                     child: SizedBox(
@@ -60,7 +60,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                       height: 120,
                       width: 120,
                       child: CachedNetworkImageWidget(
-                          imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
+                          imageUrl: imageUrl ?? '',
                           fit: BoxFit.contain,
                           errorWidget: Image.asset(ImageConst.directorProfile)),
                     ),
@@ -82,10 +82,10 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                   if (name != null)
                    Text(name ?? '',
                   style: TextStyles.clashMedium(
-                      fontSize: 14, color: AppColors.black)),
-                  Text(userName ?? homeViewModel.userName ?? '',
+                      fontSize: 20, color: AppColors.black)),
+                  /*Text(userName ?? homeViewModel.userName ?? '',
                       style: TextStyles.clashMedium(
-                          fontSize: 20, color: AppColors.black)),
+                          fontSize: 20, color: AppColors.black)),*/
                 ],
               ),
             ),

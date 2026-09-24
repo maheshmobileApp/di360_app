@@ -22,7 +22,7 @@ query getDirectory($id: uuid!, $member_id: uuid!) {
     business_name
     type
     education
-    profession_type
+    professionType
     designation
     working_at
     banner_image

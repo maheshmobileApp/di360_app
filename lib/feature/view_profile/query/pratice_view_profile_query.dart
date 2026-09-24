@@ -14,7 +14,7 @@ query practiceDisplayV2($id: uuid!) {
     business_phone
     fax_number
     abn_number
-    profile_image
+    logo
     directory_business_type_id
     middle_name
     address

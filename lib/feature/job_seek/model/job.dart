@@ -20,7 +20,7 @@ class Jobs {
   String? dentalSupplierId;
   String? activeStatus;
   String? location;
-  String? logo;
+  Logo? logo;
   String? state;
   String? city;
   String? salary;
@@ -53,6 +53,8 @@ class Jobs {
   JobEnquiriesAggregate? jobEnquiriesAggregate;
   DentalSupplier? dentalSupplier;
   DentalPractice? dentalPractice;
+  String? userRole;
+  String? createdById;
   Jobs({
     this.id,
     this.title,
@@ -100,6 +102,8 @@ class Jobs {
     this.jobEnquiriesAggregate,
     this.dentalSupplier,
     this.dentalPractice,
+    this.userRole,
+    this.createdById,
   });
 
   Jobs.fromJson(Map<String, dynamic> json) {
@@ -129,7 +133,14 @@ class Jobs {
     dentalSupplierId = json['dental_supplier_id'];
     activeStatus = json['active_status'];
     location = json['location'];
-    logo = json['logo']?.toString();
+    final logoJson = json['logo'];
+    if (logoJson is Map<String, dynamic>) {
+      logo = Logo.fromJson(logoJson);
+    } else if (logoJson is String) {
+      logo = Logo(url: logoJson);
+    } else {
+      logo = null;
+    }
     state = json['state'];
     city = json['city'];
     salary = json['salary'];
@@ -201,6 +212,8 @@ class Jobs {
     dentalPractice = json['dental_practice'] != null
         ? new DentalPractice.fromJson(json['dental_practice'])
         : null;
+    userRole = json['user_role'];
+    createdById = json['created_by_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -218,7 +231,9 @@ class Jobs {
     data['dental_supplier_id'] = this.dentalSupplierId;
     data['active_status'] = this.activeStatus;
     data['location'] = this.location;
-    data['logo'] = this.logo;
+    if (this.logo != null) {
+      data['logo'] = this.logo!.toJson();
+    }
     data['state'] = this.state;
     data['city'] = this.city;
     data['salary'] = this.salary;
@@ -263,10 +278,37 @@ class Jobs {
       data['dental_practice'] = this.dentalPractice!.toJson();
     }
 
+    data['user_role'] = userRole;
+    data['created_by_id'] = createdById;
+
     return data;
   }
 }
 
+class Logo {
+  String? url;
+  String? name;
+  String? type;
+  String? extension;
+
+  Logo({this.url, this.name, this.type, this.extension});
+
+  Logo.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    type = json['type'];
+    extension = json['extension'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['type'] = this.type;
+    data['extension'] = this.extension;
+    return data;
+  }
+}
 
 class ClinicLogo {
   String? url;

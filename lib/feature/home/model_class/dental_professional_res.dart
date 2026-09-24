@@ -1,7 +1,7 @@
 class DentalProfessional {
   String? id;
   String? name;
-  dynamic professionType;
+  DirectoryCategories? professionType;
   ProfileImage? profileImage;
   String? email;
   String? phone;
@@ -22,7 +22,11 @@ class DentalProfessional {
   DentalProfessional.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    professionType = json['profession_type'];
+
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     profileImage = json['profile_image'] != null
         ? new ProfileImage.fromJson(json['profile_image'])
         : null;
@@ -42,7 +46,11 @@ class DentalProfessional {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['profession_type'] = this.professionType;
+
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     if (this.profileImage != null) {
       data['profile_image'] = this.profileImage!.toJson();
     }
@@ -57,6 +65,27 @@ class DentalProfessional {
   }
 }
 
+class DirectoryCategories {
+  String? id;
+  String? name;
+  String? sTypename;
+
+  DirectoryCategories({this.id, this.name, this.sTypename});
+
+  DirectoryCategories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
 
 class Directories {
   String? id;
@@ -77,7 +106,8 @@ class Directories {
   Directories.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     companyName = json['company_name'];
-    logo = json['logo'] != null ? new DirectorLogo.fromJson(json['logo']) : null;
+    logo =
+        json['logo'] != null ? new DirectorLogo.fromJson(json['logo']) : null;
     description = json['description'];
     bannerImage = json['banner_image'] != null
         ? new BannerImage.fromJson(json['banner_image'])
@@ -100,7 +130,6 @@ class Directories {
     return data;
   }
 }
-
 
 class DirectorLogo {
   String? url;
@@ -151,7 +180,6 @@ class DirectorLogo {
   }
 }
 
-
 class BannerImage {
   String? url;
   String? name;
@@ -200,7 +228,6 @@ class BannerImage {
     return data;
   }
 }
-
 
 class ProfileImage {
   String? url;

@@ -1,8 +1,10 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class DentalSupplier {
   String? id;
   DentalSupplierLogo? logo;
   String? businessName;
-  dynamic professionType;
+  DirectoryCategories? professionType;
   String? email;
   String? phone;
   String? name;
@@ -26,7 +28,7 @@ class DentalSupplier {
     id = json['id'];
     logo = json['logo'] != null ? new DentalSupplierLogo.fromJson(json['logo']) : null;
     businessName = json['business_name'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'];
     email = json['email'];
     phone = json['phone'];
     name = json['name'];
@@ -49,7 +51,7 @@ class DentalSupplier {
       data['logo'] = this.logo!.toJson();
     }
     data['business_name'] = this.businessName;
-    data['profession_type'] = this.professionType;
+    data['professionType'] = this.professionType;
     data['email'] = this.email;
     data['phone'] = this.phone;
     data['name'] = this.name;

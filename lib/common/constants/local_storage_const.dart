@@ -30,4 +30,6 @@ class LocalStorageConst {
       'directoryFullAccessPermission';
   static const String myCommunityIds = 'myCommunityIds';
   static const String permissions = "permissions";
+  static const String subscriptionStatus = "subscriptionStatus";
+  static const String directoryId = "directoryId";
 }

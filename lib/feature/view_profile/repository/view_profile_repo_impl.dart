@@ -5,11 +5,14 @@ import 'package:di360_flutter/feature/view_profile/model/practice_view_profile_r
 import 'package:di360_flutter/feature/view_profile/model/professional_view_profile_res.dart';
 import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart';
 import 'package:di360_flutter/feature/view_profile/query/delete_account_querys.dart';
+import 'package:di360_flutter/feature/view_profile/query/directory_insert_record.dart';
+import 'package:di360_flutter/feature/view_profile/query/directory_update_record.dart';
 import 'package:di360_flutter/feature/view_profile/query/insert_directors_querys.dart';
 import 'package:di360_flutter/feature/view_profile/query/pratice_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/professional_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_client.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_director_to_view_profile_query.dart';
+import 'package:di360_flutter/feature/view_profile/query/update_directory_logo.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_profile_logo.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_record_query.dart';
@@ -55,13 +58,19 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
     return res;
   }
 
+   @override
+  Future updateDirectoryLogo(dynamic variables) async {
+    final res = await http.mutation(updateDirectoryLogoQuery, variables);
+    return res;
+  }
+
   @override
-  Future<DentalSuppliersByPk?> getPracticeViewProfileData() async {
+  Future<PracticeProfileData?> getPracticeViewProfileData() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {"id": userId};
     final res =
         await http.query(practiceViewProfileQuery, variables: variables);
-    final parsed = DentalSuppliersByPk.fromJson(res);
+    final parsed = PracticeProfileData.fromJson(res);
     return parsed;
   }
 
@@ -113,11 +122,23 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
     final res = await http.mutation(updateClientQuery, variables);
     return res;
   }
-  
+
   @override
   Future<dynamic> updateRecord(variables) async {
     print("*********************$variables");
-     final res = await http.mutation(updateRecordQuery, variables);
+    final res = await http.mutation(updateRecordQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> directoryInsertRecord(variables) async {
+    final res = await http.mutation(directoryInsertRecordQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> directoryUpdateRecord(variables) async {
+    final res = await http.mutation(directoryUpdateRecordQuery, variables);
     return res;
   }
 }

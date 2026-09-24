@@ -57,31 +57,7 @@ class TalentRepoImpl extends TalentRepository {
     dynamic variables
   ) async {
     try {
-      /*final Map<String, dynamic> whereConditions = {};
-
-      /*if (professions != null && professions.isNotEmpty) {
-        whereConditions["j_role"] = {"_in": professions};
-      }*/
-
-      if (employmentTypes != null && employmentTypes.isNotEmpty) {
-        whereConditions["work_type"] = {"_contains": employmentTypes};
-      }
-
-      if (experience != null && experience.isNotEmpty) {
-        whereConditions["Year_of_experiance"] = {"_eq": experience[0]};
-      }
-
-      if (availabilityDates != null && availabilityDates.isNotEmpty) {
-        whereConditions["availabilityDate"] = {"_contains": availabilityDates};
-      }
-
-      if (availabilityDays != null && availabilityDays.isNotEmpty) {
-        whereConditions["availabilityDay"] = {"_contains": availabilityDays};
-      }
-
-      final variables = {
-        "where": whereConditions,
-      };*/
+      
 
       print("Filter Variables: $variables");
 

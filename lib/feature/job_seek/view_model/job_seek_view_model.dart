@@ -3,7 +3,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/attachment.dart';
-import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/get_banner_res.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
@@ -32,7 +31,7 @@ class JobSeekViewModel extends ChangeNotifier {
       'availability': [],
     };
     // Then safely load real data
-    initializeFilterOptions();
+    //initializeFilterOptions();
   }
 
   String? enquiryData;
@@ -40,10 +39,17 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isJobApplied = false;
   List<Jobs> jobs = [];
   List<Jobs> filteredJobs = [];
+  List<Jobs> jobDetailsById = [];
   int _jobSeekLimit = 10;
   int _currentPage = 0;
   bool _hasMoreJobs = true;
   bool _isLoadingMore = false;
+  bool? jobSeekFilterApply;
+
+  void updateJobSeekFilterApply(bool val) {
+    jobSeekFilterApply = val;
+    notifyListeners();
+  }
 
   bool get hasMoreJobs => _hasMoreJobs;
   bool get isLoadingMore => _isLoadingMore;
@@ -204,16 +210,6 @@ class JobSeekViewModel extends ChangeNotifier {
         {
           "active_status": {"_eq": "ACTIVE"}
         },
-        {
-          "_or": [
-            {
-              "start_Date": {"_lte": todayDate}
-            },
-            {
-              "start_Date": {"_is_null": true}
-            }
-          ]
-        }
       ];
 
       // Add location search if not empty
@@ -272,9 +268,10 @@ class JobSeekViewModel extends ChangeNotifier {
         "offset": _currentPage * _jobSeekLimit,
         "where": {"_and": andConditions},
         "order_by": [
-          {"created_at": (selectedSort == 'A to Z') ? "asc" : "desc"}
+          (selectedSort == 'A to Z') ? {"title": "asc"} : {"created_at": "desc"}
         ]
       };
+
 
       final result = await repo.fetchFilteredJobs(variables);
 
@@ -323,7 +320,8 @@ class JobSeekViewModel extends ChangeNotifier {
 
     try {
       await repo.applyJob(applyJobRequest);
-      sendMessage(applyJobRequest.message, generatedID);
+      if (applyJobRequest.message.isNotEmpty)
+        sendMessage(applyJobRequest.message, generatedID);
       return true;
     } catch (_) {
       return false;
@@ -357,15 +355,26 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> jobEnquire(String jobId) async {
+  Future<bool> jobEnquire(
+      String jobId, String receiverId, String receiverType) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    var enquireData = EnquireRequest(
-      enquiryDescription: enquiryData ?? '',
-      jobId: jobId,
-      enquiryUserId: userId,
-    );
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    final variables = {
+      "object": {
+        "enquiry_description": enquiryData ?? '',
+        "job_id": jobId,
+        "enq_sender_id": userId,
+        "enq_sender_type": userType,
+        "enq_receiver_id":
+            receiverId, // "bf9d2549-abb4-4eff-8abd-98a2b5fbfdce",
+        "enq_receiver_type": receiverType, // "SUPPLIER"
+      }
+    };
+
+    print("Variables $variables");
     try {
-      await repo.enquire(enquireData);
+      await repo.enquire(variables);
       return true;
     } catch (_) {
       return false;
@@ -388,7 +397,20 @@ class JobSeekViewModel extends ChangeNotifier {
     try {
       final variables = {
         "limit": _jobSeekLimit,
-        "offset": _currentPage * _jobSeekLimit
+        "offset": _currentPage * _jobSeekLimit,
+        "where": {
+          "_and": [
+            {
+              "status": {"_eq": "APPROVE"}
+            },
+            {
+              "active_status": {"_eq": "ACTIVE"}
+            }
+          ]
+        },
+        "order_by": [
+          {"created_at": "desc"}
+        ]
       };
       var jobData = await repo.getPopularJobs(variables);
       final result = jobData.jobs ?? [];
@@ -420,14 +442,16 @@ class JobSeekViewModel extends ChangeNotifier {
 
   Future<void> initializeFilterOptions() async {
     try {
-      final roles = await repo.getJobRoles();
-      final types = await repo.getJobWorkTypes();
+      final rolesData = await repo.getJobRoles();
+      final roles = rolesData.jobsRoleList ?? [];
+      final typesData = await repo.getJobWorkTypes();
+      final types = typesData.jobTypes ?? [];
       filterOptions['profession'] = roles
-          .map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? ''))
+          .map((e) => FilterItem(name: e.roleName ?? '', id: e.id ?? ''))
           .toList();
       filterOptions['employment'] = types
-          .map((e) => FilterItem(
-              name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? ''))
+          .map(
+              (e) => FilterItem(name: e.employeeTypeName ?? '', id: e.id ?? ''))
           .toList();
 
       notifyListeners();
@@ -530,7 +554,7 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearSelections() {
+  void clearSelections(BuildContext context) {
     selectedIndices.updateAll((key, value) => {});
     selectedExperienceDropdown = null;
     selectedSort = null;
@@ -542,6 +566,8 @@ class JobSeekViewModel extends ChangeNotifier {
     selectedEmploymentTypes = [];
     selectedExperiences = [];
     selectedAvailability = [];
+    updateJobSeekFilterApply(false);
+    fetchFilteredJobs(context);
     notifyListeners();
   }
 
@@ -555,7 +581,7 @@ class JobSeekViewModel extends ChangeNotifier {
       final items = filterOptions[section];
       if (items != null && indices.isNotEmpty) {
         for (final i in indices) {
-          final id = items[i].id;
+          final id = items[i].name;
           if (section == "profession") {
             selectedProfessions.add(id);
           } else if (section == "employment") {
@@ -592,6 +618,21 @@ class JobSeekViewModel extends ChangeNotifier {
     final response = await repo.getBanners(variables);
     if (response != null) {
       getBannersData = response;
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> getJobDetails(String id, BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+
+    final variables = {"id": id, "loginID": userId};
+
+    final response = await repo.getJobDetails(variables);
+    if (response != []) {
+      jobDetailsById = response;
+      Loaders.circularHideLoader(context);
     }
 
     notifyListeners();

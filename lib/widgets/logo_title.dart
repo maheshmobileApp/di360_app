@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/talent_preview_data_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -43,7 +44,7 @@ class LogoWithTitle extends StatelessWidget {
                           child: CachedNetworkImageWidget(
                         width: 48,
                         height: 48,
-                        imageUrl: postAnonymously ? "" :imageUrl,
+                        imageUrl: postAnonymously ? "" : imageUrl,
                         errorWidget: Image.asset(ImageConst.directorProfile),
                       ))),
                 )),
@@ -53,9 +54,14 @@ class LogoWithTitle extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!postAnonymously)
-                Text(title, style: TextStyles.medium3()),
-                SizedBox(height: 4),
-                Text(role, style: TextStyles.medium3()),
+                  TalentPreviewDataWidget(
+                    head: "Name",
+                    value: title,
+                  ),
+                TalentPreviewDataWidget(
+                    head: "Designation",
+                    value: role,
+                  ),
               ],
             ),
           ],

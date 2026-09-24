@@ -10,7 +10,6 @@ const String enquiriesListQuery =
     id
     job_id
     created_at
-    enquiry_userid
     enq_sender_id
     dental_professional {
       profile_image
@@ -23,6 +22,8 @@ const String enquiriesListQuery =
       company_name
       j_role
       TypeofEmployment
+      user_role
+      created_by_id
       __typename
     }
     job_applicants_find {

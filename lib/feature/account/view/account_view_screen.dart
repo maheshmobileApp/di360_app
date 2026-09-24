@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart'
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/subscription_expired_dialog.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
@@ -37,6 +38,37 @@ class AccountScreen extends StatefulWidget {
   State<AccountScreen> createState() => _AccountScreenState();
 }
 
+Future<bool> _checkSubscriptionStatus(BuildContext context) async {
+  final subscriptionStatus = await LocalStorage.getStringVal(
+    LocalStorageConst.subscriptionStatus,
+  );
+
+  if (subscriptionStatus == "EXPIRED") {
+    await SubscriptionExpiredDialog.show(
+      context,
+      onAction: () {
+        scaffoldMessenger(
+          "To view and manage your subscription or purchase credit packs, "
+          "please log in through the web.",
+        );
+      },
+    );
+
+    return false;
+  }
+
+  if (subscriptionStatus == "PENDING") {
+    scaffoldMessenger(
+      "Your subscription is currently pending. "
+      "Please wait while we process your subscription.",
+    );
+
+    return false;
+  }
+
+  return true;
+}
+
 class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
   String type = '';
 
@@ -44,7 +76,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.read<ViewProfileViewModel>().getTheViewProfileData();
+      context.read<ViewProfileViewModel>().getTheViewProfileData(context);
       final t = await LocalStorage.getStringVal(LocalStorageConst.type);
       setState(() => type = t);
     });
@@ -96,7 +128,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                   height: 100,
                   width: 100,
                   child: CachedNetworkImageWidget(
-                      imageUrl: viewProfileVM.logoUrl ?? '',
+                      imageUrl: viewProfileVM.logoUrl ?? vm.profilePic ?? "",
                       fit: BoxFit.contain,
                       errorWidget: type == UserRole.professional.value
                           ? viewProfileVM.gender?.toLowerCase() == "male"
@@ -160,8 +192,16 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                               LocalStorageConst.userId);
 
                           if (item.title == 'Catalogues') {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             await navigationService
-                                .navigateTo(RouteList.myCatalogueScreen);
+                                .runOnce(RouteList.myCatalogueScreen, () async {
+                              await navigationService
+                                  .navigateTo(RouteList.myCatalogueScreen);
+                            });
                           } else if (item.title == 'View Profile') {
                             Loaders.circularShowLoader(context);
                             final type = await LocalStorage.getStringVal(
@@ -171,7 +211,10 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .getBusinessTypes();
                             await context
                                 .read<ViewProfileViewModel>()
-                                .getTheViewProfileData();
+                                .getTheViewProfileData(context);
+                            await context
+                                .read<AddDirectoryViewModel>()
+                                .getDirectories();
                             Loaders.circularHideLoader(context);
                             type == UserRole.professional.value
                                 ? await navigationService.navigateTo(
@@ -179,21 +222,36 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 : await navigationService
                                     .navigateTo(RouteList.viewProfileScreen);
                           } else if (item.title == 'Job Listings') {
-                            Loaders.circularShowLoader(context);
-                            context.read<JobListingsViewModel>().listingStatus =
-                                [];
-                            context.read<JobListingsViewModel>().activeStatus =
-                                "";
-                            await context
-                                .read<JobListingsViewModel>()
-                                .getMyJobListingData(context);
-                            context
-                                .read<JobListingsViewModel>()
-                                .updateSelectedStatus("All");
-                            Loaders.circularHideLoader(context);
-                            navigationService
-                                .navigateTo(RouteList.JobListingScreen);
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
+                            await navigationService
+                                .runOnce(RouteList.JobListingScreen, () async {
+                              Loaders.circularShowLoader(context);
+                              context
+                                  .read<JobListingsViewModel>()
+                                  .listingStatus = [];
+                              context
+                                  .read<JobListingsViewModel>()
+                                  .activeStatus = "";
+                              await context
+                                  .read<JobListingsViewModel>()
+                                  .getMyJobListingData(context);
+                              context
+                                  .read<JobListingsViewModel>()
+                                  .updateSelectedStatus("All");
+                              Loaders.circularHideLoader(context);
+                              await navigationService
+                                  .navigateTo(RouteList.JobListingScreen);
+                            });
                           } else if (item.title == 'JobProfile') {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<JobProfileListingViewModel>()
@@ -206,10 +264,20 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.JobProfileScreen);
                           } else if (item.title == 'Applied Jobs') {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             Navigator.pushNamed(
                                 context, RouteList.AppliedJobScreen,
                                 arguments: userId);
                           } else if (item.title == 'Job Enquiries') {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<EnquiriesViewModel>()
@@ -220,6 +288,11 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 context, RouteList.EnquiriesScreen,
                                 arguments: userId);
                           } else if (item.title == 'Talent Listing') {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             /*Loaders.circularShowLoader(context);
                             await context
                                 .read<TalentListingViewModel>()
@@ -229,6 +302,11 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
                           } else if (item.title == 'Talent Enquiries') {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<TalentEnquiryViewModel>()
@@ -238,53 +316,89 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.talentEnquiriesView);
                           } else if (item.title == 'My Directory') {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             await context
                                 .read<AddDirectoryViewModel>()
                                 .fetchTheDirectorData(context);
                           } else if (item.title == 'Learning Hub') {
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<CourseListingViewModel>()
-                                .getCoursesListingData(context);
-                            Loaders.circularHideLoader(context);
-                            context
-                                .read<CourseListingViewModel>()
-                                .searchBarOpen = false;
-                            context
-                                .read<CourseListingViewModel>()
-                                .searchController
-                                .text = "";
-                            navigationService
-                                .navigateTo(RouteList.learningHubScreen);
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
+                            await navigationService
+                                .runOnce(RouteList.learningHubScreen, () async {
+                              Loaders.circularShowLoader(context);
+                              await context
+                                  .read<CourseListingViewModel>()
+                                  .getCoursesListingData(context);
+                              Loaders.circularHideLoader(context);
+                              context
+                                  .read<CourseListingViewModel>()
+                                  .searchBarOpen = false;
+                              context
+                                  .read<CourseListingViewModel>()
+                                  .searchController
+                                  .text = "";
+                              await navigationService
+                                  .navigateTo(RouteList.learningHubScreen);
+                            });
                           } else if (item.title == 'My Learning Hub') {
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<MyLearningHubViewModel>()
-                                .getCoursesWithMyRegistrations(context);
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
+                            await navigationService.runOnce(
+                                RouteList.myLearningHubScreen, () async {
+                              Loaders.circularShowLoader(context);
+                              await context
+                                  .read<MyLearningHubViewModel>()
+                                  .getCoursesWithMyRegistrations(context);
 
-                            Loaders.circularHideLoader(context);
-                            context
-                                .read<MyLearningHubViewModel>()
-                                .searchBarOpen = false;
-                            context
-                                .read<MyLearningHubViewModel>()
-                                .searchController
-                                .text = "";
-                            context
-                                .read<NewCourseViewModel>()
-                                .fetchCourseCategory();
-                            context
-                                .read<NewCourseViewModel>()
-                                .fetchCourseType();
-                            navigationService
-                                .navigateTo(RouteList.myLearningHubScreen);
+                              Loaders.circularHideLoader(context);
+                              context
+                                  .read<MyLearningHubViewModel>()
+                                  .searchBarOpen = false;
+                              context
+                                  .read<MyLearningHubViewModel>()
+                                  .searchController
+                                  .text = "";
+                              context
+                                  .read<NewCourseViewModel>()
+                                  .fetchCourseCategory();
+                              context
+                                  .read<NewCourseViewModel>()
+                                  .fetchCourseType();
+                              await navigationService
+                                  .navigateTo(RouteList.myLearningHubScreen);
+                            });
                           } else if (item.title == "Banners") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService
                                 .navigateTo(RouteList.bannersListView);
                           } else if (item.title == "Marketing") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService
                                 .navigateTo(RouteList.campaignListingView);
                           } else if (item.title == "Team Members") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService
                                 .navigateTo(RouteList.teamMembersListingView);
                           } else if (item.title == "Appointments") {
@@ -295,27 +409,67 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             await navigationService
                                 .navigateTo(RouteList.supportScreen);
                           } else if (item.title == "Join Request") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService
                                 .navigateTo(RouteList.joinRequestView);
                           } else if (item.title == "Partnership Request") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService
                                 .navigateTo(RouteList.partnershipRequestView);
                           } else if (item.title == "Contacts") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService.navigateTo(RouteList.contactView);
                           } else if (item.title == "Membership Registration") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService.navigateTo(
                                 RouteList.membershipRegistrationView);
                           } else if (item.title == "Partnership Registration") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService.navigateTo(
                                 RouteList.partnershipRegistrationView);
                           } else if (item.title == "News Feed Categories") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService
                                 .navigateTo(RouteList.newsFeedCategoriesView);
                           } else if (item.title == "News Feed") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             context
                                 .read<DashBoardViewModel>()
                                 .setIndex(1, context);
                           } else if (item.title.contains("Community")) {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             final viewModel = Provider.of<CommunityViewModel>(
                                 context,
                                 listen: false);
@@ -334,6 +488,11 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.newsFeedCommunityView);
                           } else if (item.title == "Clients") {
+                            if (!await _checkSubscriptionStatus(
+                              context,
+                            )) {
+                              return;
+                            }
                             navigationService
                                 .navigateTo(RouteList.clientScreen);
                           }

@@ -20,7 +20,7 @@ class ContactInfo extends StatelessWidget
               controller: viewProfileVM.firstNameController,
               hintText: "First Name",
               isRequired: true,
-              title: "first Name",
+              title: "First Name",
               validator: validateFirstName),
           addVertical(10),
           InputTextField(

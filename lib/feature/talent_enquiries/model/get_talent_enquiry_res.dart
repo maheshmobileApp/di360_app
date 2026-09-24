@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class GetTalentEnquiryRes {
   TalentEnquiryData? data;
 
@@ -47,8 +49,8 @@ class TalentEnquiries {
   String? enquiryFrom;
   dynamic dentalPractices;
   JobProfilesEnquiry? jobProfiles;
-  dynamic jobhiringsFindPractice;
-  dynamic jobhiringsFindSupplier;
+  TalentEnquiriesFindSupplier? jobhiringsFindPractice;
+  TalentEnquiriesFindSupplier? jobhiringsFindSupplier;
   String? sTypename;
 
   TalentEnquiries(
@@ -71,8 +73,15 @@ class TalentEnquiries {
     jobProfiles = json['job_profiles'] != null
         ? new JobProfilesEnquiry.fromJson(json['job_profiles'])
         : null;
-    jobhiringsFindPractice = json['jobhirings_find_practice'];
-    jobhiringsFindSupplier = json['jobhirings_find_supplier'];
+    jobhiringsFindPractice = json['jobhirings_find_practice'] != null
+        ? new TalentEnquiriesFindSupplier.fromJson(
+            json['jobhirings_find_practice'])
+        : null;
+        jobhiringsFindSupplier = json['jobhirings_find_supplier'] != null
+        ? new TalentEnquiriesFindSupplier.fromJson(
+            json['jobhirings_find_supplier'])
+        : null;
+    
     sTypename = json['__typename'];
   }
 
@@ -86,8 +95,14 @@ class TalentEnquiries {
     if (this.jobProfiles != null) {
       data['job_profiles'] = this.jobProfiles!.toJson();
     }
-    data['jobhirings_find_practice'] = this.jobhiringsFindPractice;
-    data['jobhirings_find_supplier'] = this.jobhiringsFindSupplier;
+    if (this.jobhiringsFindPractice != null) {
+      data['jobhirings_find_practice'] =
+          this.jobhiringsFindPractice?.toJson();
+    }
+    if (this.jobhiringsFindSupplier != null) {
+      data['jobhirings_find_supplier'] =
+          this.jobhiringsFindSupplier?.toJson();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -96,7 +111,7 @@ class TalentEnquiries {
 class JobProfilesEnquiry {
   String? id;
   String? fullName;
-  String? professionType;
+  DirectoryCategories? professionType;
   String? state;
   List<ProfileImage>? profileImage;
   List<String>? workType;
@@ -120,7 +135,10 @@ class JobProfilesEnquiry {
   JobProfilesEnquiry.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fullName = json['full_name'];
-    professionType = json['profession_type'];
+   professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     state = json['state'];
     if (json['profile_image'] != null) {
       profileImage = <ProfileImage>[];
@@ -143,7 +161,10 @@ class JobProfilesEnquiry {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['full_name'] = this.fullName;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['state'] = this.state;
     if (this.profileImage != null) {
       data['profile_image'] =
@@ -181,6 +202,25 @@ class ProfileImage {
     data['name'] = this.name;
     data['type'] = this.type;
     data['extension'] = this.extension;
+    return data;
+  }
+}
+
+class TalentEnquiriesFindSupplier {
+  String? id;
+  String? sTypename;
+
+  TalentEnquiriesFindSupplier({this.id, this.sTypename});
+
+  TalentEnquiriesFindSupplier.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }

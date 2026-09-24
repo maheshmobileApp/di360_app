@@ -19,7 +19,7 @@ const String getTalentPreviewQuery = r'''query getTalentPreview($id: uuid!) {
     mobile_number
     email_address
     work_type
-    profession_type
+    professionType
     location
     country
     city

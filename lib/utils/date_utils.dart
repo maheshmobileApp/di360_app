@@ -160,7 +160,7 @@ class DateFormatUtils {
     }
   }
 
-  static String formatYyyyMmDdToMmDdYyyy(String dateString) {
+  static String formatMMDDYYYY(String dateString) {
     try {
       final dateTime = DateTime.parse(dateString);
       final localDateTime = dateTime.toLocal();

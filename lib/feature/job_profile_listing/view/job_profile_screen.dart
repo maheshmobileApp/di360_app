@@ -29,7 +29,9 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<JobProfileListingViewModel>(context);
-    final jobCreateProfileVM =  Provider.of<JobProfileCreateViewModel>(context, listen: false);
+
+    final jobCreateProfileVM =
+        Provider.of<JobProfileCreateViewModel>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       floatingActionButton: FloatingActionButton.extended(
@@ -43,13 +45,19 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           style: const TextStyle(color: Colors.white),
         ),
         onPressed: () async {
-          //await vm.fetchJobProfiles();
           if (vm.allJobProfiles.isEmpty) {
             vm.setEditProfileEnable(false);
+
             await navigationService.navigateTo(RouteList.JobProfileView);
-            //await vm.fetchJobProfiles();
           } else {
-            final profileData = vm.allJobProfiles.first;
+            await vm.getProfileByIdNew(
+                context, vm.allJobProfiles.first.id ?? "");
+            final profileData = vm.getProfileById;
+            print(
+                "adminStatus from update:************ ${profileData?.adminStatus ?? ""}");
+
+            jobCreateProfileVM
+                .setJobProfileStatus(profileData?.adminStatus ?? "");
             vm.setEditProfileEnable(true);
             await navigationService
                 .navigateToWithParams(RouteList.JobProfileView, params: {
@@ -60,7 +68,8 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
         },
       ),
       appBar: AppBarWidget(
-          searchWidget: false,),
+        searchWidget: false,
+      ),
       body: Column(
         children: [
           Expanded(
