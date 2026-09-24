@@ -132,7 +132,7 @@ class DeliveryAndNotesCard extends StatelessWidget {
                     );
                     if (picked != null) {
                       vm.deliveryDateController.text =
-                          DateFormatUtils.formatYyyyMmDdToMmDdYyyy(picked.toIso8601String());
+                          DateFormatUtils.formatMMDDYYYY(picked.toIso8601String());
                     }
                   },
                   validator: (value) => value == null || value.isEmpty
