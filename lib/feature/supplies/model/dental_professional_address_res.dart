@@ -49,12 +49,12 @@ class DentalProfessionalAddresses {
   String? dentalProfessionalId;
   String? googlePlaceId;
   String? landmark;
-  double? latitude;
+  dynamic latitude;
   String? line1;
   String? line2;
-  double? longitude;
+  dynamic longitude;
   bool? makeDefault;
-  Null? otherTypeName;
+  String? otherTypeName;
   String? postalCode;
   String? shortName;
   String? state;

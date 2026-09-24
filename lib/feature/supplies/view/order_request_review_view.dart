@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
+import 'package:di360_flutter/feature/supplies/widgets/app_button.dart';
 import 'package:di360_flutter/feature/supplies/widgets/delivery_and_notes_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/order_summary_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/payment_mode_card.dart';
@@ -40,16 +41,17 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
       return widget.selectedProducts[item.id!] ?? false;
     }).toList();
 
-    final supplier = proceedItems.first.supply?.dentalSupplier?.businessName?? "";
+    final supplier =
+        proceedItems.first.supply?.dentalSupplier?.businessName ?? "";
     final itemsCount = proceedItems.length ?? 0;
     final subTotal = proceedItems.fold<double>(
-  0,
-  (sum, item) =>
-      sum + ((item.supplyVariant?.sellingPrice ?? 0) * (item.quantity ?? 0)),
-);
-final discount = "0.00";
-final freightCharges = "0.00";
-      
+      0,
+      (sum, item) =>
+          sum +
+          ((item.supplyVariant?.sellingPrice ?? 0) * (item.quantity ?? 0)),
+    );
+    final discount = "0.00";
+    final freightCharges = "0.00";
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -87,14 +89,32 @@ final freightCharges = "0.00";
                   },
                   menuOptions: false,
                 );
-              }
-              
+              }),
+              SizedBox(
+                height: 10,
               ),
-              SizedBox(height: 10,),
-              //DeliveryAndNotesCard(address: vm.dentalProfessionalAddress),
+              DeliveryAndNotesCard(),
               PaymentModeCard(),
-              OrderSummaryCard(supplier: supplier,
-              subTotal: subTotal.toString(),discount: discount,itemsCount: itemsCount.toString(),estimatedTotal: subTotal.toString(),freightCharges: freightCharges,)
+              OrderSummaryCard(
+                supplier: supplier,
+                subTotal: subTotal.toString(),
+                discount: discount,
+                itemsCount: itemsCount.toString(),
+                estimatedTotal: subTotal.toString(),
+                freightCharges: freightCharges,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              AppButton(
+                  height: 50,
+                  title: "Submit Order Request",
+                  onPressed: () async {
+                    vm.checkPaymentDetails();
+                    //await vm.submitOrderRequest(context);
+                  }), SizedBox(
+                height: 10,
+              ),
             ])));
   }
 }

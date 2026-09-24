@@ -1,8 +1,12 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
+import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +19,7 @@ class SuppliesViewModel extends ChangeNotifier {
   DentalProfessionalAddressesData? dentalProfessionalAddress;
 
   final locationController = TextEditingController();
+  final otherTypeController = TextEditingController();
   final nameController = TextEditingController();
   final addressline1Controller = TextEditingController();
   final addressline2Controller = TextEditingController();
@@ -26,8 +31,20 @@ class SuppliesViewModel extends ChangeNotifier {
   final compCompanyNameController = TextEditingController();
   final accountNumberController = TextEditingController();
   final emailController = TextEditingController();
+  final deliveryDateController = TextEditingController();
 
+  String? addressType;
+  String selectedType = "";
 
+  void setSelectedType(String value) {
+    selectedType = value;
+    notifyListeners();
+  }
+
+  void setAddressType(String value) {
+    addressType = value;
+    notifyListeners();
+  }
 
   int _supplyLimit = 20;
   int _supplyOffset = 0;
@@ -134,6 +151,22 @@ class SuppliesViewModel extends ChangeNotifier {
   bool isSupplierSelected(String supplierName) {
     return _selectedSupplier == supplierName &&
         _selectedProducts.values.any((e) => e);
+  }
+
+  String? resolveSupplierIdForGroup(String supplierName) {
+    final carts = suppliesCartData?.supplyCarts ?? [];
+
+    for (final item in carts) {
+      final businessName = item.supply?.dentalSupplier?.businessName ?? '';
+      if (businessName == supplierName) {
+        final supplierId = item.supply?.dentalSupplier?.id;
+        if (supplierId != null && supplierId.isNotEmpty) {
+          return supplierId;
+        }
+      }
+    }
+
+    return null;
   }
 
   bool? supplierCheckboxValue(String supplierName) {
@@ -275,12 +308,60 @@ class SuppliesViewModel extends ChangeNotifier {
 
   Future<void> getDentalProfessionalAddress(BuildContext context) async {
     Loaders.circularShowLoader(context);
-
     final res = await repo.dentalProfessionalAddress();
     dentalProfessionalAddress = res;
     Loaders.circularHideLoader(context);
 
     notifyListeners();
+  }
+
+  Future<void> addAddress(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "dental_professional_addressees": {
+        "type": addressType,
+        "other_type_name": otherTypeController.text,
+        "short_name": nameController.text,
+        "line_1": addressline1Controller.text,
+        "line_2": addressline2Controller.text,
+        "landmark": landmarkController.text,
+        "city": cityController.text,
+        "state": selectedState,
+        "country": selectedCountry,
+        "postal_code": postcodeController.text,
+        "latitude": 0,
+        "longitude": 0,
+        "google_place_id": "PLACE_ID123",
+        "make_default": true
+      }
+    };
+
+    final res = await repo.addAddress(variables);
+    getDentalProfessionalAddress(context);
+    navigationService.goBack();
+    clearAddressFields();
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  clearAddressFields() {
+    locationController.clear();
+    otherTypeController.clear();
+    nameController.clear();
+    addressline1Controller.clear();
+    addressline2Controller.clear();
+    landmarkController.clear();
+    cityController.clear();
+    companyNameController.clear();
+    postcodeController.clear();
+    compNameController.clear();
+    compCompanyNameController.clear();
+    accountNumberController.clear();
+    emailController.clear();
+
+    selectedState = "";
+    selectedCountry = "";
   }
 
   SupplyCarts? getCartItemBySupplyId(String supplyId) {
@@ -343,5 +424,98 @@ class SuppliesViewModel extends ChangeNotifier {
     }
 
     return total;
+  }
+
+  List<String> filterStates = [
+    "Australian Capital Territory",
+    "New South Wales",
+    "Northern Territory",
+    "Queensland",
+    "South Australia",
+    "Western Australia",
+    "Victoria",
+  ];
+
+  List<String> filterCountry = [
+    "Australia",
+  ];
+
+  String selectedState = "";
+  void setSelectedState(String value) {
+    selectedState = value;
+    notifyListeners();
+  }
+
+  String selectedCountry = "";
+  void setSelectedCountry(String value) {
+    selectedCountry = value;
+    notifyListeners();
+  }
+
+  String? selectedAddressId;
+
+  DentalProfessionalAddresses? get selectedAddress {
+    final addresses = dentalProfessionalAddress?.dentalProfessionalAddresses;
+
+    if (addresses == null || addresses.isEmpty) {
+      return null;
+    }
+
+    if (selectedAddressId == null) {
+      return addresses.first;
+    }
+
+    for (final address in addresses) {
+      if (address.id == selectedAddressId) {
+        return address;
+      }
+    }
+
+    return addresses.first;
+  }
+
+  void setSelectedAddress(String addressId) {
+    selectedAddressId = addressId;
+    notifyListeners();
+  }
+
+  checkPaymentDetails() {
+    if (compNameController.text.isEmpty ||
+        compCompanyNameController.text.isEmpty ||
+        accountNumberController.text.isEmpty ||
+        emailController.text.isEmpty) {
+      return scaffoldMessenger("Please fill all the payment details");
+    }
+    return true;
+  }
+
+  AccountData? accountTowardsSupplier;
+
+  Future<void> getAccountTowardsSupplier(
+      BuildContext context, String supplierId, String companyName) async {
+    final email = await LocalStorage.getStringVal(LocalStorageConst.emailId);
+    Loaders.circularShowLoader(context);
+    final variables = {"supplier_id": supplierId};
+    print("****getAccountTowardsSupplier************$variables");
+
+    final res = await repo.getAccountTowardsSupplier(variables);
+    if (res.supplierAccounts?.isEmpty == true) {
+      scaffoldMessenger("No account found for this supplier");
+      Loaders.circularHideLoader(context);
+    } else {
+      accountTowardsSupplier = res;
+      compNameController.text = accountTowardsSupplier
+              ?.supplierAccounts?.first.dentalProfessional?.name ??
+          "";
+      compCompanyNameController.text = companyName;
+      accountNumberController.text =
+          accountTowardsSupplier?.supplierAccounts?.first.accountNumber ?? "";
+      emailController.text = email;
+
+      navigationService.goBack();
+      Loaders.circularHideLoader(context);
+
+      notifyListeners();
+    }
   }
 }

@@ -147,8 +147,21 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                     title: "Proceed",
                                     onPressed: () async {
                                       if (vm.isSupplierSelected(supplier.key)) {
+                                        final supplierId = vm.resolveSupplierIdForGroup(
+                                            supplier.key);
+
+                                        if (supplierId == null ||
+                                            supplierId.isEmpty) {
+                                          showAlertMessage(context,
+                                              'Supplier details are not available.');
+                                          return;
+                                        }
+
                                         await vm.getDentalProfessionalAddress(
                                             context);
+
+                                        await vm.getAccountTowardsSupplier(
+                                            context, supplierId,supplier.key);
                                         navigationService.navigateToWithParams(
                                             RouteList.orderRequestReviewView,
                                             params: {

@@ -57,35 +57,42 @@ class ProductCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        product.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyles.medium2(),
-                      ),
-                      Text(
                         product.brand,
-                        style: TextStyles.bold3(color: AppColors.primaryColor),
+                        style:
+                            TextStyles.medium2(color: AppColors.primaryColor),
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "AUD ",
-                            style: TextStyles.medium2(),
-                          ),
-                          Text(
-                            "${product.price}",
-                            style: TextStyles.bold3(),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        product.inStock ? "In Stock" : "Out of Stock",
-                        style: TextStyle(
-                          color: product.inStock ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.w600,
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyles.medium2(),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "\$ ${product.price} ",
+                                  style: TextStyles.regular5(color: const Color.fromARGB(255, 251, 14, 1)),
+                                ),
+                                Text(
+                                  "INC GST",
+                                  style: TextStyles.medium1(),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              product.inStock ? "In Stock" : "Out of Stock",
+                              style: TextStyle(
+                                color:
+                                    product.inStock ? Colors.green : Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

@@ -46,6 +46,16 @@
             }
           ]
         },
+
+         {
+          "title": "Supplies",
+          "subTitle": [
+            {
+              "title": "My Favourites",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            }
+          ]
+        },
         {
           "title": "Support Request",
           "subTitle": [

@@ -1,11 +1,14 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
+import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
+import 'package:di360_flutter/feature/supplies/queries/add_address_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/decrease_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/delete_cart_item.dart';
 import 'package:di360_flutter/feature/supplies/queries/dental_professional_address.dart';
+import 'package:di360_flutter/feature/supplies/queries/get_account_towards_supplier.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_details_query.dart';
@@ -63,4 +66,18 @@ class SuppliesRepoImpl extends SuppliesRepository {
     final res = await http.query(dentalProfessionalAddressQuery);
     return DentalProfessionalAddressesData.fromJson(res);
   }
+
+  @override
+  Future<dynamic> addAddress(variables) async {
+     final res = await http.mutation(addAddressQuery, variables);
+     return res;
+  }
+
+  @override
+  Future<AccountData> getAccountTowardsSupplier(variables) async {
+
+     final res = await http.query(getAccountTowardsSupplierQuery, variables : variables);
+     return AccountData.fromJson(res);
+  }
+
 }
