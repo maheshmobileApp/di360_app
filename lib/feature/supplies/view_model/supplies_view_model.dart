@@ -407,11 +407,9 @@ class SuppliesViewModel extends ChangeNotifier {
   Future<void> decreaseQuantityById(BuildContext context, String id) async {
     Loaders.circularShowLoader(context);
     final variables = {"id": id};
-
     final res = await repo.decreaseQuantityById(variables);
     await getSuppliesCart(context);
     Loaders.circularHideLoader(context);
-
     notifyListeners();
   }
 

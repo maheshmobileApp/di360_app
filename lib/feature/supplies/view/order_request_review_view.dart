@@ -6,7 +6,9 @@ import 'package:di360_flutter/feature/supplies/widgets/delivery_and_notes_card.d
 import 'package:di360_flutter/feature/supplies/widgets/order_summary_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/payment_mode_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_cart_card.dart';
+import 'package:di360_flutter/feature/supplies/widgets/selected_item_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -51,7 +53,6 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
           ((item.supplyVariant?.calaculatedPrice ?? 0) * (item.quantity ?? 0)),
     );
 
-
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
@@ -68,27 +69,63 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
         body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ListView(children: [
-              ...proceedItems.map((item) {
-                return ProductCartCard(
-                  checkbox: false,
-                  item: item,
-                  isSelected: vm.isProductSelected(item.id!),
-                  imageUrl: item.supply?.image?.isNotEmpty == true
-                      ? item.supply!.image!.first.url ?? ""
-                      : "",
-                  productId: item.supplyVariant?.skuCode ?? "",
-                  productName: item.supply?.name ?? "",
-                  price: item.supplyVariant?.calaculatedPrice?.toString() ?? "",
-                  quantity: item.quantity ?? 0,
-                  onChecked: (value) {
-                    vm.toggleProduct(
-                      item,
-                      value ?? false,
-                    );
-                  },
-                  menuOptions: false,
-                );
-              }),
+              Card(
+                elevation: 2,
+                color: AppColors.whiteColor,
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    for (var index = 0;
+                        index < proceedItems.length;
+                        index++) ...[
+                      if (index > 0)
+                        const Divider(height: 1, indent: 12, endIndent: 12),
+                      Builder(
+                        builder: (context) {
+                          final item = proceedItems[index];
+                          return SelectedItemCard(
+                              checkbox: false,
+                              embedded: true,
+                              item: item,
+                              isSelected: vm.isProductSelected(item.id!),
+                              imageUrl: item.supply?.image?.isNotEmpty == true
+                                  ? item.supply!.image!.first.url ?? ""
+                                  : "",
+                              productId: item.supplyVariant?.skuCode ?? "",
+                              productName: item.supply?.name ?? "",
+                              price: item.supplyVariant?.calaculatedPrice
+                                      ?.toString() ??
+                                  "",
+                              quantity: item.quantity ?? 0,
+                              onChecked: (value) {
+                                vm.toggleProduct(item, value ?? false);
+                              },
+                              menuOptions: true,
+                              onMenuSelected: (value) {
+                                switch (value) {
+                                  case 'delete':
+                                    showAlertMessage(context,
+                                        "Are you really want to delete this cart item ?",
+                                        no: "No", yes: "Yes", onBack: () async {
+                                      await vm.deleteCartItem(
+                                          context, item.id ?? "");
+                                    });
+
+                                    break;
+                                }
+                              });
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -96,12 +133,11 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
               PaymentModeCard(),
               OrderSummaryCard(
                 supplier: supplier,
-                subTotal: (subTotal- subTotal * 10 / 100).toStringAsFixed(2),
+                subTotal: (subTotal - subTotal * 10 / 100).toStringAsFixed(2),
                 gst: (subTotal * 10 / 100).toStringAsFixed(2),
                 itemsCount: itemsCount.toString(),
                 estimatedTotal: subTotal.toString(),
                 total: subTotal.toString(),
-                
               ),
               SizedBox(
                 height: 10,
