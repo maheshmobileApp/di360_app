@@ -103,4 +103,6 @@ class RouteList {
   static const String orderRequestReviewView = '/orderRequestReviewView';
   static const String jobProfileTalentMessage = '/jobProfileTalentMessage';
   static const String addNewsAddressView = '/addNewsAddressView';
+  static const String myFavouritesView = '/myFavouritesView';
+  static const String myOrdersView = '/myOrdersView';
 }

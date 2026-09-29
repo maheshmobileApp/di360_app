@@ -147,8 +147,9 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                     title: "Proceed",
                                     onPressed: () async {
                                       if (vm.isSupplierSelected(supplier.key)) {
-                                        final supplierId = vm.resolveSupplierIdForGroup(
-                                            supplier.key);
+                                        final supplierId =
+                                            vm.resolveSupplierIdForGroup(
+                                                supplier.key);
 
                                         if (supplierId == null ||
                                             supplierId.isEmpty) {
@@ -161,7 +162,20 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                             context);
 
                                         await vm.getAccountTowardsSupplier(
-                                            context, supplierId,supplier.key);
+                                            context, supplierId, supplier.key);
+                                        vm.setAccountPayType("");
+                                        vm.setSelectedAddress(vm
+                                                    .dentalProfessionalAddress
+                                                    ?.dentalProfessionalAddresses
+                                                    ?.isNotEmpty ==
+                                                true
+                                            ? vm
+                                                    .dentalProfessionalAddress
+                                                    ?.dentalProfessionalAddresses
+                                                    ?.first
+                                                    .id ??
+                                                ""
+                                            : "");
                                         navigationService.navigateToWithParams(
                                             RouteList.orderRequestReviewView,
                                             params: {
@@ -188,7 +202,7 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                     : "",
                                 productId: item.supplyVariant?.skuCode ?? "",
                                 productName: item.supply?.name ?? "",
-                                price: item.supplyVariant?.sellingPrice
+                                price: item.supplyVariant?.calaculatedPrice
                                         ?.toString() ??
                                     "",
                                 quantity: item.quantity ?? 0,

@@ -391,6 +391,7 @@ class SupplyVariants {
   String? moreImages;
   String? priceUnit;
   dynamic sellingPrice;
+  dynamic calaculatedPrice;
   String? specifications;
   String? status;
   String? stockUnit;
@@ -414,6 +415,7 @@ class SupplyVariants {
       this.moreImages,
       this.priceUnit,
       this.sellingPrice,
+      this.calaculatedPrice,
       this.specifications,
       this.status,
       this.stockUnit,
@@ -428,6 +430,7 @@ class SupplyVariants {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     actualPrice = json['actual_price'];
+    calaculatedPrice = json['calculated_price'];
     attributes = json['attributes'];
     availableStock = json['available_stock'];
     color = json['color'];
@@ -455,6 +458,7 @@ class SupplyVariants {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['actual_price'] = this.actualPrice;
+    data['calculated_price'] = this.calaculatedPrice;
     data['attributes'] = this.attributes;
     data['available_stock'] = this.availableStock;
     data['color'] = this.color;

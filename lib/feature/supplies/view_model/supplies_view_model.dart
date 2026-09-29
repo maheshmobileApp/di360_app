@@ -32,9 +32,27 @@ class SuppliesViewModel extends ChangeNotifier {
   final accountNumberController = TextEditingController();
   final emailController = TextEditingController();
   final deliveryDateController = TextEditingController();
+  final contactPersonController = TextEditingController();
+  final phoneController = TextEditingController();
+  final abnController = TextEditingController();
+  final billingAddressController = TextEditingController();
+  final notesController = TextEditingController();
 
   String? addressType;
   String selectedType = "";
+  String accountPayType = "";
+
+  void setAccountPayType(String value) {
+    accountPayType = value;
+    notifyListeners();
+  }
+
+  String shippingMethod = "standard";
+
+  void setShippingMethod(String value) {
+    shippingMethod = value;
+    notifyListeners();
+  }
 
   void setSelectedType(String value) {
     selectedType = value;
@@ -272,6 +290,8 @@ class SuppliesViewModel extends ChangeNotifier {
 //add to cart
   Future<void> addToCart(BuildContext context, String supplyId,
       String supplyVariantId, int quantity) async {
+    Loaders.circularShowLoader(context);
+
     final variables = {
       "supply_carts": {
         "supply_id": supplyId,
@@ -282,6 +302,7 @@ class SuppliesViewModel extends ChangeNotifier {
 
     print("Add to cart variables: $variables");
     final res = await repo.addToCart(variables);
+    Loaders.circularHideLoader(context);
   }
 
   Future<void> getSuppliesDetails(BuildContext context, String supplyId) async {
@@ -416,7 +437,7 @@ class SuppliesViewModel extends ChangeNotifier {
       final isSelected = _selectedProducts[item.id] ?? false;
 
       if (isSelected) {
-        final price = item.supplyVariant?.sellingPrice ?? 0;
+        final price = item.supplyVariant?.calaculatedPrice ?? 0;
         final quantity = item.quantity ?? 0;
 
         total += price * quantity;
@@ -516,6 +537,19 @@ class SuppliesViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
 
       notifyListeners();
+    }
+  }
+
+  Future<void> addFavourites(String supplyId, String supplyVariantId) async {
+    final variables = {
+      "supply_favorites": {
+        "supply_id": supplyId,
+        "supply_variant_id": supplyVariantId
+      }
+    };
+    final res = await repo.addFavourite(variables);
+    if (res != null) {
+      scaffoldMessenger("Added to Favourites");
     }
   }
 }

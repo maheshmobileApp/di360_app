@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplie
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_address_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/add_favourite_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/decrease_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/delete_cart_item.dart';
@@ -69,15 +70,20 @@ class SuppliesRepoImpl extends SuppliesRepository {
 
   @override
   Future<dynamic> addAddress(variables) async {
-     final res = await http.mutation(addAddressQuery, variables);
-     return res;
+    final res = await http.mutation(addAddressQuery, variables);
+    return res;
   }
 
   @override
   Future<AccountData> getAccountTowardsSupplier(variables) async {
-
-     final res = await http.query(getAccountTowardsSupplierQuery, variables : variables);
-     return AccountData.fromJson(res);
+    final res =
+        await http.query(getAccountTowardsSupplierQuery, variables: variables);
+    return AccountData.fromJson(res);
   }
 
+  @override
+  Future<dynamic> addFavourite(variables) async {
+    final res = await http.mutation(addFavouriteQuery, variables);
+    return res;
+  }
 }

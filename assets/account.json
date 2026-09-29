@@ -56,6 +56,22 @@
             {
               "title": "My Favourites",
               "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+             {
+              "title": "My Orders",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+             {
+              "title": "My Enquiries",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+             {
+              "title": "Account Pay Requests",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+             {
+              "title": "Shipping Address",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
             }
           ]
         },

@@ -15,6 +15,8 @@ class PaymentModeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<SuppliesViewModel>();
+    String selected = 'account';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
       child: Container(
@@ -37,41 +39,35 @@ class PaymentModeCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text('Payment Mode',
+                  Text('Payment Mode',
                       style: TextStyles.clashSemiBold(fontSize: 18)),
                   SizedBox(height: 8),
-                  InputTextField(
-                    controller: vm.compNameController,
-                    hintText: "Enter Name",
-                    keyboardType: TextInputType.name,
-                    title: "Name",
-                    maxLength: 70,
-                    isRequired: true,
+                  _radioWidget(selected),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _accountPayCard(() {
+                          vm.setAccountPayType("yes");
+                        },
+                            title:
+                                "I already have an account with this supplier",
+                            subtitle: "Enter your existing account number",
+                            type: vm.accountPayType == "yes"),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _accountPayCard(() {
+                          vm.setAccountPayType("no");
+                        },
+                            title: "I don't have an account with this supplier",
+                            subtitle: "Provide your details to request one",
+                            type: vm.accountPayType == "no"),
+                      ),
+                    ],
                   ),
-                  InputTextField(
-                    controller: vm.compCompanyNameController,
-                    hintText: "Enter company name",
-                    keyboardType: TextInputType.name,
-                    title: "Company Name",
-                    maxLength: 70,
-                    isRequired: true,
-                  ),
-                  InputTextField(
-                    controller: vm.accountNumberController,
-                    hintText: "Enter account number",
-                    keyboardType: TextInputType.name,
-                    title: "Account number",
-                    maxLength: 70,
-                    isRequired: true,
-                  ),
-                  InputTextField(
-                    controller: vm.emailController,
-                    hintText: "Enter email",
-                    keyboardType: TextInputType.name,
-                    title: "Email",
-                    maxLength: 70,
-                    isRequired: true,
-                  ),
+                  SizedBox(height: 6),
+                  if (vm.accountPayType == "yes") _typeYesFields(vm),
+                  if (vm.accountPayType == "no") _typeNoFields(vm),
                 ]),
           )),
     );
@@ -104,6 +100,178 @@ _quantityCard(SuppliesViewModel vm, String supplyId) {
     ),
     const SizedBox(height: 4),
   ]);
+}
+
+_radioWidget(String selected) {
+  return Row(
+    children: [
+      Radio<String>(
+        value: 'account',
+        groupValue: selected,
+        activeColor: Colors.orange,
+        onChanged: (value) {},
+      ),
+      const Text(
+        'Account Pay',
+        style: TextStyle(fontSize: 16, color: Colors.black),
+      ),
+      const SizedBox(width: 12),
+      Radio<String>(
+        value: 'online',
+        groupValue: selected,
+        activeColor: Colors.orange,
+        onChanged: (value) {},
+      ),
+      const Text(
+        'Online',
+        style: TextStyle(fontSize: 16, color: Colors.grey),
+      ),
+    ],
+  );
+}
+
+Widget _typeYesFields(SuppliesViewModel vm) {
+  return Column(children: [
+    InputTextField(
+      controller: vm.compNameController,
+      hintText: "Enter Name",
+      keyboardType: TextInputType.name,
+      title: "Name",
+      maxLength: 70,
+      isRequired: true,
+    ),
+    InputTextField(
+      controller: vm.compCompanyNameController,
+      hintText: "Enter company name",
+      keyboardType: TextInputType.name,
+      title: "Company Name",
+      maxLength: 70,
+      isRequired: true,
+    ),
+    InputTextField(
+      controller: vm.accountNumberController,
+      hintText: "Enter account number",
+      keyboardType: TextInputType.name,
+      title: "Account number",
+      maxLength: 70,
+      isRequired: true,
+    ),
+    InputTextField(
+      controller: vm.emailController,
+      hintText: "Enter email",
+      keyboardType: TextInputType.name,
+      title: "Email",
+      maxLength: 70,
+      isRequired: true,
+    ),
+  ]);
+}
+
+Widget _typeNoFields(SuppliesViewModel vm) {
+  return Column(children: [
+    InputTextField(
+      controller: vm.contactPersonController,
+      hintText: "Enter contact person",
+      keyboardType: TextInputType.name,
+      title: "Contact Person",
+      maxLength: 70,
+      isRequired: true,
+    ),
+    InputTextField(
+      controller: vm.emailController,
+      hintText: "Enter Email",
+      keyboardType: TextInputType.name,
+      title: "Email",
+      maxLength: 70,
+      isRequired: true,
+    ),
+    InputTextField(
+      controller: vm.phoneController,
+      hintText: "Enter phone",
+      keyboardType: TextInputType.name,
+      title: "Phone",
+      maxLength: 70,
+      isRequired: true,
+    ),
+    InputTextField(
+      controller: vm.abnController,
+      hintText: "Enter ABN",
+      keyboardType: TextInputType.name,
+      title: "ABN",
+      maxLength: 70,
+    ),
+    InputTextField(
+      controller: vm.billingAddressController,
+      hintText: "Enter billing address",
+      keyboardType: TextInputType.name,
+      title: "Billing Address",
+      maxLength: 70,
+    ),
+    InputTextField(
+      controller: vm.notesController,
+      hintText: "Enter notes",
+      keyboardType: TextInputType.name,
+      title: "Notes",
+      maxLength: 70,
+    ),
+  ]);
+}
+
+Widget _accountPayCard(VoidCallback onTap,
+    {required String title, required String subtitle, required bool type}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      height: 204,
+      decoration: BoxDecoration(
+          color:
+              type ? AppColors.primaryColor.withOpacity(0.1) : AppColors.black,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+              color: type ? AppColors.primaryColor : AppColors.black)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          type
+              ? Icon(
+                  Icons.check_circle,
+                  color: Colors.orange,
+                  size: 26,
+                )
+              : Container(
+                  width: 25,
+                  height: 25,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFF6F82A0),
+                      width: 2,
+                    ),
+                  ),
+                ),
+          const SizedBox(height: 20),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: type ? AppColors.black : AppColors.whiteColor,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: type ? AppColors.black : AppColors.whiteColor,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 _priceInfoCard(Supplies? suppliesDetails) {

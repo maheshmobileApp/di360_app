@@ -76,7 +76,9 @@ class ProductCard extends StatelessWidget {
                               children: [
                                 Text(
                                   "\$ ${product.price} ",
-                                  style: TextStyles.regular5(color: const Color.fromARGB(255, 251, 14, 1)),
+                                  style: TextStyles.regular5(
+                                      color: const Color.fromARGB(
+                                          255, 251, 14, 1)),
                                 ),
                                 Text(
                                   "INC GST",
@@ -147,6 +149,17 @@ class ProductCard extends StatelessWidget {
                     style: TextStyles.bold1(
                         color: AppColors.whiteColor, fontSize: 10),
                   ),
+                ),
+              )),
+          Positioned(
+              top: 10,
+              right: 10,
+              child: GestureDetector(
+                onTap: onFavorite,
+                child: Icon(
+                  Icons.favorite_border,
+                  color: AppColors.black,
+                  size: 22,
                 ),
               )),
         ]),

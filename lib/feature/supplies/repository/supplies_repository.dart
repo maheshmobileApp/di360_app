@@ -14,5 +14,5 @@ abstract class SuppliesRepository {
   Future<DentalProfessionalAddressesData> dentalProfessionalAddress();
   Future<dynamic> addAddress(dynamic variables);
   Future<AccountData> getAccountTowardsSupplier(dynamic variables);
-
+  Future<dynamic> addFavourite(dynamic variables);
 }

@@ -11,6 +11,8 @@ import 'package:di360_flutter/feature/forgot_password/view_model/forgot_password
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
+import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/no_internet/no_internet_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -164,6 +166,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => JobProfileCreateViewModel()),
         ChangeNotifierProvider(create: (_) => SuppliesViewModel()),
+        ChangeNotifierProvider(create: (_) => MyFavouritesViewModel()),
+        ChangeNotifierProvider(create: (_) => MyOrdersViewModel())
       ],
       child: MaterialApp(
         builder: (context, child) {

@@ -23,6 +23,9 @@ const String getSupplies =
     specifications
     status
     product_status
+    price_type
+    gst_rate
+    gst_applicable
     supply_brand_id
     supply_brand {
       id
@@ -46,6 +49,7 @@ const String getSupplies =
       more_images
       price_unit
       selling_price
+      calculated_price
       specifications
       status
       stock_unit

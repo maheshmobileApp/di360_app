@@ -248,6 +248,7 @@ class SupplyVariant {
   dynamic? actualPrice;
   String? skuCode;
   dynamic? sellingPrice;
+  dynamic calaculatedPrice;
   Null? image;
   int? availableStock;
   String? sTypename;
@@ -259,6 +260,7 @@ class SupplyVariant {
       this.actualPrice,
       this.skuCode,
       this.sellingPrice,
+      this.calaculatedPrice,
       this.image,
       this.availableStock,
       this.sTypename});
@@ -273,6 +275,7 @@ class SupplyVariant {
     image = json['image'];
     availableStock = json['available_stock'];
     sTypename = json['__typename'];
+    calaculatedPrice = json['calculated_price'];
   }
 
   Map<String, dynamic> toJson() {
@@ -286,6 +289,8 @@ class SupplyVariant {
     data['image'] = this.image;
     data['available_stock'] = this.availableStock;
     data['__typename'] = this.sTypename;
+        data['calculated_price'] = this.calaculatedPrice;
+
     return data;
   }
 }

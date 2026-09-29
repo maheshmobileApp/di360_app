@@ -120,7 +120,7 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   image: supply.image?.firstOrNull?.url ?? "",
                   name: supply.name ?? "",
                   brand: supply.dentalSupplier?.businessName ?? "",
-                  price: supply.supplyVariants?.firstOrNull?.sellingPrice
+                  price: supply.supplyVariants?.firstOrNull?.calaculatedPrice
                           ?.toString() ??
                       "",
                   inStock:
@@ -131,7 +131,10 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   isSpotOn: true,
                   supplyBrand: supply.supplyBrand?.name ?? "",
                 ),
-                onFavorite: () {},
+                onFavorite: () {
+                  vm.addFavourites(
+                      supply.id ?? "", supply.supplyVariants?.first.id ?? "");
+                },
                 onIncrease: () {
                   vm.increaseQuantity(supply.id ?? "");
                 },

@@ -48,10 +48,9 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
       0,
       (sum, item) =>
           sum +
-          ((item.supplyVariant?.sellingPrice ?? 0) * (item.quantity ?? 0)),
+          ((item.supplyVariant?.calaculatedPrice ?? 0) * (item.quantity ?? 0)),
     );
-    final discount = "0.00";
-    final freightCharges = "0.00";
+
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -79,7 +78,7 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                       : "",
                   productId: item.supplyVariant?.skuCode ?? "",
                   productName: item.supply?.name ?? "",
-                  price: item.supplyVariant?.sellingPrice?.toString() ?? "",
+                  price: item.supplyVariant?.calaculatedPrice?.toString() ?? "",
                   quantity: item.quantity ?? 0,
                   onChecked: (value) {
                     vm.toggleProduct(
@@ -97,11 +96,12 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
               PaymentModeCard(),
               OrderSummaryCard(
                 supplier: supplier,
-                subTotal: subTotal.toString(),
-                discount: discount,
+                subTotal: (subTotal- subTotal * 10 / 100).toStringAsFixed(2),
+                gst: (subTotal * 10 / 100).toStringAsFixed(2),
                 itemsCount: itemsCount.toString(),
                 estimatedTotal: subTotal.toString(),
-                freightCharges: freightCharges,
+                total: subTotal.toString(),
+                
               ),
               SizedBox(
                 height: 10,
@@ -112,7 +112,8 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                   onPressed: () async {
                     vm.checkPaymentDetails();
                     //await vm.submitOrderRequest(context);
-                  }), SizedBox(
+                  }),
+              SizedBox(
                 height: 10,
               ),
             ])));
