@@ -37,6 +37,8 @@ class DocumentsCard extends StatelessWidget {
         file: suppliesDetails?.docMsds,
       ),
     ];
+    final availableDocuments =
+        documents.where((doc) => doc.file != null).toList();
 
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
@@ -62,27 +64,34 @@ class DocumentsCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.description,
-                              size: 18, color: AppColors.primaryColor),
-                          const SizedBox(width: 4),
-                          Text("DOCUMENTS",
+                          Text("Documents & Downloads",
                               style: TextStyles.bold2(color: Colors.black)),
                         ],
                       ),
                       Divider(color: Colors.grey.shade300, thickness: 1),
-                      Column(
-                        children: documents
-                            .where((doc) => doc.file != null)
-                            .map<Widget>(
-                              (doc) => _documentRow(
-                                doc.title,
-                                doc.file!.size ?? 0,
-                                doc.file!.url ?? "",
-                                context
-                              ),
-                            )
-                            .toList(),
-                      )
+                      if (availableDocuments.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            "No documents available",
+                            style: TextStyles.medium2(
+                              color: AppColors.geryColor,
+                            ),
+                          ),
+                        )
+                      else
+                        Column(
+                          children: availableDocuments
+                              .map<Widget>(
+                                (doc) => _documentRow(
+                                  doc.title,
+                                  doc.file!.size ?? 0,
+                                  doc.file!.url ?? "",
+                                  context,
+                                ),
+                              )
+                              .toList(),
+                        ),
                     ]))));
   }
 }
@@ -110,7 +119,8 @@ _documentRow(String title, int size, String url, BuildContext context) {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(Icons.picture_as_pdf, size: 20, color: AppColors.primaryColor),
+              Icon(Icons.picture_as_pdf,
+                  size: 20, color: AppColors.primaryColor),
               Text(title, style: TextStyles.bold2(color: AppColors.black)),
               Text("PDF - ${formatFileSize(size)}",
                   style: TextStyles.medium1(color: AppColors.geryColor)),

@@ -131,6 +131,7 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   isSpotOn: true,
                   supplyBrand: supply.supplyBrand?.name ?? "",
                 ),
+                viewOption: (supply.supplyVariants?.length ?? 0) > 1,
                 onFavorite: () {
                   vm.addFavourites(
                       supply.id ?? "", supply.supplyVariants?.first.id ?? "");
@@ -171,6 +172,7 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   print(
                       "Navigating to details view for supply ID: ${supply.id}");
                   await vm.getSuppliesDetails(context, supply.id ?? "");
+                  (supply.supplyVariants?.length ?? 0) > 1 ?navigationService.navigateTo(RouteList.suppliesViewOptionsDetailsView) :
                   navigationService.navigateTo(RouteList.suppliesDetailsView);
                 });
           },

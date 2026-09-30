@@ -99,6 +99,7 @@ class RouteList {
   static const String interestedScreen = '/interestedScreen';
   static const String suppliesMarketPlace = '/suppliesMarketPlace';
   static const String suppliesDetailsView = '/suppliesDetailsView';
+  static const String suppliesViewOptionsDetailsView = '/suppliesViewOptionsDetailsView';
   static const String suppliesCartView = '/suppliesCartView';
   static const String orderRequestReviewView = '/orderRequestReviewView';
   static const String jobProfileTalentMessage = '/jobProfileTalentMessage';

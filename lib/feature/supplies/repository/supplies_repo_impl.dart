@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_address_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_favourite_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/add_multiple_products_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/decrease_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/delete_cart_item.dart';
@@ -84,6 +85,12 @@ class SuppliesRepoImpl extends SuppliesRepository {
   @override
   Future<dynamic> addFavourite(variables) async {
     final res = await http.mutation(addFavouriteQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> addMultipleProductsToCart(variables) async {
+    final res = await http.mutation(addMultipleProductstoCartQuery, variables);
     return res;
   }
 }

@@ -84,6 +84,7 @@ import 'package:di360_flutter/feature/supplies/view/order_request_review_view.da
 import 'package:di360_flutter/feature/supplies/view/supplies_cart_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_details_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_marketplace_view.dart';
+import 'package:di360_flutter/feature/supplies/view/supplies_view_options_detail_view.dart';
 import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
 import 'package:di360_flutter/feature/support/view/support_view.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view/talent_enquiries_view.dart';
@@ -164,9 +165,9 @@ class Routes {
             dentalProfessionalId: args['dental_professional_id'],
             talentId: args['talentId'],
             profilePic: args['profile_pic'],
-            userId : args['userId'],
-            talentEnquiryId : args["talent_enquiry_id"],
-            type : args["type"]);
+            userId: args['userId'],
+            talentEnquiryId: args["talent_enquiry_id"],
+            type: args["type"]);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =
@@ -299,6 +300,8 @@ class Routes {
       RouteList.interestedScreen: (context) => InterestedScreen(),
       RouteList.suppliesMarketPlace: (context) => SuppliesMarketplaceView(),
       RouteList.suppliesDetailsView: (context) => SuppliesDetailsView(),
+      RouteList.suppliesViewOptionsDetailsView: (context) =>
+          SuppliesViewOptionsDetailView(),
       RouteList.suppliesCartView: (context) => SuppliesCartView(),
       RouteList.orderRequestReviewView: (context) {
         final args =

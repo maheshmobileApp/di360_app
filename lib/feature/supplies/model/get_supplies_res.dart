@@ -398,6 +398,7 @@ class SupplyVariants {
   String? supplyId;
   String? title;
   String? video;
+  String? skuCode;
   SupplyReviewsAggregate? supplyReviewsAggregate;
   String? sTypename;
 
@@ -422,6 +423,7 @@ class SupplyVariants {
       this.supplyId,
       this.title,
       this.video,
+      this.skuCode,
       this.supplyReviewsAggregate,
       this.sTypename});
 
@@ -446,6 +448,7 @@ class SupplyVariants {
     supplyId = json['supply_id'];
     title = json['title'];
     video = json['video'];
+    skuCode = json['sku_code'];
     supplyReviewsAggregate = json['supply_reviews_aggregate'] != null
         ? new SupplyReviewsAggregate.fromJson(json['supply_reviews_aggregate'])
         : null;
@@ -474,6 +477,7 @@ class SupplyVariants {
     data['supply_id'] = this.supplyId;
     data['title'] = this.title;
     data['video'] = this.video;
+    data['sku_code'] = this.skuCode;
     if (this.supplyReviewsAggregate != null) {
       data['supply_reviews_aggregate'] = this.supplyReviewsAggregate?.toJson();
     }

@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/app_button.dart';
+import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
 import 'package:di360_flutter/feature/supplies/widgets/quantity_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,41 +41,42 @@ class ProductDetailCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(suppliesDetails?.name ?? '',
+                  Text("PRODUCT INFORMATION",
                       style: TextStyles.clashSemiBold(fontSize: 18)),
                   _infoDetailColumn(suppliesDetails),
                   _priceInfoCard(suppliesDetails),
-                  _quantityCard(vm, suppliesDetails?.id ?? ""),
+                  /*_quantityCard(vm, suppliesDetails?.id ?? ""),
                   SizedBox(height: 8),
                   AppButton(
                     height: 40,
                     title: "Add to Cart",
                     prefixIcon: Icons.shopping_cart,
-                    onPressed: () async{
+                    onPressed: () async {
                       final supplyId = suppliesDetails?.id ?? "";
-                  final variantId =
-                      suppliesDetails?.supplyVariants?.firstOrNull?.id ?? "";
-                  final quantity = vm.getQuantity(supplyId);
+                      final variantId =
+                          suppliesDetails?.supplyVariants?.firstOrNull?.id ??
+                              "";
+                      final quantity = vm.getQuantity(supplyId);
 
-                  final cartItem = vm.getCartItemBySupplyId(supplyId);
+                      final cartItem = vm.getCartItemBySupplyId(supplyId);
 
-                  if (cartItem != null) {
-                    await vm.increaseQuantityById(
-                      context,
-                      cartItem.id ?? "",
-                      quantity,
-                    );
-                  } else {
-                    await vm.addToCart(
-                      context,
-                      supplyId,
-                      variantId,
-                      quantity,
-                    );
-                  }
+                      if (cartItem != null) {
+                        await vm.increaseQuantityById(
+                          context,
+                          cartItem.id ?? "",
+                          quantity,
+                        );
+                      } else {
+                        await vm.addToCart(
+                          context,
+                          supplyId,
+                          variantId,
+                          quantity,
+                        );
+                      }
 
-                  vm.resetQuantity(supplyId);
-                  vm.getSuppliesCart(context);
+                      vm.resetQuantity(supplyId);
+                      vm.getSuppliesCart(context);
                     },
                   ),
                   SizedBox(height: 10),
@@ -119,13 +121,12 @@ class ProductDetailCard extends StatelessWidget {
                       SizedBox(width: 10),
                       _iconWithText(Icons.share, "Share Product Link"),
                     ],
-                  ),
+                  ),*/
                 ]),
           )),
     );
   }
 }
-
 
 _iconWithText(IconData icon, String text) {
   return Row(
@@ -156,39 +157,18 @@ _quantityCard(SuppliesViewModel vm, String supplyId) {
 }
 
 _priceInfoCard(Supplies? suppliesDetails) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Price", style: TextStyles.medium2(color: Colors.grey.shade700)),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                "AUD ${suppliesDetails?.supplyVariants?.firstOrNull?.sellingPrice ?? 'N/A'}",
-                style: TextStyles.semiBold(
-                    fontSize: 20, color: AppColors.primaryColor),
-              ),
-              Text(" / Piece",
-                  style: TextStyles.medium2(color: Colors.grey.shade700)),
-            ],
-          ),
-        ],
+      SizedBox(
+        height: 6,
       ),
-      Container(
-        decoration: BoxDecoration(
-            color: AppColors.greenColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.greenColor, width: 1)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-          child: Text("In Stock",
-              style: TextStyles.semiBold(
-                  color: AppColors.greenColor, fontSize: 12)),
-        ),
-      )
+      Text(
+        "\$ ${suppliesDetails?.supplyVariants?.first.sellingPrice} - \$ ${suppliesDetails?.supplyVariants?.last.sellingPrice}",
+        style: TextStyles.semiBold(fontSize: 20, color: AppColors.primaryColor),
+      ),
+      Text("Price varies by selected size",
+          style: TextStyles.medium2(color: Colors.grey.shade700)),
     ],
   );
 }
@@ -197,6 +177,7 @@ _infoDetailColumn(Supplies? suppliesDetails) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      _infoRow("Product ID", "N/A"),
       _infoRow("Supplier", suppliesDetails?.dentalSupplier?.businessName ?? ''),
       _infoRow("Brand", suppliesDetails?.supplyBrand?.name ?? ''),
       _infoRow("Category", suppliesDetails?.supplyCategory?.name ?? ''),
@@ -210,6 +191,19 @@ _infoRow(String title, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
     child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: TextStyles.medium2(color: Colors.grey.shade700)),
+        Text(value, style: TextStyles.bold2()),
+      ],
+    ),
+  );
+}
+
+_varientText(String title, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: TextStyles.medium2(color: Colors.grey.shade700)),

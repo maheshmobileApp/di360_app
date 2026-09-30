@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/supplies/model/product_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
 import 'package:di360_flutter/feature/supplies/widgets/quantity_stepper.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -12,6 +13,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onIncrease;
   final VoidCallback? onDecrease;
   final VoidCallback? onDetailView;
+  final bool viewOption;
 
   const ProductCard(
       {super.key,
@@ -20,7 +22,8 @@ class ProductCard extends StatelessWidget {
       this.onAddToCart,
       this.onIncrease,
       this.onDecrease,
-      this.onDetailView});
+      this.onDetailView,
+      this.viewOption = false});
 
   @override
   Widget build(BuildContext context) {
@@ -101,35 +104,68 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                        child: QuantityStepper(
-                      quantity: product.quantity,
-                      onIncrease: onIncrease,
-                      onDecrease: onDecrease,
-                    )),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: product.quantity == 0 ? () {} : onAddToCart,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          color: product.quantity == 0
-                              ? const Color.fromARGB(255, 235, 184, 145)
-                              : AppColors.primaryColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.shopping_cart,
-                            color: AppColors.whiteColor,
+                viewOption
+                    ? GestureDetector(
+                        onTap: onDetailView,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: AppColors.primaryColor,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.visibility,
+                                  color: AppColors.whiteColor,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text("View Options",
+                                    style: TextStyles.medium2(
+                                        color: AppColors.whiteColor))
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                              child: QuantityStepper(
+                            quantity: product.quantity,
+                            onIncrease: onIncrease,
+                            onDecrease: onDecrease,
+                          )),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: product.quantity == 0
+                                ? () {
+                                    scaffoldMessenger("Please Add A Quantity");
+                                  }
+                                : onAddToCart,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                color: product.quantity == 0
+                                    ? const Color.fromARGB(255, 235, 184, 145)
+                                    : AppColors.primaryColor,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.shopping_cart,
+                                  color: AppColors.whiteColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
               ],
             ),
           ),

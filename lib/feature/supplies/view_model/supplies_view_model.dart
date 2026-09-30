@@ -73,6 +73,8 @@ class SuppliesViewModel extends ChangeNotifier {
 
   int selectedTotal = 0;
 
+  int totalAvailableOptionPrice = 0;
+
   //cart quantity
   final Map<String, int> _cartQuantity = {};
 
@@ -422,6 +424,45 @@ class SuppliesViewModel extends ChangeNotifier {
     await getSuppliesCart(context);
     navigationService.goBack();
     Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> addMultipleProductsToCart(
+    BuildContext context,
+    String supplyId,
+    List<SupplyVariants> variants,
+  ) async {
+    final objects = variants
+        .map((variant) {
+          final quantity = getQuantity(variant.id ?? '');
+          final variantId = variant.id;
+          if (quantity <= 0 || variantId == null || variantId.isEmpty) {
+            return null;
+          }
+
+          return {
+            "supply_id": supplyId,
+            "supply_variant_id": variantId,
+            "quantity": quantity,
+          };
+        })
+        .whereType<Map<String, Object>>()
+        .toList();
+
+    if (supplyId.isEmpty || objects.isEmpty) {
+      scaffoldMessenger("Select a quantity for at least one option");
+      return;
+    }
+
+    Loaders.circularShowLoader(context);
+    try {
+      await repo.addMultipleProductsToCart({"objects": objects});
+      suppliesCartData = await repo.getSupplyCarts();
+      navigationService.goBack();
+    } finally {
+      Loaders.circularHideLoader(context);
+    }
 
     notifyListeners();
   }
