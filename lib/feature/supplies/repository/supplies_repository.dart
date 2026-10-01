@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
+import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
@@ -16,4 +17,5 @@ abstract class SuppliesRepository {
   Future<AccountData> getAccountTowardsSupplier(dynamic variables);
   Future<dynamic> addFavourite(dynamic variables);
   Future<dynamic> addMultipleProductsToCart(dynamic variables);
+  Future<FavouritesKeysData> getFavouritesKeys(dynamic variables);
 }

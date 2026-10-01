@@ -2,7 +2,7 @@ const String getSupplies =
     r'''query supplies($andList: [supplies_bool_exp!], $limit: Int, $offset: Int) {
   supplies(
     where: {_and: $andList}
-    order_by: {updated_at: desc}
+    order_by: [{updated_at: desc}, {id: desc}]
     limit: $limit
     offset: $offset
   ) {
@@ -89,6 +89,25 @@ const String getSupplies =
         name
         image
         type
+        __typename
+      }
+      __typename
+    }
+    supply_promotion_items(
+      where: {item_role: {_eq: "APPLIES"}, supply_promotion: {is_active: {_eq: true}, start_date: {_lte: "now()"}, end_date: {_gte: "now()"}}}
+    ) {
+      id
+      supply_id
+      promotion_id
+      item_role
+      supply_promotion {
+        id
+        name
+        type
+        is_active
+        start_date
+        end_date
+        config
         __typename
       }
       __typename

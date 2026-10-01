@@ -14,6 +14,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onDecrease;
   final VoidCallback? onDetailView;
   final bool viewOption;
+  final bool isFavourited;
 
   const ProductCard(
       {super.key,
@@ -23,7 +24,8 @@ class ProductCard extends StatelessWidget {
       this.onIncrease,
       this.onDecrease,
       this.onDetailView,
-      this.viewOption = false});
+      this.viewOption = false,
+      this.isFavourited = false});
 
   @override
   Widget build(BuildContext context) {
@@ -193,8 +195,9 @@ class ProductCard extends StatelessWidget {
               child: GestureDetector(
                 onTap: onFavorite,
                 child: Icon(
-                  Icons.favorite_border,
-                  color: AppColors.black,
+                  isFavourited ? Icons.favorite : Icons.favorite_border,
+                  color:
+                      isFavourited ? AppColors.primaryColor : AppColors.black,
                   size: 22,
                 ),
               )),

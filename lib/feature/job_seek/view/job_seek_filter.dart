@@ -1,4 +1,3 @@
-import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_seek/widget/collasible_section.dart';
 import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.dart';

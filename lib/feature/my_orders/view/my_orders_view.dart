@@ -1,9 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/my_orders/widgets/my_order_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class MyOrdersView extends StatefulWidget {
@@ -54,16 +57,25 @@ class _MyOrdersViewState extends State<MyOrdersView> {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-          backgroundColor: AppColors.whiteColor,
-          leading: IconButton(
-              onPressed: () {
-                navigationService.goBack();
-              },
-              icon: Icon(Icons.arrow_back_ios)),
-          title: Text(
-            "My Orders",
-            style: TextStyles.bold3(),
+      appBar: AppBarWidget(
+          title: "My Orders",
+          notification: false,
+          logo: false,
+          searchWidget: false,
+          filterWidget: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  navigationService.navigateTo(RouteList.myOrdersFilterView);
+
+                },
+                child:
+                    SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+              ),
+              /*GestureDetector(
+                  onTap: () {},
+                  child: Icon(Icons.close, color: AppColors.black))*/
+            ],
           )),
       body: orders.isEmpty
           ? Center(

@@ -67,6 +67,7 @@ import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hu
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_favourites/view/my_favourites_view.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
+import 'package:di360_flutter/feature/my_orders/view/my_orders_filter_view.dart';
 import 'package:di360_flutter/feature/my_orders/view/my_orders_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
@@ -311,7 +312,8 @@ class Routes {
       },
       RouteList.addNewsAddressView: (context) => AddNewsAddressView(),
       RouteList.myFavouritesView: (context) => MyFavouritesView(),
-      RouteList.myOrdersView: (context) => MyOrdersView()
+      RouteList.myOrdersView: (context) => MyOrdersView(), 
+      RouteList.myOrdersFilterView: (context) => MyOrdersFilterView(),
     };
   }
 }

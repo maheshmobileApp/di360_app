@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
+import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
@@ -590,5 +591,23 @@ class SuppliesViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger("Added to Favourites");
     }
+  }
+
+  FavouritesKeysData? favouritesKeysData;
+
+  Future<void> getFavouriteKeys() async {
+    final variables = {};
+    final res = await repo.getFavouritesKeys(variables);
+
+    if (res != null) {
+      favouritesKeysData = res;
+      notifyListeners();
+    }
+  }
+
+  bool checkFavouriteKey(String id) {
+    return favouritesKeysData?.supplyFavorites
+            ?.any((item) => item.supplyId?.toString() == id) ??
+        false;
   }
 }

@@ -136,6 +136,7 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   vm.addFavourites(
                       supply.id ?? "", supply.supplyVariants?.first.id ?? "");
                 },
+                isFavourited: vm.checkFavouriteKey(supply.id ?? ""),
                 onIncrease: () {
                   vm.increaseQuantity(supply.id ?? "");
                 },
@@ -172,8 +173,11 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   print(
                       "Navigating to details view for supply ID: ${supply.id}");
                   await vm.getSuppliesDetails(context, supply.id ?? "");
-                  (supply.supplyVariants?.length ?? 0) > 1 ?navigationService.navigateTo(RouteList.suppliesViewOptionsDetailsView) :
-                  navigationService.navigateTo(RouteList.suppliesDetailsView);
+                  (supply.supplyVariants?.length ?? 0) > 1
+                      ? navigationService
+                          .navigateTo(RouteList.suppliesViewOptionsDetailsView)
+                      : navigationService
+                          .navigateTo(RouteList.suppliesDetailsView);
                 });
           },
         ),

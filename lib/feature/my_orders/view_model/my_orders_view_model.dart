@@ -13,6 +13,26 @@ class MyOrdersViewModel extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMoreData = true;
 
+  final TextEditingController searchController = TextEditingController();
+  String selectedOrderStatus = "";
+  void setSelectedOrderStatus(String value) {
+    selectedOrderStatus = value;
+    notifyListeners();
+  }
+
+  List<String> orderStatuses = [
+    "Select Order Status",
+    "Pending",
+    "Approved",
+    "Partially Shipped",
+    "Shipped",
+    "Delivered",
+    "Cancelled",
+    "Refunded"
+  ];
+
+  List<String> supplierNames = [];
+
   Future<void> getSuppliesOrders(
     BuildContext context, {
     bool isLoadMore = false,

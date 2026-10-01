@@ -1,5 +1,6 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
+import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
@@ -10,6 +11,7 @@ import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/decrease_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/delete_cart_item.dart';
 import 'package:di360_flutter/feature/supplies/queries/dental_professional_address.dart';
+import 'package:di360_flutter/feature/supplies/queries/favourites_keys_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_account_towards_supplier.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_cart_query.dart';
@@ -92,5 +94,11 @@ class SuppliesRepoImpl extends SuppliesRepository {
   Future<dynamic> addMultipleProductsToCart(variables) async {
     final res = await http.mutation(addMultipleProductstoCartQuery, variables);
     return res;
+  }
+
+  @override
+  Future<FavouritesKeysData> getFavouritesKeys(variables) async {
+    final res = await http.query(favouritesKeysQuery);
+    return FavouritesKeysData.fromJson(res);
   }
 }

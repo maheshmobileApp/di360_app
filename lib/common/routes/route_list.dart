@@ -99,11 +99,13 @@ class RouteList {
   static const String interestedScreen = '/interestedScreen';
   static const String suppliesMarketPlace = '/suppliesMarketPlace';
   static const String suppliesDetailsView = '/suppliesDetailsView';
-  static const String suppliesViewOptionsDetailsView = '/suppliesViewOptionsDetailsView';
+  static const String suppliesViewOptionsDetailsView =
+      '/suppliesViewOptionsDetailsView';
   static const String suppliesCartView = '/suppliesCartView';
   static const String orderRequestReviewView = '/orderRequestReviewView';
   static const String jobProfileTalentMessage = '/jobProfileTalentMessage';
   static const String addNewsAddressView = '/addNewsAddressView';
   static const String myFavouritesView = '/myFavouritesView';
   static const String myOrdersView = '/myOrdersView';
+  static const String myOrdersFilterView = '/myOrdersFilterView';
 }
