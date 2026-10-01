@@ -28,6 +28,7 @@ import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/permissions_enum.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -132,6 +133,17 @@ class DashBoardViewModel extends ChangeNotifier {
     int index,
     BuildContext context,
   ) async {
+    final requiredPermission = _requiredPermissionForIndex(index);
+    if (requiredPermission != null) {
+      final permissions = await LocalStorage.getStringList(
+        LocalStorageConst.permissions,
+      );
+      if (!permissions.contains(requiredPermission)) {
+        scaffoldMessenger("You don't have permission to access this page.");
+        return;
+      }
+    }
+
     bool isSubscriptionExempt = false;
 
     if (userType == UserRole.supplier.value) {
@@ -168,6 +180,35 @@ class DashBoardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? _requiredPermissionForIndex(int index) {
+    if (_userType == UserRole.supplier.value) {
+      return switch (index) {
+        1 => ModulePermission.newsfeedMarketplace.value,
+        2 => ModulePermission.jobSeekMarketplace.value,
+        3 => ModulePermission.newsfeedMarketplace.value,
+        4 => ModulePermission.catalogueMarketplace.value,
+        _ => null,
+      };
+    }
+
+    if (_userType == UserRole.practice.value) {
+      return switch (index) {
+        1 => ModulePermission.newsfeedMarketplace.value,
+        2 => ModulePermission.jobSeekMarketplace.value,
+        3 => ModulePermission.catalogueMarketplace.value,
+        _ => null,
+      };
+    }
+
+    return switch (index) {
+      1 => ModulePermission.newsfeedMarketplace.value,
+      2 => ModulePermission.jobSeekMarketplace.value,
+      3 => ModulePermission.newsfeedMarketplace.value,
+      4 => ModulePermission.catalogueMarketplace.value,
+      _ => null,
+    };
+  }
+
   void _showInactivePopup(BuildContext context) {
     SubscriptionExpiredDialog.show(
       context,
@@ -181,9 +222,6 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   updateIndex(int index, BuildContext context) async {
-    final permissions = await LocalStorage.getStringList(
-      LocalStorageConst.permissions,
-    );
     if (_userType == UserRole.supplier.value) {
       switch (index) {
         case 0: // Home

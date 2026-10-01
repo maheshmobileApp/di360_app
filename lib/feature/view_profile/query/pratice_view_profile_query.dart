@@ -4,6 +4,7 @@ query practiceDisplayV2($id: uuid!) {
     id
     first_name
     last_name
+    type
     name
     email
     phone
@@ -26,6 +27,7 @@ query practiceDisplayV2($id: uuid!) {
     website_link
     directory_category_id
     profile_completed
+    mobile_number
     directories {
       id
       __typename

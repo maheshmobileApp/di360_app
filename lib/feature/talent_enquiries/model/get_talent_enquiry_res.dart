@@ -6,7 +6,9 @@ class GetTalentEnquiryRes {
   GetTalentEnquiryRes({this.data});
 
   GetTalentEnquiryRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new TalentEnquiryData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new TalentEnquiryData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -77,11 +79,11 @@ class TalentEnquiries {
         ? new TalentEnquiriesFindSupplier.fromJson(
             json['jobhirings_find_practice'])
         : null;
-        jobhiringsFindSupplier = json['jobhirings_find_supplier'] != null
+    jobhiringsFindSupplier = json['jobhirings_find_supplier'] != null
         ? new TalentEnquiriesFindSupplier.fromJson(
             json['jobhirings_find_supplier'])
         : null;
-    
+
     sTypename = json['__typename'];
   }
 
@@ -96,12 +98,10 @@ class TalentEnquiries {
       data['job_profiles'] = this.jobProfiles!.toJson();
     }
     if (this.jobhiringsFindPractice != null) {
-      data['jobhirings_find_practice'] =
-          this.jobhiringsFindPractice?.toJson();
+      data['jobhirings_find_practice'] = this.jobhiringsFindPractice?.toJson();
     }
     if (this.jobhiringsFindSupplier != null) {
-      data['jobhirings_find_supplier'] =
-          this.jobhiringsFindSupplier?.toJson();
+      data['jobhirings_find_supplier'] = this.jobhiringsFindSupplier?.toJson();
     }
     data['__typename'] = this.sTypename;
     return data;
@@ -111,7 +111,7 @@ class TalentEnquiries {
 class JobProfilesEnquiry {
   String? id;
   String? fullName;
-  DirectoryCategories? professionType;
+  String? professionType;
   String? state;
   List<ProfileImage>? profileImage;
   List<String>? workType;
@@ -135,9 +135,7 @@ class JobProfilesEnquiry {
   JobProfilesEnquiry.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fullName = json['full_name'];
-   professionType = json['professionType'] != null
-        ? new DirectoryCategories.fromJson(json['professionType'])
-        : null;
+    professionType = json['profession_type'];
 
     state = json['state'];
     if (json['profile_image'] != null) {
@@ -148,7 +146,8 @@ class JobProfilesEnquiry {
         });
       }
     }
-    workType = json['work_type'] != null ? json['work_type'].cast<String>() : null;
+    workType =
+        json['work_type'] != null ? json['work_type'].cast<String>() : null;
     dentalProfessionalId = json['dental_professional_id'];
     postAnonymously = json['post_anonymously'];
     dentalProfessional = json['dental_professional'] != null
@@ -161,9 +160,8 @@ class JobProfilesEnquiry {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['full_name'] = this.fullName;
-    if (this.professionType != null) {
-      data['professionType'] = this.professionType!.toJson();
-    }
+
+    data['professionType'] = this.professionType;
 
     data['state'] = this.state;
     if (this.profileImage != null) {

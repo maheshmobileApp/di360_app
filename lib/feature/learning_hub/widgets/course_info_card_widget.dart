@@ -286,7 +286,7 @@ class _CourseInfoCardWidgetState extends State<CourseInfoCardWidget> {
                           _InfoTextWidget(
                             label: "Price",
                             first: true,
-                            value: (widget.totalPrice == 0)
+                            value: (widget.totalPrice != "0")
                                 ? "\$${widget.totalPrice != null ? double.tryParse(widget.totalPrice!)?.toStringAsFixed(0) ?? widget.totalPrice : ''}"
                                 : "FREE",
                           ),

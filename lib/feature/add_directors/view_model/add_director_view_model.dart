@@ -751,7 +751,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Updated Basic Information successfully');
       await updateRecord(logo);
-      await LocalStorage.setStringVal(LocalStorageConst.profilePic, logoUrl);
+      await LocalStorage.setStringVal(LocalStorageConst.profilePic, logoUrl ?? "");
       await LocalStorage.setStringVal(
           LocalStorageConst.professionId, selectedBusineestype?.id ?? "");
     } else {
@@ -1259,7 +1259,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "business_email":
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "business_name": CompanyNameController.text,
-        "mobile_number": "",
+        "mobile_number": businessPhoneCntr.text,
         "logo": logo,
         "abn_number": ABNNumberController.text,
       };
