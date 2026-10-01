@@ -147,6 +147,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
         "web_url": websiteController.text,
         "user_role": type,
         "user_id": userId,
+        "status": "",
         if (type == UserRole.practice.value) "dental_practice_id": userId,
         if (type == UserRole.supplier.value) "dental_supplier_id": userId,
         if (type == UserRole.professional.value)
@@ -154,8 +155,10 @@ class AddNewsFeedViewModel extends ChangeNotifier {
         if (type == UserRole.admin.value) "dental_admin_id": userId,
         "newsfeedType": "NEWSFEED",
         "community_id": null,
-        if (type == UserRole.supplier.value) "comments_enabled": enableComments,
+        "comments_enabled":
+            type == UserRole.supplier.value ? enableComments : true,
       };
+      print("*******$variables");
 
       final res = await repo.addNewsFeed(variables);
 

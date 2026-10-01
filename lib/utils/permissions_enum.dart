@@ -6,6 +6,7 @@ enum ModulePermission {
   jobSeekMarketplace('POPULAR_JOBS_MARKETPLACE'),
   catalogueMarketplace('CATALOGUE_MARKETPLACE'),
   suppliesMarketplace('SUPPLIES_MARKETPLACE'),
+  supportMarketplace('SUPPORT_MARKETPLACE'),
 
   // Modules
   newsfeedModule('NEWSFEED_MODULE'),

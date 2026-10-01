@@ -910,7 +910,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                     "ejobdesp": e.jobDescription,
                     "startMonth": e.startMonth,
                     "startYear": e.startYear,
-                    "isStillWorking": isStillWorking,
+                    "stillInRole": isStillWorking,
                     "endMonth": e.endMonth,
                     "endYear": e.endYear
                   })
@@ -948,6 +948,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       ]
     };
 
+    print("******$variables");
+
     try {
       final res = await repo.createJobProfileListing(variables);
       Loaders.circularHideLoader(context);
@@ -978,7 +980,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     bool isDraft,
     String jobProfileId,
   ) async {
-    print("**************//******************$jobProfileStatus");
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {};
 
@@ -1029,36 +1030,45 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                 }
               ]
             : [],
-        "upload_resume": [
-          _buildFilePayload(
-            url: serverDocuments["Resume"]?.url ??
-                uploadedFiles["Resume"]?["url"],
-            name: serverDocuments["Resume"]?.name ??
-                uploadedFiles["Resume"]?["name"],
-            filePath: serverDocuments["Resume"]?.url ??
-                uploadedFiles["Resume"]?["name"],
-          )
-        ],
-        "certificate": [
-          _buildFilePayload(
-            url: serverDocuments["Certificate"]?.url ??
-                uploadedFiles["Certificate"]?["url"],
-            name: serverDocuments["Certificate"]?.name ??
-                uploadedFiles["Certificate"]?["name"],
-            filePath: serverDocuments["Certificate"]?.url ??
-                uploadedFiles["Certificate"]?["name"],
-          )
-        ],
-        "cover_letter": [
-          _buildFilePayload(
-            url: serverDocuments["Cover Letter"]?.url ??
-                uploadedFiles["Cover Letter"]?["url"],
-            name: serverDocuments["Cover Letter"]?.name ??
-                uploadedFiles["Cover Letter"]?["name"],
-            filePath: serverDocuments["Cover Letter"]?.url ??
-                uploadedFiles["Cover Letter"]?["name"],
-          )
-        ],
+        "upload_resume": serverDocuments["Resume"]?.url == null &&
+                uploadedFiles["Resume"]?["url"] == null
+            ? []
+            : [
+                _buildFilePayload(
+                  url: serverDocuments["Resume"]?.url ??
+                      uploadedFiles["Resume"]?["url"],
+                  name: serverDocuments["Resume"]?.name ??
+                      uploadedFiles["Resume"]?["name"],
+                  filePath: serverDocuments["Resume"]?.url ??
+                      uploadedFiles["Resume"]?["name"],
+                )
+              ],
+        "certificate": serverDocuments["Certificate"]?.url == null &&
+                uploadedFiles["Certificate"]?["url"] == null
+            ? []
+            : [
+                _buildFilePayload(
+                  url: serverDocuments["Certificate"]?.url ??
+                      uploadedFiles["Certificate"]?["url"],
+                  name: serverDocuments["Certificate"]?.name ??
+                      uploadedFiles["Certificate"]?["name"],
+                  filePath: serverDocuments["Certificate"]?.url ??
+                      uploadedFiles["Certificate"]?["name"],
+                )
+              ],
+        "cover_letter": serverDocuments["Cover Letter"]?.url == null &&
+                uploadedFiles["Cover Letter"]?["url"] == null
+            ? []
+            : [
+                _buildFilePayload(
+                  url: serverDocuments["Cover Letter"]?.url ??
+                      uploadedFiles["Cover Letter"]?["url"],
+                  name: serverDocuments["Cover Letter"]?.name ??
+                      uploadedFiles["Cover Letter"]?["name"],
+                  filePath: serverDocuments["Cover Letter"]?.url ??
+                      uploadedFiles["Cover Letter"]?["name"],
+                )
+              ],
         "Year_of_experiance": selectExperience,
 
         "abn_number": abnNumberController.text,
@@ -1073,7 +1083,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                   "ejobdesp": e.jobDescription,
                   "startMonth": e.startMonth,
                   "startYear": e.startYear,
-                  "isStillWorking": isStillWorking,
+                  "stillInRole": isStillWorking,
                   "endMonth": e.endMonth,
                   "endYear": e.endYear
                 })

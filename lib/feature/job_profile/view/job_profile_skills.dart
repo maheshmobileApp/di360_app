@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_documents_dialog.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_education_dialog.dart';
@@ -330,16 +329,15 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
             title: Row(
               children: [
                 if (exp.jobTitle != null)
-                  Text(exp.jobTitle ?? "",
+                  Text("${exp.jobTitle} at " ?? "",
                       style: TextStyles.semiBold(
                           fontSize: 16, color: AppColors.black)),
-                Text(" at ",
-                    style: TextStyles.semiBold(
-                        fontSize: 16, color: AppColors.black)),
                 if (exp.companyName != null)
-                  Text(exp.companyName ?? "",
-                      style: TextStyles.semiBold(
-                          fontSize: 16, color: AppColors.blueColor)),
+                  Expanded(
+                    child: Text(exp.companyName ?? "",
+                        style: TextStyles.semiBold(
+                            fontSize: 16, color: AppColors.blueColor)),
+                  ),
               ],
             ),
             subtitle: Column(

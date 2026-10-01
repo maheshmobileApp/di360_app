@@ -115,6 +115,8 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
         await context.read<SuppliesViewModel>().getSuppliers(context);
         navigationService.navigateTo(RouteList.suppliesMarketPlace);
       }
+    } else if (title == "Support") {
+      navigationService.navigateTo(RouteList.supportScreen);
     }
   }
 

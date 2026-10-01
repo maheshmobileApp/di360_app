@@ -181,6 +181,9 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   updateIndex(int index, BuildContext context) async {
+    final permissions = await LocalStorage.getStringList(
+      LocalStorageConst.permissions,
+    );
     if (_userType == UserRole.supplier.value) {
       switch (index) {
         case 0: // Home
