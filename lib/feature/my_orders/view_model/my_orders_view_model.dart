@@ -1,5 +1,7 @@
 import 'package:di360_flutter/feature/my_orders/model/supplies_orders_res.dart';
+import 'package:di360_flutter/feature/my_orders/model/get_all_dental_suppliers_res.dart';
 import 'package:di360_flutter/feature/my_orders/repository/my_orders_repo_impl.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class MyOrdersViewModel extends ChangeNotifier {
@@ -12,11 +14,39 @@ class MyOrdersViewModel extends ChangeNotifier {
   bool isLoading = false;
   bool isLoadingMore = false;
   bool hasMoreData = true;
+  bool isFilterApplied = false;
 
   final TextEditingController searchController = TextEditingController();
   String selectedOrderStatus = "";
+  String selectedSupplierName = "";
+  String selectedSupplierId = "";
+
+  String filterStatus = "";
+  String filterSupplierId = "";
+  String filterStartDate = "";
+  String filterEndDate = "";
+
+  void setFilterApply(bool value) {
+    isFilterApplied = value;
+    notifyListeners();
+  }
+
+  void setFilterDates(String startDate, String endDate) {
+    filterStartDate = startDate;
+    filterEndDate = endDate;
+    notifyListeners();
+  }
+
   void setSelectedOrderStatus(String value) {
     selectedOrderStatus = value;
+    filterStatus = value.toUpperCase();
+    notifyListeners();
+  }
+
+  void setSelectedSupplier(String id, String name) {
+    selectedSupplierId = id;
+    selectedSupplierName = name;
+    filterSupplierId = id;
     notifyListeners();
   }
 
@@ -31,12 +61,11 @@ class MyOrdersViewModel extends ChangeNotifier {
     "Refunded"
   ];
 
-  List<String> supplierNames = [];
-
   Future<void> getSuppliesOrders(
     BuildContext context, {
     bool isLoadMore = false,
   }) async {
+    Loaders.circularShowLoader(context);
     if (isLoading || isLoadingMore) return;
     if (isLoadMore && !hasMoreData) return;
 
@@ -49,11 +78,32 @@ class MyOrdersViewModel extends ChangeNotifier {
     }
     notifyListeners();
 
+    if (filterStatus.isNotEmpty ||
+        filterSupplierId.isNotEmpty ||
+        filterStartDate.isNotEmpty ||
+        filterEndDate.isNotEmpty) {
+      setFilterApply(true);
+    } else {
+      setFilterApply(false);
+    }
+
     final variables = {
       "andList": [
-        {
-          "status": {"_neq": "DRAFT"}
-        }
+        (filterStatus != "")
+            ? {
+                "status": {"_eq": filterStatus}
+              }
+            : {
+                "status": {"_neq": "DRAFT"}
+              },
+        if (filterSupplierId != "")
+          {
+            "suppliers_id": {"_eq": filterSupplierId}
+          },
+        if (filterStartDate != "" && filterEndDate != "")
+          {
+            "created_at": {"_gte": filterStartDate, "_lte": filterEndDate}
+          }
       ],
       "limit": _ordersLimit,
       "offset": _ordersOffset,
@@ -79,5 +129,28 @@ class MyOrdersViewModel extends ChangeNotifier {
       isLoadingMore = false;
       notifyListeners();
     }
+    Loaders.circularHideLoader(context);
+  }
+
+  AllDentalSuppliersData? suppliersData;
+
+  Future<void> getAllDentalSuppliers(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final res = await repo.getAllDentalSuppliers();
+    suppliersData = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  clearFilters() {
+    selectedOrderStatus = "";
+    selectedSupplierName = "";
+    selectedSupplierId = "";
+    filterStatus = "";
+    filterSupplierId = "";
+    filterStartDate = "";
+    filterEndDate = "";
+    notifyListeners();
   }
 }

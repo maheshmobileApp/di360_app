@@ -65,16 +65,21 @@ class _MyOrdersViewState extends State<MyOrdersView> {
           filterWidget: Row(
             children: [
               GestureDetector(
-                onTap: () {
+                onTap: () async{
+                  await vm.getAllDentalSuppliers(context);
                   navigationService.navigateTo(RouteList.myOrdersFilterView);
 
                 },
                 child:
                     SvgPicture.asset(ImageConst.filter, color: AppColors.black),
               ),
-              /*GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.close, color: AppColors.black))*/
+              if (vm.isFilterApplied)
+              GestureDetector(
+                  onTap: () async {
+                    await vm.clearFilters();
+                    vm.getSuppliesOrders(context);
+                  },
+                  child: Icon(Icons.close, color: AppColors.black))
             ],
           )),
       body: orders.isEmpty

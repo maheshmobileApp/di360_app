@@ -41,19 +41,22 @@ class CustomDropDown<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-       if(title.isNotEmpty) Row(
-          children: [
-            Text(
-              title,
-              style: TextStyles.regular3(color: titleColor ?? AppColors.black),
-            ),
-            if (isRequired)
-              const Text(
-                ' *',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        if (title.isNotEmpty)
+          Row(
+            children: [
+              Text(
+                title,
+                style:
+                    TextStyles.regular3(color: titleColor ?? AppColors.black),
               ),
-          ],
-        ),
+              if (isRequired)
+                const Text(
+                  ' *',
+                  style:
+                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+            ],
+          ),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
           dropdownColor: Colors.white,
@@ -66,22 +69,26 @@ class CustomDropDown<T> extends StatelessWidget {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: style ?? TextStyles.regular3(color: AppColors.black),
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             filled: bgcolor != null,
             fillColor: bgcolor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.geryColor, width: 1.5),
+              borderSide:
+                  const BorderSide(color: AppColors.geryColor, width: 1.5),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.geryColor, width: 1.5),
+              borderSide:
+                  const BorderSide(color: AppColors.geryColor, width: 1.5),
             ),
           ),
           icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
           hint: Text(
             hintText,
-            style: hintstyle ?? TextStyles.regular4(color: AppColors.dropDownHint),
+            style:
+                hintstyle ?? TextStyles.regular4(color: AppColors.dropDownHint),
           ),
           items: items,
         ),

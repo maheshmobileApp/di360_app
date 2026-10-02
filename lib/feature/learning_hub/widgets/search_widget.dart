@@ -61,24 +61,26 @@ class SearchWidget extends StatelessWidget {
                 },
               ),
             if (searchButton)
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                onPressed: onSearch == null
+                    ? null
+                    : () {
+                        FocusScope.of(context).unfocus();
+                        onSearch!();
+                      },
+                label: const Text(
+                  "Search",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-              onPressed: onSearch == null ? null : () {
-                FocusScope.of(context).unfocus();
-                onSearch!();
-              },
-              label: const Text(
-                "Search",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
           ],
         ),
       ),

@@ -1,5 +1,7 @@
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/my_orders/model/get_all_dental_suppliers_res.dart';
 import 'package:di360_flutter/feature/my_orders/model/supplies_orders_res.dart';
+import 'package:di360_flutter/feature/my_orders/queries/get_all_dental_suppliers_query.dart';
 import 'package:di360_flutter/feature/my_orders/queries/supplies_orders_query.dart';
 import 'package:di360_flutter/feature/my_orders/repository/my_orders_repository.dart';
 
@@ -10,6 +12,13 @@ class MyOrdersRepoImpl extends MyOrdersRepository {
   Future<SuppliesOrdersData> getSuppliesOrders(variables) async {
     final res = await http.query(suppliesOrdersQuery, variables: variables);
     final result = SuppliesOrdersData.fromJson(res);
+    return result;
+  }
+
+  @override
+  Future<AllDentalSuppliersData> getAllDentalSuppliers() async {
+    final res = await http.query(getAllDentalSuppliersQuery);
+    final result = AllDentalSuppliersData.fromJson(res);
     return result;
   }
 }
