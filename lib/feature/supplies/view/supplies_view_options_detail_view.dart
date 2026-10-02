@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/supplies/widgets/available_options_card.da
 import 'package:di360_flutter/feature/supplies/widgets/documents_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_detail_card.dart';
-import 'package:di360_flutter/feature/supplies/widgets/supplies_information_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -580,7 +580,10 @@ class SuppliesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> addFavourites(String supplyId, String supplyVariantId) async {
+  Future<void> addFavourites(
+      String supplyId, String supplyVariantId, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
     final variables = {
       "supply_favorites": {
         "supply_id": supplyId,
@@ -588,8 +591,27 @@ class SuppliesViewModel extends ChangeNotifier {
       }
     };
     final res = await repo.addFavourite(variables);
+    await getFavouriteKeys();
+    Loaders.circularHideLoader(context);
+
     if (res != null) {
       scaffoldMessenger("Added to Favourites");
+    }
+  }
+
+  Future<void> deleteFavourites(
+      String supplyId, String supplyVariantId, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "supplyId": supplyId,
+      "supplyVariantId": supplyVariantId
+    };
+    final res = await repo.deleteFavourite(variables);
+    await getFavouriteKeys();
+    Loaders.circularHideLoader(context);
+
+    if (res != null) {
+      scaffoldMessenger("Removed from Favourites");
     }
   }
 

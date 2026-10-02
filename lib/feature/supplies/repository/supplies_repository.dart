@@ -16,6 +16,7 @@ abstract class SuppliesRepository {
   Future<dynamic> addAddress(dynamic variables);
   Future<AccountData> getAccountTowardsSupplier(dynamic variables);
   Future<dynamic> addFavourite(dynamic variables);
+  Future<dynamic> deleteFavourite(dynamic variables);
   Future<dynamic> addMultipleProductsToCart(dynamic variables);
   Future<FavouritesKeysData> getFavouritesKeys(dynamic variables);
 }

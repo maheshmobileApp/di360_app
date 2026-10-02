@@ -1,4 +1,5 @@
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/my_favourites/queries/delete_favourite_query.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
@@ -87,6 +88,12 @@ class SuppliesRepoImpl extends SuppliesRepository {
   @override
   Future<dynamic> addFavourite(variables) async {
     final res = await http.mutation(addFavouriteQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> deleteFavourite(variables) async {
+    final res = await http.mutation(deleteFavouriteQuery, variables);
     return res;
   }
 

@@ -121,7 +121,7 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   name: supply.name ?? "",
                   brand: supply.dentalSupplier?.businessName ?? "",
                   price: supply.supplyVariants?.firstOrNull?.calaculatedPrice
-                          ?.toString() ??
+                          ?.toStringAsFixed(2) ??
                       "",
                   inStock:
                       (supply.supplyVariants?.firstOrNull?.availableStock ??
@@ -133,8 +133,11 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                 ),
                 viewOption: (supply.supplyVariants?.length ?? 0) > 1,
                 onFavorite: () {
-                  vm.addFavourites(
-                      supply.id ?? "", supply.supplyVariants?.first.id ?? "");
+                  vm.checkFavouriteKey(supply.id ?? "")
+                      ? vm.deleteFavourites(supply.id ?? "",
+                          supply.supplyVariants?.first.id ?? "", context)
+                      : vm.addFavourites(supply.id ?? "",
+                          supply.supplyVariants?.first.id ?? "", context);
                 },
                 isFavourited: vm.checkFavouriteKey(supply.id ?? ""),
                 onIncrease: () {

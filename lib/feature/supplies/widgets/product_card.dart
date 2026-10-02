@@ -36,7 +36,7 @@ class ProductCard extends StatelessWidget {
         surfaceTintColor: AppColors.whiteColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: AppColors.greyLight),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Stack(children: [
           Padding(
@@ -81,7 +81,7 @@ class ProductCard extends StatelessWidget {
                               children: [
                                 Text(
                                   "\$ ${product.price} ",
-                                  style: TextStyles.regular5(
+                                  style: TextStyles.regular4(
                                       color: const Color.fromARGB(
                                           255, 251, 14, 1)),
                                 ),
