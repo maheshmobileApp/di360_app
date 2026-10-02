@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view_model/account_pay_requests_view_model.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/clients/clients_provider/clients_provider.dart';
 import 'package:di360_flutter/feature/forgot_password/view_model/forgot_password_view_model.dart';
@@ -167,7 +168,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => JobProfileCreateViewModel()),
         ChangeNotifierProvider(create: (_) => SuppliesViewModel()),
         ChangeNotifierProvider(create: (_) => MyFavouritesViewModel()),
-        ChangeNotifierProvider(create: (_) => MyOrdersViewModel())
+        ChangeNotifierProvider(create: (_) => MyOrdersViewModel()),
+        ChangeNotifierProvider(create: (_) => AccountPayRequestsViewModel()),
       ],
       child: MaterialApp(
         builder: (context, child) {

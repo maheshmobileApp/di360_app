@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view/account_pay_requests_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/add_catalogue_screen.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
@@ -312,8 +313,9 @@ class Routes {
       },
       RouteList.addNewsAddressView: (context) => AddNewsAddressView(),
       RouteList.myFavouritesView: (context) => MyFavouritesView(),
-      RouteList.myOrdersView: (context) => MyOrdersView(), 
+      RouteList.myOrdersView: (context) => MyOrdersView(),
       RouteList.myOrdersFilterView: (context) => MyOrdersFilterView(),
+      RouteList.accountPayRequestsView: (context) => AccountPayRequestsView(),
     };
   }
 }

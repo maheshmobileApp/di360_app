@@ -108,4 +108,5 @@ class RouteList {
   static const String myFavouritesView = '/myFavouritesView';
   static const String myOrdersView = '/myOrdersView';
   static const String myOrdersFilterView = '/myOrdersFilterView';
+  static const String accountPayRequestsView = '/accountPayRequestsView';
 }

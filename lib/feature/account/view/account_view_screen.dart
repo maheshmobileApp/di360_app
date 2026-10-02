@@ -8,6 +8,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/account/account_model/account_model.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view_model/account_pay_requests_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
@@ -503,12 +504,18 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .getSupplyFavourites(context);
                             navigationService
                                 .navigateTo(RouteList.myFavouritesView);
-                          }  else if (item.title == "My Orders") {
+                          } else if (item.title == "My Orders") {
                             await context
                                 .read<MyOrdersViewModel>()
                                 .getSuppliesOrders(context);
                             navigationService
                                 .navigateTo(RouteList.myOrdersView);
+                          } else if (item.title == "Account Pay Requests") {
+                            await context
+                                .read<AccountPayRequestsViewModel>()
+                                .getAccountPayRequests(context);
+                            navigationService
+                                .navigateTo(RouteList.accountPayRequestsView);
                           }
                         },
                       ),
