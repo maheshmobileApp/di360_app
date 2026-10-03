@@ -28,8 +28,7 @@ class _TalentListingScreenState extends State<TalentListingScreen>
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final vm = Provider.of<TalentListingViewModel>(context, listen: false);
-      vm.listingStatus = "";
-      await vm.getMyTalentListingData(context);
+      vm.changeStatus(context, 'All');
     });
   }
 

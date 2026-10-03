@@ -1,13 +1,14 @@
 const String filterSuppilerQuery = r'''
-query dental_suppliers {
-  dental_suppliers(where: {catalogues_aggregate: {count: {predicate: {_gt: 0}}}}) {
-    id
-    name
-    logo
-    business_name
-    profession_type
-    directories {
-      name
+query getAllCatalogueSupplierName {
+  catalogues(
+    distinct_on: dental_supplier_id
+    order_by: [{dental_supplier_id: asc}, {created_at: desc}]
+    where: {status: {_in: ["APPROVED", "SCHEDULED"]}, catalogue_status: {_eq: "ACTIVE"}}
+  ) {
+    dental_supplier {
+      id
+      business_name
+      community_id
       __typename
     }
     __typename

@@ -43,7 +43,7 @@ class MyDirectorScreen extends StatelessWidget {
                     imageUrl:
                         addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
                     userName:
-                        addDirectorVM.getBasicInfoData.first.professionType,
+                        addDirectorVM.getBasicInfoData.first.professionType?.name,
                     followerCount:
                         '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
                     followingCount:

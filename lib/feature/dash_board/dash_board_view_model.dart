@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
@@ -13,6 +12,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/subscription_expired_dialog.dart';
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
@@ -26,7 +26,9 @@ import 'package:di360_flutter/feature/splash/repository/app_config_repo_impl.dar
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/permissions_enum.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,7 @@ class DashBoardViewModel extends ChangeNotifier {
   int _currentIndex = 0;
   // int? _pendingIndex;
   List<Widget> _pages = [];
+  final Set<int> _pendingIndexes = <int>{};
   String _userType = '';
   bool _isInitialized = false;
 
@@ -107,11 +110,115 @@ class DashBoardViewModel extends ChangeNotifier {
     }
   }
 
-  void setIndex(int index, BuildContext context) {
-    if (index < 0 || index >= _pages.length) return;
+  Future<void> setIndex(
+    int index,
+    BuildContext context,
+  ) async {
+    if (index < 0 || index >= _pages.length) {
+      return;
+    }
+
+    if (!_pendingIndexes.add(index)) {
+      return;
+    }
+
+    try {
+      await _setIndex(index, context);
+    } finally {
+      _pendingIndexes.remove(index);
+    }
+  }
+
+  Future<void> _setIndex(
+    int index,
+    BuildContext context,
+  ) async {
+    final requiredPermission = _requiredPermissionForIndex(index);
+    if (requiredPermission != null) {
+      final permissions = await LocalStorage.getStringList(
+        LocalStorageConst.permissions,
+      );
+      if (!permissions.contains(requiredPermission)) {
+        scaffoldMessenger("You don't have permission to access this page.");
+        return;
+      }
+    }
+
+    bool isSubscriptionExempt = false;
+
+    if (userType == UserRole.supplier.value) {
+      isSubscriptionExempt = [0, 5].contains(index);
+    } else if (userType == UserRole.practice.value) {
+      isSubscriptionExempt = [0, 4].contains(index);
+    } else if (userType == UserRole.professional.value) {
+      isSubscriptionExempt = [0, 5].contains(index);
+    }
+
+    if (!isSubscriptionExempt) {
+      final subscriptionStatus = await LocalStorage.getStringVal(
+        LocalStorageConst.subscriptionStatus,
+      );
+
+      if (subscriptionStatus == "EXPIRED") {
+        _showInactivePopup(context);
+        return;
+      }
+
+      if (subscriptionStatus == "PENDING") {
+        scaffoldMessenger(
+          "Your subscription is currently pending. "
+          "Please wait while we process your subscription.",
+        );
+        return;
+      }
+    }
+
     _currentIndex = index;
-    updateIndex(index, context);
+
+    await updateIndex(index, context);
+
     notifyListeners();
+  }
+
+  String? _requiredPermissionForIndex(int index) {
+    if (_userType == UserRole.supplier.value) {
+      return switch (index) {
+        1 => ModulePermission.newsfeedMarketplace.value,
+        2 => ModulePermission.jobSeekMarketplace.value,
+        3 => ModulePermission.newsfeedMarketplace.value,
+        4 => ModulePermission.catalogueMarketplace.value,
+        _ => null,
+      };
+    }
+
+    if (_userType == UserRole.practice.value) {
+      return switch (index) {
+        1 => ModulePermission.newsfeedMarketplace.value,
+        2 => ModulePermission.jobSeekMarketplace.value,
+        3 => ModulePermission.catalogueMarketplace.value,
+        _ => null,
+      };
+    }
+
+    return switch (index) {
+      1 => ModulePermission.newsfeedMarketplace.value,
+      2 => ModulePermission.jobSeekMarketplace.value,
+      3 => ModulePermission.newsfeedMarketplace.value,
+      4 => ModulePermission.catalogueMarketplace.value,
+      _ => null,
+    };
+  }
+
+  void _showInactivePopup(BuildContext context) {
+    SubscriptionExpiredDialog.show(
+      context,
+      onAction: () {
+        scaffoldMessenger(
+          "To view and manage your subscription or purchase credit packs, "
+          "please log in through the web.",
+        );
+      },
+    );
   }
 
   updateIndex(int index, BuildContext context) async {
@@ -120,24 +227,30 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
-          context.read<JobSeekViewModel>().fetchJobs(context);
+          await context.read<JobSeekViewModel>().initializeFilterOptions();
+          await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Community
-          context
+          await context
               .read<CommunityViewModel>()
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
-          context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
-          context.read<NewsFeedCommunityViewModel>().initialStateData();
+          await context
+              .read<NewsFeedCommunityViewModel>()
+              .getBannerUrl(context);
+          await context.read<NewsFeedCommunityViewModel>().initialStateData();
           context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
+          context.read<NewsFeedCommunityViewModel>().setentryNewsFeedId("");
 
           break;
         case 4: // Catalogue
-          context
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          context.read<CatalogueViewModel>().clearSelections(context);
+          await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
@@ -149,14 +262,17 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
-          context.read<JobSeekViewModel>().fetchJobs(context);
+          await context.read<JobSeekViewModel>().initializeFilterOptions();
+          await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Catalogue
-          context
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          context.read<CatalogueViewModel>().clearSelections(context);
+          await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
@@ -168,7 +284,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Catalogue
@@ -184,21 +300,25 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
+          await context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
-          context.read<JobSeekViewModel>().fetchJobs(context);
+          await context.read<JobSeekViewModel>().initializeFilterOptions();
+          await context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Community
-          context
+          await context
               .read<CommunityViewModel>()
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
           context.read<NewsFeedCommunityViewModel>().setNewsFeedCommunityId("");
+          context.read<NewsFeedCommunityViewModel>().setentryNewsFeedId("");
           break;
         case 4: // Catalogue
-          context
+          context.read<CatalogueViewModel>().setCommunityIdCatalouge("");
+          context.read<CatalogueViewModel>().clearSelections(context);
+          await context
               .read<CatalogueViewModel>()
               .fetchCatalogue(context, isCommunityCatalogue: false);
           break;

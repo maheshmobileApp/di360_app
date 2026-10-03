@@ -37,11 +37,12 @@ class AddCatalogueViewModel extends ChangeNotifier {
   final List<String> statuses = [
     'All',
     'Draft',
-    'Pending Approval',
-    'Approved & Scheduled',
+    'Pending',
+    'Active',
+    'InActive',
+    'Scheduled',
     'Expired',
-    'Reject',
-    'InActive'
+    'Reject'
   ];
 
   final List<String> adminStatuses = [
@@ -60,12 +61,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
   int? expiredCatalogueCount = 0;
   int? rejectCatalogueCount = 0;
   int? inActiveCatalogueCount = 0;
+  int? scheduledCatalogueCount = 0;
 
   Map<String, int?> get statusCountMap => {
         'All': allCatalogueCount,
         'Draft': draftCatalogueCount,
-        'Pending Approval': pendingApprovalCatalogueCount,
-        'Approved & Scheduled': approvedScheduledCatalogueCount,
+        'Pending': pendingApprovalCatalogueCount,
+        'Active': approvedScheduledCatalogueCount,
+        'Scheduled': scheduledCatalogueCount,
         'Expired': expiredCatalogueCount,
         'Reject': rejectCatalogueCount,
         'InActive': inActiveCatalogueCount
@@ -97,12 +100,20 @@ class AddCatalogueViewModel extends ChangeNotifier {
   String? pdfPath;
   dynamic pdfPathUrl;
   bool isEditCatalogue = false;
+  bool isRelisting = false;
   List<String> communityTypes = ["Both", "Community User"];
   String? selectedCommunityType = 'Both';
   bool communityStatus = false;
   String? userType;
   String editCatalougeStatus = "";
   String editStatus = '';
+
+  bool get canEditScheduleExpiry {
+    if (!isEditCatalogue) return true;
+    return isRelisting ||
+        editStatus == 'DRAFT' ||
+        editStatus == 'PENDING_APPROVAL';
+  }
 
   void setCommunityStatus() async {
     print("Setting community status");
@@ -149,11 +160,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
     } else if (status == 'Draft') {
       catalogStatus = ['DRAFT'];
       activeStatus = [];
-    } else if (status == 'Pending Approval') {
+    } else if (status == 'Pending Approval' || status == 'Pending') {
       catalogStatus = ['PENDING_APPROVAL'];
       activeStatus = [];
     } else if (status == 'Approved & Scheduled') {
       catalogStatus = ["APPROVED", "SCHEDULED"];
+      activeStatus = ["ACTIVE"];
+    } else if (status == 'Active') {
+      catalogStatus = ["APPROVED"];
       activeStatus = ["ACTIVE"];
     } else if (status == 'Expired') {
       catalogStatus = ['EXPIRED'];
@@ -265,7 +279,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddCatalogueData();
-      selectedStatus = 'Pending Approval';
+      selectedStatus = 'Pending';
       catalogStatus = ['PENDING_APPROVAL'];
       await getMyCataloguesData(navigatorKey.currentContext!);
     } else {
@@ -285,6 +299,9 @@ class AddCatalogueViewModel extends ChangeNotifier {
     selectedCatalogueType = null;
     scheduleDate = null;
     expiryDate = null;
+    isRelisting = false;
+    editStatus = '';
+    editCatalougeStatus = '';
     updateEditCatalogueVal(false);
     notifyListeners();
   }
@@ -392,6 +409,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     if (res != null) {
       cataloguView = res;
       updateEditCatalogueVal(true);
+      isRelisting = isThisRelist == true;
       editDataAssign(res, expDate, isThisRelist: isThisRelist);
       setEditCatalougeStatus(status, catalougeStatus);
       Loaders.circularHideLoader(context);
@@ -535,6 +553,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     expiredCatalogueCount = res.expired?.aggregate?.count;
     rejectCatalogueCount = res.rejected?.aggregate?.count;
     inActiveCatalogueCount = res.inactive?.aggregate?.count;
+    scheduledCatalogueCount = res.scheduled?.aggregate?.count;
     notifyListeners();
   }
 

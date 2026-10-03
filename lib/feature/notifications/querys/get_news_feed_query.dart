@@ -27,7 +27,7 @@ query getNewsfeedById($id: uuid!) {
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -45,7 +45,7 @@ query getNewsfeedById($id: uuid!) {
     dental_professional {
       id
       name
-      profession_type
+      professionType
       profile_image
       email
       phone
@@ -56,7 +56,7 @@ query getNewsfeedById($id: uuid!) {
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name

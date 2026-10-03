@@ -25,7 +25,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
           children: [
             _sectionHeader("Other info"),
             addVertical(16),
-            Row(
+            /*Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _checkBox(
@@ -195,7 +195,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                       : SizedBox.shrink(),
                 ),
               ],
-            ),
+            ),*/
             /*if (_shouldShowDateError(jobCreateVM))
               Padding(
                 padding: const EdgeInsets.only(top: 8),

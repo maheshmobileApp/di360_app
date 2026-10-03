@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class LogInRes {
   LogInData? data;
 
@@ -52,7 +54,7 @@ class LoginApi {
   String? type;
   dynamic address; //Not required in response
   dynamic directoryCategoryId;
-  String? professionType;
+  DirectoryCategories? professionType;
   bool? secondHand;
   String? businessName;
   String? abnNumber;
@@ -66,6 +68,10 @@ class LoginApi {
   String? subType;
   String? ownerId;
   Professiontype? professiontype;
+  String? expiresAt;
+  Subscription? subscription;
+  Navigation? navigation;
+
 
   LoginApi(
       {this.id,
@@ -96,7 +102,10 @@ class LoginApi {
       this.subscriptionPermissions,
       this.subType,
       this.professiontype,
-      this.ownerId});
+      this.ownerId,
+      this.expiresAt,
+      this.subscription,
+      this.navigation});
 
   LoginApi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -110,13 +119,22 @@ class LoginApi {
     message = json['message'];
     profileCompleted = json['profile_completed'];
     paymentCompleted = json['payment_completed'];
-    profileImage = json['profile_image'] != null
-        ? new ProfileImage.fromJson(json['profile_image'])
-        : null;
+    if (json['profile_image'] != null) {
+      if (json['profile_image'] is String) {
+        profileImage = ProfileImage(url: json['profile_image']);
+      } else if (json['profile_image'] is Map<String, dynamic>) {
+        profileImage = ProfileImage.fromJson(json['profile_image']);
+      }
+    } else {
+      profileImage = null;
+    }
     type = json['type'];
     address = json['address'];
     directoryCategoryId = json['directory_category_id'];
-    professionType = json['profession_type'];
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     secondHand = json['second_hand'];
     businessName = json['business_name'];
     abnNumber = json['abn_number'];
@@ -130,9 +148,16 @@ class LoginApi {
         ? new SubscriptionPermissions.fromJson(json['subscription_permissions'])
         : null;
     subType = json['sub_type'];
+    professiontype = json['professionType'] != null
+        ? new Professiontype.fromJson(json['professionType'])
+        : null;
     ownerId = json['owner_id'];
-    professiontype = json['professiontype'] != null
-        ? new Professiontype.fromJson(json['professiontype'])
+    expiresAt = json['expiresAt'];
+    subscription = json['subscription'] != null
+        ? new Subscription.fromJson(json['subscription'])
+        : null;
+    navigation = json['navigation'] != null
+        ? new Navigation.fromJson(json['navigation'])
         : null;
   }
 
@@ -157,7 +182,10 @@ class LoginApi {
     data['type'] = this.type;
     data['address'] = this.address;
     data['directory_category_id'] = this.directoryCategoryId;
-    data['profession_type'] = this.professionType;
+    if (this.professionType != null) {
+      data['professionType'] = this.professionType!.toJson();
+    }
+
     data['second_hand'] = this.secondHand;
     data['business_name'] = this.businessName;
     data['abn_number'] = this.abnNumber;
@@ -172,9 +200,60 @@ class LoginApi {
     }
     data['sub_type'] = this.subType;
     data['owner_id'] = this.ownerId;
-     if (this.professiontype != null) {
-      data['professiontype'] = this.professiontype!.toJson();
+    if (this.professiontype != null) {
+      data['professionType'] = this.professiontype!.toJson();
     }
+    data['expiresAt'] = this.expiresAt;
+     if (this.subscription != null) {
+      data['subscription'] = this.subscription?.toJson();
+    }
+    if (this.navigation != null) {
+      data['navigation'] = this.navigation?.toJson();
+    }
+    return data;
+  }
+}
+
+class Subscription {
+  String? status;
+  String? subscriptionPlanId;
+  String? currentSubscriptionPlanId;
+  String? planName;
+  String? planType;
+
+  Subscription({this.status, this.subscriptionPlanId, this.currentSubscriptionPlanId, this.planName, this.planType});
+
+  Subscription.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    subscriptionPlanId = json['subscriptionPlanId'];
+    currentSubscriptionPlanId = json['currentSubscriptionId'];
+    planName = json['planName'];
+    planType = json['planType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['currentSubscriptionId'] = this.currentSubscriptionPlanId;
+    data['subscriptionPlanId'] = this.subscriptionPlanId;
+    data['planName'] = this.planName;
+    data['planType'] = this.planType;
+    return data;
+  }
+}
+
+class Navigation {
+  List<String>? permissions;
+
+  Navigation({this.permissions});
+
+  Navigation.fromJson(Map<String, dynamic> json) {
+    permissions = json['permissions'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['permissions'] = this.permissions;
     return data;
   }
 }

@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
+import 'package:di360_flutter/feature/talents/widgets/file_utils.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 
@@ -39,12 +40,11 @@ class CertificatesView extends StatelessWidget with BaseContextHelpers {
           children: certificates!.map((cert) {
             return InkWell(
               onTap: () {
-                navigationService.push(
-                  HorizantalPdf(
-                    fileUrl: cert.url ?? '',
-                    fileName: cert.name ?? '',
-                    isfullScreen: true,
-                  ),
+                FileViewer.open(
+                  context: context,
+                  url: cert.url ?? "",
+                  fileName: cert.name ?? "",
+                  type: cert.extension ?? "",
                 );
               },
               child: Container(
@@ -53,9 +53,9 @@ class CertificatesView extends StatelessWidget with BaseContextHelpers {
                   color: AppColors.timeBgColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.picture_as_pdf,
-                  size: 40, 
+                child: Icon(
+                  FileViewer.getIcon(cert.extension),
+                  size: 40,
                   color: AppColors.primaryColor,
                 ),
               ),

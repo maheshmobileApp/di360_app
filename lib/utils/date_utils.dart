@@ -160,6 +160,16 @@ class DateFormatUtils {
     }
   }
 
+  static String formatMMDDYYYY(String dateString) {
+    try {
+      final dateTime = DateTime.parse(dateString);
+      final localDateTime = dateTime.toLocal();
+      return DateFormat('MM/dd/yyyy').format(localDateTime);
+    } catch (e) {
+      return dateString;
+    }
+  }
+
   static String formatDateOnly(String? date) {
     if (date == null || date.trim().isEmpty) return '';
     try {

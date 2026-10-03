@@ -6,6 +6,7 @@ const String updateMessageQuery =
   ) {
     id
     message
+    updated_at
     __typename
   }
 }

@@ -46,7 +46,7 @@ class JobProfileInputModel {
       "full_name": fullName,
       "mobile_number": mobileNumber,
       "email_address": emailAddress,
-      "profession_type": professionType,
+      "professionType": professionType,
       "work_type": workType,
       "current_company": currentCompany,
       "job_designation": jobDesignation,

@@ -4,7 +4,7 @@ class GetTeamMembersRes {
   GetTeamMembersRes({this.data});
 
   GetTeamMembersRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? TeamMembersData.fromJson(json['data']) : null;
+    data = json['data'] != null ? new TeamMembersData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -17,69 +17,61 @@ class GetTeamMembersRes {
 }
 
 class TeamMembersData {
-  List<Clients>? clients;
-  ClientsAggregate? clientsAggregate;
+  List<SupplierAccess>? supplierAccess;
+  SupplierAccessAggregate? supplierAccessAggregate;
 
-  TeamMembersData({this.clients, this.clientsAggregate});
+  TeamMembersData({this.supplierAccess, this.supplierAccessAggregate});
 
   TeamMembersData.fromJson(Map<String, dynamic> json) {
-    if (json['clients'] != null) {
-      clients = <Clients>[];
-      json['clients'].forEach((v) {
-        clients!.add(Clients.fromJson(v));
+    if (json['supplier_access'] != null) {
+      supplierAccess = <SupplierAccess>[];
+      json['supplier_access'].forEach((v) {
+        supplierAccess!.add(new SupplierAccess.fromJson(v));
       });
     }
-    clientsAggregate = json['clients_aggregate'] != null
-        ? ClientsAggregate.fromJson(json['clients_aggregate'])
+    supplierAccessAggregate = json['supplier_access_aggregate'] != null
+        ? new SupplierAccessAggregate.fromJson(
+            json['supplier_access_aggregate'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.clients != null) {
-      data['clients'] = this.clients!.map((v) => v.toJson()).toList();
+    if (this.supplierAccess != null) {
+      data['supplier_access'] =
+          this.supplierAccess!.map((v) => v.toJson()).toList();
     }
-    if (this.clientsAggregate != null) {
-      data['clients_aggregate'] = this.clientsAggregate!.toJson();
+    if (this.supplierAccessAggregate != null) {
+      data['supplier_access_aggregate'] =
+          this.supplierAccessAggregate!.toJson();
     }
     return data;
   }
 }
 
-class Clients {
+class SupplierAccess {
   String? id;
   String? name;
-  String? email;
-  String? type;
-  String? status;
+  String? phone;
   String? createdAt;
-  String? subType;
-  String? supplierAccessId;
-  String? businessName;
+  Clients? clients;
   String? sTypename;
 
-  Clients(
+  SupplierAccess(
       {this.id,
       this.name,
-      this.email,
-      this.type,
-      this.status,
+      this.phone,
       this.createdAt,
-      this.subType,
-      this.supplierAccessId,
-      this.businessName,
+      this.clients,
       this.sTypename});
 
-  Clients.fromJson(Map<String, dynamic> json) {
+  SupplierAccess.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    email = json['email'];
-    type = json['type'];
-    status = json['status'];
+    phone = json['phone'];
     createdAt = json['created_at'];
-    subType = json['sub_type'];
-    supplierAccessId = json['supplier_access_id'];
-    businessName = json['business_name'];
+    clients =
+        json['clients'] != null ? new Clients.fromJson(json['clients']) : null;
     sTypename = json['__typename'];
   }
 
@@ -87,27 +79,50 @@ class Clients {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['email'] = this.email;
-    data['type'] = this.type;
-    data['status'] = this.status;
+    data['phone'] = this.phone;
     data['created_at'] = this.createdAt;
-    data['sub_type'] = this.subType;
-    data['supplier_access_id'] = this.supplierAccessId;
-    data['business_name'] = this.businessName;
+    if (this.clients != null) {
+      data['clients'] = this.clients!.toJson();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }
 }
 
-class ClientsAggregate {
+class Clients {
+  String? email;
+  String? type;
+  String? status;
+  String? sTypename;
+
+  Clients({this.email, this.type, this.status, this.sTypename});
+
+  Clients.fromJson(Map<String, dynamic> json) {
+    email = json['email'];
+    type = json['type'];
+    status = json['status'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['email'] = this.email;
+    data['type'] = this.type;
+    data['status'] = this.status;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class SupplierAccessAggregate {
   Aggregate? aggregate;
   String? sTypename;
 
-  ClientsAggregate({this.aggregate, this.sTypename});
+  SupplierAccessAggregate({this.aggregate, this.sTypename});
 
-  ClientsAggregate.fromJson(Map<String, dynamic> json) {
+  SupplierAccessAggregate.fromJson(Map<String, dynamic> json) {
     aggregate = json['aggregate'] != null
-        ? Aggregate.fromJson(json['aggregate'])
+        ? new Aggregate.fromJson(json['aggregate'])
         : null;
     sTypename = json['__typename'];
   }
