@@ -568,7 +568,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       if (type == UserRole.supplier.value) "dental_supplier_id": userId,
       if (type == UserRole.professional.value) "dental_professional_id": userId,
       "status": "",
-      if (type == UserRole.supplier.value) "comments_enabled": enableComments,
+      "comments_enabled":  (type == UserRole.supplier.value) ? enableComments : true,
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
       "newsfeedType": "COMMUNITY_NEWSFEED",
@@ -672,7 +672,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateNewsFeedCommunity(BuildContext context) async {
+  Future<void> 
+  updateNewsFeedCommunity(BuildContext context) async {
     print("**************edit news feed id calling");
     Loaders.circularShowLoader(context);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
