@@ -139,8 +139,8 @@ class ProductCard extends StatelessWidget {
                           Expanded(
                               child: QuantityStepper(
                             quantity: product.quantity,
-                            onIncrease: onIncrease,
-                            onDecrease: onDecrease,
+                            onIncrease: product.inStock ? onIncrease : null,
+                            onDecrease: product.inStock ? onDecrease : null,
                           )),
                           const SizedBox(width: 8),
                           GestureDetector(

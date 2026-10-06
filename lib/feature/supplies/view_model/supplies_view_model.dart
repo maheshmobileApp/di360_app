@@ -1,10 +1,12 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
+import 'package:di360_flutter/feature/supplies/model/supplier_account_res.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -38,6 +40,8 @@ class SuppliesViewModel extends ChangeNotifier {
   final abnController = TextEditingController();
   final billingAddressController = TextEditingController();
   final notesController = TextEditingController();
+
+  FavouritesKeysData? favouritesKeysData;
 
   String? addressType;
   String selectedType = "";
@@ -395,14 +399,20 @@ class SuppliesViewModel extends ChangeNotifier {
         );
   }
 
-  Future<void> increaseQuantityById(
-      BuildContext context, String id, int amount) async {
-    Loaders.circularShowLoader(context);
+  Future<void> increaseQuantityById(BuildContext context, String id, int amount,
+      {bool showLoader = true, bool refreshCart = true}) async {
+    if (showLoader) {
+      Loaders.circularShowLoader(context);
+    }
     final variables = {"id": id, "amount": amount};
 
-    final res = await repo.increaseQuantityById(variables);
-    await getSuppliesCart(context);
-    Loaders.circularHideLoader(context);
+    await repo.increaseQuantityById(variables);
+    if (refreshCart) {
+      suppliesCartData = await repo.getSupplyCarts();
+    }
+    if (showLoader) {
+      Loaders.circularHideLoader(context);
+    }
 
     notifyListeners();
   }
@@ -434,31 +444,54 @@ class SuppliesViewModel extends ChangeNotifier {
     String supplyId,
     List<SupplyVariants> variants,
   ) async {
-    final objects = variants
-        .map((variant) {
-          final quantity = getQuantity(variant.id ?? '');
-          final variantId = variant.id;
-          if (quantity <= 0 || variantId == null || variantId.isEmpty) {
-            return null;
-          }
+    final selectedVariants = variants.where((variant) {
+      return variant.id != null &&
+          variant.id!.isNotEmpty &&
+          getQuantity(variant.id!) > 0;
+    }).toList();
 
-          return {
-            "supply_id": supplyId,
-            "supply_variant_id": variantId,
-            "quantity": quantity,
-          };
-        })
-        .whereType<Map<String, Object>>()
-        .toList();
-
-    if (supplyId.isEmpty || objects.isEmpty) {
+    if (supplyId.isEmpty || selectedVariants.isEmpty) {
       scaffoldMessenger("Select a quantity for at least one option");
       return;
     }
 
     Loaders.circularShowLoader(context);
     try {
-      await repo.addMultipleProductsToCart({"objects": objects});
+      suppliesCartData = await repo.getSupplyCarts();
+      final existingCartItems = {
+        for (final item in suppliesCartData?.supplyCarts ?? [])
+          if (item.supplyId == supplyId &&
+              item.supplyVariantId != null &&
+              item.id != null)
+            item.supplyVariantId!: item,
+      };
+      final newObjects = <Map<String, Object>>[];
+
+      for (final variant in selectedVariants) {
+        final variantId = variant.id!;
+        final quantity = getQuantity(variantId);
+        final existingCartItem = existingCartItems[variantId];
+
+        if (existingCartItem?.id != null) {
+          await increaseQuantityById(
+            context,
+            existingCartItem!.id!,
+            quantity,
+            showLoader: false,
+            refreshCart: false,
+          );
+        } else {
+          newObjects.add({
+            "supply_id": supplyId,
+            "supply_variant_id": variantId,
+            "quantity": quantity,
+          });
+        }
+      }
+
+      if (newObjects.isNotEmpty) {
+        await repo.addMultipleProductsToCart({"objects": newObjects});
+      }
       suppliesCartData = await repo.getSupplyCarts();
       navigationService.goBack();
     } finally {
@@ -540,13 +573,32 @@ class SuppliesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  checkPaymentDetails() {
-    if (compNameController.text.isEmpty ||
-        compCompanyNameController.text.isEmpty ||
-        accountNumberController.text.isEmpty ||
-        emailController.text.isEmpty) {
-      return scaffoldMessenger("Please fill all the payment details");
+  bool checkPaymentDetails() {
+    return accountPayType == "yes"
+        ? checkAccountPayDetails()
+        : checkPaymentDetailsFields();
+  }
+
+  bool checkAccountPayDetails() {
+    if (compNameController.text.trim().isEmpty ||
+        compCompanyNameController.text.trim().isEmpty ||
+        accountNumberController.text.trim().isEmpty ||
+        emailController.text.trim().isEmpty) {
+      scaffoldMessenger("Please enter payment details");
+      return false;
     }
+
+    return true;
+  }
+
+  bool checkPaymentDetailsFields() {
+    if (contactPersonController.text.trim().isEmpty ||
+        phoneController.text.trim().isEmpty ||
+        emailController.text.trim().isEmpty) {
+      scaffoldMessenger("Please enter payment details");
+      return false;
+    }
+
     return true;
   }
 
@@ -555,6 +607,7 @@ class SuppliesViewModel extends ChangeNotifier {
   Future<void> getAccountTowardsSupplier(
       BuildContext context, String supplierId, String companyName) async {
     final email = await LocalStorage.getStringVal(LocalStorageConst.emailId);
+    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
     final variables = {"supplier_id": supplierId};
     print("****getAccountTowardsSupplier************$variables");
@@ -565,19 +618,17 @@ class SuppliesViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     } else {
       accountTowardsSupplier = res;
-      compNameController.text = accountTowardsSupplier
-              ?.supplierAccounts?.first.dentalProfessional?.name ??
-          "";
-      compCompanyNameController.text = companyName;
       accountNumberController.text =
           accountTowardsSupplier?.supplierAccounts?.first.accountNumber ?? "";
-      emailController.text = email;
 
       navigationService.goBack();
       Loaders.circularHideLoader(context);
 
       notifyListeners();
     }
+    compCompanyNameController.text = companyName;
+    emailController.text = email;
+    compNameController.text = name;
   }
 
   Future<void> addFavourites(
@@ -615,8 +666,6 @@ class SuppliesViewModel extends ChangeNotifier {
     }
   }
 
-  FavouritesKeysData? favouritesKeysData;
-
   Future<void> getFavouriteKeys() async {
     final variables = {};
     final res = await repo.getFavouritesKeys(variables);
@@ -624,6 +673,128 @@ class SuppliesViewModel extends ChangeNotifier {
     if (res != null) {
       favouritesKeysData = res;
       notifyListeners();
+    }
+  }
+
+  SupplierAccountData? supplierAccountData;
+
+  Future<void> addSupplierAccountRequest(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    print("*********addSupplierAccount**********");
+
+    final cartItem = suppliesCartData?.supplyCarts?.firstWhere(
+      (item) => _selectedProducts[item.id] ?? false,
+      orElse: () => SupplyCarts(),
+    );
+    final supplierId = cartItem?.supply?.dentalSuppliersId ?? "";
+    final variables = {
+      "supplier_account_request": {
+        "supplier_id": supplierId,
+        "practice_name": null,
+        "name": contactPersonController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "abn_number": abnController.text,
+        "billing_address": billingAddressController.text,
+        "notes": notesController.text,
+        "status": "PENDING"
+      }
+    };
+    final res = await repo.addSupplierAccountRequest(variables);
+
+    if (res != null) {
+      supplierAccountData = res;
+      Loaders.circularHideLoader(context);
+
+      notifyListeners();
+    }
+  }
+
+  Future<void> addSupplierAccount(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    final cartItem = suppliesCartData?.supplyCarts?.firstWhere(
+      (item) => _selectedProducts[item.id] ?? false,
+      orElse: () => SupplyCarts(),
+    );
+    final supplierId = cartItem?.supply?.dentalSuppliersId ?? "";
+    final variables = {
+      "supplier_account": {
+        "supplier_id": supplierId,
+        "account_number": accountNumberController.text,
+        "dental_professional_id": userId
+      }
+    };
+    final res = await repo.addSupplierAccount(variables);
+
+    if (res != null) {
+      supplierAccountData = res;
+      Loaders.circularHideLoader(context);
+
+      notifyListeners();
+    }
+  }
+
+  Future<bool> addOrder(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    try {
+      print("*********add Order**********");
+
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+      final cartItem = suppliesCartData?.supplyCarts?.firstWhere(
+        (item) => _selectedProducts[item.id] ?? false,
+        orElse: () => SupplyCarts(),
+      );
+
+      final subTotal = cartItem?.supplyVariant?.calaculatedPrice ??
+          0 * (cartItem?.quantity ?? 0);
+      final totalAmount = subTotal + (shippingMethod == "standard" ? 15 : 25);
+
+      final suppliesOrderItems = [
+        for (final cartItem in suppliesCartData?.supplyCarts ?? [])
+          if (_selectedProducts[cartItem.id] ?? false)
+            {
+              "supply_id": cartItem.supplyId,
+              "supply_variant_id": cartItem.supplyVariantId,
+              "price": cartItem.supplyVariant?.calaculatedPrice ?? 0,
+              "quantity": cartItem.quantity ?? 0,
+              "free_quantity": 0
+            }
+      ];
+      final variables = {
+        "supplies_orders": {
+          "suppliers_id": cartItem?.supply?.dentalSuppliersId ?? "",
+          "coupon_discount": 0,
+          "sub_total": subTotal,
+          "total_amount": totalAmount,
+          "tax_amount": 0,
+          "tax_percentage": 0,
+          "delivery_charge": shippingMethod == "standard" ? 15 : 25,
+          "shipping_method":
+              shippingMethod == "standard" ? "STANDARD" : "EXPRESS",
+          "estimated_delivery_in_days": 0,
+          "status": "VERIFICATION_PENDING",
+          "payment_status": "PENDING",
+          "payment_mode": "ACCOUNT_PAY",
+          "billing_address": selectedAddress,
+          "shipping_address": selectedAddress,
+          "order_notes": "",
+          "requested_delivery_date": null,
+          "role": userType,
+          "user_id": userId,
+          "supplies_order_items": suppliesOrderItems,
+          "billing_type": "NEW",
+          "account_pay_details": null,
+          "supplier_account_request_id":
+              supplierAccountData?.insertSupplierAccountRequestsOne?.id ?? ""
+        }
+      };
+      final res = await repo.addOrder(variables);
+      return res != null;
+    } finally {
+      Loaders.circularHideLoader(context);
     }
   }
 

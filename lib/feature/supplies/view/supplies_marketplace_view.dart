@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/supplies/model/product_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -168,6 +169,8 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                       quantity,
                     );
                   }
+
+                  scaffoldMessenger("Added to cart successfully");
 
                   vm.resetQuantity(supplyId);
                   vm.getSuppliesCart(context);

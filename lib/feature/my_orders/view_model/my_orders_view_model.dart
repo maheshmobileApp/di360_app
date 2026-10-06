@@ -65,9 +65,12 @@ class MyOrdersViewModel extends ChangeNotifier {
     BuildContext context, {
     bool isLoadMore = false,
   }) async {
-    Loaders.circularShowLoader(context);
     if (isLoading || isLoadingMore) return;
     if (isLoadMore && !hasMoreData) return;
+
+    if (!isLoadMore) {
+      Loaders.circularShowLoader(context);
+    }
 
     if (isLoadMore) {
       isLoadingMore = true;
@@ -78,38 +81,38 @@ class MyOrdersViewModel extends ChangeNotifier {
     }
     notifyListeners();
 
-    if (filterStatus.isNotEmpty ||
-        filterSupplierId.isNotEmpty ||
-        filterStartDate.isNotEmpty ||
-        filterEndDate.isNotEmpty) {
-      setFilterApply(true);
-    } else {
-      setFilterApply(false);
-    }
-
-    final variables = {
-      "andList": [
-        (filterStatus != "")
-            ? {
-                "status": {"_eq": filterStatus}
-              }
-            : {
-                "status": {"_neq": "DRAFT"}
-              },
-        if (filterSupplierId != "")
-          {
-            "suppliers_id": {"_eq": filterSupplierId}
-          },
-        if (filterStartDate != "" && filterEndDate != "")
-          {
-            "created_at": {"_gte": filterStartDate, "_lte": filterEndDate}
-          }
-      ],
-      "limit": _ordersLimit,
-      "offset": _ordersOffset,
-    };
-
     try {
+      if (filterStatus.isNotEmpty ||
+          filterSupplierId.isNotEmpty ||
+          filterStartDate.isNotEmpty ||
+          filterEndDate.isNotEmpty) {
+        setFilterApply(true);
+      } else {
+        setFilterApply(false);
+      }
+
+      final variables = {
+        "andList": [
+          (filterStatus != "")
+              ? {
+                  "status": {"_eq": filterStatus}
+                }
+              : {
+                  "status": {"_neq": "DRAFT"}
+                },
+          if (filterSupplierId != "")
+            {
+              "suppliers_id": {"_eq": filterSupplierId}
+            },
+          if (filterStartDate != "" && filterEndDate != "")
+            {
+              "created_at": {"_gte": filterStartDate, "_lte": filterEndDate}
+            }
+        ],
+        "limit": _ordersLimit,
+        "offset": _ordersOffset,
+      };
+
       final res = await repo.getSuppliesOrders(variables);
       final newOrders = res.suppliesOrders ?? [];
 
@@ -127,9 +130,11 @@ class MyOrdersViewModel extends ChangeNotifier {
     } finally {
       isLoading = false;
       isLoadingMore = false;
+      if (!isLoadMore) {
+        Loaders.circularHideLoader(context);
+      }
       notifyListeners();
     }
-    Loaders.circularHideLoader(context);
   }
 
   AllDentalSuppliersData? suppliersData;

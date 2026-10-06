@@ -140,6 +140,7 @@ Widget _typeYesFields(SuppliesViewModel vm) {
       maxLength: 70,
       isRequired: true,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.compCompanyNameController,
       hintText: "Enter company name",
@@ -148,6 +149,7 @@ Widget _typeYesFields(SuppliesViewModel vm) {
       maxLength: 70,
       isRequired: true,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.accountNumberController,
       hintText: "Enter account number",
@@ -156,6 +158,7 @@ Widget _typeYesFields(SuppliesViewModel vm) {
       maxLength: 70,
       isRequired: true,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.emailController,
       hintText: "Enter email",
@@ -177,6 +180,7 @@ Widget _typeNoFields(SuppliesViewModel vm) {
       maxLength: 70,
       isRequired: true,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.emailController,
       hintText: "Enter Email",
@@ -185,6 +189,7 @@ Widget _typeNoFields(SuppliesViewModel vm) {
       maxLength: 70,
       isRequired: true,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.phoneController,
       hintText: "Enter phone",
@@ -193,6 +198,7 @@ Widget _typeNoFields(SuppliesViewModel vm) {
       maxLength: 70,
       isRequired: true,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.abnController,
       hintText: "Enter ABN",
@@ -200,6 +206,7 @@ Widget _typeNoFields(SuppliesViewModel vm) {
       title: "ABN",
       maxLength: 70,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.billingAddressController,
       hintText: "Enter billing address",
@@ -207,6 +214,7 @@ Widget _typeNoFields(SuppliesViewModel vm) {
       title: "Billing Address",
       maxLength: 70,
     ),
+    SizedBox(height: 6),
     InputTextField(
       controller: vm.notesController,
       hintText: "Enter notes",

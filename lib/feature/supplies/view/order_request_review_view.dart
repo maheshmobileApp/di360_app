@@ -1,11 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/app_button.dart';
 import 'package:di360_flutter/feature/supplies/widgets/delivery_and_notes_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/order_summary_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/payment_mode_card.dart';
-import 'package:di360_flutter/feature/supplies/widgets/product_cart_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/selected_item_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -146,12 +146,149 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                   height: 50,
                   title: "Submit Order Request",
                   onPressed: () async {
-                    vm.checkPaymentDetails();
-                    //await vm.submitOrderRequest(context);
+                    if (vm.checkPaymentDetails()) {
+                      (vm.accountPayType == "yes")
+                          ? await vm.addSupplierAccount(context)
+                          : await vm.addSupplierAccountRequest(context);
+                      final orderCreated = await vm.addOrder(context);
+                      if (orderCreated && context.mounted) {
+                        showOrderSuccessPopup(context);
+                      }
+                    }
                   }),
               SizedBox(
                 height: 10,
               ),
             ])));
   }
+}
+
+void showOrderSuccessPopup(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Colors.black.withOpacity(0.35),
+    builder: (context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(24, 35, 24, 40),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.20),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Success Icon
+                  Container(
+                    height: 95,
+                    width: 95,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFFFCE2D5),
+                        width: 6,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      size: 58,
+                      color: Color(0xFFED6A2C),
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Title
+                  const Text(
+                    "Order placed successfully !",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF222222),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Subtitle
+                  const Text(
+                    "You can Track Order on My Orders",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFFB5B5BE),
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // Continue Shopping Button
+                  SizedBox(
+                    height: 50,
+                    width: 240,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        navigationService.goBack();
+                        navigationService.replaceWith(
+                          RouteList.suppliesMarketPlace,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFED6A00),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: const Text(
+                        "Continue Shopping",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // Close Button
+              /*Positioned(
+                right: -5,
+                top: -12,
+                child: IconButton(
+                  onPressed: () {
+                    navigationService.goBack();
+                    navigationService.replaceWith(
+                          RouteList.suppliesMarketPlace,
+                        );
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                    color: Color(0xFFE91E63),
+                    size: 22,
+                  ),
+                ),
+              ),*/
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

@@ -5,9 +5,13 @@ import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
+import 'package:di360_flutter/feature/supplies/model/supplier_account_res.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_address_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_favourite_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_multiple_products_to_cart_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/add_order_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/add_supplier_account_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/add_supplier_account_request.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/decrease_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/delete_cart_item.dart';
@@ -107,5 +111,23 @@ class SuppliesRepoImpl extends SuppliesRepository {
   Future<FavouritesKeysData> getFavouritesKeys(variables) async {
     final res = await http.query(favouritesKeysQuery);
     return FavouritesKeysData.fromJson(res);
+  }
+
+  @override
+  Future<dynamic> addOrder(variables) async {
+    final res = await http.mutation(addOrderQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<SupplierAccountData> addSupplierAccountRequest(variables) async {
+    final res = await http.mutation(addSupplierAccountRequestQuery, variables);
+    return SupplierAccountData.fromJson(res);
+  }
+
+  @override
+  Future<SupplierAccountData> addSupplierAccount(dynamic variables) async {
+    final res = await http.mutation(addSupplierAccountQuery, variables);
+    return SupplierAccountData.fromJson(res);
   }
 }
