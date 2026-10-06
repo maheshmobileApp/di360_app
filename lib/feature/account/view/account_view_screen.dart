@@ -22,6 +22,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
+import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -516,6 +517,12 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .getAccountPayRequests(context);
                             navigationService
                                 .navigateTo(RouteList.accountPayRequestsView);
+                          } else if (item.title == "Shipping Address") {
+                            await context
+                                .read<ShippingAddressViewModel>()
+                                .getShippingAddressesProfessional(context);
+                            navigationService
+                                .navigateTo(RouteList.shippingAddressView);
                           }
                         },
                       ),
