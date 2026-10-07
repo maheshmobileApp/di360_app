@@ -160,13 +160,13 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
             )
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
             myCatalogVM.clearAddCatalogueData();
             navigationService.navigateTo(RouteList.addCatalogScreen);
           },
           child: SvgPicture.asset(ImageConst.addFeed),
-        ));
+        )*/);
   }
 }

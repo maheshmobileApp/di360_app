@@ -40,13 +40,17 @@ class RoleData {
 
 class ProfileCategory {
   final String title;
+  final String? permission;
   final List<SubTitle> subTitle;
 
-  ProfileCategory({required this.title, required this.subTitle});
+  ProfileCategory({required this.title, this.permission, required this.subTitle});
 
   factory ProfileCategory.fromJson(Map<String, dynamic> json) {
     return ProfileCategory(
       title: json['title'],
+      permission: json.containsKey('permission')
+          ? json['permission']
+          : null,
       subTitle: List<SubTitle>.from(
         json['subTitle'].map((item) => SubTitle.fromJson(item)),
       ),
@@ -56,6 +60,7 @@ class ProfileCategory {
   Map<String, dynamic> toJson() {
     return {
       'title': title,
+      if (permission != null) 'permission': permission,
       'subTitle': subTitle.map((item) => item.toJson()).toList(),
     };
   }

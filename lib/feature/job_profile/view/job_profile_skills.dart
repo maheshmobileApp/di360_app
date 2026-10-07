@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_documents_dialog.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_education_dialog.dart';
@@ -68,7 +67,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                 hintText: "Enter skills",
                 onChanged: (chips) {},
               ),
-              
+
               //_buildSkills(jobProfileVM),
               addVertical(24),
               _buildSectionRow(
@@ -165,18 +164,20 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
   Widget _uploadedDocuments(JobProfileCreateViewModel vm) {
     final docs = vm.combinedDocuments;
 
-    if (docs.isEmpty) return const SizedBox.shrink();
+    if (docs.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: docs.entries.map((entry) {
         final title = entry.key;
         final val = entry.value;
 
-        // detect type
         final isLocal = val is File;
-        final fileName = isLocal
-            ? val.path.split('/').last
-            : (val as FileUpload).url?.split('/').last;
+
+        final fileName = isLocal ? val.path.split('/').last : title;
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Column(
@@ -184,28 +185,46 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
             children: [
               Text(
                 "$title:",
-                style: TextStyles.bold2(color: AppColors.black),
+                style: TextStyles.bold2(
+                  color: AppColors.black,
+                ),
               ),
               addVertical(6),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 6,
+                ),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.geryColor),
+                  border: Border.all(
+                    color: AppColors.geryColor,
+                  ),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.picture_as_pdf,
-                        color: AppColors.buttonColor),
+                    const Icon(
+                      Icons.picture_as_pdf,
+                      color: AppColors.buttonColor,
+                    ),
                     addHorizontal(8),
                     Expanded(
-                      child: Text(fileName ?? "",
-                          style: TextStyles.bold2(color: AppColors.black),
-                          overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        fileName,
+                        style: TextStyles.bold2(
+                          color: AppColors.black,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.black),
-                      onPressed: () => vm.removeDocument(title),
+                      icon: const Icon(
+                        Icons.close,
+                        color: AppColors.black,
+                      ),
+                      onPressed: () {
+                        vm.removeDocument(title);
+                      },
                     ),
                   ],
                 ),
@@ -310,16 +329,15 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
             title: Row(
               children: [
                 if (exp.jobTitle != null)
-                  Text(exp.jobTitle ?? "",
+                  Text("${exp.jobTitle} at " ?? "",
                       style: TextStyles.semiBold(
                           fontSize: 16, color: AppColors.black)),
-                Text(" at ",
-                    style: TextStyles.semiBold(
-                        fontSize: 16, color: AppColors.black)),
                 if (exp.companyName != null)
-                  Text(exp.companyName ?? "",
-                      style: TextStyles.semiBold(
-                          fontSize: 16, color: AppColors.blueColor)),
+                  Expanded(
+                    child: Text(exp.companyName ?? "",
+                        style: TextStyles.semiBold(
+                            fontSize: 16, color: AppColors.blueColor)),
+                  ),
               ],
             ),
             subtitle: Column(
@@ -333,7 +351,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                         if (exp.stillInRole ?? false) ...[
                           TextSpan(
                             text:
-                                "Started: ${exp.startMonth} ${exp.startYear} • ",
+                                "${exp.startMonth} ${exp.startYear} - Present ",
                           ),
                           TextSpan(
                             text: "(Still Working)",

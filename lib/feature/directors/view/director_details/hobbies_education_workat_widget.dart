@@ -32,7 +32,7 @@ class HobbiesEducationWorkatWidget extends StatelessWidget
                         .toList() ??
                     []))
       ],
-      if (directionalVM.directorDetails?.universitySchool?.isNotEmpty ??
+      /*if (directionalVM.directorDetails?.universitySchool?.isNotEmpty ??
           false) ...[
         addVertical(10),
         sectionTitle(
@@ -52,7 +52,7 @@ class HobbiesEducationWorkatWidget extends StatelessWidget
                         ?.map((e) => Text(e))
                         .toList() ??
                     []))
-      ],
+      ],*/
     ]);
   }
 }

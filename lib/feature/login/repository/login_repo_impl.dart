@@ -1,4 +1,6 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/core/api_constants.dart';
+import 'package:di360_flutter/core/base_api_cilent.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_community_owner_res.dart';
@@ -7,12 +9,11 @@ import 'package:di360_flutter/feature/login/query/get_directory_query.dart';
 import 'package:di360_flutter/feature/login/query/get_my_community_data_query.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_community_owner_query.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_query.dart';
-import 'package:di360_flutter/feature/login/query/login_querys.dart';
-import 'package:di360_flutter/feature/login/query/update_device_token_query.dart';
 import 'package:di360_flutter/feature/login/repository/login_repository.dart';
 
 class LoginRepoImpl extends LoginRepository {
   final HttpService http = HttpService();
+  final baseClient = BaseApiClient();
   @override
   Future<GetSupplierData> getSuppliers(String id) async {
     final variables = {"id": id};
@@ -48,7 +49,8 @@ class LoginRepoImpl extends LoginRepository {
 
   @override
   Future<dynamic> login(dynamic _variables) async {
-    final res = await http.mutation(loginSchema, _variables, isTokenRequired: false);
+    final endpoint = ApiConst.login;
+    final res = await baseClient.postCall(endpoint, payload : _variables);
     return res;
   }
 

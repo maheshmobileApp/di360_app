@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class GetClientsResponse {
   ClientsData? data;
 
@@ -49,7 +51,7 @@ class Clients {
   bool? paymentStatus;
   String? phone;
   String? postalCode;
-  String? professionType;
+  DirectoryCategories? professionType;
   bool? profileStatus;
   String? state;
   String? status;
@@ -132,7 +134,10 @@ class Clients {
     paymentStatus = json['payment_status'];
     phone = json['phone'];
     postalCode = json['postal_code'];
-    professionType = json['professionType'];
+    professionType = json['professionType'] != null
+        ? new DirectoryCategories.fromJson(json['professionType'])
+        : null;
+
     profileStatus = json['profile_status'];
     state = json['state'];
     status = json['status'];

@@ -56,36 +56,6 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                       validator: validateBannerName,
                     ),
                     addVertical(15),
-                    // ImagePickerField(
-                    //   title: "Banner Image",
-                    //   isRequired: true,
-                    //   showPreview: true,
-                    //   serverImage: bannersVM.bannner_image,
-                    //   selectedFile: bannersVM.selectedPresentedImg,
-                    //   onFilePicked: (file) => bannersVM.setPresentedImg(file),
-                    // selectedFiles: jobCreateVM.selectedGallery,
-                    //  onFilesPicked: (file) => bannersVM.setPresentedImg(file),
-                    // onFilePicked: (file) async {
-                    //   final actualSize = await bannersVM.getImageSize(file!);
-                    //   final requiredDim =
-                    //       bannersVM.selectedCatagory?.dimensions;
-
-                    //   final isValid =
-                    //       bannersVM.checkDimensions(actualSize, requiredDim);
-
-                    //   if (!isValid) {
-                    //     ScaffoldMessenger.of(context).showSnackBar(
-                    //       SnackBar(
-                    //           content: Text(
-                    //               "Invalid image size. Expected $requiredDim but got ${actualSize?.width.toInt()}x${actualSize?.height.toInt()}")),
-                    //     );
-                    //     return;
-                    //   }
-
-                    //   // valid → save in VM
-                    //   bannersVM.setPresentedImg(file);
-                    // },
-                    // ),
                     ImagePickerField(
                       title: "Banner Image",
                       isRequired: true,
@@ -240,8 +210,9 @@ class _AddBannersScreenState extends State<AddBannersScreen>
       isRequired: true,
       value: bannersVM.selectedCatagory,
       title: "Category",
-      onChanged: (v) {
+      onChanged: (v) async {
         bannersVM.updateSelectedCatagory(v as BannerCategories);
+        await bannersVM.getDisableMonths(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

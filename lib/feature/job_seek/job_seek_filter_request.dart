@@ -1,4 +1,4 @@
-const String getAllJobsFilterQuery = r'''query getJobList($limit: Int, $offset: Int, $where: jobs_bool_exp, $order_by: [jobs_order_by!]) {
+const String getAllJobsFilterQuery = r'''query getMarketplaceJobs($limit: Int, $offset: Int, $where: jobs_bool_exp, $order_by: [jobs_order_by!]) {
   jobs(where: $where, order_by: $order_by, limit: $limit, offset: $offset) {
     id
     title
@@ -9,17 +9,12 @@ const String getAllJobsFilterQuery = r'''query getJobList($limit: Int, $offset: 
     description
     TypeofEmployment
     availability_date
-    auto_expiry_date
-    years_of_experience
     active_status
     location
     logo
-    state
     city
     company_name
     status
-    country
-    banner_image
     created_at
     __typename
   }

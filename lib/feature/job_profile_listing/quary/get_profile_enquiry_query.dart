@@ -1,12 +1,17 @@
 const String getProfileEnquiryQuery =
-    r'''query getTalentsEnquiry($where: talent_enquiries_bool_exp!) {
-  talent_enquiries(where: $where, order_by: {created_at: asc}) {
+    r'''query getTalentsEnquiry($where: talent_enquiries_bool_exp!, $limit: Int!) {
+  talent_enquiries(
+    where: $where
+    limit: $limit
+    order_by: [{created_at: desc}, {id: desc}]
+  ) {
     id
     talent_id
     created_at
     updated_at
-    enquiry_from
+    enq_sender_id
     enquiry_description
     __typename
   }
-}''';
+}
+''';

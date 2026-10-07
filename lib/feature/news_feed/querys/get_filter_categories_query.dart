@@ -1,4 +1,4 @@
-const String getFilterCategoriesQuery = '''
+/*const String getFilterCategoriesQuery = '''
     query getAllNewsfeedCategories {
       newsfeed_categories(order_by: {created_at: desc}) {
         id
@@ -10,4 +10,4 @@ const String getFilterCategoriesQuery = '''
         __typename
       }
     }
-  ''';
+  ''';*/

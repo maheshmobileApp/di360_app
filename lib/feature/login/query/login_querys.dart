@@ -15,7 +15,7 @@ String get loginSchema => r"""mutation loginApi($details: LoginInput!) {
     type
     address
     directory_category_id
-    profession_type
+    professionType
     second_hand
     business_name
     abn_number

@@ -91,11 +91,25 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundColor: AppColors.geryColor,
-                      child: CachedNetworkImageWidget(
-                          imageUrl: profileImageUrl ?? '',
-                          fit: BoxFit.fill,
-                          errorWidget: Image.asset(ImageConst.prfImg)),
+                      backgroundColor: AppColors.primaryColor,
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: CachedNetworkImageWidget(
+                            imageUrl: profileImageUrl ?? '',
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.contain,
+                            errorWidget: Image.asset(
+                              ImageConst.prfImg,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     Positioned(
                       bottom: 0,

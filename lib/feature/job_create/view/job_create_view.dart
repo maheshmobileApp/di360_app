@@ -247,12 +247,17 @@ class _JobCreateViewState extends State<JobCreateView> {
                       jobCreateVM.formKeys[jobCreateVM.currentStep];
                   if (currentFormKey.currentState?.validate() ?? false) {
                     if (isLastStep) {
-                      await jobCreateVM.createdJobListing(context, false);
-                      //jobListingVM.selectedStatus = "All";
-                      await jobListingVM.getMyJobListingData(context);
-                      navigationService.goBack();
-                      Loaders.circularHideLoader(context);
-                      scaffoldMessenger("Job submitted successfully");
+                      showAlertMessage(context,
+                          "This job post will remain active for 30 days from the date it is approved by the Admin.",
+                          onBack: () async {
+                        await jobCreateVM.createdJobListing(context, false);
+                        //jobListingVM.selectedStatus = "All";
+                        await jobListingVM.getMyJobListingData(context);
+                        navigationService.goBack();
+                        navigationService.goBack();
+                        Loaders.circularHideLoader(context);
+                        scaffoldMessenger("Job submitted successfully");
+                      });
                     } else {
                       jobCreateVM.goToNextStep();
                     }

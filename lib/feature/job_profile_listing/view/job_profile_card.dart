@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/widget/availibility_caleder_card.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
@@ -15,6 +16,7 @@ import 'package:jiffy/jiffy.dart';
 class JobProfileCard extends StatelessWidget with BaseContextHelpers {
   final JobProfiles jobsListingData;
   final JobProfileListingViewModel vm;
+  final JobProfileCreateViewModel jobCreateProfileVM;
   final dynamic parmas;
   final int? index;
 
@@ -22,6 +24,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
     super.key,
     required this.jobsListingData,
     required this.vm,
+    required this.jobCreateProfileVM,
     this.index,
     this.parmas,
   });
@@ -86,12 +89,13 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                         JobTimeChip(time: time),
                         const SizedBox(width: 4),
                         menuWidget(
-                          vm,
-                          context,
-                          index!,
-                          jobsListingData.id ?? '',
-                          jobsListingData.activeStatus ?? '',
-                        ),
+                            vm,
+                            jobCreateProfileVM,
+                            context,
+                            index!,
+                            jobsListingData.id ?? '',
+                            jobsListingData.activeStatus ?? '',
+                            jobsListingData.adminStatus ?? ''),
                       ],
                     ),
                   ],
@@ -115,13 +119,49 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                     ),
                   ],
                 ),
+                addVertical(10),
+                Row(
+                  children: [
+                    _tabWidget("Interested",
+                        vm.requestCountData?.approve?.aggregate?.count ?? 0,
+                        () async {
+                      if (vm.requestCountData?.approve?.aggregate?.count != 0) {
+                        vm.setRequestType("Interested");
+                        await vm.getAllTalentsRequest(
+                            context,
+                            jobsListingData.dentalProfessionalId ?? "",
+                            "APPROVE");
+                        navigationService
+                            .navigateTo(RouteList.interestedScreen);
+                      } else {
+                        scaffoldMessenger("No requests available");
+                      }
+                    }),
+                    addHorizontal(6),
+                    _tabWidget("Not Interested",
+                        vm.requestCountData?.reject?.aggregate?.count ?? 0,
+                        () async {
+                      if (vm.requestCountData?.reject?.aggregate?.count != 0) {
+                        vm.setRequestType("NotInterested");
+                        await vm.getAllTalentsRequest(
+                            context,
+                            jobsListingData.dentalProfessionalId ?? "",
+                            "REJECT");
+                        navigationService
+                            .navigateTo(RouteList.interestedScreen);
+                      } else {
+                        scaffoldMessenger("No requests available");
+                      }
+                    }),
+                  ],
+                )
               ],
             ),
           ),
           GestureDetector(
             onTap: () async {
-              await vm.getAllTalentsRequest(
-                  context, jobsListingData.dentalProfessionalId ?? "");
+              await vm.getAllTalentsRequest(context,
+                  jobsListingData.dentalProfessionalId ?? "", "PENDING");
               navigationService.navigateToWithParams(
                 RouteList.MyJobProfileScreen,
                 params: jobsListingData,
@@ -146,8 +186,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
               ),
               child: Center(
                 child: Text(
-                  "${jobsListingData.jobHirings.length} requests, "
-                  "${jobsListingData.talentEnquiries?.length ?? 0} enquiry for this job profile",
+                  "${vm.hiringTalentList?.jobhirings?.length ?? 0} requests, "
+                  "${vm.myEnquiryJobData?.talentEnquiries?.length ?? 0} enquiry for this job profile",
                   style: TextStyles.medium1(color: AppColors.black),
                 ),
               ),
@@ -249,18 +289,56 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+  Widget _tabWidget(String type, int count, Function()? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.secondaryBlueColor,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          children: [
+            Text(
+              type,
+              style: TextStyles.medium2(
+                color: AppColors.primaryBlueColor,
+              ),
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            CircleAvatar(
+              radius: 10,
+              backgroundColor: AppColors.primaryColor,
+              child: Text(
+                count.toString(),
+                style: TextStyles.medium2(
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget menuWidget(
     JobProfileListingViewModel vm,
+    JobProfileCreateViewModel jobCreateVM,
     BuildContext context,
     int index,
     String id,
     String activeStatus,
+    String adminStatus,
   ) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == "Delete") {
           showAlertMessage(context, 'Are you sure you want to delete this job?',
               onBack: () async {
@@ -286,13 +364,19 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             },
           );
         } else if (value == "Preview") {
+          await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
+          final profileData = vm.getProfileById;
           navigationService.navigateToWithParams(
             RouteList.talentdetailsScreen,
-            params: jobsListingData,
+            params: profileData,
           );
         } else if (value == "Edit") {
-          final profileData = vm.allJobProfiles.first;
+          print("adminStatus from edit:************ $adminStatus");
+           jobCreateVM.setJobProfileStatus(adminStatus);
+          await vm.getProfileByIdNew(context, vm.allJobProfiles.first.id ?? "");
+          final profileData = vm.getProfileById;
           vm.setEditProfileEnable(true);
+         
           navigationService
               .navigateToWithParams(RouteList.JobProfileView, params: {
             "profileData": profileData,
@@ -310,25 +394,38 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             value: "Edit",
             child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
           ),
-          PopupMenuItem(
-            value: "Delete",
-            child:
-                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
-          ),
+          if (adminStatus.toUpperCase() == "PENDING")
+            PopupMenuItem(
+              value: "Delete",
+              child:
+                  _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
+            ),
+            if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "ACTIVE")
+          (PopupMenuItem(
+            value: "Inactive",
+            child: _buildRow(
+                Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
+          )),
+          if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "INACTIVE")
+          (PopupMenuItem(
+            value: "Active",
+            child: _buildRow(
+                Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
+          ))
         ];
-        if (activeStatus.toUpperCase() == "ACTIVE") {
+        /*if (adminStatus.toUpperCase() == "APPROVE" && activeStatus.toUpperCase() == "ACTIVE") {
           items.add(PopupMenuItem(
             value: "Inactive",
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
           ));
-        } else if (activeStatus.toUpperCase() == "INACTIVE") {
+        } else if (adminStatus.toUpperCase() == "APPROVE" &&activeStatus.toUpperCase() == "INACTIVE") {
           items.add(PopupMenuItem(
             value: "Active",
             child: _buildRow(
                 Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
           ));
-        }
+        }*/
         return items;
       },
     );
