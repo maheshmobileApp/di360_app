@@ -19,7 +19,7 @@ class DeliveryAndNotesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<SuppliesViewModel>();
 
-    final address = vm.selectedAddress;
+    final address = vm.selectedProfessionalAddress;
 
     return Padding(
       padding: const EdgeInsets.symmetric(

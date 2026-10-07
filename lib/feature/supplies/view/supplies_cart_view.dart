@@ -202,7 +202,9 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                     : "",
                                 productId: item.supplyVariant?.skuCode ?? "",
                                 productName: item.supply?.name ?? "",
-                                price: item.supplyVariant?.calaculatedPrice
+                                price: item.supply?.priceType == "inclusive"? item.supplyVariant?.sellingPrice
+                                        ?.toString() ??
+                                    "" : item.supplyVariant?.calaculatedPrice
                                         ?.toString() ??
                                     "",
                                 quantity: item.quantity ?? 0,

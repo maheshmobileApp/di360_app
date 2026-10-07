@@ -49,27 +49,27 @@
             }
           ]
         },
-
-         {
+        {
           "title": "Supplies",
+          "permission": "SUPPLIES_MODULE",
           "subTitle": [
             {
               "title": "My Favourites",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             },
-             {
+            {
               "title": "My Orders",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             },
-             {
+            {
               "title": "My Enquiries",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             },
-             {
+            {
               "title": "Account Pay Requests",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             },
-             {
+            {
               "title": "Shipping Address",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             }
@@ -123,7 +123,7 @@
             {
               "title": "Job Listings",
               "asset": "assets/profile/jobseek/#000000ff.svg"
-            }, 
+            },
             {
               "title": "Talent Listing",
               "asset": "assets/profile/jobseek/#000000ff.svg"
@@ -140,6 +140,32 @@
           "subTitle": [
             {
               "title": "My Learning Hub",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            }
+          ]
+        },
+        {
+          "title": "Supplies",
+          "permission": "SUPPLIES_MODULE",
+          "subTitle": [
+            {
+              "title": "My Favourites",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "My Orders",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "My Enquiries",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Account Pay Requests",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Shipping Address",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             }
           ]
@@ -267,11 +293,10 @@
             }
           ]
         },
-         {
+        {
           "title": "Team Members",
           "permission": "TEAM_MEMBERS_MODULE",
           "subTitle": [
-            
             {
               "title": "Team Members",
               "asset": "assets/profile/payments&others/call-center 1.svg"

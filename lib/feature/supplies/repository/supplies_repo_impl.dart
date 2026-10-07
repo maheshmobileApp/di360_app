@@ -1,5 +1,6 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/my_favourites/queries/delete_favourite_query.dart';
+import 'package:di360_flutter/feature/supplies/model/dental_practice_addresses_res.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
@@ -74,6 +75,12 @@ class SuppliesRepoImpl extends SuppliesRepository {
   Future<DentalProfessionalAddressesData> dentalProfessionalAddress() async {
     final res = await http.query(dentalProfessionalAddressQuery);
     return DentalProfessionalAddressesData.fromJson(res);
+  }
+
+  @override
+  Future<DentalPracticeAddressesData> dentalPracticeAddress() async {
+    final res = await http.query(dentalProfessionalAddressQuery);
+    return DentalPracticeAddressesData.fromJson(res);
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/supplies/model/dental_practice_addresses_res.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
@@ -11,6 +12,7 @@ import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dar
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class SuppliesViewModel extends ChangeNotifier {
@@ -20,6 +22,7 @@ class SuppliesViewModel extends ChangeNotifier {
   Supplies? suppliesDetailsData;
   SupplyCartData? suppliesCartData;
   DentalProfessionalAddressesData? dentalProfessionalAddress;
+  DentalPracticeAddressesData? dentalPracticeAddressesData;
 
   final locationController = TextEditingController();
   final otherTypeController = TextEditingController();
@@ -46,9 +49,15 @@ class SuppliesViewModel extends ChangeNotifier {
   String? addressType;
   String selectedType = "";
   String accountPayType = "";
+  String billingType = "NEW";
 
   void setAccountPayType(String value) {
     accountPayType = value;
+    notifyListeners();
+  }
+
+  void setBillingType(String value) {
+    billingType = value;
     notifyListeners();
   }
 
@@ -343,6 +352,15 @@ class SuppliesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getDentalPracticeAddress(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.dentalPracticeAddress();
+    dentalPracticeAddressesData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
   Future<void> addAddress(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final variables = {
@@ -365,7 +383,7 @@ class SuppliesViewModel extends ChangeNotifier {
     };
 
     final res = await repo.addAddress(variables);
-    getDentalProfessionalAddress(context);
+    await getDentalProfessionalAddress(context);
     navigationService.goBack();
     clearAddressFields();
     Loaders.circularHideLoader(context);
@@ -548,8 +566,8 @@ class SuppliesViewModel extends ChangeNotifier {
 
   String? selectedAddressId;
 
-  DentalProfessionalAddresses? get selectedAddress {
-    final addresses = dentalProfessionalAddress?.dentalProfessionalAddresses;
+  DentalProfessionalAddresses? get selectedProfessionalAddress  {
+    final addresses = dentalProfessionalAddress?.dentalProfessionalAddresses;// : dentalPracticeAddressesData?.dentalPracticeAddresses;
 
     if (addresses == null || addresses.isEmpty) {
       return null;
@@ -567,14 +585,22 @@ class SuppliesViewModel extends ChangeNotifier {
 
     return addresses.first;
   }
-
+  
   void setSelectedAddress(String addressId) {
     selectedAddressId = addressId;
     notifyListeners();
   }
 
+  bool checkAddressDetails() {
+    if (selectedProfessionalAddress == null) {
+      scaffoldMessenger("Please select address");
+      return false;
+    }
+    return true;
+  }
+
   bool checkPaymentDetails() {
-    return accountPayType == "yes"
+    return accountPayType == "yes" || billingType == "EXISTING"
         ? checkAccountPayDetails()
         : checkPaymentDetailsFields();
   }
@@ -615,8 +641,10 @@ class SuppliesViewModel extends ChangeNotifier {
     final res = await repo.getAccountTowardsSupplier(variables);
     if (res.supplierAccounts?.isEmpty == true) {
       scaffoldMessenger("No account found for this supplier");
+      setBillingType("NEW");
       Loaders.circularHideLoader(context);
     } else {
+      setBillingType("EXISTING");
       accountTowardsSupplier = res;
       accountNumberController.text =
           accountTowardsSupplier?.supplierAccounts?.first.accountNumber ?? "";
@@ -730,6 +758,7 @@ class SuppliesViewModel extends ChangeNotifier {
 
     if (res != null) {
       supplierAccountData = res;
+      print("*******------$supplierAccountData");
       Loaders.circularHideLoader(context);
 
       notifyListeners();
@@ -737,6 +766,8 @@ class SuppliesViewModel extends ChangeNotifier {
   }
 
   Future<bool> addOrder(BuildContext context) async {
+    final email = await LocalStorage.getStringVal(LocalStorageConst.emailId);
+    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
     try {
       print("*********add Order**********");
@@ -758,7 +789,9 @@ class SuppliesViewModel extends ChangeNotifier {
             {
               "supply_id": cartItem.supplyId,
               "supply_variant_id": cartItem.supplyVariantId,
-              "price": cartItem.supplyVariant?.calaculatedPrice ?? 0,
+              "price": cartItem.supply.priceType == "inclusive"
+                  ? cartItem.supplyVariant?.sellingPrice ?? 0
+                  : cartItem.supplyVariant?.calaculatedPrice ?? 0,
               "quantity": cartItem.quantity ?? 0,
               "free_quantity": 0
             }
@@ -778,19 +811,35 @@ class SuppliesViewModel extends ChangeNotifier {
           "status": "VERIFICATION_PENDING",
           "payment_status": "PENDING",
           "payment_mode": "ACCOUNT_PAY",
-          "billing_address": selectedAddress,
-          "shipping_address": selectedAddress,
+          "billing_address": selectedProfessionalAddress,
+          "shipping_address": selectedProfessionalAddress,
           "order_notes": "",
           "requested_delivery_date": null,
           "role": userType,
           "user_id": userId,
           "supplies_order_items": suppliesOrderItems,
-          "billing_type": "NEW",
-          "account_pay_details": null,
-          "supplier_account_request_id":
-              supplierAccountData?.insertSupplierAccountRequestsOne?.id ?? ""
+          "billing_type": billingType,
+          "account_pay_details": billingType == "EXISTING"
+              ? {
+                  "payment_mode": "ACCOUNT_PAY",
+                  "clinic_name": compNameController.text,
+                  "company_name": compCompanyNameController.text,
+                  "account_number": accountNumberController.text,
+                  "email": emailController.text,
+                  "new_practice_name": null,
+                  "new_contact_person": null,
+                  "new_phone": null,
+                  "new_abn": null,
+                  "new_billing_address": null,
+                  "new_notes": null
+                }
+              : null,
+          if (billingType == "NEW")
+            "supplier_account_request_id":
+                supplierAccountData?.insertSupplierAccountRequestsOne?.id ?? ""
         }
       };
+      print("/////********$variables");
       final res = await repo.addOrder(variables);
       return res != null;
     } finally {

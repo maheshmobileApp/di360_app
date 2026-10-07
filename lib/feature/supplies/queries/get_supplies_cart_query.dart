@@ -10,6 +10,7 @@ const String getSuppliesCartQuery = r'''query supply_carts {
       name
       dental_suppliers_id
       image
+      price_type
       dental_supplier {
         id
         name

@@ -18,6 +18,7 @@ const String getSuppliesDetailsQuery = r'''query get_supply_by_pk($id: uuid!) {
     status
     product_status
     product_type
+    price_type
     product_condition
     doc_msds
     doc_spec_sheet

@@ -30,8 +30,9 @@ class ShippingAddressRepoImpl extends ShippingAddressRepository {
   }
 
   @override
-  Future<dynamic> deleteShippingAddressProfessional(variables)async {
-    final res = await http.mutation(deleteProfessionalShippingAddressQuery, variables);
+  Future<dynamic> deleteShippingAddressProfessional(variables) async {
+    final res =
+        await http.mutation(deleteProfessionalShippingAddressQuery, variables);
     return res;
   }
 }

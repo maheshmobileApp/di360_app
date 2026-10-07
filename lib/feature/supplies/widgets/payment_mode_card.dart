@@ -43,6 +43,7 @@ class PaymentModeCard extends StatelessWidget {
                       style: TextStyles.clashSemiBold(fontSize: 18)),
                   SizedBox(height: 8),
                   _radioWidget(selected),
+                  if (vm.billingType == "NEW")
                   Row(
                     children: [
                       Expanded(
@@ -66,6 +67,7 @@ class PaymentModeCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 6),
+                  if (vm.billingType == "EXISTING") _typeYesFields(vm),
                   if (vm.accountPayType == "yes") _typeYesFields(vm),
                   if (vm.accountPayType == "no") _typeNoFields(vm),
                 ]),

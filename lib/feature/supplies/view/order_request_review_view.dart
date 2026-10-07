@@ -50,7 +50,10 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
       0,
       (sum, item) =>
           sum +
-          ((item.supplyVariant?.calaculatedPrice ?? 0) * (item.quantity ?? 0)),
+          ((item.supply?.priceType == "inclusive"
+                  ? item.supplyVariant?.sellingPrice ?? 0
+                  : item.supplyVariant?.calaculatedPrice ?? 0) *
+              (item.quantity ?? 0)),
     );
 
     return Scaffold(
@@ -99,9 +102,13 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                                   : "",
                               productId: item.supplyVariant?.skuCode ?? "",
                               productName: item.supply?.name ?? "",
-                              price: item.supplyVariant?.calaculatedPrice
-                                      ?.toString() ??
-                                  "",
+                              price: item.supply?.priceType == "inclusive"
+                                  ? item.supplyVariant?.sellingPrice
+                                          ?.toString() ??
+                                      ""
+                                  : item.supplyVariant?.calaculatedPrice
+                                          ?.toString() ??
+                                      "",
                               quantity: item.quantity ?? 0,
                               onChecked: (value) {
                                 vm.toggleProduct(item, value ?? false);
@@ -146,10 +153,12 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                   height: 50,
                   title: "Submit Order Request",
                   onPressed: () async {
+                    if (vm.checkAddressDetails())
                     if (vm.checkPaymentDetails()) {
-                      (vm.accountPayType == "yes")
-                          ? await vm.addSupplierAccount(context)
-                          : await vm.addSupplierAccountRequest(context);
+                      if (vm.accountPayType == "yes")
+                        await vm.addSupplierAccount(context);
+                      if (vm.accountPayType == "no")
+                        await vm.addSupplierAccountRequest(context);
                       final orderCreated = await vm.addOrder(context);
                       if (orderCreated && context.mounted) {
                         showOrderSuccessPopup(context);

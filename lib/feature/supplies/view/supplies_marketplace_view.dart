@@ -121,9 +121,13 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                   image: supply.image?.firstOrNull?.url ?? "",
                   name: supply.name ?? "",
                   brand: supply.dentalSupplier?.businessName ?? "",
-                  price: supply.supplyVariants?.firstOrNull?.calaculatedPrice
-                          ?.toStringAsFixed(2) ??
-                      "",
+                  price: supply.priceType == "exclusive"
+                      ? supply.supplyVariants?.firstOrNull?.calaculatedPrice
+                              ?.toStringAsFixed(2) ??
+                          ""
+                      : supply.supplyVariants?.firstOrNull?.sellingPrice
+                              ?.toStringAsFixed(2) ??
+                          "",
                   inStock:
                       (supply.supplyVariants?.firstOrNull?.availableStock ??
                               0) >

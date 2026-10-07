@@ -61,6 +61,7 @@ class Supplies {
   dynamic specifications;
   String? status;
   String? productStatus;
+  String? priceType;
   String? supplyBrandId;
   SupplyBrand? supplyBrand;
   String? supplyCategoryId;
@@ -98,6 +99,7 @@ class Supplies {
       this.specifications,
       this.status,
       this.productStatus,
+      this.priceType,
       this.supplyBrandId,
       this.supplyBrand,
       this.supplyCategoryId,
@@ -143,6 +145,7 @@ class Supplies {
     specifications = json['specifications'];
     status = json['status']?.toString();
     productStatus = json['product_status']?.toString();
+    priceType = json['price_type']?.toString();
     supplyBrandId = json['supply_brand_id']?.toString();
     supplyBrand = json['supply_brand'] != null && json['supply_brand'] is Map
         ? SupplyBrand.fromJson(json['supply_brand'] as Map<String, dynamic>)
@@ -225,6 +228,7 @@ class Supplies {
     data['specifications'] = this.specifications;
     data['status'] = this.status;
     data['product_status'] = this.productStatus;
+    data['price_type'] = this.priceType;
     data['supply_brand_id'] = this.supplyBrandId;
     if (this.supplyBrand != null) {
       data['supply_brand'] = this.supplyBrand?.toJson();

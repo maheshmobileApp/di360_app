@@ -4,7 +4,7 @@ import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/documents_card.dart';
 import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
-import 'package:di360_flutter/feature/supplies/widgets/product_detail_card.dart';
+import 'package:di360_flutter/feature/supplies/widgets/product_detail_card_one.dart';
 import 'package:di360_flutter/feature/supplies/widgets/supplies_information_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +82,7 @@ class _SuppliesDetailsViewState extends State<SuppliesDetailsView> {
                     ),
                   ),
                 ),
-                ProductDetailCard(suppliesDetails: suppliesDetails),
+                ProductDetailCardOne(suppliesDetails: suppliesDetails),
                 _productDetails(suppliesDetails),
                 SuppliesInformationCard(suppliesDetails: suppliesDetails),
                 DocumentsCard(suppliesDetails: suppliesDetails),

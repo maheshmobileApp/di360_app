@@ -100,7 +100,7 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringVal(
               LocalStorageConst.token, loginData.accessToken ?? '');
 
-          final newPermission = "SUPPLIES_MARKETPLACE";
+          /*final newPermission = "SUPPLIES_MARKETPLACE";
 
           await LocalStorage.setStringList(
             LocalStorageConst.permissions,
@@ -108,10 +108,10 @@ class LoginViewModel extends ChangeNotifier {
               ...(loginData.navigation?.permissions ?? []),
               newPermission,
             ],
-          );
+          );*/
 
-          /*await LocalStorage.setStringList(LocalStorageConst.permissions,
-              loginData.navigation?.permissions ?? []);*/
+          await LocalStorage.setStringList(LocalStorageConst.permissions,
+              loginData.navigation?.permissions ?? []);
           await LocalStorage.setStringVal(LocalStorageConst.subscriptionStatus,
               loginData.subscription?.status ?? "");
 

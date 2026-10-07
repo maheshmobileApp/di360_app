@@ -267,7 +267,7 @@ class BillingAddress {
   String? postalCode;
   bool? makeDefault;
   String? googlePlaceId;
-  Null? otherTypeName;
+  String? otherTypeName;
   String? dentalProfessionalId;
 
   BillingAddress(
