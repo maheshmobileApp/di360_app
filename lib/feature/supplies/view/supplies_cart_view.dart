@@ -166,12 +166,10 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                         vm.setAccountPayType("");
                                         vm.setSelectedAddress(vm
                                                     .dentalProfessionalAddress
-                                                    ?.dentalProfessionalAddresses
                                                     ?.isNotEmpty ==
                                                 true
                                             ? vm
                                                     .dentalProfessionalAddress
-                                                    ?.dentalProfessionalAddresses
                                                     ?.first
                                                     .id ??
                                                 ""

@@ -4,7 +4,9 @@ class SuppliesOrdersRes {
   SuppliesOrdersRes({this.data});
 
   SuppliesOrdersRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new SuppliesOrdersData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new SuppliesOrdersData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -69,8 +71,8 @@ class SuppliesOrders {
   Null? refundedOn;
   Null? refundedMessage;
   Null? customMessage;
-  Null? dentalPracticeId;
-  Null? dentalPractice;
+  String? dentalPracticeId;
+  DentalProfessional? dentalPractice;
   String? dentalProfessionalId;
   DentalProfessional? dentalProfessional;
   Null? dentalSupplierId;
@@ -162,7 +164,9 @@ class SuppliesOrders {
     refundedMessage = json['refunded_message'];
     customMessage = json['custom_message'];
     dentalPracticeId = json['dental_practice_id'];
-    dentalPractice = json['dental_practice'];
+    dentalPractice = json['dental_practice'] != null
+        ? new DentalProfessional.fromJson(json['dental_practice'])
+        : null;
     dentalProfessionalId = json['dental_professional_id'];
     dentalProfessional = json['dental_professional'] != null
         ? new DentalProfessional.fromJson(json['dental_professional'])
@@ -223,7 +227,9 @@ class SuppliesOrders {
     data['refunded_message'] = this.refundedMessage;
     data['custom_message'] = this.customMessage;
     data['dental_practice_id'] = this.dentalPracticeId;
-    data['dental_practice'] = this.dentalPractice;
+    if (this.dentalPractice != null) {
+      data['dental_practice'] = this.dentalPractice!.toJson();
+    }
     data['dental_professional_id'] = this.dentalProfessionalId;
     if (this.dentalProfessional != null) {
       data['dental_professional'] = this.dentalProfessional!.toJson();

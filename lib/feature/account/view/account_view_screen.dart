@@ -515,6 +515,9 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             await context
                                 .read<AccountPayRequestsViewModel>()
                                 .getAccountPayRequests(context);
+                            await context
+                                .read<AccountPayRequestsViewModel>()
+                                .getSupplierAccounts(context);
                             navigationService
                                 .navigateTo(RouteList.accountPayRequestsView);
                           } else if (item.title == "Shipping Address") {

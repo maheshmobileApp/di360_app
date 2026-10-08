@@ -47,6 +47,7 @@ class DentalProfessionalAddresses {
   String? id;
   String? createdAt;
   String? updatedAt;
+  String? practiceName; //"practice_name": "test name",
   String? dentalProfessionalId;
   String? email;
   String? shortName;
@@ -69,6 +70,7 @@ class DentalProfessionalAddresses {
       {this.id,
       this.createdAt,
       this.updatedAt,
+      this.practiceName,
       this.dentalProfessionalId,
       this.email,
       this.shortName,
@@ -91,6 +93,7 @@ class DentalProfessionalAddresses {
     id = json['id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    practiceName = json['practice_name'];
     dentalProfessionalId = json['dental_professional_id'];
     email = json['email'];
     shortName = json['short_name'];
@@ -115,6 +118,7 @@ class DentalProfessionalAddresses {
     data['id'] = this.id;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['practice_name'] = this.practiceName;
     data['dental_professional_id'] = this.dentalProfessionalId;
     data['email'] = this.email;
     data['short_name'] = this.shortName;

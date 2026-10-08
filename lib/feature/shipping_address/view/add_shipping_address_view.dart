@@ -24,7 +24,7 @@ class AddShippingAddressView extends StatelessWidget with ValidationMixins {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            vm.editMode ? "Edit Shipping Address":"Add Shipping Address",
+            vm.editMode ? "Edit Shipping Address" : "Add Shipping Address",
             style: TextStyles.medium2(),
           ),
         ),
@@ -54,6 +54,15 @@ class AddShippingAddressView extends StatelessWidget with ValidationMixins {
                 style: TextStyles.clashSemiBold(
                     fontSize: 16, color: AppColors.primaryColor),
               ),
+              InputTextField(
+                controller: vm.practiceNameController,
+                hintText: "Enter practice name",
+                keyboardType: TextInputType.name,
+                title: "Practice Name",
+                maxLength: 70,
+                isRequired: true,
+              ),
+              SizedBox(height: 6),
               InputTextField(
                 controller: vm.nameController,
                 hintText: "Enter contact name",
@@ -232,7 +241,9 @@ class AddShippingAddressView extends StatelessWidget with ValidationMixins {
                         title: "Save",
                         onPressed: () async {
                           vm.editMode
-                              ? await vm.updateShippingAddress(context, vm.editId) : await vm.addShippingAddress(context);
+                              ? await vm.updateShippingAddress(
+                                  context, vm.editId)
+                              : await vm.addShippingAddress(context);
                         }),
                   ),
                 ],

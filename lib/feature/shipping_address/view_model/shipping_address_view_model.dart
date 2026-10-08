@@ -1,14 +1,17 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/shipping_address/model/get_shipping_addresses_professional_res.dart';
 import 'package:di360_flutter/feature/shipping_address/repository/shipping_address_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class ShippingAddressViewModel extends ChangeNotifier {
   final ShippingAddressRepoImpl repo = ShippingAddressRepoImpl();
 
-  ShippingAddressesProfessionalData? shippingAddressesProfessionalData;
+  List<DentalProfessionalAddresses>? shippingAddressesProfessionalData;
   static const int _addressPageSize = 10;
   int _addressOffset = 0;
   bool isLoading = false;
@@ -24,6 +27,7 @@ class ShippingAddressViewModel extends ChangeNotifier {
   final otherTypeController = TextEditingController();
   final locationController = TextEditingController();
   final nameController = TextEditingController();
+  final practiceNameController = TextEditingController();
   final emailController = TextEditingController();
   final addressline1Controller = TextEditingController();
   final addressline2Controller = TextEditingController();
@@ -97,11 +101,10 @@ class ShippingAddressViewModel extends ChangeNotifier {
         "offset": _addressOffset,
       };
       final res = await repo.getShippingAddressesProfessional(variables);
-      final newAddresses = res.dentalProfessionalAddresses ?? [];
+      final newAddresses = res;
 
       if (isLoadMore) {
-        shippingAddressesProfessionalData?.dentalProfessionalAddresses
-            ?.addAll(newAddresses);
+        shippingAddressesProfessionalData?.addAll(newAddresses);
       } else {
         shippingAddressesProfessionalData = res;
       }
@@ -156,29 +159,52 @@ class ShippingAddressViewModel extends ChangeNotifier {
   }
 
   Future<void> addShippingAddress(BuildContext context) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     if (!await checkValidFields()) return;
 
     Loaders.circularShowLoader(context);
-    final variables = {
-      "dental_professional_addressees": {
-        "type": addressType,
-        "other_type_name": otherTypeController.text,
-        "email": emailController.text,
-        "short_name": nameController.text,
-        "line_1": addressline1Controller.text,
-        "line_2": addressline2Controller.text,
-        "landmark": landmarkController.text,
-        "city": cityController.text,
-        "state": selectedState,
-        "country": selectedCountry,
-        "postal_code": postcodeController.text,
-        "latitude": latitude,
-        "longitude": longitude,
-        "google_place_id":
-            "EjNOU1cgQ29hc3RsaW5lIEN5Y2xld2F5LCBXb29ub25hIE5TVyAyNTE3LCBBdXN0cmFsaWEiLiosChQKEglb3g4Dpx8TaxFF2qfcB8lFghIUChIJ2cUq4eQeE2sRUOcyFmh9AQU",
-        "make_default": true
-      }
-    };
+    final variables = type == UserRole.professional.value
+        ? {
+            "dental_professional_addressees": {
+              "type": addressType,
+              "other_type_name": otherTypeController.text,
+              "email": emailController.text,
+              "short_name": nameController.text,
+              "line_1": addressline1Controller.text,
+              "line_2": addressline2Controller.text,
+              "landmark": landmarkController.text,
+              "city": cityController.text,
+              "state": selectedState,
+              "country": selectedCountry,
+              "postal_code": postcodeController.text,
+              "latitude": latitude,
+              "longitude": longitude,
+              "google_place_id":
+                  "EjNOU1cgQ29hc3RsaW5lIEN5Y2xld2F5LCBXb29ub25hIE5TVyAyNTE3LCBBdXN0cmFsaWEiLiosChQKEglb3g4Dpx8TaxFF2qfcB8lFghIUChIJ2cUq4eQeE2sRUOcyFmh9AQU",
+              "make_default": true
+            }
+          }
+        : {
+            "dental_practice_addressees": {
+              "type": addressType,
+              "other_type_name": otherTypeController.text,
+              "practice_name": practiceNameController.text,
+              "email": emailController.text,
+              "short_name": nameController.text,
+              "line_1": addressline1Controller.text,
+              "line_2": addressline2Controller.text,
+              "landmark": landmarkController.text,
+              "city": cityController.text,
+              "state": selectedState,
+              "country": selectedCountry,
+              "postal_code": postcodeController.text,
+              "latitude": latitude,
+              "longitude": longitude,
+              "google_place_id":
+                  "EjNOU1cgQ29hc3RsaW5lIEN5Y2xld2F5LCBXb29ub25hIE5TVyAyNTE3LCBBdXN0cmFsaWEiLiosChQKEglb3g4Dpx8TaxFF2qfcB8lFghIUChIJ2cUq4eQeE2sRUOcyFmh9AQU",
+              "make_default": true
+            }
+          };
     print("**************variables $variables");
     final res = await repo.addShippingAddress(variables);
     Loaders.circularHideLoader(context);
@@ -244,6 +270,7 @@ class ShippingAddressViewModel extends ChangeNotifier {
 
   fillController(DentalProfessionalAddresses address) {
     otherTypeController.text = address.otherTypeName ?? "";
+    practiceNameController.text = address.practiceName ?? "";
     locationController.text = "";
     nameController.text = address.shortName ?? "";
     emailController.text = address.email ?? "";

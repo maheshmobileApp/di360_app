@@ -151,7 +151,7 @@ class DeliveryAndNotesCard extends StatelessWidget {
     SuppliesViewModel viewModel,
   ) {
     final addresses =
-        viewModel.dentalProfessionalAddress?.dentalProfessionalAddresses ??
+        viewModel.dentalProfessionalAddress ??
             [];
 
     if (addresses.isEmpty) {

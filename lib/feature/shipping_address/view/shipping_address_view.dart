@@ -49,7 +49,7 @@ class _ShippingAddressViewState extends State<ShippingAddressView> {
     final vm = Provider.of<ShippingAddressViewModel>(context);
     final supVM = context.watch<SuppliesViewModel>();
     final addresses =
-        vm.shippingAddressesProfessionalData?.dentalProfessionalAddresses ?? [];
+        vm.shippingAddressesProfessionalData ?? [];
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,

@@ -1,7 +1,5 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/supplies/model/dental_practice_addresses_res.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
@@ -12,7 +10,6 @@ import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dar
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class SuppliesViewModel extends ChangeNotifier {
@@ -21,8 +18,7 @@ class SuppliesViewModel extends ChangeNotifier {
   getSupplyData? supplyData;
   Supplies? suppliesDetailsData;
   SupplyCartData? suppliesCartData;
-  DentalProfessionalAddressesData? dentalProfessionalAddress;
-  DentalPracticeAddressesData? dentalPracticeAddressesData;
+  List<DentalProfessionalAddresses>? dentalProfessionalAddress;
 
   final locationController = TextEditingController();
   final otherTypeController = TextEditingController();
@@ -352,15 +348,6 @@ class SuppliesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getDentalPracticeAddress(BuildContext context) async {
-    Loaders.circularShowLoader(context);
-    final res = await repo.dentalPracticeAddress();
-    dentalPracticeAddressesData = res;
-    Loaders.circularHideLoader(context);
-
-    notifyListeners();
-  }
-
   Future<void> addAddress(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final variables = {
@@ -567,7 +554,7 @@ class SuppliesViewModel extends ChangeNotifier {
   String? selectedAddressId;
 
   DentalProfessionalAddresses? get selectedProfessionalAddress  {
-    final addresses = dentalProfessionalAddress?.dentalProfessionalAddresses;// : dentalPracticeAddressesData?.dentalPracticeAddresses;
+    final addresses = dentalProfessionalAddress;
 
     if (addresses == null || addresses.isEmpty) {
       return null;
@@ -585,7 +572,7 @@ class SuppliesViewModel extends ChangeNotifier {
 
     return addresses.first;
   }
-  
+
   void setSelectedAddress(String addressId) {
     selectedAddressId = addressId;
     notifyListeners();

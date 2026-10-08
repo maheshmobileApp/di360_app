@@ -1,4 +1,6 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/my_favourites/queries/delete_favourite_query.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_practice_addresses_res.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
@@ -16,6 +18,7 @@ import 'package:di360_flutter/feature/supplies/queries/add_supplier_account_requ
 import 'package:di360_flutter/feature/supplies/queries/add_to_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/decrease_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/delete_cart_item.dart';
+import 'package:di360_flutter/feature/supplies/queries/dental_practice_addresses_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/dental_professional_address.dart';
 import 'package:di360_flutter/feature/supplies/queries/favourites_keys_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_account_towards_supplier.dart';
@@ -24,6 +27,7 @@ import 'package:di360_flutter/feature/supplies/queries/get_supplies_cart_query.d
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_details_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/increase_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repository.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class SuppliesRepoImpl extends SuppliesRepository {
   final http = HttpService();
@@ -72,15 +76,30 @@ class SuppliesRepoImpl extends SuppliesRepository {
   }
 
   @override
-  Future<DentalProfessionalAddressesData> dentalProfessionalAddress() async {
-    final res = await http.query(dentalProfessionalAddressQuery);
-    return DentalProfessionalAddressesData.fromJson(res);
-  }
+  Future<List<DentalProfessionalAddresses>> dentalProfessionalAddress() async {
+    final type = await LocalStorage.getStringVal(
+      LocalStorageConst.type,
+    );
 
-  @override
-  Future<DentalPracticeAddressesData> dentalPracticeAddress() async {
-    final res = await http.query(dentalProfessionalAddressQuery);
-    return DentalPracticeAddressesData.fromJson(res);
+    final isProfessional = type == UserRole.professional.value;
+
+    final query = isProfessional
+        ? dentalProfessionalAddressQuery
+        : dentalPracticeAddressesQuery;
+
+    final res = await http.query(query);
+
+    final List<dynamic> data = isProfessional
+        ? (res['dental_professional_addresses'] ?? [])
+        : (res['dental_practice_addresses'] ?? []);
+
+    return data
+        .map(
+          (e) => DentalProfessionalAddresses.fromJson(
+            e as Map<String, dynamic>,
+          ),
+        )
+        .toList();
   }
 
   @override

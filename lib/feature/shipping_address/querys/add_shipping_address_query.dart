@@ -7,3 +7,10 @@ const String addShippingAddressQuery =
     __typename
   }
 }''';
+
+const String addShippingAddressPracticeQuery = r'''mutation addDentalPracticeAddresses($dental_practice_addressees: dental_practice_addresses_insert_input!) {
+  insert_dental_practice_addresses_one(object: $dental_practice_addressees) {
+    id
+    __typename
+  }
+}''';
