@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/catalogue_filter_suppliers.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/catalouges_list.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/filter_suppliers_res.dart';
 import 'package:di360_flutter/feature/catalogue/querys/add_like_catalogue_query.dart';
@@ -145,10 +146,10 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
   }
 
   @override
-  Future<List<DentalSuppliers>?> getFilterSuppliers() async {
+  Future<CatalogueFilterSupplierData> getFilterSuppliers() async {
     final data = await http.query(filterSuppilerQuery);
-    final result = FilterSuppliersData.fromJson(data);
-    return result.dentalSuppliers;
+    final result = CatalogueFilterSupplierData.fromJson(data);
+    return result;
   }
 
   @override

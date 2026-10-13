@@ -161,7 +161,7 @@ class CommentViewModel extends ChangeNotifier {
         commentController.clear();
         selectedFiles.clear();
         getComments(context, feedId);
-        getNewsfeedComment(context, feedId);
+        //getNewsfeedComment(context, feedId);
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
@@ -205,7 +205,7 @@ class CommentViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
-  
+
   deleteTheComment(BuildContext context, String id, String feedId) async {
     Loaders.circularShowLoader(context);
 
@@ -215,7 +215,7 @@ class CommentViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         commentController.clear();
         await getComments(context, feedId);
-        await getNewsfeedComment(context, feedId);
+        //await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -227,7 +227,7 @@ class CommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
+ /* Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
     try {
       var res = await _http.query(getNewsfeedQuery, variables: {'id': feedId});
       if (res != null) {
@@ -242,7 +242,7 @@ class CommentViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
-  }
+  }*/
 
   Future<void> getComments(BuildContext context, String feedId) async {
     Loaders.circularShowLoader(context);
@@ -252,7 +252,7 @@ class CommentViewModel extends ChangeNotifier {
       newsFeedComments = res;
     } catch (e) {
       print("Error fetching comments: $e");
-      scaffoldMessenger(e.toString());
+      //scaffoldMessenger(e.toString());
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -339,7 +339,7 @@ class CommentViewModel extends ChangeNotifier {
 
       if (res.isNotEmpty) {
         commentController.clear();
-        await getNewsfeedComment(context, feedId);
+        //await getNewsfeedComment(context, feedId);
         await getComments(context, feedId);
         await getReplies(context, directParentId);
       } else {
@@ -367,7 +367,7 @@ class CommentViewModel extends ChangeNotifier {
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        //getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -389,7 +389,7 @@ class CommentViewModel extends ChangeNotifier {
         commentController.clear();
         getComments(context, feedId);
         getReplies(context, parentId);
-        getNewsfeedComment(context, feedId);
+        //getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -508,7 +508,7 @@ const String getNewsfeedQuery = '''
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -526,7 +526,7 @@ const String getNewsfeedQuery = '''
     dental_professional {
       id
       name
-      profession_type
+      professionType
       profile_image
       email
       phone
@@ -537,7 +537,7 @@ const String getNewsfeedQuery = '''
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -569,7 +569,7 @@ const String getNewsfeedQuery = '''
         name
         logo
         type
-        profession_type
+        professionType
         __typename
       }
       dental_supplier {
@@ -577,13 +577,13 @@ const String getNewsfeedQuery = '''
         name
         logo
         type
-        profession_type
+        professionType
         __typename
       }
       dental_professional {
         id
         name
-        profession_type
+        professionType
         type
         profile_image
         __typename

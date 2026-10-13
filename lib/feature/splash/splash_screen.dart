@@ -92,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
     Loaders.circularShowLoader(context);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     await context.read<ViewProfileViewModel>().getBusinessTypes();
-    await context.read<ViewProfileViewModel>().getTheViewProfileData();
+    await context.read<ViewProfileViewModel>().getTheViewProfileData(context);
     Loaders.circularHideLoader(context);
     type == UserRole.professional.value
         ? await navigationService

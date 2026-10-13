@@ -39,9 +39,9 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
       vm.companyController.text = exp.companyName??"";
       vm.descriptionController.text = exp.jobDescription??"";
       vm.selectedStartMonth = exp.startMonth;
-      vm.selectedStartYear = exp.startYear;
+      vm.selectedStartYear = exp.startYear?.toString();
       vm.selectedEndMonth = exp.endMonth;
-      vm.selectedEndYear = exp.endYear;
+      vm.selectedEndYear = exp.endYear?.toString();
       vm.isStillWorking = exp.stillInRole??false;
     } else {
       vm.jobTitleController.clear();

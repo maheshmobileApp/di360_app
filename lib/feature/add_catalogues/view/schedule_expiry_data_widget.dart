@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,11 @@ class ScheduleExpiryPage extends StatelessWidget {
 
   Future<void> _pickScheduleDate(BuildContext context) async {
     final provider = context.read<AddCatalogueViewModel>();
+    if (!provider.canEditScheduleExpiry) {
+      scaffoldMessenger("Schedule editing is disabled for this status");
+      return;
+    }
+
     final picked = await showDatePicker(
       context: context,
       initialDate: provider.scheduleDate ?? DateTime.now(),
@@ -24,6 +30,11 @@ class ScheduleExpiryPage extends StatelessWidget {
 
   Future<void> _pickExpiryDate(BuildContext context) async {
     final provider = context.read<AddCatalogueViewModel>();
+    if (!provider.canEditScheduleExpiry) {
+      scaffoldMessenger("Expiry editing is disabled for this status");
+      return;
+    }
+
     if (provider.scheduleDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select Schedule date first")),

@@ -1,74 +1,22 @@
-String job_list_request = r'''query getAllJobs($limit: Int, $offset: Int!) {
-  jobs(
-    order_by: { created_at: desc }
-    where: {
-      active_status: { _eq: "ACTIVE" }
-      status: { _in: ["APPROVE"] }
-    }
-    limit: $limit
-    offset: $offset
-  ) {
+String job_list_request = r'''query getMarketplaceJobs($limit: Int, $offset: Int, $where: jobs_bool_exp, $order_by: [jobs_order_by!]) {
+  jobs(where: $where, order_by: $order_by, limit: $limit, offset: $offset) {
     id
     title
     j_type
     j_role
+    dental_supplier_id
+    dental_practice_id
     description
     TypeofEmployment
-    years_of_experience
-    dental_practice_id
-    dental_supplier_id
+    availability_date
+    active_status
     location
     logo
-    state
     city
     company_name
-    salary
-    website_url
-    pay_range
-    education
-    video
-    rate_billing
+    status
     created_at
-    job_applicants_aggregate {
-      aggregate {
-        count
-      }
-    }
-    country
-    days_of_week
-    current_company
-    endDateToggle
-    experience
-    facebook_url
-    hiring_period
-    instagram_url
-    linkedin_url
-    is_featured
-    closing_message
-    closed_at
-    clinic_logo
-    banner_image
-    availability_date
-    address
-    active_status
-    pay_min
-    pay_max
-    offered_benefits
-    dental_practice {
-      directories {
-        description
-        __typename
-      }
-      __typename
-    }
-    dental_supplier {
-      directories {
-        description
-        __typename
-      }
-      __typename
-    }
-
+    __typename
   }
 }
 ''';

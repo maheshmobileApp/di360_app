@@ -55,6 +55,8 @@ class AppliedJob {
   String? message;
   String? dentalProfessionalId;
   Jobs? job;
+  JobEnquiriesFind? jobEnquiriesFind;
+  String? sTypename;
 
   AppliedJob({
     this.id,
@@ -64,6 +66,8 @@ class AppliedJob {
     this.message,
     this.dentalProfessionalId,
     this.job,
+    this.jobEnquiriesFind,
+    this.sTypename
   });
 
   factory AppliedJob.fromJson(Map<String, dynamic> json) {
@@ -77,6 +81,10 @@ class AppliedJob {
       message: json['message'],
       dentalProfessionalId: json['dental_professional_id'],
       job: json['job'] != null ? Jobs.fromJson(json['job']) : null,
+      jobEnquiriesFind : json['job_enquiries_find'] != null
+        ? new JobEnquiriesFind.fromJson(json['job_enquiries_find'])
+        : null,
+    sTypename : json['__typename']
     );
   }
 
@@ -89,10 +97,32 @@ class AppliedJob {
       'message': message,
       'dental_professional_id': dentalProfessionalId,
       'job': job?.toJson(),
+      'job_enquiries_find' : jobEnquiriesFind?.toJson(),
+      '_typename' : sTypename
+
     };
   }
 }
 
+
+class JobEnquiriesFind {
+  String? id;
+  String? sTypename;
+
+  JobEnquiriesFind({this.id, this.sTypename});
+
+  JobEnquiriesFind.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
 class Attachments {
   String? url;
   String? name;

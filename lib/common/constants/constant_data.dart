@@ -12,6 +12,7 @@ class ConstantData {
     ImageConst.jobSeek,
     //  ImageConst.buy,
     ImageConst.catalogue,
+    ImageConst.support,
     ImageConst.support
   ];
 
@@ -24,7 +25,8 @@ class ConstantData {
     'Job Seek',
     //'Buy & Sell',
     'Catalogue',
-    'Support'
+    'Support',
+    'Supplies'
   ];
 
   static List<String> adminHomeGridImgs = [

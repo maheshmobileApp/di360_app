@@ -28,7 +28,7 @@ const String filterCommunityQuery =
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -46,7 +46,7 @@ const String filterCommunityQuery =
     dental_professional {
       id
       name
-      profession_type
+      professionType
       profile_image
       email
       phone
@@ -57,7 +57,7 @@ const String filterCommunityQuery =
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name

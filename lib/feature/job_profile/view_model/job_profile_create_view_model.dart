@@ -12,9 +12,11 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart' as htmlParser;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -168,11 +170,17 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   void setFromDate(DateTime date) {
     fromDateController.text =
-        di360_date_utils.DateFormatUtils.formatToYyyyMmDd(date);
+        DateFormatUtils.formatMMDDYYYY(date.toIso8601String());
     notifyListeners();
   }
 
   String? selectedSalaryPer;
+  String? jobProfileStatus;
+
+  void setJobProfileStatus(String val) {
+    jobProfileStatus = val;
+    notifyListeners();
+  }
 
   void setSelectSalaryPer(String value) {
     if (value == "Hourly") {
@@ -902,7 +910,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                     "ejobdesp": e.jobDescription,
                     "startMonth": e.startMonth,
                     "startYear": e.startYear,
-                    "isStillWorking": isStillWorking,
+                    "stillInRole": isStillWorking,
                     "endMonth": e.endMonth,
                     "endYear": e.endYear
                   })
@@ -940,6 +948,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       ]
     };
 
+    print("******$variables");
+
     try {
       final res = await repo.createJobProfileListing(variables);
       Loaders.circularHideLoader(context);
@@ -966,7 +976,10 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> updateJobProfile(
-      BuildContext context, bool isDraft, String jobProfileId) async {
+    BuildContext context,
+    bool isDraft,
+    String jobProfileId,
+  ) async {
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {};
 
@@ -1017,43 +1030,52 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                 }
               ]
             : [],
-        "upload_resume": [
-          _buildFilePayload(
-            url: serverDocuments["Resume"]?.url ??
-                uploadedFiles["Resume"]?["url"],
-            name: serverDocuments["Resume"]?.name ??
-                uploadedFiles["Resume"]?["name"],
-            filePath: serverDocuments["Resume"]?.url ??
-                uploadedFiles["Resume"]?["name"],
-          )
-        ],
-        "certificate": [
-          _buildFilePayload(
-            url: serverDocuments["Certificate"]?.url ??
-                uploadedFiles["Certificate"]?["url"],
-            name: serverDocuments["Certificate"]?.name ??
-                uploadedFiles["Certificate"]?["name"],
-            filePath: serverDocuments["Certificate"]?.url ??
-                uploadedFiles["Certificate"]?["name"],
-          )
-        ],
-        "cover_letter": [
-          _buildFilePayload(
-            url: serverDocuments["Cover Letter"]?.url ??
-                uploadedFiles["Cover Letter"]?["url"],
-            name: serverDocuments["Cover Letter"]?.name ??
-                uploadedFiles["Cover Letter"]?["name"],
-            filePath: serverDocuments["Cover Letter"]?.url ??
-                uploadedFiles["Cover Letter"]?["name"],
-          )
-        ],
+        "upload_resume": serverDocuments["Resume"]?.url == null &&
+                uploadedFiles["Resume"]?["url"] == null
+            ? []
+            : [
+                _buildFilePayload(
+                  url: serverDocuments["Resume"]?.url ??
+                      uploadedFiles["Resume"]?["url"],
+                  name: serverDocuments["Resume"]?.name ??
+                      uploadedFiles["Resume"]?["name"],
+                  filePath: serverDocuments["Resume"]?.url ??
+                      uploadedFiles["Resume"]?["name"],
+                )
+              ],
+        "certificate": serverDocuments["Certificate"]?.url == null &&
+                uploadedFiles["Certificate"]?["url"] == null
+            ? []
+            : [
+                _buildFilePayload(
+                  url: serverDocuments["Certificate"]?.url ??
+                      uploadedFiles["Certificate"]?["url"],
+                  name: serverDocuments["Certificate"]?.name ??
+                      uploadedFiles["Certificate"]?["name"],
+                  filePath: serverDocuments["Certificate"]?.url ??
+                      uploadedFiles["Certificate"]?["name"],
+                )
+              ],
+        "cover_letter": serverDocuments["Cover Letter"]?.url == null &&
+                uploadedFiles["Cover Letter"]?["url"] == null
+            ? []
+            : [
+                _buildFilePayload(
+                  url: serverDocuments["Cover Letter"]?.url ??
+                      uploadedFiles["Cover Letter"]?["url"],
+                  name: serverDocuments["Cover Letter"]?.name ??
+                      uploadedFiles["Cover Letter"]?["name"],
+                  filePath: serverDocuments["Cover Letter"]?.url ??
+                      uploadedFiles["Cover Letter"]?["name"],
+                )
+              ],
         "Year_of_experiance": selectExperience,
 
         "abn_number": abnNumberController.text,
         "availabilityOption": selectedAvailabilityType,
         "current_ctc": "100000",
         "post_anonymously": isPostAnonymous,
-        "admin_status": "APPROVE",
+        "admin_status": jobProfileStatus == "APPROVE" ? "APPROVE" : "PENDING",
         "jobexperiences": experiences
             .map((e) => {
                   "company_name": e.companyName,
@@ -1061,7 +1083,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                   "ejobdesp": e.jobDescription,
                   "startMonth": e.startMonth,
                   "startYear": e.startYear,
-                  "isStillWorking": isStillWorking,
+                  "stillInRole": isStillWorking,
                   "endMonth": e.endMonth,
                   "endYear": e.endYear
                 })
@@ -1126,6 +1148,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   setTheProfileUpdateData(JobProfiles? profile) {
+    jobProfileStatus = profile?.adminStatus;
     mobileNumberController.text = profile?.mobileNumber ?? "";
     togglePostAnonymous(profile?.postAnonymously ?? false);
     emailAddressController.text = profile?.emailAddress ?? "";
@@ -1152,7 +1175,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     experiences = profile?.jobExperiences ?? [];
     aphraRegistrationNumberController.text = profile?.aphraNumber ?? "";
     educations = profile?.educations ?? [];
-
     isWillingToTravel = profile?.willingToTravel ?? false;
     DistanceController.text = profile?.travelDistance ?? "";
     serverProfileFile = profile?.profileImage.isNotEmpty == true
@@ -1183,7 +1205,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         .join(", ");
     //isJoiningImmediate = profile?.i
 
-    aboutMeController.text = profile?.aboutYourself ?? "";
+    aboutMeController.text =
+        htmlParser.parse(profile?.aboutYourself ?? "").body?.text ?? '';
+    fromDateController.text = profile?.fromDate?.isNotEmpty == true
+        ? DateFormatUtils.formatMMDDYYYY(profile?.fromDate ?? "")
+        : "";
 
     notifyListeners();
   }
@@ -1291,7 +1317,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         availabilityDay: selectedDays,
         availabilityDate:
             availabilityDates.map((d) => d.toIso8601String()).toList(),
-        fromDate: joiningDate != null ? [joiningDate!.toIso8601String()] : [],
+        fromDate: joiningDate != null
+            ? DateFormatUtils.formatMMDDYYYY(joiningDate!.toIso8601String())
+            : "",
         unavailabilityDate: [],
         jobHirings: []);
 

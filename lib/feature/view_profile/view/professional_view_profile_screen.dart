@@ -91,7 +91,7 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                                   scaffoldMessenger("Please enter address");
                                 } else {
                                   await provider.updateViewProfile(context);
-                                  await provider.getTheViewProfileData();
+                                  await provider.getTheViewProfileData(context);
                                 }
                               }
                             }),

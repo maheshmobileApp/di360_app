@@ -91,8 +91,8 @@ final isNotOwner =
                     imageUrl: directionalVM.directorDetails?.logo?.url ??
                         directionalVM.directorDetails?.profileImage?.url ??
                         '',
-                    userName: directionalVM.directorDetails?.professionType,
-                    name: directionalVM.directorDetails?.name,
+                    userName: directionalVM.directorDetails?.professionType?.name,
+                    name: directionalVM.directorDetails?.companyName,
                     followerCount:
                         '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
                     followingCount:

@@ -48,6 +48,7 @@ class TalentsMessage {
   String? updatedAt;
   String? message;
   String? messageFrom;
+  String? senderId;
   bool? deletedStatus;
   dynamic attachments;
 
@@ -57,6 +58,7 @@ class TalentsMessage {
       this.updatedAt,
       this.message,
       this.messageFrom,
+      this.senderId,
       this.deletedStatus,
       this.attachments});
 
@@ -66,6 +68,7 @@ class TalentsMessage {
     updatedAt = json['updated_at'];
     message = json['message'];
     messageFrom = json['message_from'];
+    senderId = json['sender_id'];
     attachments = json['attachments'];
     deletedStatus = json['deleted_status'];
   }
@@ -77,6 +80,7 @@ class TalentsMessage {
     data['updated_at'] = this.updatedAt;
     data['message'] = this.message;
     data['message_from'] = this.messageFrom;
+    data['sender_id'] = this.senderId;
     data['attachments'] = this.attachments;
     data['deleted_status'] = this.deletedStatus;
     return data;

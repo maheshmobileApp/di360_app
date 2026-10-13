@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/add_directors/model/get_directories_res.da
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -39,7 +40,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
       vm.QualificationController.text = edu.qualification??"";
       vm.InstitutionController.text = edu.institution??"";
       vm.FinishDateController.text = edu.finishDate ?? "";
-      vm.ExpectedFinishDateController.text = edu.expectedFinishDate ?? "";
+      vm.ExpectedFinishDateController.text = DateFormatUtils.formatMMDDYYYY(edu.finishDate ?? "");
       vm.courseHighlightsController.text = edu.courseHighlights??"";
       vm.selectedQualification = edu.selectedQualification !=""?edu.selectedQualification : "No";
     } else {
@@ -206,10 +207,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
               institution: vm.InstitutionController.text.trim(),
               finishDate: vm.selectedQualification == "Yes"
                   ? vm.FinishDateController.text.trim()
-                  : null,
-              expectedFinishDate: vm.selectedQualification == "No"
-                  ? vm.ExpectedFinishDateController.text.trim()
-                  : null,
+                  : vm.ExpectedFinishDateController.text.trim(),
               selectedQualification: vm.selectedQualification ?? "",
               courseHighlights: vm.courseHighlightsController.text.trim(),
             );

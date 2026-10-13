@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_feed_details.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_sheet.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
@@ -16,7 +17,8 @@ import 'package:provider/provider.dart';
 
 class CommunityCommentScreen extends StatefulWidget {
   final Newsfeeds? newsfeeds;
-  const CommunityCommentScreen({super.key, required this.newsfeeds});
+  final NewsFeedCommentData? newsFeedComments;
+  const CommunityCommentScreen({super.key, required this.newsfeeds, required this.newsFeedComments});
 
   @override
   State<CommunityCommentScreen> createState() => _CommentScreenState();
