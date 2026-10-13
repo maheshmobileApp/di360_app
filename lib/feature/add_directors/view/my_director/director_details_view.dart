@@ -26,7 +26,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle('BASIC INFO', _description(directData)),
+          _sectionTitle('ABOUT US', _description(directData)),
           addVertical(8),
           if (directData.directoryServices?.length != 0)
             _sectionTitle('SERVICES', _serviceButtons(context, addDirectVM)),

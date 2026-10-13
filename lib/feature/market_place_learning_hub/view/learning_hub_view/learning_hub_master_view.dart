@@ -151,6 +151,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           return ListingHubMasterCard(
                             feedId: course.id ?? "",
                             afterWardsPrice: course.afterwardsPrice,
+                            presenters: course.presenters,
                             presenterName: course.presenters?.isNotEmpty == true
                                 ? course.presenters?.first.presentedByName ?? ""
                                 : "",
@@ -159,9 +160,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                         ?.url ??
                                     ""
                                 : "",
-                            imageUrl: (course.courseBannerImage!.isNotEmpty)
-                                ? course.courseBannerImage?.first.url ?? ''
-                                : '',
+                            imageUrls: (course.courseBannerImage!.isNotEmpty)
+                                ? course.courseBannerImage
+                                : [],
                             companyName: course.courseName ?? '',
                             description: course.description ?? '',
                             date: course.startDate ?? "",

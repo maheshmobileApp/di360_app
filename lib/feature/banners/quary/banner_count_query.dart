@@ -1,5 +1,4 @@
-const String getBannersCountQuery = r'''
-query GetBannerCounts($adminId: uuid!) {
+const String getBannersCountQuery = r'''query GetBannerCounts($adminId: uuid!) {
   all: banners_aggregate(
     where: {_or: [{status: {_neq: "DRAFT"}}, {status: {_eq: "DRAFT"}, from_id: {_eq: $adminId}}]}
   ) {
@@ -25,7 +24,25 @@ query GetBannerCounts($adminId: uuid!) {
     }
     __typename
   }
-  approved: banners_aggregate(where: {status: {_eq: "APPROVED"}}) {
+  active: banners_aggregate(
+    where: {status: {_eq: "APPROVED"}, active_status: {_eq: "ACTIVE"}}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
+  inactive: banners_aggregate(
+    where: {status: {_eq: "APPROVED"}, active_status: {_eq: "INACTIVE"}}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
+  scheduled: banners_aggregate(where: {status: {_eq: "SCHEDULED"}}) {
     aggregate {
       count
       __typename

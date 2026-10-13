@@ -18,7 +18,7 @@ const String getTalentEnquiryQuery =
     job_profiles {
       id
       full_name
-      profession_type
+      professionType
       state
       profile_image
       work_type

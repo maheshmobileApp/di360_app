@@ -4,7 +4,9 @@ class GetSupplierRes {
   GetSupplierRes({this.data});
 
   GetSupplierRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new GetSupplierData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new GetSupplierData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -38,6 +40,7 @@ class GetSupplierData {
 
 class DentalSuppliersByPk {
   String? id;
+  String? businessName;
   bool? secondHand;
   bool? sellProducts;
   bool? profileCompleted;
@@ -49,6 +52,7 @@ class DentalSuppliersByPk {
 
   DentalSuppliersByPk(
       {this.id,
+      this.businessName,
       this.secondHand,
       this.sellProducts,
       this.profileCompleted,
@@ -60,6 +64,7 @@ class DentalSuppliersByPk {
 
   DentalSuppliersByPk.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    businessName = json['business_name'];
     secondHand = json['second_hand'];
     sellProducts = json['sell_products'];
     profileCompleted = json['profile_completed'];
@@ -83,6 +88,7 @@ class DentalSuppliersByPk {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['business_name'] = this.businessName;
     data['second_hand'] = this.secondHand;
     data['sell_products'] = this.sellProducts;
     data['profile_completed'] = this.profileCompleted;

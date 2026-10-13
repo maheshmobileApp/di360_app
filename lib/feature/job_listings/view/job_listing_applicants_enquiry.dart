@@ -60,7 +60,7 @@ class JobListingApplicantsEnquiry extends StatelessWidget
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        if (applicant.jobEnquiries != null)
+                        if (applicant.jobEnquiries?.length != 0)
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

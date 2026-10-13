@@ -65,16 +65,16 @@ class TeamMemberCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                PopupMenuButton<String>(
+                /*PopupMenuButton<String>(
                   color: AppColors.whiteColor,
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.more_vert),
                   onSelected: (value) => onMenuAction?.call(value, id),
                   itemBuilder: (context) => [
-                    _popupItem("Edit", Icons.edit, AppColors.blueColor),
+                    //_popupItem("Edit", Icons.edit, AppColors.blueColor),
                     _popupItem("Delete", Icons.delete, AppColors.redColor),
                   ],
-                ),
+                ),*/
 
                 /// 3 Dots Menu
               ],

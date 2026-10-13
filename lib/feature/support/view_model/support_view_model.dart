@@ -166,6 +166,7 @@ class SupportViewModel extends ChangeNotifier {
       var value = await _http.uploadImage(element.path);
       print("resp from upload $value");
       if (value != null) {
+        value["file_type"] = "IMAGE";
         uploadedFiles.add(value);
       }
     }
@@ -180,7 +181,9 @@ class SupportViewModel extends ChangeNotifier {
         if (type == 'PROFESSIONAL') "dental_professional_id": userId,
       }
     };
-    
+
+    print("*******************$variables");
+
     final res = await repo.sendSupportRequest(variables);
 
     if (res != null) {

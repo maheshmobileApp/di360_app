@@ -66,7 +66,7 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        if (applicant?.talentEnquiries != null)
+                        if (applicant?.talentEnquiries?.length != 0)
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

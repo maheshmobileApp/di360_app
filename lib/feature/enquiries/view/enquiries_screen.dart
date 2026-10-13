@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_card.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
@@ -16,7 +17,7 @@ class EnquiriesScreen extends StatelessWidget {
     return Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppbarTitleBackIconWidget(title: 'Enquiries'),
-        body: ListView.builder(
+        body: count == 0 ? Center(child: Text("No Enquiries", style: TextStyles.medium2(),)) :ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           itemCount: count,
           itemBuilder: (_, index) {

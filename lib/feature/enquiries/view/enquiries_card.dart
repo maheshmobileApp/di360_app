@@ -22,7 +22,8 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
   final JobEnquiries? enquiry;
   final int? index;
 
-  const EnquiriesCard({
+  const 
+  EnquiriesCard({
     super.key,
     required this.enquiry,
     this.index,
@@ -54,7 +55,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _logoWithTitle(
                     context,
-                    enquiry?.jobs?.logo ?? '',
+                    enquiry?.jobs?.logo?.url ?? '',
                     enquiry?.jobs?.title ?? '',
                     enquiry?.jobs?.jRole ?? '',
                     enquiry?.jobs?.companyName ?? '',
@@ -107,14 +108,16 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                         LocalStorageConst.userId);
 
                     navigationService.navigateToWithParams(
-                      RouteList.enquiryMessagesView,
+                      RouteList.JobListingApplicantsMessege,
                       params: {
-                        "jobId": enquiry?.jobId ?? "",
-                        "applicantId": enquiry?.id ?? "",
-                        "receiverId": enquiry?.enqSenderId ?? "",
+                        "applicantId": enquiry?.jobApplicantsFind?.id ?? "",
                         "userId": userId,
-                        "profilePic": enquiry?.jobs?.logo ?? "",
-                        "type": "applicant",
+                        "profilePic": job?.logo?.url ?? '',
+                        "receiverId": enquiry?.jobs?.createdById ?? "",
+                        "receiverType": enquiry?.jobs?.userRole ?? "", 
+                        "jobEnquiryId": enquiry?.id?? "",
+                        "jobId" : enquiry?.jobId?? "",
+                        "type" : "enquiry"
                       },
                     );
                   },

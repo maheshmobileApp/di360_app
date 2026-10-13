@@ -1,14 +1,15 @@
 const String updateViewProfileDataQuery = r'''
-mutation addSupplier($id: uuid!, $supplierObj: dental_suppliers_set_input!) {
+mutation updateSupplierV2($id: uuid!, $supplierObj: dental_suppliers_set_input!) {
   update_dental_suppliers(where: {id: {_eq: $id}}, _set: $supplierObj) {
     affected_rows
     __typename
   }
 }
+
 ''';
 
 const String updatePracticeViewProfileDataQuery = r'''
-mutation addPractice($id: uuid!, $practiceObj: dental_practices_set_input!) {
+mutation updatePracticeV2($id: uuid!, $practiceObj: dental_practices_set_input!) {
   update_dental_practices(where: {id: {_eq: $id}}, _set: $practiceObj) {
     affected_rows
     __typename

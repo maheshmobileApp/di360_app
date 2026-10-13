@@ -171,7 +171,7 @@ class _JobListingScreenState extends State<CampaignListingView>
             ],
           ),
         ),
-        floatingActionButton: floatingActionButton);
+       /* floatingActionButton: floatingActionButton*/);
   }
 
   bool _isHtmlContent(String text) {

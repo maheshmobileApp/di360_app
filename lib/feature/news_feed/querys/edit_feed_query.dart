@@ -24,7 +24,7 @@ mutation UpdateNewsfeed($id: uuid!, $data: newsfeeds_set_input!) {
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -42,7 +42,7 @@ mutation UpdateNewsfeed($id: uuid!, $data: newsfeeds_set_input!) {
     dental_professional {
       id
       name
-      profession_type
+      professionType
       profile_image
       email
       phone
@@ -53,7 +53,7 @@ mutation UpdateNewsfeed($id: uuid!, $data: newsfeeds_set_input!) {
       id
       logo
       business_name
-      profession_type
+      professionType
       email
       phone
       name
@@ -85,7 +85,7 @@ mutation UpdateNewsfeed($id: uuid!, $data: newsfeeds_set_input!) {
         name
         logo
         type
-        profession_type
+        professionType
         __typename
       }
       dental_supplier {
@@ -93,13 +93,13 @@ mutation UpdateNewsfeed($id: uuid!, $data: newsfeeds_set_input!) {
         name
         logo
         type
-        profession_type
+        professionType
         __typename
       }
       dental_professional {
         id
         name
-        profession_type
+        professionType
         type
         profile_image
         __typename

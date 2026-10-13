@@ -89,7 +89,7 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                                       } else {
                                         await provider
                                             .updateViewProfile(context);
-                                        await provider.getTheViewProfileData();
+                                        await provider.getTheViewProfileData(context);
                                       }
                                     }
                                   })),

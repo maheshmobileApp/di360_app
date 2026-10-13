@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_card.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -28,6 +29,9 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<JobProfileListingViewModel>(context);
+
+    final jobCreateProfileVM =
+        Provider.of<JobProfileCreateViewModel>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       floatingActionButton: FloatingActionButton.extended(
@@ -41,13 +45,19 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           style: const TextStyle(color: Colors.white),
         ),
         onPressed: () async {
-          //await vm.fetchJobProfiles();
           if (vm.allJobProfiles.isEmpty) {
             vm.setEditProfileEnable(false);
+
             await navigationService.navigateTo(RouteList.JobProfileView);
-            //await vm.fetchJobProfiles();
           } else {
-            final profileData = vm.allJobProfiles.first;
+            await vm.getProfileByIdNew(
+                context, vm.allJobProfiles.first.id ?? "");
+            final profileData = vm.getProfileById;
+            print(
+                "adminStatus from update:************ ${profileData?.adminStatus ?? ""}");
+
+            jobCreateProfileVM
+                .setJobProfileStatus(profileData?.adminStatus ?? "");
             vm.setEditProfileEnable(true);
             await navigationService
                 .navigateToWithParams(RouteList.JobProfileView, params: {
@@ -58,7 +68,8 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
         },
       ),
       appBar: AppBarWidget(
-          searchWidget: false,),
+        searchWidget: false,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -79,6 +90,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
                           return JobProfileCard(
                             jobsListingData: jobData,
                             vm: vm,
+                            jobCreateProfileVM: jobCreateProfileVM,
                             index: index,
                             parmas: {},
                           );

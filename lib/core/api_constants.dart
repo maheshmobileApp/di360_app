@@ -15,11 +15,20 @@ class ApiConst {
       "AIzaSyA5vRiUsDawykjIT0GpCKgJ_20f-6eHWFA";
 
   static const String staticGoogleAPIKey =
-      "AIzaSyAzaYcSFRWOySuMNQMzAYPIVhvvF3eieDY";
+      "AIzaSyAQ6RHTkmhYqcy04ONj52cMhntKBQrIC7I";
 
   static String get googleAPIKey =>
       Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;
 
+  static String professionalSignUp = "/api/v1/auth/signup-professional-v2";
+  static String practiceSignUp = "/api/v1/auth/signup-practice-v2";
+  static String supplierSignUp = "/api/v1/auth/signup-supplier-v2";
+  static String adminSignUp = "";
+  static String login = "/api/v1/auth/login-v2";
   static const String resendMail = '/api/v1/event/resend-verification-mail';
   static const String adminApproveUser = '/api/v1/event/admin-approve-user/';
+  static String refreshToken = '/api/v1/auth/refresh-token_v2';
+  static String newsfeedCreation = '/api/v1/newsfeeds';
+  static String creditBalance = '/api/v1/credits/header/';
+  static String creditCost = '/api/v1/credit-events';
 }

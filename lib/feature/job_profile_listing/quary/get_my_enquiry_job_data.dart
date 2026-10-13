@@ -1,16 +1,16 @@
 const String getMyEnquiryJobDataQuery =
-    r'''query getMyEnquiryJobData($limit: Int, $offset: Int, $where: talent_enquiries_bool_exp) {
+    r'''query getMyEnquiries($limit: Int, $offset: Int, $where: talent_enquiries_bool_exp) {
   talent_enquiries(
     where: $where
     limit: $limit
     offset: $offset
-    order_by: {enquiry_from: asc, created_at: asc}
-    distinct_on: enquiry_from
+    order_by: [{enq_sender_id: asc}, {created_at: asc}]
+    distinct_on: [enq_sender_id]
   ) {
     id
     created_at
     talent_id
-    enquiry_from
+    enq_sender_id
     dental_practices {
       id
       name

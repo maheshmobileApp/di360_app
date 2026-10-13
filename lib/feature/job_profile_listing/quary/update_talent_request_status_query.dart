@@ -6,3 +6,6 @@ const String updateTalentRequestStatusQuery =
     __typename
   }
 }''';
+
+
+

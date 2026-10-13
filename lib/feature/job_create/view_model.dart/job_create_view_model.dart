@@ -126,7 +126,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         dentalSupplierId: null,
         activeStatus: "Active",
         location: locationSearchController.text,
-        logo: logoPath,
+        logo: null,
         noOfPeople: selectPositions,
         state: stateController.text,
         city: cityPostCodeController.text,

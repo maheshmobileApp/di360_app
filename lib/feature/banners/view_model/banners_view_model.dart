@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/banners/model/disable_months_model.dart';
 import 'package:di360_flutter/feature/banners/model/edit_banner_model.dart';
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
@@ -32,6 +33,7 @@ class BannersViewModel extends ChangeNotifier {
   bool isRelistBanner = false;
   String? existingBannerImageUrl;
   String? requiredDimension;
+  DisableMonthsData? disableMonthsData;
 
   getBannerData(BuildContext context) {
     getBannersList(context);
@@ -62,26 +64,33 @@ class BannersViewModel extends ChangeNotifier {
   final List<String> statuses = [
     'All',
     'Draft',
-    'Pending Approval',
-    'Approved & Scheduled',
+    'Pending',
+    'Active',
+    'In Active',
+    'Scheduled',
     'Expired',
-    'Reject'
+    'Rejected'
   ];
-  List<String>? bannersStatus = [];
+  String? bannersStatus = "";
+  String? activeStatus = "";
   int? allBannersCount = 0;
   int? draftBannersCount = 0;
   int? pendingApprovalBannersCount = 0;
-  int? approvedScheduledBannersCount = 0;
+  int? activeBannersCount = 0;
+  int? inActiveBannersCount = 0;
+  int? scheduledBannersCount = 0;
   int? expiredBannersCount = 0;
   int? rejectBannersCount = 0;
   File? bannerFile;
   Map<String, int> get statusCountMap => {
         'All': allBannersCount ?? 0,
         'Draft': draftBannersCount ?? 0,
-        'Pending Approval': pendingApprovalBannersCount ?? 0,
-        'Approved & Scheduled': approvedScheduledBannersCount ?? 0,
+        'Pending': pendingApprovalBannersCount ?? 0,
+        'Active': activeBannersCount ?? 0,
+        'In Active': inActiveBannersCount ?? 0,
+        'Scheduled': scheduledBannersCount ?? 0,
         'Expired': expiredBannersCount ?? 0,
-        'Reject': rejectBannersCount ?? 0,
+        'Rejected': rejectBannersCount ?? 0,
       };
   DateTime? scheduleDate;
   DateTime? expiryDate;
@@ -109,24 +118,29 @@ class BannersViewModel extends ChangeNotifier {
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
     if (status == 'All') {
-      bannersStatus = [
-        "APPROVED",
-        "PENDING",
-        "EXPIRED",
-        "SCHEDULED",
-        "REJECTED",
-        "DRAFT"
-      ];
+      bannersStatus = "";
+      activeStatus = "";
     } else if (status == 'Draft') {
-      bannersStatus = ['DRAFT'];
-    } else if (status == 'Pending Approval') {
-      bannersStatus = ['PENDING'];
-    } else if (status == 'Approved & Scheduled') {
-      bannersStatus = ["APPROVED", "SCHEDULED"];
+      bannersStatus = 'DRAFT';
+      activeStatus = "";
+    } else if (status == 'Pending') {
+      bannersStatus = 'PENDING';
+      activeStatus = "";
+    } else if (status == 'Active') {
+      bannersStatus = "APPROVED";
+      activeStatus = "ACTIVE";
+    } else if (status == 'Inactive') {
+      bannersStatus = 'APPROVED';
+      activeStatus = "INACTIVE";
+    } else if (status == 'Scheduled') {
+      bannersStatus = 'SCHEDULED';
+      activeStatus = "";
     } else if (status == 'Expired') {
-      bannersStatus = ['EXPIRED'];
-    } else if (status == 'Reject') {
-      bannersStatus = ['REJECTED'];
+      bannersStatus = 'EXPIRED';
+      activeStatus = "";
+    } else if (status == 'Rejected') {
+      bannersStatus = 'REJECTED';
+      activeStatus = "";
     }
     getBannersList(context);
 
@@ -135,10 +149,11 @@ class BannersViewModel extends ChangeNotifier {
 
   Future<void> getBannersCounts() async {
     final res = await repo.bannersCounts();
-    allBannersCount = res.aLL?.aggregate?.count;
+    allBannersCount = res.all?.aggregate?.count;
     pendingApprovalBannersCount = res.pending?.aggregate?.count;
     draftBannersCount = res.draft?.aggregate?.count;
-    approvedScheduledBannersCount = res.approved?.aggregate?.count;
+    activeBannersCount = res.active?.aggregate?.count;
+    inActiveBannersCount = res.inactive?.aggregate?.count;
     expiredBannersCount = res.expired?.aggregate?.count;
     rejectBannersCount = res.rejected?.aggregate?.count;
     notifyListeners();
@@ -179,31 +194,31 @@ class BannersViewModel extends ChangeNotifier {
 
     try {
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-      await getBannersCounts();
 
       final variables = {
         "where": {
-          "status": {
-            "_in": bannersStatus?.isEmpty == true
-                ? [
-                    "APPROVED",
-                    "PENDING",
-                    "EXPIRED",
-                    "SCHEDULED",
-                    "REJECTED",
-                    "DRAFT"
-                  ]
-                : bannersStatus,
-          },
-          "from_id": {"_eq": userId}
+          "_and": [
+            if (bannersStatus?.isNotEmpty == true)
+              {
+                "status": {"_eq": bannersStatus}
+              },
+            if (activeStatus?.isNotEmpty == true)
+              {
+                "active_status": {"_eq": "ACTIVE"}
+              },
+            {
+              "from_id": {"_eq": userId}
+            }
+          ]
         },
-        "limit": 10000,
+        "limit": 20,
         "offset": 0,
       };
 
       final res = await repo.getMyBanners(variables);
 
       if (res != null) {
+        await getBannersCounts();
         bannersList = res;
         Loaders.circularHideLoader(context);
       }
@@ -250,8 +265,12 @@ class BannersViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     await validateBannerImg();
 
-    final scheduleStr = scheduleDate != null ? DateFormatUtils.formatToYyyyMmDd(scheduleDate!) : null;
-    final expiryStr = expiryDate != null ? DateFormatUtils.formatToYyyyMmDd(expiryDate!) : null;
+    final scheduleStr = scheduleDate != null
+        ? DateFormatUtils.formatToYyyyMmDd(scheduleDate!)
+        : null;
+    final expiryStr = expiryDate != null
+        ? DateFormatUtils.formatToYyyyMmDd(expiryDate!)
+        : null;
 
     final res = await repo.addBanners({
       "fields": {
@@ -373,8 +392,12 @@ class BannersViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     await validateBannerImg();
 
-    final scheduleStr = scheduleDate != null ? DateFormatUtils.formatToYyyyMmDd(scheduleDate!) : null;
-    final expiryStr = expiryDate != null ? DateFormatUtils.formatToYyyyMmDd(expiryDate!) : null;
+    final scheduleStr = scheduleDate != null
+        ? DateFormatUtils.formatToYyyyMmDd(scheduleDate!)
+        : null;
+    final expiryStr = expiryDate != null
+        ? DateFormatUtils.formatToYyyyMmDd(expiryDate!)
+        : null;
 
     final variables = {
       "id": editBannerId,
@@ -440,6 +463,58 @@ class BannersViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
+  }
+
+  Future<void> getDisableMonths(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "category_name": {"_eq": selectedCatagory?.name}
+          },
+          {
+            "status": {
+              "_in": ["APPROVED", "PENDING", "SCHEDULED"]
+            }
+          },
+          {
+            "from_id": {"_eq": userId}
+          },
+          {
+            "schedule_date": {"_gte": "2026-06-30T18:30:00.000Z"}
+          }
+        ]
+      }
+    };
+    final res = await repo.getDisableMonths(variables);
+    disableMonthsData = res;
+    final date = await getFirstAvailableDate(disableMonthsData?.banners ?? []);
+    setScheduleDate(date.isBefore(DateTime.now()) ? DateTime.now(): date);
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  DateTime getFirstAvailableDate(List<Banners> banners) {
+    // Store occupied months as "yyyy-MM"
+    final occupiedMonths =
+        banners.map((banner) => banner.scheduleDate!.substring(0, 7)).toSet();
+
+    DateTime current = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      1,
+    );
+
+    while (occupiedMonths.contains(
+      '${current.year}-${current.month.toString().padLeft(2, '0')}',
+    )) {
+      current = DateTime(current.year, current.month + 1, 1);
+    }
+
+    return current;
   }
 
   //clere fields

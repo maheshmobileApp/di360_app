@@ -22,7 +22,7 @@ class JobListingMessege extends StatelessWidget with BaseContextHelpers {
           elevation: 0,
           title: _logoWithTitle(
             context,
-            jobsListingData?.logo ?? '',
+            jobsListingData?.logo?.url ?? '',
             jobsListingData?.companyName ?? '',
             jobsListingData?.jRole ?? '',
             jobsListingData?.status ?? '',

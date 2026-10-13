@@ -54,7 +54,8 @@ class NewsFeedsComments {
     dentalAdminId = json['dental_admin_id'];
     commentProImg = json['comment_Pro_Img'];
     commenterName = json['commenter_name'];
-    if (json['comments_attachments'] != null && json['comments_attachments'] != []) {
+    if (json['comments_attachments'] != null &&
+        json['comments_attachments'] != []) {
       commentsAttachments = <CommentsAttachments>[];
       final data = json['comments_attachments'];
       if (data is List) {
@@ -296,6 +297,7 @@ class CommentReply {
 }
 
 class CommentDentalSupplier {
+  String? id;
   String? name;
   String? businessName;
   CommentSupplierLogo? logo;
@@ -303,9 +305,10 @@ class CommentDentalSupplier {
   String? sTypename;
 
   CommentDentalSupplier(
-      {this.name, this.businessName, this.logo, this.sTypename});
+      {this.id, this.name, this.businessName, this.logo, this.sTypename});
 
   CommentDentalSupplier.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     businessName = json['business_name'] ?? json['name'];
     logo = json['logo'] != null
@@ -322,6 +325,7 @@ class CommentDentalSupplier {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     data['business_name'] = this.businessName;
     if (this.logo != null) {
@@ -385,6 +389,7 @@ class CommentSupplierLogo {
 }
 
 class CommentDentalPartice {
+  String? id;
   String? name;
   String? businessName;
   CommentParticeLogo? logo;
@@ -392,9 +397,10 @@ class CommentDentalPartice {
   String? sTypename;
 
   CommentDentalPartice(
-      {this.name, this.logo, this.businessName, this.sTypename});
+      {this.id, this.name, this.logo, this.businessName, this.sTypename});
 
   CommentDentalPartice.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'] ?? json['business_name'];
     businessName = json['business_name'] ?? json['name'];
     logo = json['logo'] != null
@@ -411,6 +417,7 @@ class CommentDentalPartice {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     data['business_name'] = this.businessName;
     if (this.logo != null) {
@@ -474,14 +481,17 @@ class CommentParticeLogo {
 }
 
 class CommentDentalprofessional {
+  String? id;
   String? name;
   CommentProfessionalLogo? profileImage;
   // List<Directories>? directories;
   String? sTypename;
 
-  CommentDentalprofessional({this.name, this.profileImage, this.sTypename});
+  CommentDentalprofessional(
+      {this.id, this.name, this.profileImage, this.sTypename});
 
   CommentDentalprofessional.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     profileImage = json['profile_image'] != null
         ? new CommentProfessionalLogo.fromJson(json['profile_image'])
@@ -497,6 +507,7 @@ class CommentDentalprofessional {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     if (this.profileImage != null) {
       data['profile_image'] = this.profileImage!.toJson();

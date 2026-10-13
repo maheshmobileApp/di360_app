@@ -3,6 +3,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_type_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/repository/add_catalogue_repository_impl.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/catalogue_filter_suppliers.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/catalouges_list.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class CatalogueViewModel extends ChangeNotifier {
   CatalogueViewModel() {
     getFilterTypes();
     getFilterCatagorie();
-    //getFilterSupplier();
+    getFilterSupplier();
   }
 
   TextEditingController searchController = TextEditingController();
@@ -30,17 +31,27 @@ class CatalogueViewModel extends ChangeNotifier {
   List<CatalogData>? reletedCatalogues = [];
   List<CatalogueSubCategories> filterCategories = [];
   List<CatalogueTypes> filterTypes = [];
-  List<DentalSuppliers>? filterSuppliers = [];
+  CatalogueFilterSupplierData? catalogueFilterData;
+  List<CataloguesSupplier> filterSuppliers = [];
 
   Map<String, bool> showMoreMap = {};
 
   late Map<String, List<FilterItem>> filterOptions;
   List<String> suppliers = [];
+  List<String> supplierIds = [];
   List<String> catagroies = [];
+  List<String?> selectedFilterTypes = [];
+  String? selectedFavoriteId = "";
   String? type = '';
   String? selectedUserId;
   bool? cataloguesLoading;
   bool? catalogFilterApply;
+  String? communityIdCatalouge = "";
+
+  void setCommunityIdCatalouge(String val) {
+    communityIdCatalouge = val;
+    notifyListeners();
+  }
 
   void updateCatalogFilterApply(bool val) {
     catalogFilterApply = val;
@@ -102,8 +113,10 @@ class CatalogueViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  Future<void> fetchCatalogue(BuildContext context,
-      {bool? isCommunityCatalogue, String? communityId}) async {
+  Future<void> fetchCatalogue(
+    BuildContext context, {
+    bool? isCommunityCatalogue,
+  }) async {
     cataloguesLoading = true;
     Loaders.circularShowLoader(context);
     var res = await repo.getCatalogue(searchController.text, type, catagroies,
@@ -118,7 +131,7 @@ class CatalogueViewModel extends ChangeNotifier {
           name: "All",
         ),
       );
-      getCataloguesList("", communityId: communityId);
+      getCataloguesList("");
       initializeExpanded(catalogueCategories);
       Loaders.circularHideLoader(context);
       for (var cat in catalogueCategories) {
@@ -178,6 +191,7 @@ class CatalogueViewModel extends ChangeNotifier {
     final res = await addCataRepo.getCatagorys();
     if (res != null) {
       filterCategories = res;
+      print("********filterCategories Options****${filterCategories.length}");
       initializeFilterOptions();
     }
     notifyListeners();
@@ -186,7 +200,7 @@ class CatalogueViewModel extends ChangeNotifier {
   Future<void> getFilterSupplier() async {
     final res = await repo.getFilterSuppliers();
     if (res != null) {
-      filterSuppliers = res;
+      filterSuppliers = res.catalogues ?? [];
       initializeFilterOptions();
     }
     notifyListeners();
@@ -301,14 +315,37 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   CatalougesListData? catalougesListData;
-  Future<void> getCataloguesList(String categoryId,
-      {String? communityId}) async {
+  Future<void> getCataloguesList(
+    String categoryId,
+  ) async {
     final myCommunityIds =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final date =
         "${DateTime.now().toUtc().toIso8601String().split('T')[0]}T00:00:00.000Z";
+    final catalogueCategoryIds = selectedFilterTypes;
+    final catalougeSubCategoryList = catagroies;
+    final favoriteId = selectedFavoriteId;
+    final suppliers = supplierIds;
+    final supplierFilters = suppliers.map((supplierId) {
+      return {
+        "_and": [
+          {
+            "dental_supplier_id": {
+              "_eq": supplierId,
+            }
+          },
+          {
+            "community_user_type": {
+              "_in": ["BOTH"],
+            }
+          },
+        ],
+      };
+    }).toList();
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
     final variables = {
       "where": {
@@ -319,16 +356,19 @@ class CatalogueViewModel extends ChangeNotifier {
         },
         "catalogue_status": {"_eq": "ACTIVE"},
         "catalogue_category": {
-          "status": {"_eq": "ACTIVE"}
+          "status": {"_eq": "ACTIVE"},
+          if (catalogueCategoryIds.isNotEmpty)
+            "id": {"_in": catalogueCategoryIds}
         },
         "schedulerDay": {"_lte": date},
         "_and": [
-          if (communityId?.isNotEmpty == true)
+          if (communityIdCatalouge?.isNotEmpty == true)
             {
               "community_id": {
-                "_in": [communityId]
+                "_in": [communityIdCatalouge]
               }
             },
+          if (suppliers.isNotEmpty) {"_or": supplierFilters},
           {
             "_or": [
               {
@@ -340,13 +380,16 @@ class CatalogueViewModel extends ChangeNotifier {
               {
                 "dental_supplier_id": {"_eq": userId}
               },
-              if (UserRole.professional.value == userType && communityId?.isNotEmpty == false)
+              if (UserRole.professional.value == userType &&
+                  communityIdCatalouge?.isNotEmpty == false &&
+                  myCommunityIds.isNotEmpty)
                 {
                   "community_id": {
                     "_in": ["${myCommunityIds.first}"]
                   }
                 },
-              if (communityId?.isNotEmpty == true)
+              if (communityId.isNotEmpty &&
+                  catalogueCategoryIds.isNotEmpty == true)
                 {
                   "community_id": {
                     "_in": [communityId]
@@ -354,11 +397,20 @@ class CatalogueViewModel extends ChangeNotifier {
                 },
             ]
           }
-        ]
+        ],
+        if (catalougeSubCategoryList.isNotEmpty)
+          "catalogue_sub_category": {
+            "id": {"_in": catalougeSubCategoryList}
+          },
+        if (favoriteId?.isNotEmpty == true)
+          "catalogue_favorites": {
+            "dental_supplier_id": {"_eq": favoriteId}
+          }
       },
       "limit": 20,
       "offset": 0
     };
+    print("filter catalouge $variables");
     final res = await repo.getCatalougesList(variables);
     if (res != null) {
       catalougesListData = res;
@@ -378,9 +430,12 @@ class CatalogueViewModel extends ChangeNotifier {
           id: e.id ?? '',
         );
       }).toList(),
-      'suppliers': [
-        FilterItem(name: 'smiletech', id: user_id),
-      ],
+      'suppliers': filterSuppliers.map((e) {
+        return FilterItem(
+          name: e.dentalSupplier?.businessName ?? '',
+          id: e.dentalSupplier?.id ?? '',
+        );
+      }).toList(),
       'favourites': [
         FilterItem(name: 'My Favourites', id: user_id),
       ],
@@ -416,10 +471,14 @@ class CatalogueViewModel extends ChangeNotifier {
     type = null;
     updateCatalogFilterApply(false);
     fetchCatalogue(context);
+    selectedFavoriteId = null;
+    selectedFilterTypes = [];
+    supplierIds = [];
+
     notifyListeners();
   }
 
-  void printSelectedItems() {
+  void printSelectedItemsCatalouge() {
     suppliers = [];
     catagroies = [];
     type = null;
@@ -432,12 +491,15 @@ class CatalogueViewModel extends ChangeNotifier {
           final name = items[i].name;
           if (section == "suppliers") {
             suppliers.add(name);
+            supplierIds.add(id);
           } else if (section == "categories") {
             catagroies.add(id);
           } else if (section == "favourites") {
             selectedUserId = id;
+            selectedFavoriteId = id;
           } else if (section == "Types") {
             type = id;
+            selectedFilterTypes.add(type);
           }
         }
       }

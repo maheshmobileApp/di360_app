@@ -6,8 +6,7 @@ mutation InsertDirectory($object: directories_insert_input!) {
     email
     phone
     address
-    profession_type
-    professiontype
+    professionType
     type
     dental_professional_id
     profile_image
@@ -29,8 +28,7 @@ mutation InsertDirectory(
     mobile_number
     business_name
     business_email
-    profession_type
-    professiontype
+    professionType
     abn_acn
     address
     type
@@ -53,8 +51,7 @@ mutation InsertDirectory(
     mobile_number
     business_name
     business_email
-    profession_type
-    professiontype
+    professionType
     abn_acn
     address
     type

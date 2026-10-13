@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/certificates_view.dart';
@@ -17,6 +18,7 @@ import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/exerinace_info_icons.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
+import 'package:di360_flutter/widgets/talent_preview_data_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -71,6 +73,10 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
   Widget _buildBodyContent(
       BuildContext context, TalentsViewModel talentViewmodel) {
     final talentList = talentViewmodel.talentListById?.firstOrNull;
+    if (talentList == null) {
+      return const Center(child: Text('Talent details unavailable'));
+    }
+
     String profleImage = '';
     if (talentList?.profileImage.isNotEmpty ?? false) {
       profleImage = talentList!.profileImage.first.url ?? '';
@@ -78,30 +84,39 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: LogoWithTitle(
+                  title: talentList.fullName ?? "",
+                  showTime: false,
+                  createdAt: talentList.createdAt ?? "",
+                  role: talentList.jobDesignation ?? "",
+                  imageUrl: profleImage,
+                  postAnonymously: talentList.postAnonymously ?? false,
+                ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Expanded(
-                    child: LogoWithTitle(
-                      title: talentList?.fullName ?? "",
-                      showTime: false,
-                      createdAt: talentList?.createdAt ?? "",
-                      role: talentList?.professionType ?? "",
-                      imageUrl: profleImage,
-                      postAnonymously: talentList?.postAnonymously ?? false,
-                    ),
-                  ),
-                  if ((talentList?.uploadResume.isNotEmpty ?? false))
+                  if (talentList.yearOfExperience != null)
+                    _tagWidget(
+                        "Experience : ${talentList.yearOfExperience} Years" ??
+                            ""),
+                  addVertical(10),
+                  if ((talentList.uploadResume.isNotEmpty ?? false))
                     CustomRoundedButton(
                       height: 36,
                       width: 90,
                       text: 'View CV',
                       onPressed: () {
                         navigationService.push(HorizantalPdf(
-                          fileUrl: talentList!.uploadResume.first.url ?? '',
+                          fileUrl:
+                              talentList!.uploadResume.first.url ?? '',
                           fileName: '',
                           isfullScreen: true,
                         ));
@@ -111,110 +126,164 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                     ),
                 ],
               ),
-              addVertical(16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (talentList?.yearOfExperience != null)
-                    ExerinaceInfoIcons(
-                        icon: Icons.work,
-                        text: '${talentList!.yearOfExperience} Yrs Experience'),
-                  if (talentList?.yearOfExperience != null) addVertical(12),
-                  if (talentList?.location?.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                        icon: Icons.location_on, text: talentList!.location!),
-                  if (talentList?.location?.isNotEmpty == true) addVertical(12),
-                  if (talentList?.mobileNumber?.isNotEmpty == true && talentList?.postAnonymously == false) ...[
-                    ExerinaceInfoIcons(
-                        icon: Icons.call, text: talentList!.mobileNumber!),
-                        addVertical(12),
-                  ],
-                  
-                  if (talentList?.currentCompany?.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                        icon: Icons.business,
-                        text: talentList!.currentCompany!),
-                  if (talentList?.currentCompany?.isNotEmpty == true)
-                    addVertical(12),
-                  if (talentList?.emailAddress?.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                        icon: Icons.email, text: talentList!.emailAddress!),
-                  if (talentList?.emailAddress?.isNotEmpty == true)
-                    addVertical(12),
-                  if (talentList?.languagesSpoken.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                      icon: Icons.language,
-                      text: talentList!.languagesSpoken.join(", "),
-                    ),
-                  if (talentList?.languagesSpoken.isNotEmpty == true)
-                    addVertical(12),
-                  if (talentList?.areasExpertise.isNotEmpty == true)
-                    ExerinaceInfoIcons(
-                      icon: Icons.build,
-                      text: talentList!.areasExpertise.join(", "),
-                    ),
-                ],
-              ),
-              Divider(color: AppColors.geryColor),
-
-              // Professional Details Section
-              if (_hasAnyProfessionalData()) _buildProfessionalSection(),
-
-              // Skills Section
-              if (talentList?.skills?.isNotEmpty == true) ...[
-                addVertical(10),
-                _sectionHeader("Skills"),
-                addVertical(6),
-                CustomChipView(typesList: talentList!.skills!),
-              ],
-
-              // Work Type Section
-              if (talentList?.workType.isNotEmpty == true) ...[
-                addVertical(10),
-                _sectionHeader("Work Type"),
-                addVertical(6),
-                CustomChipView(typesList: talentList!.workType),
-              ],
-
-              // About Section
-              if (talentList?.aboutYourself?.isNotEmpty == true) ...[
-                const Divider(),
-                _sectionHeader("About me / Profile Summary"),
-                _sectionText(talentList!.aboutYourself!),
-              ],
-
-              // Work Experience Section
-              if (talentList?.jobExperiences.isNotEmpty == true) ...[
-                const Divider(),
-                _sectionHeader("Work Experience"),
-                addVertical(10),
-                _buildJobExperiencesList(talentViewmodel),
-              ],
-
-              // Certifications Section
-              if (talentList?.certificate.isNotEmpty == true) ...[
-                addVertical(16),
-                _sectionHeader("Certifications"),
-                CertificatesView(certificates: talentList?.certificate),
-              ],
-
-              // Cover Letter Section
-              if (talentList?.coverLetter.isNotEmpty == true) ...[
-                addVertical(16),
-                _sectionHeader("Cover Letter"),
-                CertificatesView(certificates: talentList?.coverLetter),
-              ],
-
-              // Location Section
-              if (talentList?.location?.isNotEmpty == true) ...[
-                addVertical(16),
-                _sectionHeader('Job Location'),
-                Text(talentList!.location!),
-                locationView(context, talentList),
-              ],
-            ]),
+            ],
+          ),
+          addVertical(16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (talentList?.professionType?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Profession Type",
+                  value: talentList?.professionType ?? "",
+                ),
+              if (talentList?.currentCompany?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Current Company",
+                  value: talentList?.currentCompany ?? "",
+                ),
+              if (talentList?.emailAddress?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Email Address",
+                  value: talentList?.emailAddress ?? "",
+                ),
+              if (talentList?.mobileNumber?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Mobile Number",
+                  value: talentList?.mobileNumber ?? "",
+                ),
+                 if (talentList?.willingToTravel == true)
+                TalentPreviewDataWidget(
+                  head: "Willing to Travel",
+                  value: "Yes",
+                ),
+              if (talentList?.travelDistance != null)
+                TalentPreviewDataWidget(
+                  head: "Travel Distance",
+                  value: talentList?.travelDistance.toString() ?? "",
+                ),
+              if (talentList.abnNumber?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "ABN Number",
+                  value: talentList.abnNumber!,
+                ),
+              if (talentList?.workRights?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Work Rights",
+                  value: talentList?.workRights ?? "",
+                ),
+              if (talentList?.salaryAmount != 0 && talentList?.salaryAmount != null)
+                TalentPreviewDataWidget(
+                  head: "Salary Amount",
+                  value: talentList?.salaryAmount.toString() ?? "",
+                ),
+              if (talentList?.salaryType?.isNotEmpty == true)
+                TalentPreviewDataWidget(
+                  head: "Salary Type",
+                  value: talentList?.salaryType ?? "",
+                ),
+              
+            ],
+          ),
+            if (talentList?.availabilityOption?.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Available from"),
+            _sectionText(talentList!.availabilityOption == "fromDate1"
+                ? DateFormatUtils.formatDate(talentList?.fromDate ?? "")
+                : "Immediately"),
           ],
-        ),
+          if (talentList?.availabilityDay.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Available Days"),
+            _sectionText(talentList!.availabilityDay.join(", ")),
+          ],
+
+          if (talentList?.availabilityDate.isNotEmpty == true) ...[
+            Divider(),
+            _sectionHeader("Available Dates"),
+            _sectionText(
+              talentList!.availabilityDate
+                  .map((date) => DateFormatUtils.formatDateToDmy(date))
+                  .join(", "),
+            ),
+          ],
+
+          // Professional Details Section
+          //if (_hasAnyProfessionalData()) _buildProfessionalSection(),
+
+          // Work Type Section
+          if (talentList?.workType.isNotEmpty == true) ...[
+            _sectionHeader("Work Type"),
+            addVertical(6),
+            CustomChipView(typesList: talentList!.workType),
+          ],
+
+          // Skills Section
+          if (talentList?.skills?.isNotEmpty == true) ...[
+            _sectionHeader("Skills"),
+            addVertical(6),
+            CustomChipView(typesList: talentList!.skills!),
+          ],
+
+          // Skills Section
+          if (talentList?.languagesSpoken?.isNotEmpty == true) ...[
+            _sectionHeader("Languages"),
+            addVertical(6),
+            CustomChipView(typesList: talentList!.languagesSpoken!),
+          ],
+
+          // Skills Section
+          if (talentList?.areasExpertise?.isNotEmpty == true) ...[
+            _sectionHeader("Areas of Expertise"),
+            addVertical(6),
+            CustomChipView(typesList: talentList!.areasExpertise!),
+          ],
+
+          // About Section
+          if (talentList?.aboutYourself?.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("About me"),
+            _sectionText(talentList!.aboutYourself!),
+          ],
+
+          if (talentList?.educations?.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Education"),
+            _sectionText(talentList.educations.isNotEmpty
+              ? talentList.educations.first.qualification ?? ""
+                : ""),
+          ],
+
+          // Work Experience Section
+          if (talentList?.jobExperiences.isNotEmpty == true) ...[
+            const Divider(),
+            _sectionHeader("Work Experience"),
+            addVertical(10),
+            _buildJobExperiencesList(talentViewmodel),
+          ],
+
+          // Certifications Section
+          if (talentList?.certificate.isNotEmpty == true) ...[
+            addVertical(16),
+            _sectionHeader("Certifications"),
+            CertificatesView(certificates: talentList?.certificate),
+          ],
+
+          // Cover Letter Section
+          if (talentList?.coverLetter.isNotEmpty == true) ...[
+            addVertical(16),
+            _sectionHeader("Cover Letter"),
+            CertificatesView(certificates: talentList?.coverLetter),
+          ],
+
+          // Location Section
+          if (talentList?.location?.isNotEmpty == true) ...[
+            addVertical(16),
+            _sectionHeader('Job Location'),
+            Text(talentList!.location!),
+            locationView(context,talentList),
+          ],
+        ]),
       ),
     );
   }
@@ -422,6 +491,30 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
     return Padding(
       padding: EdgeInsets.only(top: 8.0, bottom: 8),
       child: Text(title, style: TextStyles.bold2()),
+    );
+  }
+
+  Widget _tagWidget(String? tagText) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: Text(tagText ?? "",
+            style: TextStyles.semiBold(
+              color: AppColors.black,
+            )),
+      ),
     );
   }
 

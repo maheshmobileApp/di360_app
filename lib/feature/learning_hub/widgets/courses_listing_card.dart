@@ -385,11 +385,10 @@ class _CouresListingCardState extends State<CouresListingCard> {
       onSelected: (value) => widget.onMenuAction?.call(value, widget.id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        if (widget.userType == UserRole.admin.value &&
+        /*if (widget.userType == UserRole.admin.value &&
             (widget.status == "PENDING" || widget.status == "REJECT"))
           _popupItem("Approve", Icons.check, AppColors.greenColor),
-        /*if (status != "EXPIRED" && courseType != "Online Academy")
-          _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),*/
+        
         if (widget.status != "APPROVE" &&
             widget.status != "EXPIRED" &&
             widget.status != "REJECT")
@@ -399,9 +398,7 @@ class _CouresListingCardState extends State<CouresListingCard> {
               "Inactive", Icons.nightlight_outlined, AppColors.primaryColor),
         if (widget.activeStatus == "INACTIVE" && widget.status == "APPROVE")
           _popupItem(
-              "Active", Icons.nightlight_outlined, AppColors.primaryColor),
-        /*if (status == "EXPIRED")
-          _popupItem("Re-Listing", Icons.edit_outlined, AppColors.blueColor),*/
+              "Active", Icons.nightlight_outlined, AppColors.primaryColor),*/
       ],
     );
   }

@@ -137,7 +137,7 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
           PopupMenuItem(
               value: "delete",
               child: buildRow(Icons.delete, AppColors.redColor, "Delete")),
-        if (isSameUser && widget.newsfeeds?.communityType != "COMMUNITY_USER") ...[
+        if (isSameUser && widget.newsfeeds?.feedType == "NEWSFEED") ...[
           PopupMenuItem(
               value: "edit",
               child: buildRow(Icons.edit, AppColors.blueColor, "Edit")),
