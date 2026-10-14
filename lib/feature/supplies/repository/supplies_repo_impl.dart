@@ -2,13 +2,17 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/my_favourites/queries/delete_favourite_query.dart';
-import 'package:di360_flutter/feature/supplies/model/dental_practice_addresses_res.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
+import 'package:di360_flutter/feature/supplies/model/get_dental_suppliers.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
+import 'package:di360_flutter/feature/supplies/model/get_supply_categories.dart';
+import 'package:di360_flutter/feature/supplies/model/shipping_charges_res.dart';
+import 'package:di360_flutter/feature/supplies/model/supplier_account_practice.dart';
 import 'package:di360_flutter/feature/supplies/model/supplier_account_res.dart';
+import 'package:di360_flutter/feature/supplies/model/supply_brands_res.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_address_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_favourite_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/add_multiple_products_to_cart_query.dart';
@@ -22,9 +26,13 @@ import 'package:di360_flutter/feature/supplies/queries/dental_practice_addresses
 import 'package:di360_flutter/feature/supplies/queries/dental_professional_address.dart';
 import 'package:di360_flutter/feature/supplies/queries/favourites_keys_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_account_towards_supplier.dart';
+import 'package:di360_flutter/feature/supplies/queries/get_dental_suppliers_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/get_shipping_charges_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_cart_query.dart';
 import 'package:di360_flutter/feature/supplies/queries/get_supplies_details_query.dart';
+import 'package:di360_flutter/feature/supplies/queries/get_supply_brands.dart';
+import 'package:di360_flutter/feature/supplies/queries/get_supply_categories.dart';
 import 'package:di360_flutter/feature/supplies/queries/increase_quantity_query.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repository.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -33,6 +41,7 @@ class SuppliesRepoImpl extends SuppliesRepository {
   final http = HttpService();
   @override
   Future<getSupplyData> getSuppliers(variables) async {
+    print("***888$variables");
     final res = await http.query(getSupplies, variables: variables);
     return getSupplyData.fromJson(res);
   }
@@ -104,7 +113,10 @@ class SuppliesRepoImpl extends SuppliesRepository {
 
   @override
   Future<dynamic> addAddress(variables) async {
-    final res = await http.mutation(addAddressQuery, variables);
+    final type = LocalStorage.getStringVal(LocalStorageConst.type);
+    final isProfessional = type == UserRole.professional.value;
+    final res = await http.mutation(
+        isProfessional ? addAddressQuery : addPracticeAddressQuery, variables);
     return res;
   }
 
@@ -152,8 +164,32 @@ class SuppliesRepoImpl extends SuppliesRepository {
   }
 
   @override
-  Future<SupplierAccountData> addSupplierAccount(dynamic variables) async {
+  Future<SupplierAccountPracticeData> addSupplierAccount(dynamic variables) async {
     final res = await http.mutation(addSupplierAccountQuery, variables);
-    return SupplierAccountData.fromJson(res);
+    return SupplierAccountPracticeData.fromJson(res);
+  }
+
+  @override
+  Future<ShippingChargesData> getShippingCharges(variables) async {
+    final res = await http.query(getShippingChargesQuery, variables: variables);
+    return ShippingChargesData.fromJson(res);
+  }
+
+  @override
+  Future<SupplyBrandsData> getSupplyBrands(variables) async {
+    final res = await http.query(getSupplyBrandsQuery);
+    return SupplyBrandsData.fromJson(res);
+  }
+
+  @override
+  Future<SupplyCategoriesData> getSupplyCategories(variables) async {
+    final res = await http.query(getSupplyCategoriesQuery);
+    return SupplyCategoriesData.fromJson(res);
+  }
+
+  @override
+  Future<DentalSuppliersData> getDentalSuppliers(variables) async {
+    final res = await http.query(getDentalSuppliersQuery);
+    return DentalSuppliersData.fromJson(res);
   }
 }

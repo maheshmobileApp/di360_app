@@ -168,12 +168,11 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                                     .dentalProfessionalAddress
                                                     ?.isNotEmpty ==
                                                 true
-                                            ? vm
-                                                    .dentalProfessionalAddress
-                                                    ?.first
-                                                    .id ??
+                                            ? vm.dentalProfessionalAddress
+                                                    ?.first.id ??
                                                 ""
                                             : "");
+                                        await vm.getShippingCharges(context);
                                         navigationService.navigateToWithParams(
                                             RouteList.orderRequestReviewView,
                                             params: {
@@ -200,11 +199,13 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                     : "",
                                 productId: item.supplyVariant?.skuCode ?? "",
                                 productName: item.supply?.name ?? "",
-                                price: item.supply?.priceType == "inclusive"? item.supplyVariant?.sellingPrice
-                                        ?.toString() ??
-                                    "" : item.supplyVariant?.calaculatedPrice
-                                        ?.toString() ??
-                                    "",
+                                price: item.supply?.priceType == "inclusive"
+                                    ? item.supplyVariant?.sellingPrice
+                                            ?.toString() ??
+                                        ""
+                                    : item.supplyVariant?.calaculatedPrice
+                                            ?.toString() ??
+                                        "",
                                 quantity: item.quantity ?? 0,
                                 onChecked: (value) {
                                   vm.toggleProduct(
@@ -240,8 +241,7 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                             if (vm.isSupplierSelected(supplier.key))
                               Padding(
                                 padding: const EdgeInsets.only(right: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                child: Wrap(
                                   children: [
                                     Text(
                                       "Selected Items: ${vm.selectedProducts.length}",
@@ -250,7 +250,7 @@ class _SuppliesCartViewState extends State<SuppliesCartView> {
                                     ),
                                     SizedBox(width: 4),
                                     Text(
-                                      "Selected Total: AUD ${vm.selectedProductsTotalPrice}",
+                                      "Selected Total: AUD ${(vm.selectedProductsTotalPrice).toStringAsFixed(2)}",
                                       style: TextStyles.medium2(),
                                     ),
                                   ],

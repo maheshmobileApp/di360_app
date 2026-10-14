@@ -43,9 +43,13 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
       return widget.selectedProducts[item.id!] ?? false;
     }).toList();
 
-    final supplier =
-        proceedItems.first.supply?.dentalSupplier?.businessName ?? "";
+    final supplier = proceedItems.isNotEmpty ?
+        proceedItems.first.supply?.dentalSupplier?.businessName ?? "" : "";
     final itemsCount = proceedItems.length ?? 0;
+    final uniqueProductItemCount = vm.getUniqueCount(proceedItems);
+    final minProducts = vm.shippingChargesData?.freightRanges?.isEmpty == false
+        ? vm.shippingChargesData?.freightRanges?.first.minNoProducts ?? 3
+        : 3;
     final subTotal = proceedItems.fold<double>(
       0,
       (sum, item) =>
@@ -69,106 +73,113 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
               "Order Request Review",
               style: TextStyles.bold3(),
             )),
-        body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: ListView(children: [
-              Card(
-                elevation: 2,
-                color: AppColors.whiteColor,
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    for (var index = 0;
-                        index < proceedItems.length;
-                        index++) ...[
-                      if (index > 0)
-                        const Divider(height: 1, indent: 12, endIndent: 12),
-                      Builder(
-                        builder: (context) {
-                          final item = proceedItems[index];
-                          return SelectedItemCard(
-                              checkbox: false,
-                              embedded: true,
-                              item: item,
-                              isSelected: vm.isProductSelected(item.id!),
-                              imageUrl: item.supply?.image?.isNotEmpty == true
-                                  ? item.supply!.image!.first.url ?? ""
-                                  : "",
-                              productId: item.supplyVariant?.skuCode ?? "",
-                              productName: item.supply?.name ?? "",
-                              price: item.supply?.priceType == "inclusive"
-                                  ? item.supplyVariant?.sellingPrice
-                                          ?.toString() ??
-                                      ""
-                                  : item.supplyVariant?.calaculatedPrice
-                                          ?.toString() ??
-                                      "",
-                              quantity: item.quantity ?? 0,
-                              onChecked: (value) {
-                                vm.toggleProduct(item, value ?? false);
-                              },
-                              menuOptions: true,
-                              onMenuSelected: (value) {
-                                switch (value) {
-                                  case 'delete':
-                                    showAlertMessage(context,
-                                        "Are you really want to delete this cart item ?",
-                                        no: "No", yes: "Yes", onBack: () async {
-                                      await vm.deleteCartItem(
-                                          context, item.id ?? "");
-                                    });
+        body: proceedItems.length != 0
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: ListView(children: [
+                  Card(
+                    elevation: 2,
+                    color: AppColors.whiteColor,
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        for (var index = 0;
+                            index < proceedItems.length;
+                            index++) ...[
+                          if (index > 0)
+                            const Divider(height: 1, indent: 12, endIndent: 12),
+                          Builder(
+                            builder: (context) {
+                              final item = proceedItems[index];
+                              return SelectedItemCard(
+                                  checkbox: false,
+                                  embedded: true,
+                                  item: item,
+                                  isSelected: vm.isProductSelected(item.id!),
+                                  imageUrl:
+                                      item.supply?.image?.isNotEmpty == true
+                                          ? item.supply!.image!.first.url ?? ""
+                                          : "",
+                                  productId: item.supplyVariant?.skuCode ?? "",
+                                  productName: item.supply?.name ?? "",
+                                  price: item.supply?.priceType == "inclusive"
+                                      ? item.supplyVariant?.sellingPrice
+                                              ?.toString() ??
+                                          ""
+                                      : item.supplyVariant?.calaculatedPrice
+                                              ?.toString() ??
+                                          "",
+                                  quantity: item.quantity ?? 0,
+                                  onChecked: (value) {
+                                    vm.toggleProduct(item, value ?? false);
+                                  },
+                                  menuOptions: true,
+                                  onMenuSelected: (value) {
+                                    switch (value) {
+                                      case 'delete':
+                                        showAlertMessage(context,
+                                            "Are you really want to delete this cart item ?",
+                                            no: "No",
+                                            yes: "Yes", onBack: () async {
+                                          await vm.deleteCartItem(
+                                              context, item.id ?? "");
+                                        });
 
-                                    break;
-                                }
-                              });
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              DeliveryAndNotesCard(),
-              PaymentModeCard(),
-              OrderSummaryCard(
-                supplier: supplier,
-                subTotal: (subTotal - subTotal * 10 / 100).toStringAsFixed(2),
-                gst: (subTotal * 10 / 100).toStringAsFixed(2),
-                itemsCount: itemsCount.toString(),
-                estimatedTotal: subTotal.toString(),
-                total: subTotal.toString(),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              AppButton(
-                  height: 50,
-                  title: "Submit Order Request",
-                  onPressed: () async {
-                    if (vm.checkAddressDetails())
-                    if (vm.checkPaymentDetails()) {
-                      if (vm.accountPayType == "yes")
-                        await vm.addSupplierAccount(context);
-                      if (vm.accountPayType == "no")
-                        await vm.addSupplierAccountRequest(context);
-                      final orderCreated = await vm.addOrder(context);
-                      if (orderCreated && context.mounted) {
-                        showOrderSuccessPopup(context);
-                      }
-                    }
-                  }),
-              SizedBox(
-                height: 10,
-              ),
-            ])));
+                                        break;
+                                    }
+                                  });
+                            },
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  DeliveryAndNotesCard(),
+                  PaymentModeCard(),
+                  OrderSummaryCard(
+                    supplier: supplier,
+                    subTotal:
+                        (subTotal - subTotal * 10 / 100).toStringAsFixed(2),
+                    gst: (subTotal * 10 / 100).toStringAsFixed(2),
+                    itemsCount: itemsCount,
+                    uniqueCount: uniqueProductItemCount,
+                    estimatedTotal: subTotal.toString(),
+                    total: subTotal.toString(),
+                    minProducts: minProducts,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  AppButton(
+                      height: 50,
+                      title: "Submit Order Request",
+                      onPressed: () async {
+                        if (vm.checkAddressDetails()) if (vm
+                            .checkPaymentDetails()) {
+                          if (vm.accountPayType == "yes")
+                            await vm.addSupplierAccount(context);
+                          if (vm.accountPayType == "no")
+                            await vm.addSupplierAccountRequest(context);
+                          final orderCreated = await vm.addOrder(context);
+                          if (orderCreated && context.mounted) {
+                            showOrderSuccessPopup(context);
+                          }
+                        }
+                      }),
+                  SizedBox(
+                    height: 10,
+                  ),
+                ]))
+            : Center(child: Text("No Products")));
   }
 }
 

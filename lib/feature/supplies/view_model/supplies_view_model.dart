@@ -3,13 +3,19 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';
+import 'package:di360_flutter/feature/supplies/model/get_dental_suppliers.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supplies_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_supply_carts.dart';
+import 'package:di360_flutter/feature/supplies/model/get_supply_categories.dart';
+import 'package:di360_flutter/feature/supplies/model/shipping_charges_res.dart';
+import 'package:di360_flutter/feature/supplies/model/supplier_account_practice.dart';
 import 'package:di360_flutter/feature/supplies/model/supplier_account_res.dart';
+import 'package:di360_flutter/feature/supplies/model/supply_brands_res.dart';
 import 'package:di360_flutter/feature/supplies/repository/supplies_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class SuppliesViewModel extends ChangeNotifier {
@@ -22,6 +28,7 @@ class SuppliesViewModel extends ChangeNotifier {
 
   final locationController = TextEditingController();
   final otherTypeController = TextEditingController();
+  final practiceNameController = TextEditingController();
   final nameController = TextEditingController();
   final addressline1Controller = TextEditingController();
   final addressline2Controller = TextEditingController();
@@ -39,6 +46,10 @@ class SuppliesViewModel extends ChangeNotifier {
   final abnController = TextEditingController();
   final billingAddressController = TextEditingController();
   final notesController = TextEditingController();
+  final countryController = TextEditingController();
+  final stateController = TextEditingController();
+  double? longitude;
+  double? latitude;
 
   FavouritesKeysData? favouritesKeysData;
 
@@ -349,25 +360,47 @@ class SuppliesViewModel extends ChangeNotifier {
   }
 
   Future<void> addAddress(BuildContext context) async {
+    final type = LocalStorage.getStringVal(LocalStorageConst.type);
+    final isProfessional = type == UserRole.professional.value;
     Loaders.circularShowLoader(context);
-    final variables = {
-      "dental_professional_addressees": {
-        "type": addressType,
-        "other_type_name": otherTypeController.text,
-        "short_name": nameController.text,
-        "line_1": addressline1Controller.text,
-        "line_2": addressline2Controller.text,
-        "landmark": landmarkController.text,
-        "city": cityController.text,
-        "state": selectedState,
-        "country": selectedCountry,
-        "postal_code": postcodeController.text,
-        "latitude": 0,
-        "longitude": 0,
-        "google_place_id": "PLACE_ID123",
-        "make_default": true
-      }
-    };
+    final variables = isProfessional
+        ? {
+            "dental_professional_addressees": {
+              "type": addressType,
+              "other_type_name": otherTypeController.text,
+              "short_name": nameController.text,
+              "line_1": addressline1Controller.text,
+              "line_2": addressline2Controller.text,
+              "landmark": landmarkController.text,
+              "city": cityController.text,
+              "state": selectedState,
+              "country": selectedCountry,
+              "postal_code": postcodeController.text,
+              "latitude": 0,
+              "longitude": 0,
+              "google_place_id": "PLACE_ID123",
+              "make_default": true
+            }
+          }
+        : {
+            "dental_practice_addressees": {
+              "type": addressType,
+              "other_type_name": otherTypeController.text,
+              "practice_name": "test",
+              "short_name": nameController.text,
+              "line_1": addressline1Controller.text,
+              "line_2": addressline2Controller.text,
+              "landmark": landmarkController.text,
+              "city": cityController.text,
+              "state": selectedState,
+              "country": selectedCountry,
+              "postal_code": postcodeController.text,
+              "latitude": 0,
+              "longitude": 0,
+              "google_place_id": "PLACE_ID123",
+              "make_default": true
+            }
+          };
 
     final res = await repo.addAddress(variables);
     await getDentalProfessionalAddress(context);
@@ -553,7 +586,7 @@ class SuppliesViewModel extends ChangeNotifier {
 
   String? selectedAddressId;
 
-  DentalProfessionalAddresses? get selectedProfessionalAddress  {
+  DentalProfessionalAddresses? get selectedProfessionalAddress {
     final addresses = dentalProfessionalAddress;
 
     if (addresses == null || addresses.isEmpty) {
@@ -665,6 +698,22 @@ class SuppliesViewModel extends ChangeNotifier {
     }
   }
 
+  ShippingChargesData? shippingChargesData;
+
+  Future<void> getShippingCharges(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final variables = {
+      "where": {
+        "is_active": {"_eq": true}
+      }
+    };
+    final res = await repo.getShippingCharges(variables);
+    shippingChargesData = res;
+
+    Loaders.circularHideLoader(context);
+  }
+
   Future<void> deleteFavourites(
       String supplyId, String supplyVariantId, BuildContext context) async {
     Loaders.circularShowLoader(context);
@@ -692,6 +741,7 @@ class SuppliesViewModel extends ChangeNotifier {
   }
 
   SupplierAccountData? supplierAccountData;
+  SupplierAccountPracticeData? supplierAccountPractice;
 
   Future<void> addSupplierAccountRequest(BuildContext context) async {
     Loaders.circularShowLoader(context);
@@ -728,6 +778,7 @@ class SuppliesViewModel extends ChangeNotifier {
   Future<void> addSupplierAccount(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
     final cartItem = suppliesCartData?.supplyCarts?.firstWhere(
       (item) => _selectedProducts[item.id] ?? false,
@@ -738,14 +789,15 @@ class SuppliesViewModel extends ChangeNotifier {
       "supplier_account": {
         "supplier_id": supplierId,
         "account_number": accountNumberController.text,
-        "dental_professional_id": userId
+        if (type == UserRole.professional.value)
+          "dental_professional_id": userId
       }
     };
+
     final res = await repo.addSupplierAccount(variables);
 
     if (res != null) {
-      supplierAccountData = res;
-      print("*******------$supplierAccountData");
+      supplierAccountPractice = res;
       Loaders.circularHideLoader(context);
 
       notifyListeners();
@@ -823,7 +875,7 @@ class SuppliesViewModel extends ChangeNotifier {
               : null,
           if (billingType == "NEW")
             "supplier_account_request_id":
-                supplierAccountData?.insertSupplierAccountRequestsOne?.id ?? ""
+                supplierAccountPractice?.insertSupplierAccountsOne?.id ?? ""
         }
       };
       print("/////********$variables");
@@ -838,5 +890,261 @@ class SuppliesViewModel extends ChangeNotifier {
     return favouritesKeysData?.supplyFavorites
             ?.any((item) => item.supplyId?.toString() == id) ??
         false;
+  }
+
+  int getUniqueCount(List<SupplyCarts> items) {
+    final uniqueIds =
+        items.map((i) => i.supply?.id).where((id) => id != null).toSet();
+
+    return uniqueIds.length;
+  }
+
+  SupplyBrandsData? supplyBrandsData;
+
+  Future<void> getSupplyBrands(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final variables = {};
+    final res = await repo.getSupplyBrands(variables);
+    supplyBrandsData = res;
+
+    Loaders.circularHideLoader(context);
+  }
+
+  SupplyCategoriesData? supplyCategoriesData;
+
+  Future<void> getSupplyCategories(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final variables = {};
+    final res = await repo.getSupplyCategories(variables);
+    supplyCategoriesData = res;
+
+    Loaders.circularHideLoader(context);
+  }
+
+  DentalSuppliersData? dentalSuppliersData;
+
+  Future<void> getDentalSupplers(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final variables = {};
+    final res = await repo.getDentalSuppliers(variables);
+    dentalSuppliersData = res;
+
+    Loaders.circularHideLoader(context);
+  }
+
+  List<String> promotions = [
+    "Percentage Discount",
+    "Fixed Amount Discount",
+    "Buy X Get Y Free",
+    "Volume Discount",
+    "Buy X Get Y % Off",
+    "Category Discount",
+    "Brand Discount",
+    "Clearance %"
+  ];
+
+  static const Map<String, String> _promotionApiValues = {
+    "Percentage Discount": "PERCENTAGE_DISCOUNT",
+    "Fixed Amount Discount": "FIXED_AMOUNT_DISCOUNT",
+    "Buy X Get Y Free": "BUY_X_GET_Y_FREE",
+    "Volume Discount": "VOLUME_DISCOUNT",
+    "Buy X Get Y % Off": "BUY_X_GET_Y_PERCENT",
+    "Category Discount": "CATEGORY_DISCOUNT",
+    "Brand Discount": "BRAND_DISCOUNT",
+    "Clearance %": "CLEARANCE_PERCENTAGE",
+  };
+
+  final filterSearchController = TextEditingController();
+
+  final Set<String> selectedBrands = {};
+  final Set<String> selectedCategoryIds = {};
+  final Set<String> selectedSuppliers = {};
+  final Set<String> selectedPromotions = {};
+
+  RangeValues priceRange = const RangeValues(0, 10000);
+  bool priceSelected = false;
+
+  List<String> get selectedPromotionApiValues => selectedPromotions
+      .map((name) => _promotionApiValues[name])
+      .whereType<String>()
+      .toList();
+
+  void toggleSelection(Set<String> set, String value) {
+    if (set.contains(value)) {
+      set.remove(value);
+    } else {
+      set.add(value);
+    }
+    notifyListeners();
+  }
+
+  void setSelectedCategoryIds(Set<String> ids) {
+    selectedCategoryIds
+      ..clear()
+      ..addAll(ids);
+    notifyListeners();
+  }
+
+  List<String> get supplyBrandIds =>
+      supplyBrandsData?.supplyBrands
+          ?.where((b) => selectedBrands.contains(b.name))
+          .map((b) => b.id ?? '')
+          .where((id) => id.isNotEmpty)
+          .toList() ??
+      [];
+
+  List<String> get supplyCategoryIds {
+    final parentIds = supplyCategoriesData?.supplyCategories
+            ?.map((c) => c.id ?? '')
+            .toSet() ??
+        {};
+    return selectedCategoryIds.where((id) => parentIds.contains(id)).toList();
+  }
+
+  List<String> get supplySubCategoryIds {
+    final subIds = supplyCategoriesData?.supplyCategories
+            ?.expand((c) => c.supplySubCategories ?? [])
+            .map((s) => s.id ?? '')
+            .toSet() ??
+        {};
+    return selectedCategoryIds.where((id) => subIds.contains(id)).toList();
+  }
+
+  List<String> get dentalSuppliersIds =>
+      dentalSuppliersData?.dentalSuppliers
+          ?.where((s) => selectedSuppliers.contains(s.businessName))
+          .map((s) => s.id ?? '')
+          .where((id) => id.isNotEmpty)
+          .toList() ??
+      [];
+
+  Future<void> applyFilters(BuildContext context) async {
+    print("*******666*******${selectedPromotions.length}");
+    _supplyOffset = 0;
+    hasMoreData = true;
+    isLoading = true;
+    Loaders.circularShowLoader(context);
+    notifyListeners();
+
+    final andList = [
+      {
+        "status": {"_eq": "APPROVED"}
+      },
+      {
+        "product_status": {"_eq": "ACTIVE"}
+      },
+      {
+        "name": {"_ilike": "%${filterSearchController.text.trim()}%"}
+      },
+      {
+        "supply_brand": {
+          "status": {"_eq": "ACTIVE"}
+        }
+      },
+      {
+        "supply_category": {
+          "status": {"_eq": "ACTIVE"}
+        }
+      },
+      {
+        "supply_sub_category": {
+          "status": {"_eq": "ACTIVE"}
+        }
+      },
+      {
+        "supply_variants": {
+          "make_default": {"_eq": true}
+        }
+      },
+      if (supplyBrandIds.isNotEmpty)
+        {
+          "supply_brand_id": {"_in": supplyBrandIds}
+        },
+      if (supplyCategoryIds.isNotEmpty)
+        {
+          "supply_category_id": {"_in": supplyCategoryIds}
+        },
+      if (supplySubCategoryIds.isNotEmpty)
+        {
+          "supply_sub_category_id": {"_in": supplySubCategoryIds}
+        },
+      if (dentalSuppliersIds.isNotEmpty)
+        {
+          "dental_suppliers_id": {"_in": dentalSuppliersIds}
+        },
+      if (priceSelected) ...[
+        {
+          "supply_variants": {
+            "calculated_price": {"_gte": priceRange.start}
+          }
+        },
+        {
+          "supply_variants": {
+            "calculated_price": {"_lte": priceRange.end}
+          }
+        },
+      ],
+      if (selectedPromotionApiValues.isNotEmpty)
+        {
+          "supply_promotion_items": {
+            "item_role": {"_eq": "APPLIES"},
+            "supply_promotion": {
+              "type": {"_in": selectedPromotionApiValues},
+              "is_active": {"_eq": true},
+              "_and": [
+                {
+                  "_or": [
+                    {
+                      "start_date": {"_lte": "now()"}
+                    },
+                    {
+                      "start_date": {"_is_null": true}
+                    }
+                  ]
+                },
+                {
+                  "_or": [
+                    {
+                      "end_date": {"_gte": "now()"}
+                    },
+                    {
+                      "end_date": {"_is_null": true}
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+    ];
+
+    final res = await repo.getSuppliers({
+      "andList": andList,
+      "limit": _supplyLimit,
+      "offset": _supplyOffset,
+    });
+
+    supplyData = res;
+    final newItems = res.supplies ?? [];
+    hasMoreData = newItems.length >= _supplyLimit;
+    if (hasMoreData) _supplyOffset += _supplyLimit;
+    isLoading = false;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+    navigationService.goBack();
+  }
+
+  void resetFilters() {
+    filterSearchController.clear();
+    selectedBrands.clear();
+    selectedCategoryIds.clear();
+    selectedSuppliers.clear();
+    selectedPromotions.clear();
+    priceRange = const RangeValues(0, 10000);
+    priceSelected = false;
+    notifyListeners();
   }
 }

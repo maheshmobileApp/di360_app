@@ -1,12 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/supplies/model/product_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_card.dart';
+import 'package:di360_flutter/feature/supplies/view/product_filter_result_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class SuppliesMarketplaceView extends StatefulWidget {
@@ -63,6 +66,25 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
               },
               icon: Icon(Icons.arrow_back_ios)),
           actions: [
+            GestureDetector(
+              onTap: () async {
+                await vm.getSupplyBrands(context);
+                await vm.getSupplyCategories(context);
+                await vm.getDentalSupplers(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProductFilterScreen(
+                      onApply: (result) {
+                       
+                      },
+                    ),
+                  ),
+                );
+              },
+              child:
+                  SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+            ),
             IconButton(
               onPressed: () async {
                 await vm.getSuppliesCart(context);

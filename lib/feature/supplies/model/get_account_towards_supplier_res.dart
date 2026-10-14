@@ -47,8 +47,8 @@ class SupplierAccounts {
   Supplier? supplier;
   Null? dentalSupplierId;
   Null? dentalSupplier;
-  Null? dentalPracticeId;
-  Null? dentalPractice;
+  String? dentalPracticeId;
+  Supplier? dentalPractice;
   String? dentalProfessionalId;
   Supplier? dentalProfessional;
   String? sTypename;
@@ -76,7 +76,9 @@ class SupplierAccounts {
     dentalSupplierId = json['dental_supplier_id'];
     dentalSupplier = json['dental_supplier'];
     dentalPracticeId = json['dental_practice_id'];
-    dentalPractice = json['dental_practice'];
+    dentalPractice = json['dental_practice'] != null
+        ? new Supplier.fromJson(json['dental_practice'])
+        : null;
     dentalProfessionalId = json['dental_professional_id'];
     dentalProfessional = json['dental_professional'] != null
         ? new Supplier.fromJson(json['dental_professional'])
@@ -95,7 +97,9 @@ class SupplierAccounts {
     data['dental_supplier_id'] = this.dentalSupplierId;
     data['dental_supplier'] = this.dentalSupplier;
     data['dental_practice_id'] = this.dentalPracticeId;
-    data['dental_practice'] = this.dentalPractice;
+    if (this.dentalPractice != null) {
+      data['dental_practice'] = this.dentalPractice!.toJson();
+    }
     data['dental_professional_id'] = this.dentalProfessionalId;
     if (this.dentalProfessional != null) {
       data['dental_professional'] = this.dentalProfessional!.toJson();

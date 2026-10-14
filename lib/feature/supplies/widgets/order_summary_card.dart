@@ -6,26 +6,38 @@ import 'package:provider/provider.dart';
 
 class OrderSummaryCard extends StatelessWidget {
   final String supplier;
-  final String itemsCount;
+  final int itemsCount;
+  final int uniqueCount;
   final String subTotal;
   final String total;
   final String gst;
   final String estimatedTotal;
+  final int minProducts;
 
   const OrderSummaryCard({
     required this.supplier,
     required this.itemsCount,
+    required this.uniqueCount,
     required this.subTotal,
     required this.total,
     required this.gst,
     required this.estimatedTotal,
+    required this.minProducts,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<SuppliesViewModel>();
-    final shippingCost = vm.shippingMethod == "express" ? 25.00 : 15.00;
+    final shippingCost = vm.shippingMethod == "express"
+        ? (vm.shippingChargesData?.freightRanges?.isEmpty == false
+            ? vm.shippingChargesData?.freightRanges?.first.expressPostCost
+            : 25.00)
+        : (minProducts - uniqueCount == 0)
+            ? 0.0
+            : (vm.shippingChargesData?.freightRanges?.isEmpty == false
+                ? vm.shippingChargesData?.freightRanges?.first.shippingCost
+                : 25.00);
     final totalPrice =
         ((double.tryParse(total) ?? 0) + shippingCost).toStringAsFixed(2);
     return Padding(
@@ -52,8 +64,17 @@ class OrderSummaryCard extends StatelessWidget {
                 children: [
                   Text('Order Summary',
                       style: TextStyles.clashSemiBold(fontSize: 18)),
-                  _infoDetailColumn(supplier, itemsCount, subTotal, gst,
-                      shippingCost, estimatedTotal, vm, totalPrice)
+                  _infoDetailColumn(
+                      supplier,
+                      itemsCount,
+                      uniqueCount,
+                      subTotal,
+                      gst,
+                      shippingCost.toStringAsFixed(2),
+                      estimatedTotal,
+                      vm,
+                      totalPrice,
+                      minProducts)
                 ]),
           )),
     );
@@ -62,31 +83,34 @@ class OrderSummaryCard extends StatelessWidget {
 
 _infoDetailColumn(
     String? supplier,
-    String? itemsCount,
+    int itemsCount,
+    int uniqueCount,
     String? subtotal,
     String? gst,
     dynamic shippingCost,
     String estimatedTotal,
     SuppliesViewModel vm,
-    String total) {
+    String total,
+    int minProducts) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       _infoRow("Supplier", supplier ?? ''),
-      _infoRow("Total Selected Items", itemsCount ?? ''),
+      _infoRow("Total Selected Items", itemsCount.toString()),
       Divider(),
-      _shippingMethod(vm, (3 - int.parse(itemsCount ?? "0")).toString()),
+      _shippingMethod(vm, (minProducts - uniqueCount)),
       Divider(),
       _infoRow("Subtotal (Exc GST)", "\$ $subtotal"),
       _infoRow("GST (10%)", "\$ $gst"),
-      _infoRow("Shipping Cost", "\$ $shippingCost"),
+      _infoRow("Shipping Cost",
+          (minProducts - uniqueCount == 0) ? "Free" : "\$ $shippingCost"),
       Divider(),
       _infoRow2("Total (Inc GST)", "\$ ${total}")
     ],
   );
 }
 
-_shippingMethod(SuppliesViewModel vm, String itemsCount) {
+_shippingMethod(SuppliesViewModel vm, int itemsCount) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -96,15 +120,25 @@ _shippingMethod(SuppliesViewModel vm, String itemsCount) {
       ),
       _methodCard(() {
         vm.setShippingMethod("standard");
-      }, "Standard delivery", itemsCount == "0" ? "Free" : "\$ 15.00", "3 - 5",
+      },
+          "Standard delivery",
+          itemsCount == 0
+              ? "Free"
+              : "\$ ${(vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.shippingCost : 25.00).toStringAsFixed(2)}",
+          "${vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.stdEstDelivery : "3 - 5 days"}",
           Icons.local_shipping,
-          type: vm.shippingMethod == "standard", info: itemsCount),
+          type: vm.shippingMethod == "standard",
+          info: itemsCount.toString()),
       SizedBox(
         height: 8,
       ),
       _methodCard(() {
         vm.setShippingMethod("express");
-      }, "Express delivery", "\$ 25.00", "1 - 3", Icons.bolt,
+      },
+          "Express delivery",
+          "\$ ${(vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.expressPostCost : 15.00)?.toStringAsFixed(2)}",
+          "${vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.expressDeliveryEta : "1 - 3 days"}",
+          Icons.bolt,
           type: vm.shippingMethod == "express")
     ],
   );
@@ -159,7 +193,7 @@ Widget _methodCard(
                         ),
                       ),
                       Text(
-                        "$cost",
+                        cost,
                         style: TextStyle(
                           color: cost == "Free"
                               ? AppColors.greenColor
@@ -171,7 +205,7 @@ Widget _methodCard(
                     ],
                   ),
                   Text(
-                    "Estimated $time days",
+                    "Estimated $time",
                     style: TextStyle(
                       color: AppColors.geryColor,
                       fontSize: 14,
