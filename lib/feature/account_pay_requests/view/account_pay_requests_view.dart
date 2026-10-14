@@ -1,9 +1,14 @@
+import 'dart:math';
+
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view/add_account_dialog.dart';
 import 'package:di360_flutter/feature/account_pay_requests/view_model/account_pay_requests_view_model.dart';
 import 'package:di360_flutter/feature/account_pay_requests/widgets/account_pay_detail_card.dart';
 import 'package:di360_flutter/feature/account_pay_requests/widgets/account_pay_requests_card.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class AccountPayRequestsView extends StatefulWidget {
@@ -20,6 +25,23 @@ class _AccountPayRequestsViewState extends State<AccountPayRequestsView> {
   Widget build(BuildContext context) {
     final vm = context.watch<AccountPayRequestsViewModel>();
     return Scaffold(
+      floatingActionButton: selectedTab == 0
+          ? FloatingActionButton(
+              backgroundColor: AppColors.primaryColor,
+              onPressed: () async {
+                await vm.getDentalSuppliers(context);
+                showDialog(
+                  context: context,
+                  builder: (_) => AddAccountPayDialog(
+                    
+
+                    
+                  ),
+                );
+              },
+              child: SvgPicture.asset(ImageConst.addFeed),
+            )
+          : null,
       appBar: AppBarWidget(
         notification: false,
         logo: false,
@@ -106,14 +128,15 @@ class _AccountPayRequestsViewState extends State<AccountPayRequestsView> {
   Widget _accountPayDetailsContent(AccountPayRequestsViewModel vm) {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
-      itemCount: vm.supplierAccountData?.supplierAccounts?.length, // Example count
+      itemCount:
+          vm.supplierAccountData?.supplierAccounts?.length, // Example count
       itemBuilder: (context, index) {
         final item = vm.supplierAccountData?.supplierAccounts?[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: AccountPayDetailCard(
-           name: item?.supplier?.businessName?? "",
-           number: item?.accountNumber?? "",
+            name: item?.supplier?.businessName ?? "",
+            number: item?.accountNumber ?? "",
           ),
         );
       },
@@ -123,7 +146,8 @@ class _AccountPayRequestsViewState extends State<AccountPayRequestsView> {
   Widget _accountPayRequestsContent(AccountPayRequestsViewModel vm) {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
-      itemCount: vm.accountRequestsData?.supplierAccountRequests?.length, // Example count
+      itemCount: vm.accountRequestsData?.supplierAccountRequests
+          ?.length, // Example count
       itemBuilder: (context, index) {
         final item = vm.accountRequestsData?.supplierAccountRequests?[index];
         return Padding(
