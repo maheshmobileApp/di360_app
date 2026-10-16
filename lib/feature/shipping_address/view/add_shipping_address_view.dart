@@ -1,12 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/api_constants.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/address_type_radio_button.dart';
 import 'package:di360_flutter/feature/supplies/widgets/app_button.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:dio/dio.dart';
@@ -20,6 +23,7 @@ class AddShippingAddressView extends StatelessWidget with ValidationMixins {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ShippingAddressViewModel>();
+     final userType = LocalStorage.getStringVal(LocalStorageConst.type);
 
     return Scaffold(
         appBar: AppBar(
@@ -54,6 +58,7 @@ class AddShippingAddressView extends StatelessWidget with ValidationMixins {
                 style: TextStyles.clashSemiBold(
                     fontSize: 16, color: AppColors.primaryColor),
               ),
+              if (userType == UserRole.practice.value)
               InputTextField(
                 controller: vm.practiceNameController,
                 hintText: "Enter practice name",

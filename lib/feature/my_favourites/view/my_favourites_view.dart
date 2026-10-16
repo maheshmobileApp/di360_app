@@ -1,12 +1,14 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/search_filter_widget.dart';
 import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_favourites/widgets/favourite_card.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class MyFavouritesView extends StatelessWidget {
@@ -28,6 +30,24 @@ class MyFavouritesView extends StatelessWidget {
               },
               icon: Icon(Icons.arrow_back_ios)),
           actions: [
+            Row(
+              children: [
+                GestureDetector(
+                    onTap: () async {
+                      navigationService.navigateTo(RouteList.favouriteFilterView);
+                    },
+                    child:
+                        SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+                  ),
+                  if (vm.isFilterApplied)
+                GestureDetector(
+                    onTap: () async {
+                      await vm.clearFilters();
+                      vm.getSupplyFavourites(context);
+                    },
+                    child: Icon(Icons.close, color: AppColors.black))
+              ],
+            ),
             IconButton(
               onPressed: () async {
                 await supVM.getSuppliesCart(context);
@@ -65,60 +85,63 @@ class MyFavouritesView extends StatelessWidget {
       body: favourites?.length == 0
           ? Center(child: Text("No Favourites"))
           : ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: favourites?.length,
-            itemBuilder: (context, index) {
-              final item = favourites?[index];
-          
-              return FavouriteCard(
-                isSelected: false,
-                productId: '',
-                productName: item?.supply?.name ?? "",
-                companyName:
-                    item?.supply?.dentalSupplier?.businessName ?? "",
-                addedOn: item?.updatedAt ?? "",
-                availability:
-                    item?.supplyVariant?.availableStock.toString() ?? "",
-                price: '',
-                quantity: vm.quantityFor(item?.supply?.id ?? ''),
-                onDecrease: () {
-                  vm.decreaseQuantity(item?.supply?.id ?? '');
-                },
-                onIncrease: () {
-                  vm.increaseQuantity(item?.supply?.id ?? '');
-                },
-                onFavourite: () {
-                  vm.deleteFavourite(context, item?.supply?.id ?? '',
-                      item?.supplyVariant?.id ?? "");
-                },
-                imageUrl: item?.supply?.image?.first.url ?? "",
-                onCartTap: () async {
-                  final supplyId = item?.supply?.id ?? "";
-                  final variantId = item?.supplyVariant?.id ?? "";
-                  final quantity = vm.quantityFor(supplyId);
-          
-                  final cartItem = supVM.getCartItemBySupplyId(supplyId);
-          
-                  if (cartItem != null) {
-                    await supVM.increaseQuantityById(
-                      context,
-                      cartItem.id ?? "",
-                      quantity,
-                    );
-                  } else {
-                    await supVM.addToCart(
-                      context,
-                      supplyId,
-                      variantId,
-                      quantity,
-                    );
-                  }
-          
-                  vm.resetQuantity(supplyId);
-                },
-              );
-            },
-          ),
+              padding: const EdgeInsets.all(8),
+              itemCount: favourites?.length,
+              itemBuilder: (context, index) {
+                final item = favourites?[index];
+
+                return FavouriteCard(
+                  isSelected: false,
+                  productId: '',
+                  productName: item?.supply?.name ?? "",
+                  companyName: item?.supply?.dentalSupplier?.businessName ?? "",
+                  addedOn: item?.updatedAt ?? "",
+                  availability: item?.supplyVariant?.availableStock ?? 0,
+                  price: '',
+                  quantity: vm.quantityFor(item?.supply?.id ?? ''),
+                  onDecrease: () {
+                    vm.decreaseQuantity(item?.supply?.id ?? '');
+                  },
+                  onIncrease: () {
+                    vm.increaseQuantity(item?.supply?.id ?? '');
+                  },
+                  onFavourite: () {
+                    vm.deleteFavourite(context, item?.supply?.id ?? '',
+                        item?.supplyVariant?.id ?? "");
+                  },
+                  imageUrl: item?.supply?.image?.first.url ?? "",
+                  onCartTap: () async {
+                    if ((item?.supplyVariant?.availableStock ?? 0) > 0) {
+                      final supplyId = item?.supply?.id ?? "";
+                      final variantId = item?.supplyVariant?.id ?? "";
+                      final quantity = vm.quantityFor(supplyId);
+
+                      final cartItem = supVM.getCartItemBySupplyId(supplyId);
+
+                      if (cartItem != null) {
+                        await supVM.increaseQuantityById(
+                          context,
+                          cartItem.id ?? "",
+                          quantity,
+                        );
+                      } else {
+                        await supVM.addToCart(
+                          context,
+                          supplyId,
+                          variantId,
+                          quantity,
+                        );
+                      }
+
+                      vm.resetQuantity(supplyId);
+                      await supVM.getSuppliesCart(context);
+                    } else {
+                      scaffoldMessenger("Out of stock...");
+                    }
+                  },
+                );
+              },
+            ),
     );
   }
 }

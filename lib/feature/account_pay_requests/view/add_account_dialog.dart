@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/account_pay_requests/view_model/account_pay_requests_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -187,8 +188,9 @@ class _AddAccountPayDialogState extends State<AddAccountPayDialog> {
                         children: [
                           TextButton(
                             onPressed: () {
+                              
+                              navigationService.goBack();
                               vm.clearAddAccountForm();
-                              Navigator.pop(context);
                             },
                             child: const Text(
                               "Cancel",

@@ -171,7 +171,7 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                             await vm.addSupplierAccountRequest(context);
                           final orderCreated = await vm.addOrder(context);
                           if (orderCreated && context.mounted) {
-                            showOrderSuccessPopup(context);
+                            showOrderSuccessPopup(context, vm);
                           }
                         }
                       }),
@@ -183,7 +183,7 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
   }
 }
 
-void showOrderSuccessPopup(BuildContext context) {
+void showOrderSuccessPopup(BuildContext context, SuppliesViewModel vm) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -261,11 +261,11 @@ void showOrderSuccessPopup(BuildContext context) {
                     height: 50,
                     width: 240,
                     child: ElevatedButton(
-                      onPressed: () {
-                        navigationService.goBack();
-                        navigationService.replaceWith(
+                      onPressed: () async {
+                        navigationService.pushNamedAndRemoveUntil(
                           RouteList.suppliesMarketPlace,
                         );
+                        await vm.getSuppliesCart(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFED6A00),

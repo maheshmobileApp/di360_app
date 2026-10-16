@@ -111,4 +111,6 @@ class RouteList {
   static const String accountPayRequestsView = '/accountPayRequestsView';
   static const String shippingAddressView = '/shippingAddressView';
   static const String addShippingAddressView = '/addShippingAddressView';
+  static const String orderDetailView = '/orderDetailView';
+  static const String favouriteFilterView = '/favouriteFilterView';
 }

@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/supplies/model/get_dental_suppliers.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class AccountPayRequestsViewModel extends ChangeNotifier {
@@ -35,12 +36,16 @@ class AccountPayRequestsViewModel extends ChangeNotifier {
 
   Future<void> getSupplierAccounts(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     final variables = {
       "limit": 50,
       "offset": 0,
       "where": {
-        "dental_practice_id": {"_eq": userId}
+        if (userType == UserRole.professional.value)
+          "dental_professional_id": {"_eq": userId},
+        if (userType == UserRole.practice.value)
+          "dental_practice_id": {"_eq": userId}
       }
     };
     final res = await repo.getSupplierAccount(variables);
@@ -90,6 +95,7 @@ class AccountPayRequestsViewModel extends ChangeNotifier {
     }
 
     await getSupplierAccounts(context);
+    clearAddAccountForm();
     navigationService.goBack();
     scaffoldMessenger('Account added successfully.');
     notifyListeners();
@@ -100,7 +106,7 @@ class AccountPayRequestsViewModel extends ChangeNotifier {
   }
 
   clearAddAccountForm() {
-    accountNumberController.clear();
+    accountNumberController.text = "";
     supplierValue = null;
   }
 }

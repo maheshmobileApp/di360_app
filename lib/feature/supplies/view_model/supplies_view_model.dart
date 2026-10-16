@@ -360,7 +360,7 @@ class SuppliesViewModel extends ChangeNotifier {
   }
 
   Future<void> addAddress(BuildContext context) async {
-    final type = LocalStorage.getStringVal(LocalStorageConst.type);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final isProfessional = type == UserRole.professional.value;
     Loaders.circularShowLoader(context);
     final variables = isProfessional
@@ -789,8 +789,6 @@ class SuppliesViewModel extends ChangeNotifier {
       "supplier_account": {
         "supplier_id": supplierId,
         "account_number": accountNumberController.text,
-        if (type == UserRole.professional.value)
-          "dental_professional_id": userId
       }
     };
 
@@ -847,7 +845,7 @@ class SuppliesViewModel extends ChangeNotifier {
           "shipping_method":
               shippingMethod == "standard" ? "STANDARD" : "EXPRESS",
           "estimated_delivery_in_days": 0,
-          "status": "VERIFICATION_PENDING",
+          "status": "PENDING",
           "payment_status": "PENDING",
           "payment_mode": "ACCOUNT_PAY",
           "billing_address": selectedProfessionalAddress,

@@ -11,7 +11,7 @@ class FavouriteCard extends StatelessWidget {
   final String productName;
   final String companyName;
   final String addedOn;
-  final String availability;
+  final int availability;
   final String price;
   final int quantity;
   final String? imageUrl;
@@ -130,15 +130,15 @@ class FavouriteCard extends StatelessWidget {
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: availability == "0"
+                          color: (availability) < 0
                               ? Colors.red.shade100
                               : AppColors.greenColor.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          availability == "0" ? "Not Available" : "Available",
+                          (availability) < 0 ? "Out of stock" : "Available",
                           style: TextStyles.medium2(
-                            color: availability == "0"
+                            color: (availability) < 0
                                 ? Colors.red.shade700
                                 : AppColors.greenColor,
                           ),

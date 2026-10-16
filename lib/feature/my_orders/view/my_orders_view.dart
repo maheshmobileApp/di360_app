@@ -65,21 +65,20 @@ class _MyOrdersViewState extends State<MyOrdersView> {
           filterWidget: Row(
             children: [
               GestureDetector(
-                onTap: () async{
+                onTap: () async {
                   await vm.getAllDentalSuppliers(context);
                   navigationService.navigateTo(RouteList.myOrdersFilterView);
-
                 },
                 child:
                     SvgPicture.asset(ImageConst.filter, color: AppColors.black),
               ),
               if (vm.isFilterApplied)
-              GestureDetector(
-                  onTap: () async {
-                    await vm.clearFilters();
-                    vm.getSuppliesOrders(context);
-                  },
-                  child: Icon(Icons.close, color: AppColors.black))
+                GestureDetector(
+                    onTap: () async {
+                      await vm.clearFilters();
+                      vm.getSuppliesOrders(context);
+                    },
+                    child: Icon(Icons.close, color: AppColors.black))
             ],
           )),
       body: orders.isEmpty
@@ -101,7 +100,17 @@ class _MyOrdersViewState extends State<MyOrdersView> {
                 }
 
                 final item = orders[index];
-                return MyOrderCard(item: item);
+                return MyOrderCard(
+                  item: item,
+                  onMenuSelected: (value) async {
+                    switch (value) {
+                      case "view":
+                        await vm.viewOrder(context, item.id ?? "");
+                        navigationService.navigateTo(RouteList.orderDetailView);
+                        break;
+                    }
+                  },
+                );
               },
             ),
     );

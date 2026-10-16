@@ -66,10 +66,12 @@ import 'package:di360_flutter/feature/forgot_password/view/forgot_password_scree
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_view.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
+import 'package:di360_flutter/feature/my_favourites/view/favourite_filter_view.dart';
 import 'package:di360_flutter/feature/my_favourites/view/my_favourites_view.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/my_orders/view/my_orders_filter_view.dart';
 import 'package:di360_flutter/feature/my_orders/view/my_orders_view.dart';
+import 'package:di360_flutter/feature/my_orders/view/order_detail_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
@@ -320,6 +322,8 @@ class Routes {
       RouteList.accountPayRequestsView: (context) => AccountPayRequestsView(),
       RouteList.shippingAddressView: (context) => ShippingAddressView(),
       RouteList.addShippingAddressView: (context) => AddShippingAddressView(),
+      RouteList.orderDetailView: (context) => OrderDetailView(),
+      RouteList.favouriteFilterView: (context) => FavouriteFilterView(),
     };
   }
 }

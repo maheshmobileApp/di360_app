@@ -113,7 +113,7 @@ class SuppliesRepoImpl extends SuppliesRepository {
 
   @override
   Future<dynamic> addAddress(variables) async {
-    final type = LocalStorage.getStringVal(LocalStorageConst.type);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final isProfessional = type == UserRole.professional.value;
     final res = await http.mutation(
         isProfessional ? addAddressQuery : addPracticeAddressQuery, variables);

@@ -1,5 +1,8 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/my_orders/model/supplies_orders_res.dart';
 import 'package:di360_flutter/feature/my_orders/model/get_all_dental_suppliers_res.dart';
+import 'package:di360_flutter/feature/my_orders/model/view_order_res.dart';
 import 'package:di360_flutter/feature/my_orders/repository/my_orders_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -138,12 +141,24 @@ class MyOrdersViewModel extends ChangeNotifier {
   }
 
   AllDentalSuppliersData? suppliersData;
+  ViewOrderData? viewOrderData;
 
   Future<void> getAllDentalSuppliers(BuildContext context) async {
     Loaders.circularShowLoader(context);
 
     final res = await repo.getAllDentalSuppliers();
     suppliersData = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> viewOrder(BuildContext context, String id) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+    final variables = {"id": id, "user_id": userId};
+
+    final res = await repo.viewOrder(variables);
+    viewOrderData = res;
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
