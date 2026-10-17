@@ -122,7 +122,7 @@ Widget _supplierName(MyOrdersViewModel vm) {
   final supplierNamesById = <String, String>{};
   for (final supplier in vm.suppliersData?.dentalSuppliers ?? []) {
     final id = supplier.id;
-    final name = supplier.name;
+    final name = supplier.businessName;
     if (id != null && id.isNotEmpty && name != null && name.isNotEmpty) {
       supplierNamesById[id] = name;
     }

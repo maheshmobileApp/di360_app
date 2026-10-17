@@ -20,6 +20,24 @@ class AccountPayRequestsView extends StatefulWidget {
 
 class _AccountPayRequestsViewState extends State<AccountPayRequestsView> {
   int selectedTab = 0;
+  final ScrollController _saScrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _saScrollController.addListener(() {
+      if (_saScrollController.position.pixels >=
+          _saScrollController.position.maxScrollExtent - 200) {
+        context.read<AccountPayRequestsViewModel>().loadMoreSupplierAccounts();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _saScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,17 +144,24 @@ class _AccountPayRequestsViewState extends State<AccountPayRequestsView> {
   }
 
   Widget _accountPayDetailsContent(AccountPayRequestsViewModel vm) {
+    final items = vm.supplierAccountsList;
     return ListView.builder(
+      controller: _saScrollController,
       padding: const EdgeInsets.all(12),
-      itemCount:
-          vm.supplierAccountData?.supplierAccounts?.length, // Example count
+      itemCount: items.length + (vm.saIsLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
-        final item = vm.supplierAccountData?.supplierAccounts?[index];
+        if (index == items.length) {
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final item = items[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: AccountPayDetailCard(
-            name: item?.supplier?.businessName ?? "",
-            number: item?.accountNumber ?? "",
+            name: item.supplier?.businessName ?? "",
+            number: item.accountNumber ?? "",
           ),
         );
       },

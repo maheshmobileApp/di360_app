@@ -37,6 +37,7 @@ class AccountPayDetailCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: _buildDetail('Supplier Name', name)),
+              const SizedBox(width: 8),
               Expanded(child: _buildDetail('Account Number', number)),
             ],
           ),
@@ -60,6 +61,8 @@ class AccountPayDetailCard extends StatelessWidget {
               color: Color(0xFF98A2B3),
               fontWeight: FontWeight.w500,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(

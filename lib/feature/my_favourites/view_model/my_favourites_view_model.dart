@@ -8,8 +8,16 @@ class MyFavouritesViewModel extends ChangeNotifier {
   final MyFavouritesRepoImpl repo = MyFavouritesRepoImpl();
 
   SupplyFavouritesData? supplyFavouritesData;
+  List<SupplyFavorites> _favouritesList = [];
+  List<SupplyFavorites> get favouritesList => _favouritesList;
+
   final Map<String, int> _quantities = {};
   final searchController = TextEditingController();
+
+  static const int _limit = 10;
+  int _offset = 0;
+  bool hasMore = true;
+  bool isLoadingMore = false;
 
   String? selectedSupplierId;
   String? selectedSupplierName;
@@ -67,49 +75,72 @@ class MyFavouritesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSupplyFavourites(BuildContext context) async {
-    Loaders.circularShowLoader(context);
-
-    final variables = {
-      "limit": 10,
-      "offset": 0,
-      "where": {
-        "supply": {
-          "product_status": {"_eq": "ACTIVE"},
-          if (selectedSupplierName != null &&
-              selectedSupplierName != "All Suppliers")
-            "dental_supplier": {
-              "business_name": {"_eq": selectedSupplierName}
-            }
-        },
-        if (searchController.text != "")
-          "_or": [
-            {
-              "supply": {
-                "name": {"_ilike": "%${searchController.text}%"}
+  Map<String, dynamic> _buildVariables(int offset) => {
+        "limit": _limit,
+        "offset": offset,
+        "where": {
+          "supply": {
+            "product_status": {"_eq": "ACTIVE"},
+            if (selectedSupplierName != null &&
+                selectedSupplierName != "All Suppliers")
+              "dental_supplier": {
+                "business_name": {"_eq": selectedSupplierName}
               }
-            },
-            {
-              "supply": {
-                "dental_supplier": {
-                  "business_name": {"_ilike": "%${searchController.text}%"}
+          },
+          if (searchController.text != "")
+            "_or": [
+              {
+                "supply": {
+                  "name": {"_ilike": "%${searchController.text}%"}
+                }
+              },
+              {
+                "supply": {
+                  "dental_supplier": {
+                    "business_name": {
+                      "_ilike": "%${searchController.text}%"
+                    }
+                  }
                 }
               }
+            ],
+          if (selectedStock != null && selectedStock != "All")
+            "supply_variant": {
+              "stock_status": {"_eq": _getStockText(selectedStock)}
             }
-          ],
-        if (selectedStock != null && selectedStock != "All")
-          "supply_variant": {
-            "stock_status": {"_eq": _getStockText(selectedStock)}
-          }
-      }
-    };
+        }
+      };
 
+  Future<void> getSupplyFavourites(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    _offset = 0;
+    hasMore = true;
+
+    final variables = _buildVariables(0);
     final res = await repo.getSupplyFavourites(variables);
     supplyFavouritesData = res;
+    _favouritesList = res?.supplyFavorites ?? [];
+    if ((_favouritesList.length) < _limit) hasMore = false;
+    _offset = _favouritesList.length;
     Loaders.circularHideLoader(context);
-
     notifyListeners();
   }
+
+  Future<void> loadMore() async {
+    if (!hasMore || isLoadingMore) return;
+    isLoadingMore = true;
+    notifyListeners();
+
+    final variables = _buildVariables(_offset);
+    final res = await repo.getSupplyFavourites(variables);
+    final newItems = res?.supplyFavorites ?? [];
+    _favouritesList.addAll(newItems);
+    if (newItems.length < _limit) hasMore = false;
+    _offset += newItems.length;
+    isLoadingMore = false;
+    notifyListeners();
+  }
+
 
   String _getStockText(String? text) {
     if (text == 'Available') {

@@ -11,14 +11,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class MyFavouritesView extends StatelessWidget {
+class MyFavouritesView extends StatefulWidget {
   const MyFavouritesView({super.key});
+
+  @override
+  State<MyFavouritesView> createState() => _MyFavouritesViewState();
+}
+
+class _MyFavouritesViewState extends State<MyFavouritesView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        context.read<MyFavouritesViewModel>().loadMore();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<MyFavouritesViewModel>(context);
     final supVM = context.watch<SuppliesViewModel>();
-    final favourites = vm.supplyFavouritesData?.supplyFavorites;
+    final favourites = vm.favouritesList;
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -82,38 +106,45 @@ class MyFavouritesView extends StatelessWidget {
             "My Favourites",
             style: TextStyles.bold3(),
           )),
-      body: favourites?.length == 0
+      body: favourites.isEmpty
           ? Center(child: Text("No Favourites"))
           : ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(8),
-              itemCount: favourites?.length,
+              itemCount: favourites.length + (vm.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
-                final item = favourites?[index];
+                if (index == favourites.length) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                final item = favourites[index];
 
                 return FavouriteCard(
                   isSelected: false,
                   productId: '',
-                  productName: item?.supply?.name ?? "",
-                  companyName: item?.supply?.dentalSupplier?.businessName ?? "",
-                  addedOn: item?.updatedAt ?? "",
-                  availability: item?.supplyVariant?.availableStock ?? 0,
+                  productName: item.supply?.name ?? "",
+                  companyName: item.supply?.dentalSupplier?.businessName ?? "",
+                  addedOn: item.updatedAt ?? "",
+                  availability: item.supplyVariant?.availableStock ?? 0,
                   price: '',
-                  quantity: vm.quantityFor(item?.supply?.id ?? ''),
+                  quantity: vm.quantityFor(item.supply?.id ?? ''),
                   onDecrease: () {
-                    vm.decreaseQuantity(item?.supply?.id ?? '');
+                    vm.decreaseQuantity(item.supply?.id ?? '');
                   },
                   onIncrease: () {
-                    vm.increaseQuantity(item?.supply?.id ?? '');
+                    vm.increaseQuantity(item.supply?.id ?? '');
                   },
                   onFavourite: () {
-                    vm.deleteFavourite(context, item?.supply?.id ?? '',
-                        item?.supplyVariant?.id ?? "");
+                    vm.deleteFavourite(context, item.supply?.id ?? '',
+                        item.supplyVariant?.id ?? "");
                   },
-                  imageUrl: item?.supply?.image?.first.url ?? "",
+                  imageUrl: item.supply?.image?.first.url ?? "",
                   onCartTap: () async {
-                    if ((item?.supplyVariant?.availableStock ?? 0) > 0) {
-                      final supplyId = item?.supply?.id ?? "";
-                      final variantId = item?.supplyVariant?.id ?? "";
+                    if ((item.supplyVariant?.availableStock ?? 0) > 0) {
+                      final supplyId = item.supply?.id ?? "";
+                      final variantId = item.supplyVariant?.id ?? "";
                       final quantity = vm.quantityFor(supplyId);
 
                       final cartItem = supVM.getCartItemBySupplyId(supplyId);

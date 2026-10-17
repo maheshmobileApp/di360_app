@@ -96,7 +96,7 @@ class MyOrdersViewModel extends ChangeNotifier {
 
       final variables = {
         "andList": [
-          (filterStatus != "")
+          (filterStatus != "" && filterStatus != "SELECT ORDER STATUS")
               ? {
                   "status": {"_eq": filterStatus}
                 }

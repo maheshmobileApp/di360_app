@@ -79,6 +79,7 @@ import 'package:di360_flutter/feature/notifications/view/notification_screen.dar
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
+import 'package:di360_flutter/feature/purchased_products/view/purchased_products_view.dart';
 import 'package:di360_flutter/feature/shipping_address/view/add_shipping_address_view.dart';
 import 'package:di360_flutter/feature/shipping_address/view/shipping_address_view.dart';
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
@@ -324,6 +325,7 @@ class Routes {
       RouteList.addShippingAddressView: (context) => AddShippingAddressView(),
       RouteList.orderDetailView: (context) => OrderDetailView(),
       RouteList.favouriteFilterView: (context) => FavouriteFilterView(),
+      RouteList.purchasedProductsView: (context) => PurchasedProductsView(),
     };
   }
 }

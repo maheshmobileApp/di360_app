@@ -17,6 +17,14 @@ class AccountPayRequestsViewModel extends ChangeNotifier {
   SupplierAccountData? supplierAccountData;
   DentalSuppliersData? dentalSuppliersData;
 
+  List<SupplierAccounts> _supplierAccountsList = [];
+  List<SupplierAccounts> get supplierAccountsList => _supplierAccountsList;
+
+  static const int _saLimit = 10;
+  int _saOffset = 0;
+  bool saHasMore = true;
+  bool saIsLoadingMore = false;
+
   String? supplierValue;
   final accountNumberController = TextEditingController();
 
@@ -34,23 +42,48 @@ class AccountPayRequestsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<Map<String, dynamic>> _buildSaVariables(
+      int offset, String userId, String userType) async =>
+      {
+        "limit": _saLimit,
+        "offset": offset,
+        "where": {
+          if (userType == UserRole.professional.value)
+            "dental_professional_id": {"_eq": userId},
+          if (userType == UserRole.practice.value)
+            "dental_practice_id": {"_eq": userId}
+        }
+      };
+
   Future<void> getSupplierAccounts(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
-    final variables = {
-      "limit": 50,
-      "offset": 0,
-      "where": {
-        if (userType == UserRole.professional.value)
-          "dental_professional_id": {"_eq": userId},
-        if (userType == UserRole.practice.value)
-          "dental_practice_id": {"_eq": userId}
-      }
-    };
+    _saOffset = 0;
+    saHasMore = true;
+    final variables = await _buildSaVariables(0, userId, userType);
     final res = await repo.getSupplierAccount(variables);
     supplierAccountData = res;
+    _supplierAccountsList = res?.supplierAccounts ?? [];
+    if (_supplierAccountsList.length < _saLimit) saHasMore = false;
+    _saOffset = _supplierAccountsList.length;
     Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> loadMoreSupplierAccounts() async {
+    if (!saHasMore || saIsLoadingMore) return;
+    saIsLoadingMore = true;
+    notifyListeners();
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = await _buildSaVariables(_saOffset, userId, userType);
+    final res = await repo.getSupplierAccount(variables);
+    final newItems = res?.supplierAccounts ?? [];
+    _supplierAccountsList.addAll(newItems);
+    if (newItems.length < _saLimit) saHasMore = false;
+    _saOffset += newItems.length;
+    saIsLoadingMore = false;
     notifyListeners();
   }
 
