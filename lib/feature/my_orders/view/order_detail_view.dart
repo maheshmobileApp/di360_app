@@ -231,7 +231,7 @@ _buttonSection(BuildContext context,SuppliesOrdersByPk? supplier) {
                   contactPerson: supplier?.supplier?.name ?? '',
                   email: supplier?.supplier?.email ?? '',
                   phone: supplier?.supplier?.phone ?? '',
-                  logoUrl: supplier?.supplier?.logo,
+                  logoUrl: supplier?.supplier?.logo?.url ?? "",
                 ),
               );
             }),
