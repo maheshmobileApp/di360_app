@@ -57,6 +57,12 @@ class SuppliesViewModel extends ChangeNotifier {
   String selectedType = "";
   String accountPayType = "";
   String billingType = "NEW";
+  bool isFilterApplied = false;
+
+  void setFilterApply(bool value) {
+    isFilterApplied = value;
+    notifyListeners();
+  }
 
   void setAccountPayType(String value) {
     accountPayType = value;
@@ -802,7 +808,7 @@ class SuppliesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> addOrder(BuildContext context) async {
+  Future<bool> addOrder(BuildContext context, bool free) async {
     final email = await LocalStorage.getStringVal(LocalStorageConst.emailId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
@@ -818,7 +824,12 @@ class SuppliesViewModel extends ChangeNotifier {
 
       final subTotal = cartItem?.supplyVariant?.calaculatedPrice ??
           0 * (cartItem?.quantity ?? 0);
-      final totalAmount = subTotal + (shippingMethod == "standard" ? 15 : 25);
+      final totalAmount = subTotal +
+          (shippingMethod == "standard"
+              ? free
+                  ? 0
+                  : 15
+              : 25);
 
       final suppliesOrderItems = [
         for (final cartItem in suppliesCartData?.supplyCarts ?? [])
@@ -1020,7 +1031,6 @@ class SuppliesViewModel extends ChangeNotifier {
       [];
 
   Future<void> applyFilters(BuildContext context) async {
-    print("*******666*******${selectedPromotions.length}");
     _supplyOffset = 0;
     hasMoreData = true;
     isLoading = true;
@@ -1132,10 +1142,10 @@ class SuppliesViewModel extends ChangeNotifier {
     isLoading = false;
     Loaders.circularHideLoader(context);
     notifyListeners();
-    navigationService.goBack();
   }
 
   void resetFilters() {
+    setFilterApply(false);
     filterSearchController.clear();
     selectedBrands.clear();
     selectedCategoryIds.clear();

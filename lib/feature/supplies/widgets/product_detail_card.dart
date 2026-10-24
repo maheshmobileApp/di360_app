@@ -164,7 +164,7 @@ _priceInfoCard(Supplies? suppliesDetails) {
         height: 6,
       ),
       Text(
-        "\$ ${suppliesDetails?.supplyVariants?.first.sellingPrice} - \$ ${suppliesDetails?.supplyVariants?.last.sellingPrice}",
+        "\$ ${suppliesDetails?.supplyVariants?.last.sellingPrice} - \$ ${suppliesDetails?.supplyVariants?.first.sellingPrice}",
         style: TextStyles.semiBold(fontSize: 20, color: AppColors.primaryColor),
       ),
       Text("Price varies by selected size",

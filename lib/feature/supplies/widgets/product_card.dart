@@ -61,11 +61,6 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text(
-                        product.brand,
-                        style:
-                            TextStyles.medium2(color: AppColors.primaryColor),
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Column(
@@ -73,9 +68,15 @@ class ProductCard extends StatelessWidget {
                           children: [
                             Text(
                               product.name,
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyles.medium2(),
+                              style: TextStyles.clashSemiBold(
+                                  fontSize: 14, color: AppColors.primaryColor),
+                            ),
+                            Text(
+                              "by ${product.brand}",
+                              style: TextStyles.medium2(
+                                  color: AppColors.black),
                             ),
                             Row(
                               children: [
@@ -92,10 +93,17 @@ class ProductCard extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              product.inStock ? "In Stock" : "Out of Stock",
+                              (product.stock) > 0
+                                  ? (product.stock) < 3
+                                      ? "Low Stock"
+                                      : "In Stock"
+                                  : "Out of Stock",
                               style: TextStyle(
-                                color:
-                                    product.inStock ? Colors.green : Colors.red,
+                                color: product.inStock
+                                    ? (product.stock) < 3
+                                        ? const Color.fromARGB(255, 240, 197, 8)
+                                        : Colors.green
+                                    : Colors.red,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

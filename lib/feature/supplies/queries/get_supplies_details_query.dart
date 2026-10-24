@@ -1,4 +1,21 @@
 const String getSuppliesDetailsQuery = r'''query get_supply_by_pk($id: uuid!) {
+  scoped_promotions: supply_promotions(
+    where: {is_active: {_eq: true}, type: {_in: ["CATEGORY_DISCOUNT", "BRAND_DISCOUNT"]}}
+  ) {
+    id
+    name
+    type
+    is_active
+    stackable
+    config
+    applies_to_all_products
+    category_id
+    brand_id
+    start_date
+    end_date
+    used_count
+    __typename
+  }
   supplies(where: {id: {_eq: $id}, product_status: {_eq: "ACTIVE"}}) {
     id
     created_at
@@ -18,7 +35,6 @@ const String getSuppliesDetailsQuery = r'''query get_supply_by_pk($id: uuid!) {
     status
     product_status
     product_type
-    price_type
     product_condition
     doc_msds
     doc_spec_sheet
@@ -27,6 +43,45 @@ const String getSuppliesDetailsQuery = r'''query get_supply_by_pk($id: uuid!) {
     doc_warranty
     supply_brand_id
     deal
+    supply_promotion_items {
+      item_role
+      promotion_id
+      supply_promotion {
+        id
+        type
+        is_active
+        stackable
+        config
+        applies_to_all_products
+        category_id
+        brand_id
+        start_date
+        end_date
+        used_count
+        supply_promotion_items(where: {item_role: {_eq: "FREE"}}) {
+          item_role
+          supply_id
+          supply {
+            id
+            name
+            image
+            supply_variants {
+              id
+              title
+              sku_code
+              available_stock
+              selling_price
+              image
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
     supply_brand {
       id
       name
@@ -59,6 +114,7 @@ const String getSuppliesDetailsQuery = r'''query get_supply_by_pk($id: uuid!) {
       more_images
       price_unit
       selling_price
+      calculated_price
       specifications
       status
       stock_unit

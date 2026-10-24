@@ -62,28 +62,40 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
           backgroundColor: AppColors.whiteColor,
           leading: IconButton(
               onPressed: () {
-                navigationService.goBack();
+                navigationService.navigateTo(RouteList.dashBoard);
               },
               icon: Icon(Icons.arrow_back_ios)),
           actions: [
-            GestureDetector(
-              onTap: () async {
-                await vm.getSupplyBrands(context);
-                await vm.getSupplyCategories(context);
-                await vm.getDentalSupplers(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ProductFilterScreen(
-                      onApply: (result) {
-                       
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    if (vm.isFilterApplied == false) vm.resetFilters();
+
+                    await vm.getSupplyBrands(context);
+                    await vm.getSupplyCategories(context);
+                    await vm.getDentalSupplers(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductFilterScreen(
+                          onApply: (result) {},
+                        ),
+                      ),
+                    );
+                  },
+                  child: SvgPicture.asset(ImageConst.filter,
+                      color: AppColors.black),
+                ),
+                if (vm.isFilterApplied)
+                  GestureDetector(
+                      onTap: () async {
+                        vm.setFilterApply(false);
+                        vm.resetFilters();
+                        await vm.applyFilters(context);
                       },
-                    ),
-                  ),
-                );
-              },
-              child:
-                  SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+                      child: Icon(Icons.close, color: AppColors.primaryColor)),
+              ],
             ),
             IconButton(
               onPressed: () async {
@@ -119,101 +131,107 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
             "All Products",
             style: TextStyles.bold3(),
           )),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: GridView.builder(
-          controller: scrollController,
-          itemCount: supplies.length + (vm.isLoadingMore ? 1 : 0),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.60,
-          ),
-          itemBuilder: (context, index) {
-            if (index == supplies.length) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            final supply = supplies[index];
-
-            return ProductCard(
-                product: Product(
-                  id: supply.id ?? "",
-                  image: supply.image?.firstOrNull?.url ?? "",
-                  name: supply.name ?? "",
-                  brand: supply.dentalSupplier?.businessName ?? "",
-                  price: supply.priceType == "exclusive"
-                      ? supply.supplyVariants?.firstOrNull?.calaculatedPrice
-                              ?.toStringAsFixed(2) ??
-                          ""
-                      : supply.supplyVariants?.firstOrNull?.sellingPrice
-                              ?.toStringAsFixed(2) ??
-                          "",
-                  inStock:
-                      (supply.supplyVariants?.firstOrNull?.availableStock ??
-                              0) >
-                          0,
-                  quantity: vm.getQuantity(supply.id ?? ""),
-                  isSpotOn: true,
-                  supplyBrand: supply.supplyBrand?.name ?? "",
+      body: supplies.length == 0
+          ? Center(child: Text("No Products found"))
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: GridView.builder(
+                controller: scrollController,
+                itemCount: supplies.length + (vm.isLoadingMore ? 1 : 0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.60,
                 ),
-                viewOption: (supply.supplyVariants?.length ?? 0) > 1,
-                onFavorite: () {
-                  vm.checkFavouriteKey(supply.id ?? "")
-                      ? vm.deleteFavourites(supply.id ?? "",
-                          supply.supplyVariants?.first.id ?? "", context)
-                      : vm.addFavourites(supply.id ?? "",
-                          supply.supplyVariants?.first.id ?? "", context);
-                },
-                isFavourited: vm.checkFavouriteKey(supply.id ?? ""),
-                onIncrease: () {
-                  vm.increaseQuantity(supply.id ?? "");
-                },
-                onDecrease: () {
-                  vm.decreaseQuantity(supply.id ?? "");
-                },
-                onAddToCart: () async {
-                  final supplyId = supply.id ?? "";
-                  final variantId =
-                      supply.supplyVariants?.firstOrNull?.id ?? "";
-                  final quantity = vm.getQuantity(supplyId);
-
-                  final cartItem = vm.getCartItemBySupplyId(supplyId);
-
-                  if (cartItem != null) {
-                    await vm.increaseQuantityById(
-                      context,
-                      cartItem.id ?? "",
-                      quantity,
-                    );
-                  } else {
-                    await vm.addToCart(
-                      context,
-                      supplyId,
-                      variantId,
-                      quantity,
+                itemBuilder: (context, index) {
+                  if (index == supplies.length) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
 
-                  scaffoldMessenger("Added to cart successfully");
+                  final supply = supplies[index];
 
-                  vm.resetQuantity(supplyId);
-                  vm.getSuppliesCart(context);
+                  return ProductCard(
+                      product: Product(
+                        id: supply.id ?? "",
+                        image: supply.image?.firstOrNull?.url ?? "",
+                        name: supply.name ?? "",
+                        brand: supply.dentalSupplier?.businessName ?? "",
+                        price: supply.priceType == "exclusive"
+                            ? supply.supplyVariants?.firstOrNull
+                                    ?.calaculatedPrice
+                                    ?.toStringAsFixed(2) ??
+                                ""
+                            : supply.supplyVariants?.firstOrNull?.sellingPrice
+                                    ?.toStringAsFixed(2) ??
+                                "",
+                        inStock: (supply.supplyVariants?.firstOrNull
+                                    ?.availableStock ??
+                                0) >
+                            0,
+                        stock: supply
+                                .supplyVariants?.firstOrNull?.availableStock ??
+                            0,
+                        quantity: vm.getQuantity(supply.id ?? ""),
+                        isSpotOn: true,
+                        supplyBrand: supply.supplyBrand?.name ?? "",
+                      ),
+                      viewOption: (supply.supplyVariants?.length ?? 0) > 1,
+                      onFavorite: () {
+                        vm.checkFavouriteKey(supply.id ?? "")
+                            ? vm.deleteFavourites(supply.id ?? "",
+                                supply.supplyVariants?.first.id ?? "", context)
+                            : vm.addFavourites(supply.id ?? "",
+                                supply.supplyVariants?.first.id ?? "", context);
+                      },
+                      isFavourited: vm.checkFavouriteKey(supply.id ?? ""),
+                      onIncrease: () {
+                        vm.increaseQuantity(supply.id ?? "");
+                      },
+                      onDecrease: () {
+                        vm.decreaseQuantity(supply.id ?? "");
+                      },
+                      onAddToCart: () async {
+                        final supplyId = supply.id ?? "";
+                        final variantId =
+                            supply.supplyVariants?.firstOrNull?.id ?? "";
+                        final quantity = vm.getQuantity(supplyId);
+
+                        final cartItem = vm.getCartItemBySupplyId(supplyId);
+
+                        if (cartItem != null) {
+                          await vm.increaseQuantityById(
+                            context,
+                            cartItem.id ?? "",
+                            quantity,
+                          );
+                        } else {
+                          await vm.addToCart(
+                            context,
+                            supplyId,
+                            variantId,
+                            quantity,
+                          );
+                        }
+
+                        scaffoldMessenger("Added to cart successfully");
+
+                        vm.resetQuantity(supplyId);
+                        vm.getSuppliesCart(context);
+                      },
+                      onDetailView: () async {
+                        print(
+                            "Navigating to details view for supply ID: ${supply.id}");
+                        await vm.getSuppliesDetails(context, supply.id ?? "");
+                        (supply.supplyVariants?.length ?? 0) > 1
+                            ? navigationService.navigateTo(
+                                RouteList.suppliesViewOptionsDetailsView)
+                            : navigationService
+                                .navigateTo(RouteList.suppliesDetailsView);
+                      });
                 },
-                onDetailView: () async {
-                  print(
-                      "Navigating to details view for supply ID: ${supply.id}");
-                  await vm.getSuppliesDetails(context, supply.id ?? "");
-                  (supply.supplyVariants?.length ?? 0) > 1
-                      ? navigationService
-                          .navigateTo(RouteList.suppliesViewOptionsDetailsView)
-                      : navigationService
-                          .navigateTo(RouteList.suppliesDetailsView);
-                });
-          },
-        ),
-      ),
+              ),
+            ),
     );
   }
 }

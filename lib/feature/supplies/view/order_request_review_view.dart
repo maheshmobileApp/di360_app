@@ -43,8 +43,9 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
       return widget.selectedProducts[item.id!] ?? false;
     }).toList();
 
-    final supplier = proceedItems.isNotEmpty ?
-        proceedItems.first.supply?.dentalSupplier?.businessName ?? "" : "";
+    final supplier = proceedItems.isNotEmpty
+        ? proceedItems.first.supply?.dentalSupplier?.businessName ?? ""
+        : "";
     final itemsCount = proceedItems.length ?? 0;
     final uniqueProductItemCount = vm.getUniqueCount(proceedItems);
     final minProducts = vm.shippingChargesData?.freightRanges?.isEmpty == false
@@ -55,8 +56,8 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
       (sum, item) =>
           sum +
           ((item.supply?.priceType == "inclusive"
-                  ? item.supplyVariant?.sellingPrice ?? 0
-                  : item.supplyVariant?.calaculatedPrice ?? 0) *
+                  ? item.supplyVariant?.calaculatedPrice ?? 0
+                  : item.supplyVariant?.sellingPrice ?? 0) *
               (item.quantity ?? 0)),
     );
 
@@ -147,13 +148,13 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                   PaymentModeCard(),
                   OrderSummaryCard(
                     supplier: supplier,
-                    subTotal:
-                        (subTotal - subTotal * 10 / 100).toStringAsFixed(2),
+                    subTotal: subTotal ?? 0,
                     gst: (subTotal * 10 / 100).toStringAsFixed(2),
                     itemsCount: itemsCount,
                     uniqueCount: uniqueProductItemCount,
                     estimatedTotal: subTotal.toString(),
-                    total: subTotal.toString(),
+                    total:
+                        (subTotal + (subTotal * 10 / 100)).toStringAsFixed(2),
                     minProducts: minProducts,
                   ),
                   SizedBox(
@@ -169,7 +170,10 @@ class _OrderRequestReviewViewState extends State<OrderRequestReviewView> {
                             await vm.addSupplierAccount(context);
                           if (vm.accountPayType == "no")
                             await vm.addSupplierAccountRequest(context);
-                          final orderCreated = await vm.addOrder(context);
+                          final orderCreated = await vm.addOrder(
+                              context,
+                              (minProducts - uniqueProductItemCount == 0) ||
+                                  subTotal > 200);
                           if (orderCreated && context.mounted) {
                             showOrderSuccessPopup(context, vm);
                           }

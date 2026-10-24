@@ -19,7 +19,20 @@ import 'package:google_places_flutter/model/place_type.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:provider/provider.dart';
 
-class AddNewsAddressView extends StatelessWidget with ValidationMixins {
+class AddNewsAddressView extends StatefulWidget {
+  @override
+  State<AddNewsAddressView> createState() => _AddNewsAddressViewState();
+}
+
+class _AddNewsAddressViewState extends State<AddNewsAddressView>
+    with ValidationMixins {
+  final FocusNode _locationFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _locationFocusNode.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<SuppliesViewModel>();
@@ -85,6 +98,7 @@ class AddNewsAddressView extends StatelessWidget with ValidationMixins {
                 maxLength: 70,
                 validator: validateEmail,
                 isRequired: true,
+                onTap: () => _locationFocusNode.unfocus(),
               ),
               SizedBox(height: 6),
               Text(
@@ -120,6 +134,7 @@ class AddNewsAddressView extends StatelessWidget with ValidationMixins {
                   ),
                   SizedBox(height: 10),
                   GooglePlaceAutoCompleteTextField(
+                    focusNode: _locationFocusNode,
                     textEditingController: vm.locationController,
                     googleAPIKey: ApiConst.staticGoogleAPIKey,
                     inputDecoration: InputDecoration(

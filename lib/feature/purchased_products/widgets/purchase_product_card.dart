@@ -171,13 +171,13 @@ class PurchaseProductCard extends StatelessWidget {
 
 Widget _textWidget(String title, String value) {
   return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(title, style: TextStyles.medium2()),
-      const SizedBox(width: 5),
       Expanded(
         child: Text(
           value,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyles.medium2(color: AppColors.black),
         ),

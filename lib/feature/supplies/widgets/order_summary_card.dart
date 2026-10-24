@@ -8,7 +8,7 @@ class OrderSummaryCard extends StatelessWidget {
   final String supplier;
   final int itemsCount;
   final int uniqueCount;
-  final String subTotal;
+  final dynamic subTotal;
   final String total;
   final String gst;
   final String estimatedTotal;
@@ -33,7 +33,7 @@ class OrderSummaryCard extends StatelessWidget {
         ? (vm.shippingChargesData?.freightRanges?.isEmpty == false
             ? vm.shippingChargesData?.freightRanges?.first.expressPostCost
             : 25.00)
-        : (minProducts - uniqueCount == 0)
+        : (minProducts - uniqueCount == 0) || subTotal > 200
             ? 0.0
             : (vm.shippingChargesData?.freightRanges?.isEmpty == false
                 ? vm.shippingChargesData?.freightRanges?.first.shippingCost
@@ -85,32 +85,35 @@ _infoDetailColumn(
     String? supplier,
     int itemsCount,
     int uniqueCount,
-    String? subtotal,
+    dynamic subtotal,
     String? gst,
     dynamic shippingCost,
     String estimatedTotal,
     SuppliesViewModel vm,
     String total,
     int minProducts) {
+  final double subtotalDouble = (subtotal is double)
+      ? subtotal
+      : double.tryParse(subtotal?.toString() ?? '') ?? 0.0;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       _infoRow("Supplier", supplier ?? ''),
       _infoRow("Total Selected Items", itemsCount.toString()),
       Divider(),
-      _shippingMethod(vm, (minProducts - uniqueCount)),
+      _shippingMethod(vm, (minProducts - uniqueCount), subtotalDouble),
       Divider(),
-      _infoRow("Subtotal (Exc GST)", "\$ $subtotal"),
+      _infoRow("Subtotal (Exc GST)", "\$ ${subtotalDouble.toStringAsFixed(2)}"),
       _infoRow("GST (10%)", "\$ $gst"),
       _infoRow("Shipping Cost",
-          (minProducts - uniqueCount == 0) ? "Free" : "\$ $shippingCost"),
+          (minProducts - uniqueCount == 0) || subtotalDouble > 200 ? "Free" : "\$ $shippingCost"),
       Divider(),
       _infoRow2("Total (Inc GST)", "\$ ${total}")
     ],
   );
 }
 
-_shippingMethod(SuppliesViewModel vm, int itemsCount) {
+_shippingMethod(SuppliesViewModel vm, int itemsCount, double amount) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -122,11 +125,12 @@ _shippingMethod(SuppliesViewModel vm, int itemsCount) {
         vm.setShippingMethod("standard");
       },
           "Standard delivery",
-          itemsCount == 0
+          itemsCount == 0 || amount > 200
               ? "Free"
               : "\$ ${(vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.shippingCost : 25.00).toStringAsFixed(2)}",
           "${vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.stdEstDelivery : "3 - 5 days"}",
           Icons.local_shipping,
+          amount,
           type: vm.shippingMethod == "standard",
           info: itemsCount.toString()),
       SizedBox(
@@ -139,13 +143,14 @@ _shippingMethod(SuppliesViewModel vm, int itemsCount) {
           "\$ ${(vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.expressPostCost : 15.00)?.toStringAsFixed(2)}",
           "${vm.shippingChargesData?.freightRanges?.isEmpty == false ? vm.shippingChargesData?.freightRanges?.first.expressDeliveryEta : "1 - 3 days"}",
           Icons.bolt,
+          amount,
           type: vm.shippingMethod == "express")
     ],
   );
 }
 
 Widget _methodCard(
-    VoidCallback onTap, String title, String cost, String time, IconData? icon,
+    VoidCallback onTap, String title, String cost, String time, IconData? icon, double amount,
     {required bool type, String? info = ""}) {
   return GestureDetector(
     onTap: onTap,
@@ -214,7 +219,7 @@ Widget _methodCard(
                   if (info != "")
                     Text(
                       cost == "Free"
-                          ? "Free — 3+ different products in cart."
+                          ? amount > 200 ? "Free — order is over \$200.": "Free — 3+ different products in cart."
                           : "Add $info more different product for free shipping.",
                       style: TextStyle(
                         color: cost == "Free"

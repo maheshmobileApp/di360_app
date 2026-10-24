@@ -5,6 +5,7 @@ class Product {
   final String brand;
   final String price;
   final bool inStock;
+  final int stock;
   final bool isFavorite;
   final bool isSpotOn;
   final String supplyBrand;
@@ -17,7 +18,7 @@ class Product {
     required this.brand,
     required this.price,
     required this.inStock,
-    this.isFavorite = false,
+    required this.stock, this.isFavorite = false,
     this.isSpotOn = false,
     required this.supplyBrand,
     this.quantity = 0,

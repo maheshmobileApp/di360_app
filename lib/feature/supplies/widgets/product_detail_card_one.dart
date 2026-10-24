@@ -102,18 +102,30 @@ class ProductDetailCardOne extends StatelessWidget {
                           fontSize: 12,
                           prefixIcon: Icons.favorite,
                           backgroundColor: Colors.white,
-                          borderColor: vm.checkFavouriteKey(suppliesDetails?.id ?? "")? AppColors.primaryColor: Colors.grey.shade300,
-                          textColor: vm.checkFavouriteKey(suppliesDetails?.id ?? "")? AppColors.primaryColor: Colors.black87,
-                          iconColor: vm.checkFavouriteKey(suppliesDetails?.id ?? "")? AppColors.primaryColor: Colors.black87,
+                          borderColor:
+                              vm.checkFavouriteKey(suppliesDetails?.id ?? "")
+                                  ? AppColors.primaryColor
+                                  : Colors.grey.shade300,
+                          textColor:
+                              vm.checkFavouriteKey(suppliesDetails?.id ?? "")
+                                  ? AppColors.primaryColor
+                                  : Colors.black87,
+                          iconColor:
+                              vm.checkFavouriteKey(suppliesDetails?.id ?? "")
+                                  ? AppColors.primaryColor
+                                  : Colors.black87,
                           onPressed: () {
-                            vm.checkFavouriteKey(suppliesDetails?.id ?? "" ?? "")
+                            vm.checkFavouriteKey(
+                                    suppliesDetails?.id ?? "" ?? "")
                                 ? vm.deleteFavourites(
                                     suppliesDetails?.id ?? "" ?? "",
-                                    suppliesDetails?.supplyVariants?.first.id ?? "",
+                                    suppliesDetails?.supplyVariants?.first.id ??
+                                        "",
                                     context)
                                 : vm.addFavourites(
                                     suppliesDetails?.id ?? "",
-                                    suppliesDetails?.supplyVariants?.first.id ?? "",
+                                    suppliesDetails?.supplyVariants?.first.id ??
+                                        "",
                                     context);
                           },
                         ),
@@ -189,7 +201,7 @@ _priceInfoCard(Supplies? suppliesDetails) {
           Row(
             children: [
               Text(
-                "\$ ${suppliesDetails?.supplyVariants?.firstOrNull?.sellingPrice ?? 'N/A'}",
+                "\$ ${suppliesDetails?.supplyVariants?.firstOrNull?.calaculatedPrice ?? 'N/A'}",
                 style: TextStyles.semiBold(
                     fontSize: 20, color: AppColors.primaryColor),
               ),

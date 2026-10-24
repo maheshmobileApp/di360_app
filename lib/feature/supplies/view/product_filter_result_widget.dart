@@ -89,7 +89,6 @@ class _ProductFilterScreenState extends State<ProductFilterScreen> {
                   FilterSection(
                     title: "Brand",
                     icon: Icons.local_offer,
-                    initiallyExpanded: true,
                     child: FilterOptionsList(
                       options: brands,
                       selected: vm.selectedBrands,
@@ -135,7 +134,7 @@ class _ProductFilterScreenState extends State<ProductFilterScreen> {
                         RangeSlider(
                           values: vm.priceRange,
                           min: 0,
-                          max: 10000,
+                          max: 20000,
                           divisions: 100,
                           activeColor: AppColors.primaryColor,
                           labels: RangeLabels(
@@ -194,7 +193,11 @@ class _ProductFilterScreenState extends State<ProductFilterScreen> {
                   Expanded(
                     flex: 2,
                     child: ElevatedButton.icon(
-                      onPressed: () => vm.applyFilters(context),
+                      onPressed: () async {
+                        vm.setFilterApply(true);
+                        await vm.applyFilters(context); 
+                        navigationService.goBack();
+                      },
                       icon: const Icon(
                         Icons.filter_alt,
                         size: 17,

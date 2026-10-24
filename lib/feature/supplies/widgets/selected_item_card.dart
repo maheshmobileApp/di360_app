@@ -184,6 +184,8 @@ class SelectedItemCard extends StatelessWidget {
 
   _textWidget(String key, String value) {
     return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+
       children: [
         Text(
           key,
@@ -191,10 +193,14 @@ class SelectedItemCard extends StatelessWidget {
             color: Colors.grey.shade700,
           ),
         ),
-        Text(
-          value,
-          style: TextStyles.bold2(
-            color: AppColors.primaryColor,
+        Expanded(
+          child: Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyles.bold2(
+              color: AppColors.primaryColor,
+            ),
           ),
         )
       ],

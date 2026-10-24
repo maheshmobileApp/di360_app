@@ -105,6 +105,7 @@ class ProductCartCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         "Product ID: $productId",
+                       
                         style: TextStyles.medium2(
                           color: Colors.grey.shade700,
                         ),
@@ -120,35 +121,35 @@ class ProductCartCard extends StatelessWidget {
                   ),
                 ),
                 if (menuOptions)
-                PopupMenuButton<String>(
-                  color: AppColors.whiteColor,
-                  onSelected: onMenuSelected,
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(
-                      value: "wishlist",
-                      child: Row(
-                        children: [
-                          Icon(Icons.favorite_border),
-                          SizedBox(width: 10),
-                          Text("Move to Wishlist"),
-                        ],
+                  PopupMenuButton<String>(
+                    color: AppColors.whiteColor,
+                    onSelected: onMenuSelected,
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(
+                        value: "wishlist",
+                        child: Row(
+                          children: [
+                            Icon(Icons.favorite_border),
+                            SizedBox(width: 10),
+                            Text("Move to Wishlist"),
+                          ],
+                        ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: "delete",
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
-                          ),
-                          SizedBox(width: 10),
-                          Text("Delete"),
-                        ],
+                      PopupMenuItem(
+                        value: "delete",
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                            ),
+                            SizedBox(width: 10),
+                            Text("Delete"),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
               ],
             ),
 

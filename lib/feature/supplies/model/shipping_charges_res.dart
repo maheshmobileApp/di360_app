@@ -44,7 +44,7 @@ class FreightRanges {
   String? id;
   String? shippingRule;
   dynamic? shippingCost;
-  Null? minOrderValue;
+  int? minOrderValue;
   int? minNoProducts;
   String? stdEstDelivery;
   bool? expressPostEnabled;
