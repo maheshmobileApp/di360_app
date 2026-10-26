@@ -76,6 +76,7 @@ import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/notifications/view/notification_screen.dart';
+import 'package:di360_flutter/feature/orders/view/orders_view.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
@@ -85,6 +86,8 @@ import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/supllies_module/view/supplies_module_filter_view.dart';
+import 'package:di360_flutter/feature/supllies_module/view/supplies_module_view.dart';
 import 'package:di360_flutter/feature/supplies/view/add_news_address_view.dart';
 import 'package:di360_flutter/feature/supplies/view/order_request_review_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_cart_view.dart';
@@ -324,6 +327,9 @@ class Routes {
       RouteList.addShippingAddressView: (context) => AddShippingAddressView(),
       RouteList.orderDetailView: (context) => OrderDetailView(),
       RouteList.favouriteFilterView: (context) => FavouriteFilterView(),
+      RouteList.ordersView: (context) => OrdersView(),
+      RouteList.suppliesModuleView: (context) => SuppliesModuleView(),
+      RouteList.suppliesModuleFilterView: (context) => SuppliesModuleFilterView(),
     };
   }
 }

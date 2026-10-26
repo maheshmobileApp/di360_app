@@ -34,7 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
       (item) => permissions.contains(item.permission.value),
     ).toList();
     
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
         searchWidget: true,
@@ -48,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           UserData(type: type, gender: viewProfileVM.gender),
           Expanded(child: SingleChildScrollView(child: GridWidget(visibleItems : visibleItems)))
         ],
+      ),
       ),
     );
   }

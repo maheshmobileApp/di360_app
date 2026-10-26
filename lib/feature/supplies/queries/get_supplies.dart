@@ -34,6 +34,16 @@ const String getSupplies =
     }
     supply_category_id
     supply_sub_category_id
+    supply_category {
+      id
+      name
+      __typename
+    }
+    supply_sub_category {
+      id
+      name
+      __typename
+    }
     video
     supply_variants {
       id
@@ -50,13 +60,14 @@ const String getSupplies =
       price_unit
       selling_price
       calculated_price
+      sku_code
       specifications
       status
       stock_unit
       supply_id
       title
       video
-      supply_reviews_aggregate {
+      supply_reviews_aggregate(where: {status: {_eq: true}}) {
         aggregate {
           count
           sum {

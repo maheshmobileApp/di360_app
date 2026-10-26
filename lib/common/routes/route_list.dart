@@ -113,4 +113,7 @@ class RouteList {
   static const String addShippingAddressView = '/addShippingAddressView';
   static const String orderDetailView = '/orderDetailView';
   static const String favouriteFilterView = '/favouriteFilterView';
+  static const String ordersView = '/ordersView';
+  static const String suppliesModuleView = '/suppliesModuleView';
+  static const String suppliesModuleFilterView = '/SuppliesModuleFilterView';
 }

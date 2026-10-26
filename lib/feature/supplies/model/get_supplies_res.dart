@@ -1,11 +1,11 @@
-class getSuppliesRes {
-  getSupplyData? data;
+class GetSuppliesRes {
+  GetSupplyData? data;
 
-  getSuppliesRes({this.data});
+  GetSuppliesRes({this.data});
 
-  getSuppliesRes.fromJson(Map<String, dynamic> json) {
+  GetSuppliesRes.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null
-        ? getSupplyData.fromJson(json['data'] as Map<String, dynamic>)
+        ? GetSupplyData.fromJson(json['data'] as Map<String, dynamic>)
         : null;
   }
 
@@ -18,12 +18,12 @@ class getSuppliesRes {
   }
 }
 
-class getSupplyData {
+class GetSupplyData {
   List<Supplies>? supplies;
 
-  getSupplyData({this.supplies});
+  GetSupplyData({this.supplies});
 
-  getSupplyData.fromJson(Map<String, dynamic> json) {
+  GetSupplyData.fromJson(Map<String, dynamic> json) {
     if (json['supplies'] != null && json['supplies'] is List) {
       supplies = <Supplies>[];
       for (final v in json['supplies']) {
@@ -62,6 +62,8 @@ class Supplies {
   String? status;
   String? productStatus;
   String? priceType;
+  String? productType;
+
   String? supplyBrandId;
   SupplyBrand? supplyBrand;
   String? supplyCategoryId;
@@ -100,6 +102,7 @@ class Supplies {
       this.status,
       this.productStatus,
       this.priceType,
+      this.productType,
       this.supplyBrandId,
       this.supplyBrand,
       this.supplyCategoryId,
@@ -146,6 +149,7 @@ class Supplies {
     status = json['status']?.toString();
     productStatus = json['product_status']?.toString();
     priceType = json['price_type']?.toString();
+    productType = json['product_type']?.toString();
     supplyBrandId = json['supply_brand_id']?.toString();
     supplyBrand = json['supply_brand'] != null && json['supply_brand'] is Map
         ? SupplyBrand.fromJson(json['supply_brand'] as Map<String, dynamic>)
@@ -229,6 +233,7 @@ class Supplies {
     data['status'] = this.status;
     data['product_status'] = this.productStatus;
     data['price_type'] = this.priceType;
+    data['product_type'] = this.productType;
     data['supply_brand_id'] = this.supplyBrandId;
     if (this.supplyBrand != null) {
       data['supply_brand'] = this.supplyBrand?.toJson();
@@ -327,11 +332,11 @@ class Image {
 }
 
 class SeoMetadata {
-  Null image;
-  Null title;
-  Null keywords;
-  Null description;
-  Null altTextOfImage;
+  Null? image;
+  String? title;
+  String? keywords;
+  String? description;
+  String? altTextOfImage;
 
   SeoMetadata(
       {this.image,
@@ -386,7 +391,7 @@ class SupplyVariants {
   String? createdAt;
   String? updatedAt;
   String? actualPrice;
-  String? attributes;
+  List<dynamic>? attributes;
   int? availableStock;
   String? color;
   String? details;
@@ -437,7 +442,9 @@ class SupplyVariants {
     updatedAt = json['updated_at'];
     actualPrice = json['actual_price'];
     calaculatedPrice = json['calculated_price'];
-    attributes = json['attributes'];
+    if (json['attributes'] != null) {
+      attributes = List<dynamic>.from(json['attributes']);
+    }
     availableStock = json['available_stock'];
     color = json['color'];
     details = json['details'];
@@ -466,7 +473,9 @@ class SupplyVariants {
     data['updated_at'] = this.updatedAt;
     data['actual_price'] = this.actualPrice;
     data['calculated_price'] = this.calaculatedPrice;
-    data['attributes'] = this.attributes;
+    if (this.attributes != null) {
+      data['attributes'] = this.attributes;
+    }
     data['available_stock'] = this.availableStock;
     data['color'] = this.color;
     data['details'] = this.details;

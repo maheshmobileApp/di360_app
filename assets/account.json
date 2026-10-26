@@ -279,6 +279,36 @@
           ]
         },
         {
+          "title": "Supplies",
+          "permission": "SUPPLIES_MODULE",
+          "subTitle": [
+            {
+              "title": "Supplies",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Orders",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Shipping Charges",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Purchased Products",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "My Enquiries",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Account Pay Requests",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            }
+          ]
+        },
+        {
           "title": "Banners",
           "permission": "BANNERS_MODULE",
           "subTitle": [

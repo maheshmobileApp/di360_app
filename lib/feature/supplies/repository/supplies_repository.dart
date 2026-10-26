@@ -12,11 +12,11 @@ import 'package:di360_flutter/feature/supplies/model/supplier_account_res.dart';
 import 'package:di360_flutter/feature/supplies/model/supply_brands_res.dart';
 
 abstract class SuppliesRepository {
-  Future<getSupplyData> getSuppliers(dynamic variables);
+  Future<GetSupplyData> getSuppliers(dynamic variables);
   Future<dynamic> addToCart(dynamic variables);
   Future<dynamic> increaseQuantityById(dynamic variables);
   Future<dynamic> decreaseQuantityById(dynamic variables);
-  Future<getSupplyData> getSuppliesDetails(dynamic variables);
+  Future<GetSupplyData> getSuppliesDetails(dynamic variables);
   Future<SupplyCartData> getSupplyCarts();
   Future<dynamic> deleteCartItem(dynamic variables);
   Future<List<DentalProfessionalAddresses>> dentalProfessionalAddress();

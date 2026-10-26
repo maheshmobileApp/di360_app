@@ -40,10 +40,11 @@ import 'package:di360_flutter/utils/user_role_enum.dart';
 class SuppliesRepoImpl extends SuppliesRepository {
   final http = HttpService();
   @override
-  Future<getSupplyData> getSuppliers(variables) async {
-    print("***888$variables");
+  Future<GetSupplyData> getSuppliers(variables) async {
+    print("***calling supplies");
     final res = await http.query(getSupplies, variables: variables);
-    return getSupplyData.fromJson(res);
+    if (res == null || res['_error'] != null) return GetSupplyData();
+    return GetSupplyData.fromJson(res);
   }
 
   @override
@@ -65,9 +66,9 @@ class SuppliesRepoImpl extends SuppliesRepository {
   }
 
   @override
-  Future<getSupplyData> getSuppliesDetails(variables) async {
+  Future<GetSupplyData> getSuppliesDetails(variables) async {
     final res = await http.query(getSuppliesDetailsQuery, variables: variables);
-    return getSupplyData.fromJson(res);
+    return GetSupplyData.fromJson(res);
   }
 
   @override

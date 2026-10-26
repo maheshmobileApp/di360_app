@@ -87,7 +87,7 @@ class ProductCard extends StatelessWidget {
                                 ),
                                 Text(
                                   "INC GST",
-                                  style: TextStyles.medium1(),
+                                  style: TextStyles.medium1(fontSize: 10),
                                 ),
                               ],
                             ),

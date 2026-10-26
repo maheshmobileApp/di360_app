@@ -91,7 +91,7 @@ Widget _varientCard(SupplyVariants variant, String url, SuppliesViewModel vm) {
       ? rawPrice.toDouble()
       : double.tryParse(rawPrice?.toString() ?? '') ?? 0;
   final variantName =
-      variant.title ?? variant.attributes ?? variant.color ?? "-";
+      variant.title ?? "-";
 
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 6),

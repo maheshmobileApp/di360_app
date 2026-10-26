@@ -21,7 +21,7 @@ import 'package:flutter/material.dart';
 class SuppliesViewModel extends ChangeNotifier {
   final SuppliesRepoImpl repo = SuppliesRepoImpl();
 
-  getSupplyData? supplyData;
+  GetSupplyData? supplyData;
   Supplies? suppliesDetailsData;
   SupplyCartData? suppliesCartData;
   List<DentalProfessionalAddresses>? dentalProfessionalAddress;
@@ -285,6 +285,7 @@ class SuppliesViewModel extends ChangeNotifier {
     };
 
     final res = await repo.getSuppliers(variables);
+    print("Supplies data: $res");
 
     final newItems = res.supplies ?? [];
 
@@ -837,7 +838,7 @@ class SuppliesViewModel extends ChangeNotifier {
         "supplies_orders": {
           "suppliers_id": cartItem?.supply?.dentalSuppliersId ?? "",
           "coupon_discount": 0,
-          "sub_total": subTotal,
+          "sub_total": totalAmount,
           "total_amount": totalAmount,
           "tax_amount": 0,
           "tax_percentage": 0,
@@ -845,7 +846,7 @@ class SuppliesViewModel extends ChangeNotifier {
           "shipping_method":
               shippingMethod == "standard" ? "STANDARD" : "EXPRESS",
           "estimated_delivery_in_days": 0,
-          "status": "PENDING",
+          "status": "VERIFICATION_PENDING",
           "payment_status": "PENDING",
           "payment_mode": "ACCOUNT_PAY",
           "billing_address": selectedProfessionalAddress,
