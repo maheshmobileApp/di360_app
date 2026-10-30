@@ -1,8 +1,8 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
-import 'package:di360_flutter/feature/my_orders/widgets/my_order_card.dart';
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
+import 'package:di360_flutter/feature/orders/widgets/order_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +13,10 @@ class OrdersView extends StatefulWidget {
   const OrdersView({super.key});
 
   @override
-  State<OrdersView> createState() => _MyOrdersViewState();
+  State<OrdersView> createState() => _OrdersViewState();
 }
 
-class _MyOrdersViewState extends State<OrdersView> {
+class _OrdersViewState extends State<OrdersView> {
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -58,7 +58,7 @@ class _MyOrdersViewState extends State<OrdersView> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-          title: "My Orders",
+          title: "Orders",
           notification: false,
           logo: false,
           searchWidget: false,
@@ -67,7 +67,7 @@ class _MyOrdersViewState extends State<OrdersView> {
               GestureDetector(
                 onTap: () async {
                   //await vm.getAllDentalSuppliers(context);
-                  navigationService.navigateTo(RouteList.myOrdersFilterView);
+                  //navigationService.navigateTo(RouteList.myOrdersFilterView);
                 },
                 child:
                     SvgPicture.asset(ImageConst.filter, color: AppColors.black),
@@ -100,7 +100,7 @@ class _MyOrdersViewState extends State<OrdersView> {
                 }
 
                 final item = orders[index];
-                return MyOrderCard(
+                return OrderCard(
                   item: item,
                   onMenuSelected: (value) async {
                     switch (value) {

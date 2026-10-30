@@ -116,4 +116,5 @@ class RouteList {
   static const String ordersView = '/ordersView';
   static const String suppliesModuleView = '/suppliesModuleView';
   static const String suppliesModuleFilterView = '/SuppliesModuleFilterView';
+  static const String shippingChargesView = '/shippingChargesView';
 }

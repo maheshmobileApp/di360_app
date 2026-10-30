@@ -45,6 +45,7 @@ import 'package:di360_flutter/feature/notifications/notification_view_model/noti
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
+import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
@@ -176,6 +177,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ShippingAddressViewModel()),
         ChangeNotifierProvider(create: (_) => OrdersViewModel()),
         ChangeNotifierProvider(create: (_) => SuppliesModuleViewModel()),
+        ChangeNotifierProvider(create: (_) => ShippingChargesViewModel()),
       ],
       child: MaterialApp(
         builder: (context, child) {

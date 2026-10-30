@@ -1,6 +1,7 @@
-import 'package:di360_flutter/feature/my_orders/model/supplies_orders_res.dart';
+import 'package:di360_flutter/feature/orders/model/orders_res.dart';
+import 'package:di360_flutter/feature/orders/model/view_order_res.dart';
 
 abstract class OrdersRepository {
-  Future<SuppliesOrdersData> getIPSuppliesOrders(dynamic variables);
-
+  Future<OrdersData> getIPSuppliesOrders(dynamic variables);
+  Future<ViewOrderData> viewOrderDetail(dynamic variables);
 }

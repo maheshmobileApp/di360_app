@@ -295,15 +295,20 @@
               "asset": "assets/profile/payments&others/call-center 1.svg"
             },
             {
-              "title": "Purchased Products",
-              "asset": "assets/profile/payments&others/call-center 1.svg"
-            },
-            {
-              "title": "My Enquiries",
-              "asset": "assets/profile/payments&others/call-center 1.svg"
-            },
-            {
               "title": "Account Pay Requests",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Enquiries",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            
+            {
+              "title": "My Favourites",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "Promotions",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             }
           ]

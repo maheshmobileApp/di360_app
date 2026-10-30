@@ -1,8 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/my_orders/model/supplies_orders_res.dart';
-import 'package:di360_flutter/feature/my_orders/model/get_all_dental_suppliers_res.dart';
-import 'package:di360_flutter/feature/my_orders/model/view_order_res.dart';
+import 'package:di360_flutter/feature/orders/model/orders_res.dart';
+import 'package:di360_flutter/feature/orders/model/view_order_res.dart';
 import 'package:di360_flutter/feature/orders/repository/orders_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,8 @@ import 'package:flutter/material.dart';
 class OrdersViewModel extends ChangeNotifier {
   final OrdersRepoImpl repo = OrdersRepoImpl();
 
-  SuppliesOrdersData? suppliesOrdersData;
+  OrdersData? suppliesOrdersData;
+  ViewOrderData? viewOrderData;
   static const int _ordersLimit = 10;
   int _ordersOffset = 0;
 
@@ -113,7 +113,7 @@ class OrdersViewModel extends ChangeNotifier {
 
       if (isLoadMore) {
         final existingOrders = suppliesOrdersData?.suppliesOrders ?? [];
-        suppliesOrdersData = SuppliesOrdersData(
+        suppliesOrdersData = OrdersData(
           suppliesOrders: [...existingOrders, ...newOrders],
         );
       } else {
@@ -132,9 +132,10 @@ class OrdersViewModel extends ChangeNotifier {
     }
   }
 
-  
-
-  
+  Future<void> viewOrderDetail() async {
+    final variables = {};
+    final res = await repo.viewOrderDetail(variables);
+  }
 
   clearFilters() {
     selectedOrderStatus = "";

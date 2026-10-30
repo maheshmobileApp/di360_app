@@ -24,6 +24,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub
 import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
 import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
+import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
 import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
@@ -518,9 +519,8 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .read<OrdersViewModel>()
                                 .getIPSuppliesOrders(context);
                             navigationService
-                                .navigateTo(RouteList.myOrdersView);
-                          }
-                          else if (item.title == "Account Pay Requests") {
+                                .navigateTo(RouteList.ordersView);
+                          } else if (item.title == "Account Pay Requests") {
                             await context
                                 .read<AccountPayRequestsViewModel>()
                                 .getAccountPayRequests(context);
@@ -535,12 +535,18 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .getShippingAddressesProfessional(context);
                             navigationService
                                 .navigateTo(RouteList.shippingAddressView);
-                          }  else if (item.title == "Supplies") {
+                          } else if (item.title == "Supplies") {
                             await context
                                 .read<SuppliesModuleViewModel>()
                                 .getSuppliesList(context);
                             navigationService
                                 .navigateTo(RouteList.suppliesModuleView);
+                          } else if (item.title == "Shipping Charges") {
+                            await context
+                                .read<ShippingChargesViewModel>()
+                                .getShippingCharges(context);
+                            navigationService
+                                .navigateTo(RouteList.shippingChargesView);
                           }
                         },
                       ),
