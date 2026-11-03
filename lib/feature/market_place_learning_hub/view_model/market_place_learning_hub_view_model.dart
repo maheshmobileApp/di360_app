@@ -4,11 +4,14 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
     hide CourseRegisteredUsers;
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/check_course_res.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_booking_res.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_practices_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_professional_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_supplier_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/promo_code_res.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/repository/market_place_course_reposiotry_impl.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -29,6 +32,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   final userEmailController = TextEditingController();
   final userDescriptionController = TextEditingController();
   final searchController = TextEditingController();
+  final promoCodeController = TextEditingController();
 
   final int _marketPlaceLimit = 10;
   int _marketPlaceOffset = 0;
@@ -40,6 +44,9 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   List<CoursesListingDetails> marketPlaceCoursesList = [];
   CoursesByPk? courseDetails;
   RegisteredUsersData? registeredUsers;
+  CheckCourseRes? checkCourseRes;
+  CourseBookingRes? courseBookingRes;
+  PromoCodeRes? promoCodeRes;
 
   String? courseId;
   bool searchBarOpen = false;
@@ -291,6 +298,73 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
+  }
+
+  Future<void> checkCourse(String courseId, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "courseId": courseId,
+      "email": userEmailController.text,
+      "phoneNumber": userPhoneNumberController.text
+    };
+    final res = await repo.checkCourse(variables);
+    checkCourseRes = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> courseBooking(String courseId, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "courseId": courseId,
+      "firstName": userFirstNameController.text,
+      "lastName": userLastNameController.text,
+      "email": userEmailController.text,
+      "phoneNumber": userPhoneNumberController.text,
+      "description": userDescriptionController.text,
+      if (promoCodeController.text.isNotEmpty)
+        "promoCode": promoCodeController.text
+    };
+    final res = await repo.courseBooking(variables);
+    courseBookingRes = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  /*Future<bool> presentPaymentSheet(BuildContext context) async {
+    final clientSecret = courseBookingRes?.clientSecret ?? '';
+    print("**********************clientSecret: $clientSecret");
+    if (clientSecret.isEmpty) {
+      scaffoldMessenger('Payment session not found. Please try again.');
+      return false;
+    }
+    notifyListeners();
+    
+  }*/
+
+  Future<void> cancelCourse(
+      String intentId, String id, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"paymentIntentId": intentId};
+    final res = await repo.cancelCourse(variables, id);
+
+    if (res['cancelled'] == true) {
+      navigationService.goBack();
+    }
+    Loaders.circularHideLoader(context);
+  }
+
+  Future<void> applyPromoCode(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "courseId": courseId,
+      "promoCode": promoCodeController.text,
+    };
+    final res = await repo.applyPromoCode(variables);
+    promoCodeRes = res;
+    notifyListeners();
+
+    Loaders.circularHideLoader(context);
   }
 
   Future<void> userRegisterToCourse(BuildContext context) async {

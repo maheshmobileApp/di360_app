@@ -1,5 +1,8 @@
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/check_course_res.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_booking_res.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/promo_code_res.dart';
 
 abstract class MarketPlaceCourseRepository {
   Future<List<CoursesListingDetails>?> getMarketPlaceLearningHubData(
@@ -13,4 +16,8 @@ abstract class MarketPlaceCourseRepository {
   Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables);
   Future<dynamic> userRegisterToCourse(dynamic variables);
   Future<dynamic> getProfileData();
+  Future<CheckCourseRes> checkCourse(dynamic variables);
+  Future<CourseBookingRes> courseBooking(dynamic variables);
+  Future<dynamic> cancelCourse(dynamic variables, String id);
+  Future<PromoCodeRes> applyPromoCode(dynamic variables);
 }

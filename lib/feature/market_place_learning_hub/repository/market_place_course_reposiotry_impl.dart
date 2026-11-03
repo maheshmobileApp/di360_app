@@ -1,8 +1,13 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/configuration/app_config.dart';
+import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/check_course_res.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_booking_res.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/promo_code_res.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/get_all_listing_data_query.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/get_profile_query.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/quiz_sumbit_query.dart';
@@ -28,6 +33,7 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
     final payload = {
       "limit": limit,
       "offset": offset,
+      "loginId": userId,
       "where": {
         "_and": [
           if (searchText.isNotEmpty)
@@ -172,5 +178,36 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
         variables: {"id": userId});
     if (res is Map && res.containsKey('_error')) return null;
     return res;
+  }
+
+  @override
+  Future<CheckCourseRes> checkCourse(variables) async {
+    print("Check Course Variables: $variables");
+    final url = '${AppConfig.serverBaseUrl}${ApiConst.checkCourse}';
+    final res = await http.post(url, variables, showLoading: true);
+    return CheckCourseRes.fromJson(res);
+  }
+
+  @override
+  Future<CourseBookingRes> courseBooking(variables) async {
+    final url = '${AppConfig.serverBaseUrl}${ApiConst.courseBooking}';
+    final res = await http.post(url, variables, showLoading: true);
+    return CourseBookingRes.fromJson(res);
+  }
+
+  @override
+  Future<dynamic> cancelCourse(variables, id) async {
+    final url =
+        '${AppConfig.serverBaseUrl}/api/v1/course-transaction/${id}/cancel';
+    print("Cancel Course URL: $url");
+    final res = await http.post(url, variables, showLoading: true);
+    return res;
+  }
+
+  @override
+  Future<PromoCodeRes> applyPromoCode(variables) async {
+    final url = '${AppConfig.serverBaseUrl}${ApiConst.applyPromoCode}';
+    final res = await http.post(url, variables, showLoading: true);
+    return PromoCodeRes.fromJson(res);
   }
 }

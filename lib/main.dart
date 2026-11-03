@@ -1,4 +1,6 @@
+import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -88,6 +90,11 @@ void main() async {
   } catch (e) {}
 
   await DeepLinkService.init();
+
+  if (AppConfig.stripePublishableKey.isNotEmpty) {
+    Stripe.publishableKey = AppConfig.stripePublishableKey;
+  }
+
   runApp(const MyApp());
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
