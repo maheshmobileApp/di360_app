@@ -12,7 +12,9 @@ class RegistrationSuccessView extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = Provider.of<MarketPlaceLearningHubViewModel>(context);
     return Scaffold(
-      appBar: AppbarTitleBackIconWidget(title: ''),
+      appBar: AppbarTitleBackIconWidget(title: '', backAction: () {
+       
+      }),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

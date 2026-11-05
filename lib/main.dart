@@ -93,11 +93,13 @@ void main() async {
 
   if (AppConfig.stripePublishableKey.isNotEmpty) {
     Stripe.publishableKey = AppConfig.stripePublishableKey;
+    await Stripe.instance.applySettings();
   }
 
-  runApp(const MyApp());
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  runApp(const MyApp());
   configLoading();
 }
 
