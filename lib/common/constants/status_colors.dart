@@ -10,6 +10,8 @@ class StatusColors {
     "REJECTED": Colors.red,
     "DRAFT": Colors.black,
     "EXPIRED": Colors.red,
+    "PROFESSIONAL": Colors.black,
+    "GUEST": Colors.black,
   };
 
   static Color getColor(String status) {

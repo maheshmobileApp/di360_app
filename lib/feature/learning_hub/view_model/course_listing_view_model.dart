@@ -1,10 +1,15 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_by_id.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_promotions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
     hide CourseRegisteredUsers;
+import 'package:di360_flutter/feature/learning_hub/model_class/get_notification_campaign_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/notification_campaign_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -13,12 +18,13 @@ import 'package:flutter/material.dart';
 
 class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepoImpl repo = LearningHubRepoImpl();
-  
+
   List<CoursesListingDetails> coursesListingList = [];
   List<CoursesListingDetails> marketPlaceCoursesList = [];
   RegisteredUsersData? registeredUsers;
   String selectedStatus = "All";
   String selectedRegUsersStatus = "All";
+  String? selectedModuleType = "Course Details";
   final searchController = TextEditingController();
   bool searchBarOpen = false;
   bool editOptionEnable = false;
@@ -27,9 +33,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedCategory;
   List<CourseCategories> courseCategoryList = [];
   String? selectedCategoryId;
-  
 
-  String? currentUserId;  
+  String? currentUserId;
 
   int _courseListingLimit = 10;
   int _courseListingOffset = 0;
@@ -39,8 +44,40 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   String courseStatus = "";
   String? userType;
 
+  NotificationCampaignData? notificationCampaignData;
+  CoursePromotionData? coursePromotionData;
+  CourseByIdData? courseData;
+  NotificationCampaignDetailsData? notificationCampaignDetailData;
+  PromotionDetailData? promotionDetailData;
+
+  // Notification pagination
+  final int _notifLimit = 10;
+  int _notifOffset = 0;
+  bool hasMoreNotifications = true;
+  bool isLoadingMoreNotifications = false;
+
+  // Promotion pagination
+  final int _promoLimit = 10;
+  int _promoOffset = 0;
+  bool hasMorePromotions = true;
+  bool isLoadingMorePromotions = false;
+
   void setCourseStatus(String value) {
     courseStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedModuleType(
+      String value, BuildContext context, String courseId) async {
+    selectedModuleType = value;
+    if (value == 'Course Bookings') {
+      await getCourseRegisteredUsers(context, courseId);
+    } else if (value == 'Notification') {
+      await notificationCampaigns(context, courseId);
+    } else if (value == 'Promotion') {
+      await coursePromotions(context, courseId);
+    }
+
     notifyListeners();
   }
 
@@ -75,6 +112,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     'Approved',
     'Completed',
     'Cancelled'
+  ];
+
+  final List<String> moduleTypes = [
+    'Course Details',
+    'Course Bookings',
+    'Notification',
+    'Promotion',
+    'Transaction'
   ];
 
   String? listingRegUsersStatus = "";
@@ -317,4 +362,105 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> courseById(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": courseId};
+    final res = await repo.getCourseById(variables);
+    courseData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> notificationCampaigns(
+      BuildContext context, String courseId, {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreNotifications || !hasMoreNotifications) return;
+      isLoadingMoreNotifications = true;
+    } else {
+      _notifOffset = 0;
+      hasMoreNotifications = true;
+      notificationCampaignData = null;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
+    final variables = {
+      "where": {"course_id": {"_eq": courseId}},
+      "limit": _notifLimit,
+      "offset": _notifOffset,
+      "order_by": [{"created_at": "desc"}]
+    };
+    final res = await repo.getNotificationCampaigns(variables);
+    final newItems = res.courseNotificationCampaigns ?? [];
+
+    if (loadMore) {
+      notificationCampaignData?.courseNotificationCampaigns?.addAll(newItems);
+      isLoadingMoreNotifications = false;
+    } else {
+      notificationCampaignData = res;
+      Loaders.circularHideLoader(context);
+    }
+
+    hasMoreNotifications = newItems.length >= _notifLimit;
+    _notifOffset += newItems.length;
+    notifyListeners();
+  }
+
+  Future<void> coursePromotions(BuildContext context, String courseId, {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMorePromotions || !hasMorePromotions) return;
+      isLoadingMorePromotions = true;
+    } else {
+      _promoOffset = 0;
+      hasMorePromotions = true;
+      coursePromotionData = null;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
+    final variables = {
+      "where": {"course_id": {"_eq": courseId}},
+      "limit": _promoLimit,
+      "offset": _promoOffset,
+      "order_by": [{"created_at": "desc"}]
+    };
+    final res = await repo.getCoursePromotions(variables);
+    final newItems = res.coursePromotions ?? [];
+
+    if (loadMore) {
+      coursePromotionData?.coursePromotions?.addAll(newItems);
+      isLoadingMorePromotions = false;
+    } else {
+      coursePromotionData = res;
+      Loaders.circularHideLoader(context);
+    }
+
+    hasMorePromotions = newItems.length >= _promoLimit;
+    _promoOffset += newItems.length;
+    notifyListeners();
+  }
+
+  Future<void> notificationCampaignDetails(
+      BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": courseId};
+    final res = await repo.getNotificationCampaignDetails(variables);
+    notificationCampaignDetailData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> coursePromotionDetails(
+      BuildContext context, String courseId) async {
+        print("courseId: $courseId");
+    Loaders.circularShowLoader(context);
+    final variables = {"id": courseId};
+    final res = await repo.getCoursePromotionDetails(variables);
+    promotionDetailData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
 }

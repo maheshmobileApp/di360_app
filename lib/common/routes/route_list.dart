@@ -105,4 +105,5 @@ class RouteList {
   static const String reviewPurchaseView = '/eviewPurchaseView';
   static const String securePaymentView = '/securePaymentView';
   static const String registrationSuccessView = '/registrationSuccessView';
+  static const String courseBookingDetails = '/courseBookingDetails';
 }

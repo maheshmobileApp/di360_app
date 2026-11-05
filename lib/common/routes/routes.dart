@@ -51,6 +51,7 @@ import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_booking_details.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_preview_screen.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_filter_screen.dart';
@@ -302,6 +303,12 @@ class Routes {
       RouteList.suppliesCartView: (context) => SuppliesCartView(),
       RouteList.securePaymentView: (context) => SecurePaymentView(),
       RouteList.registrationSuccessView: (context) => RegistrationSuccessView(),
+      RouteList.courseBookingDetails:  (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return CourseBookingDetails(
+            courseId: args['course_id'] ?? "");
+      },
       RouteList.orderRequestReviewView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

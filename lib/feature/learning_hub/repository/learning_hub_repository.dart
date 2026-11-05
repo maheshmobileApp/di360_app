@@ -1,6 +1,11 @@
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_by_id.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_promotions_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_notification_campaign_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/notification_campaign_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
@@ -23,4 +28,9 @@ abstract class LearningHubRepository {
       String? courseId,String status);
   Future<RegisterUserTabCountData> getRegisterUserTabCountData(dynamic variables);
   Future<dynamic> updateRegUserStatus(dynamic variables);
+  Future<NotificationCampaignData> getNotificationCampaigns(dynamic variables);
+  Future<CoursePromotionData> getCoursePromotions(dynamic variables);
+  Future<CourseByIdData> getCourseById(dynamic variables);
+  Future<NotificationCampaignDetailsData> getNotificationCampaignDetails(dynamic variables);
+  Future<PromotionDetailData> getCoursePromotionDetails(dynamic variables);
 }
