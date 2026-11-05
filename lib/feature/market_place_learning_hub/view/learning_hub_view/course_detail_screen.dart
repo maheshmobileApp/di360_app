@@ -157,7 +157,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         courseDetails?.courseName ?? "",
                                         courseDetails?.createdById ?? "",
                                         courseDetails?.id ?? "",
-                                        courseDetails?.registerLink ?? "");
+                                        courseDetails?.registerLink ?? "",
+                                        courseDetails?.type ?? "");
                                   }
                                 : () {
                                     if (!seats) {
@@ -168,7 +169,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                           courseDetails?.courseName ?? "",
                                           courseDetails?.createdById ?? "",
                                           courseDetails?.id ?? "",
-                                          courseDetails?.registerLink ?? "");
+                                          courseDetails?.registerLink ?? "",
+                                          courseDetails?.type ?? "");
                                     } else {
                                       scaffoldMessenger('Registration is Full');
                                     }
@@ -264,8 +266,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         .presentedByImage?.url ??
                                     ""
                                 : "",
-                        presenters:
-                            courseDetails?.presenters ?? [],
+                        presenters: courseDetails?.presenters ?? [],
                         cpdHours:
                             courseDetails?.cpdPoints?.toInt().toString() ?? "0",
                         platform: courseDetails?.type ?? "",

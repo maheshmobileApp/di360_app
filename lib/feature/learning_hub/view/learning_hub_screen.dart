@@ -193,9 +193,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   id: course.id ?? "",
                   index: index,
                   meetingLink: course.meetingLink ?? "",
-                  logoUrl: course.presenters?.isNotEmpty == true ?
-                      course.presenters?.first.presentedByImage?.url ??
-                          '' : "",
+                  logoUrl: course.presenters?.isNotEmpty == true
+                      ? course.presenters?.first.presentedByImage?.url ?? ''
+                      : "",
                   companyName: course.courseName ?? '',
                   courseTitle: course.presentedByName ?? '',
                   status: course.status ?? '',
@@ -221,7 +221,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
                     navigationService.navigateTo(RouteList.courseDetailScreen);
                   },
                   onTapRegistered: () async {
-                    await courseListingVM.getCourseRegisteredUsers(
+                    navigationService
+                        .navigateToWithParams(RouteList.courseBookingDetails,
+                          params: {"course_id": course.id ?? ""});
+                    /*await courseListingVM.getCourseRegisteredUsers(
                         context, course.id ?? "");
                     final count = course
                             .courseRegisteredUsersAggregate?.aggregate?.count ??
@@ -233,7 +236,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           params: {"course_id": course.id ?? ""});
                     } else {
                       scaffoldMessenger('No Registered Users');
-                    }
+                    }*/
                   },
                   userType: courseListingVM.userType,
                   onMenuAction: (action, id) async {

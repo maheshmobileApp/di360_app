@@ -112,9 +112,16 @@ class HttpService {
 
   Future post(url, _data, {showLoading = true}) async {
     try {
+      final token = await LocalStorage.getStringVal(LocalStorageConst.token);
       final result = await _dio.post(
         url,
         data: _data,
+        options: Options(
+          headers: {
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+            'x-client-type': 'mobile',
+          },
+        ),
       );
       if (result.statusCode == 201 || result.statusCode == 200) {
         if (result.data is Map) return Map<String, dynamic>.from(result.data);

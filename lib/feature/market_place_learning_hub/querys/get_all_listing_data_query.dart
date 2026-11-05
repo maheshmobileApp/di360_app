@@ -1,5 +1,5 @@
-const String getAllListingDataQuery   =
-    r'''query getAllLearningHubList($limit: Int!, $offset: Int!, $where: courses_bool_exp!) {
+const String getAllListingDataQuery =
+    r'''query getAllLearningHubList($limit: Int!, $offset: Int!, $loginId: uuid!, $where: courses_bool_exp!) {
   courses(
     limit: $limit
     offset: $offset
@@ -28,12 +28,18 @@ const String getAllListingDataQuery   =
     startTime
     endTime
     course_access_duration
-    course_registered_users {
+    course_registered_users(
+      where: {from_id: {_eq: $loginId}, status: {_nin: ["CANCELLED", "EXPIRED"]}}
+      order_by: {created_at: desc}
+      limit: 1
+    ) {
+      id
       course_id
       from_id
       status
       course_registered_date
       course_valid_till
+      course_expires_at
       __typename
     }
     course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {

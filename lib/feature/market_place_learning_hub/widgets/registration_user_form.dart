@@ -1,19 +1,18 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/widgets/show_update_profile_popup.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RegistrationUserForm {
   static void show(BuildContext context, String courseName, String createdById,
-      String courseId, String registrationLink) {
+      String courseId, String registrationLink, String courseType) {
     final formKey = GlobalKey<FormState>();
     final courseVM =
         Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false);
@@ -136,12 +135,40 @@ class RegistrationUserForm {
                                 }
                                 if (formKey.currentState!.validate()) {
                                   formKey.currentState!.save();
-                                  await courseVM.userRegisterToCourse(context);
-                                  navigationService.goBack();
-                                  courseVM.clearAll();
-                                  await courseVM.registerCourseHandler(
-                                      context, createdById);
-                                  if (registrationLink.trim().isNotEmpty) {
+                                  await courseVM.checkCourse(courseId, context);
+                                  print(
+                                      "***************${courseVM.checkCourseRes?.price?.toStringAsFixed(2)}");
+                                  navigationService.navigateToWithParams(
+                                      RouteList.reviewPurchaseView,
+                                      params: {
+                                        "first_name": courseVM
+                                            .userFirstNameController.text,
+                                        "last_name": courseVM
+                                            .userLastNameController.text,
+                                        "mobile": courseVM
+                                            .userPhoneNumberController.text,
+                                        "email":
+                                            courseVM.userEmailController.text,
+                                        "course_name": courseName,
+                                        "course_type": courseType,
+                                        "course_id": courseId,
+                                        "course_price": courseVM
+                                            .checkCourseRes?.price?.toDouble(),
+                                            
+                                        "discount": 0.0,
+                                      });
+                                  /*showReviewPurchaseDialog(
+                                      context,
+                                      courseVM.checkCourseRes,
+                                      courseVM,
+                                      courseName,
+                                      courseId);*/
+                                  //await courseVM.userRegisterToCourse(context);
+                                  //navigationService.goBack();
+                                  //courseVM.clearAll();
+                                  /*await courseVM.registerCourseHandler(
+                                      context, createdById);*/
+                                  /*if (registrationLink.trim().isNotEmpty) {
                                     alertPopup(
                                       context,
                                       "You are being redirected to the registration link",
@@ -169,10 +196,10 @@ class RegistrationUserForm {
                                         navigationService.goBack();
                                       },
                                     );
-                                  }
-                                  await courseVM.getAllLearningHubData(context);
-                                  await courseVM.getCourseDetails(
-                                      context, courseId);
+                                  }*/
+                                  //await courseVM.getAllLearningHubData(context);
+                                  /*await courseVM.getCourseDetails(
+                                      context, courseId);*/
                                 }
                               },
                               backgroundColor: AppColors.primaryColor,

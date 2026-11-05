@@ -102,4 +102,8 @@ class RouteList {
   static const String suppliesCartView = '/suppliesCartView';
   static const String orderRequestReviewView = '/orderRequestReviewView';
   static const String jobProfileTalentMessage = '/jobProfileTalentMessage';
+  static const String reviewPurchaseView = '/eviewPurchaseView';
+  static const String securePaymentView = '/securePaymentView';
+  static const String registrationSuccessView = '/registrationSuccessView';
+  static const String courseBookingDetails = '/courseBookingDetails';
 }

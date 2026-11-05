@@ -31,4 +31,7 @@ class ApiConst {
   static String newsfeedCreation = '/api/v1/newsfeeds';
   static String creditBalance = '/api/v1/credits/header/';
   static String creditCost = '/api/v1/credit-events';
+  static String checkCourse = '/api/v1/course-booking/check';
+  static String courseBooking = '/api/v1/course-booking/register';
+  static String applyPromoCode = '/api/v1/course-booking/validate-promo';
 }

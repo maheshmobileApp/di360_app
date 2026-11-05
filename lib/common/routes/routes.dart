@@ -51,6 +51,7 @@ import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_booking_details.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_preview_screen.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_filter_screen.dart';
@@ -64,6 +65,9 @@ import 'package:di360_flutter/feature/campaign/view/campaign_listing_view.dart';
 import 'package:di360_flutter/feature/forgot_password/view/forgot_password_screen.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_view.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/product_purchase_view.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/registration_success_view.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/secure_payment_view.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
@@ -161,9 +165,9 @@ class Routes {
             dentalProfessionalId: args['dental_professional_id'],
             talentId: args['talentId'],
             profilePic: args['profile_pic'],
-            userId : args['userId'],
-            talentEnquiryId : args["talent_enquiry_id"],
-            type : args["type"]);
+            userId: args['userId'],
+            talentEnquiryId: args["talent_enquiry_id"],
+            type: args["type"]);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =
@@ -297,11 +301,34 @@ class Routes {
       RouteList.suppliesMarketPlace: (context) => SuppliesMarketplaceView(),
       RouteList.suppliesDetailsView: (context) => SuppliesDetailsView(),
       RouteList.suppliesCartView: (context) => SuppliesCartView(),
+      RouteList.securePaymentView: (context) => SecurePaymentView(),
+      RouteList.registrationSuccessView: (context) => RegistrationSuccessView(),
+      RouteList.courseBookingDetails:  (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return CourseBookingDetails(
+            courseId: args['course_id'] ?? "");
+      },
       RouteList.orderRequestReviewView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return OrderRequestReviewView(
             selectedProducts: args['selected_products'] ?? {});
+      },
+      RouteList.reviewPurchaseView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return ReviewPurchaseView(
+          firstName: args['first_name'],
+          lastName: args['last_name'],
+          mobile: args['mobile'],
+          email: args['email'],
+          courseName: args['course_name'],
+          courseType : args['course_type'],
+          courseId : args['course_id'],
+          coursePrice: args['course_price'],
+          discount: args['discount'],
+        );
       },
     };
   }

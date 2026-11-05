@@ -13,6 +13,8 @@ class RegisteredUserCard extends StatelessWidget {
   final String description;
   final String userPhone;
   final String status;
+  final String userType;
+  final String paymentStatus;
   final String activeStatus;
   final Function(String action, String id)? onMenuAction;
 
@@ -24,6 +26,8 @@ class RegisteredUserCard extends StatelessWidget {
     required this.description,
     required this.userPhone,
     required this.status,
+    required this.userType,
+    required this.paymentStatus,
     required this.activeStatus,
     this.onMenuAction,
     required this.id,
@@ -130,12 +134,51 @@ class RegisteredUserCard extends StatelessWidget {
                       ),
                     ],
                   ],
-                )
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(229, 244, 237, 1),
+                        borderRadius: BorderRadius.circular(30),
+                        border:
+                            Border.all(color: AppColors.whiteColor, width: 1),
+                      ),
+                      child: Text(
+                        userType,
+                        style: TextStyles.bold4(
+                          color: StatusColors.getColor(userType),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(229, 244, 237, 1),
+                        borderRadius: BorderRadius.circular(30),
+                        border:
+                            Border.all(color: AppColors.whiteColor, width: 1),
+                      ),
+                      child: Text(
+                        paymentStatus,
+                        style: TextStyles.bold4(
+                          color: StatusColors.getColor(paymentStatus),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
 
-          (status == "PENDING" )? _menuWidget(context) : SizedBox.shrink(),
+          (status == "PENDING") ? _menuWidget(context) : SizedBox.shrink(),
         ],
       ),
     );

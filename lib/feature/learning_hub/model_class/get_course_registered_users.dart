@@ -4,7 +4,9 @@ class GetCourseRegisteredUsersRes {
   GetCourseRegisteredUsersRes({this.data});
 
   GetCourseRegisteredUsersRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new RegisteredUsersData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new RegisteredUsersData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +54,8 @@ class CourseRegisteredUsers {
   String? createdAt;
   dynamic webinarStatus;
   String? status;
+  String? type;
+  String? paymentStatus;
   DirectoriesSupplier? directoriesPractice;
   DirectoriesSupplier? directoriesSupplier;
   DirectoriesSupplier? directoriesProfessional;
@@ -69,6 +73,8 @@ class CourseRegisteredUsers {
       this.createdAt,
       this.webinarStatus,
       this.status,
+      this.type,
+      this.paymentStatus,
       this.directoriesPractice,
       this.directoriesSupplier,
       this.directoriesProfessional,
@@ -86,22 +92,27 @@ class CourseRegisteredUsers {
     createdAt = json['created_at'];
     webinarStatus = json['webinar_status'];
     status = json['status'];
+    type = json['type'];
+    paymentStatus = json['payment_status'];
     try {
-      directoriesPractice = json['directories_practice'] != null && json['directories_practice'] is Map
+      directoriesPractice = json['directories_practice'] != null &&
+              json['directories_practice'] is Map
           ? DirectoriesSupplier.fromJson(json['directories_practice'])
           : null;
     } catch (e) {
       directoriesPractice = null;
     }
     try {
-      directoriesSupplier = json['directories_supplier'] != null && json['directories_supplier'] is Map
+      directoriesSupplier = json['directories_supplier'] != null &&
+              json['directories_supplier'] is Map
           ? DirectoriesSupplier.fromJson(json['directories_supplier'])
           : null;
     } catch (e) {
       directoriesSupplier = null;
     }
     try {
-      directoriesProfessional = json['directories_professional'] != null && json['directories_professional'] is Map
+      directoriesProfessional = json['directories_professional'] != null &&
+              json['directories_professional'] is Map
           ? DirectoriesSupplier.fromJson(json['directories_professional'])
           : null;
     } catch (e) {
@@ -123,6 +134,8 @@ class CourseRegisteredUsers {
     data['created_at'] = this.createdAt;
     data['webinar_status'] = this.webinarStatus;
     data['status'] = this.status;
+    data['type'] = this.type;
+    data['payment_status'] = this.paymentStatus;
     data['directories_practice'] = this.directoriesPractice?.toJson();
     if (this.directoriesSupplier != null) {
       data['directories_supplier'] = this.directoriesSupplier!.toJson();
@@ -140,17 +153,25 @@ class DirectoriesSupplier {
   DentalSupplier? dentalProfessional;
   String? sTypename;
 
-  DirectoriesSupplier({this.id, this.dentalSupplier, this.dentalPractice, this.dentalProfessional, this.sTypename});
+  DirectoriesSupplier(
+      {this.id,
+      this.dentalSupplier,
+      this.dentalPractice,
+      this.dentalProfessional,
+      this.sTypename});
 
   DirectoriesSupplier.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    dentalSupplier = json['dental_supplier'] != null && json['dental_supplier'] is Map
-        ? DentalSupplier.fromJson(json['dental_supplier'])
-        : null;
-    dentalPractice = json['dental_practice'] != null && json['dental_practice'] is Map
-        ? DentalSupplier.fromJson(json['dental_practice'])
-        : null;
-    dentalProfessional = json['dental_professional'] != null && json['dental_professional'] is Map
+    dentalSupplier =
+        json['dental_supplier'] != null && json['dental_supplier'] is Map
+            ? DentalSupplier.fromJson(json['dental_supplier'])
+            : null;
+    dentalPractice =
+        json['dental_practice'] != null && json['dental_practice'] is Map
+            ? DentalSupplier.fromJson(json['dental_practice'])
+            : null;
+    dentalProfessional = json['dental_professional'] != null &&
+            json['dental_professional'] is Map
         ? DentalSupplier.fromJson(json['dental_professional'])
         : null;
     sTypename = json['__typename'];

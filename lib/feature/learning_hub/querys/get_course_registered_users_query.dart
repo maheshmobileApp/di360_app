@@ -16,7 +16,18 @@ const String getCourseRegisteredUsersQuery =
     from_id
     created_at
     webinar_status
+    quiz_status
     status
+    type
+    payment_status
+    completed_date
+    course_valid_till
+    courses {
+      afterwards_price
+      course_access_duration
+      type
+      __typename
+    }
     directories_practice {
       id
       dental_practice {
