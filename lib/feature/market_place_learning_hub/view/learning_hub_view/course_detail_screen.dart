@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/market_place_learning_hub/widgets/registra
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     if (courseListingVM.courseDetails == null) {
       return const Scaffold(
+        appBar: AppbarTitleBackIconWidget(title: "Course Details"),
         backgroundColor: AppColors.whiteColor,
         body: Center(child: Text("No course details available")),
       );
@@ -264,8 +266,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         .presentedByImage?.url ??
                                     ""
                                 : "",
-                        presenters:
-                            courseDetails?.presenters ?? [],
+                        presenters: courseDetails?.presenters ?? [],
                         cpdHours:
                             courseDetails?.cpdPoints?.toInt().toString() ?? "0",
                         platform: courseDetails?.type ?? "",
