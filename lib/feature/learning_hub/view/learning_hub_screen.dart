@@ -223,7 +223,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   onTapRegistered: () async {
                     navigationService
                         .navigateToWithParams(RouteList.courseBookingDetails,
-                          params: {"course_id": course.id ?? ""});
+                          params: {"course_id": course.id ?? "", "course_status": course.status ?? ""});
                     /*await courseListingVM.getCourseRegisteredUsers(
                         context, course.id ?? "");
                     final count = course

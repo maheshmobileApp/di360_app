@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
@@ -8,6 +9,8 @@ import 'package:di360_flutter/feature/learning_hub/model_class/course_status_cou
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_by_id.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_promotions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_notification_campaign_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transaction_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transactions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/notification_campaign_detail_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_by_id_query.dart';
@@ -247,26 +250,30 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<NotificationCampaignData> getNotificationCampaigns(variables)  async {
-    final res = await http.query(getNotificationCampaignQuery, variables: variables);
+  Future<NotificationCampaignData> getNotificationCampaigns(variables) async {
+    final res =
+        await http.query(getNotificationCampaignQuery, variables: variables);
     return NotificationCampaignData.fromJson(res);
   }
 
   @override
-  Future<CoursePromotionData> getCoursePromotions(variables)  async {
-    final res = await http.query(getCoursePromotionsQuery, variables: variables);
+  Future<CoursePromotionData> getCoursePromotions(variables) async {
+    final res =
+        await http.query(getCoursePromotionsQuery, variables: variables);
     return CoursePromotionData.fromJson(res);
   }
 
   @override
-  Future<CourseByIdData> getCourseById(variables)  async {
+  Future<CourseByIdData> getCourseById(variables) async {
     final res = await http.query(getCousreByIdQuery, variables: variables);
     return CourseByIdData.fromJson(res);
   }
 
   @override
-  Future<NotificationCampaignDetailsData> getNotificationCampaignDetails(variables) async {
-    final res = await http.query(notificationCampaignDetailQuery, variables: variables);
+  Future<NotificationCampaignDetailsData> getNotificationCampaignDetails(
+      variables) async {
+    final res =
+        await http.query(notificationCampaignDetailQuery, variables: variables);
     return NotificationCampaignDetailsData.fromJson(res);
   }
 
@@ -276,8 +283,23 @@ class LearningHubRepoImpl extends LearningHubRepository {
     return PromotionDetailData.fromJson(res);
   }
 
+  @override
+  Future<GetTransactionsRes> getTransactions(variables) async {
+    print("variables: $variables");
+    final url =
+        "${AppConfig.serverBaseUrl}/api/v1/course-transaction/list?page=1&limit=10&view=COURSE&courseId=${variables['courseId']}";
+    final res = await http.get(url);
+    return GetTransactionsRes.fromJson(res);
+  }
 
-  
+  @override
+  Future<GetTransactionDetailRes> getTransactionDetail(courseId) async {
+    final url =
+        "${AppConfig.serverBaseUrl}/api/v1/course-transaction/${courseId}/detail";
+    final res = await http.get(url);
+    return GetTransactionDetailRes.fromJson(res);
+  }
+
   /*@override
   Future<dynamic> removeJobListing(String? id) async {
     final jobListingData = await http.mutation(deleteJobListing, {"id": id});

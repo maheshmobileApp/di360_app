@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view/notification_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/promotion_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/registered_users_view.dart';
+import 'package:di360_flutter/feature/learning_hub/view/transactions_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/booking_url_card.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -13,10 +14,12 @@ import 'package:provider/provider.dart';
 
 class CourseBookingDetails extends StatefulWidget {
   final String courseId;
+  final String? courseStatus;
 
   const CourseBookingDetails({
     super.key,
     required this.courseId,
+    this.courseStatus,
   });
 
   @override
@@ -59,13 +62,13 @@ class _CourseBookingDetailsState extends State<CourseBookingDetails>
   Widget _tabContent(CourseListingViewModel vm) {
     switch (vm.selectedModuleType) {
       case 'Course Bookings':
-        return RegisteredUsersView(courseId: widget.courseId);
+        return RegisteredUsersView(courseId: widget.courseId, courseStatus: widget.courseStatus);
       case 'Notification':
         return NotificationView();
       case 'Promotion':
         return PromotionView();
       case 'Transaction':
-        return _msgText('Refer web for Transactions');
+        return TransactionsView();
       case 'Course Details':
       default:
         return BookingUrlCard(

@@ -13,25 +13,30 @@ class RegisteredUserCard extends StatelessWidget {
   final String description;
   final String userPhone;
   final String status;
+  final String quizStatus;
+  final String courseStatus;
   final String userType;
   final String paymentStatus;
   final String activeStatus;
+  final bool isCourseActive;
   final Function(String action, String id)? onMenuAction;
 
-  const RegisteredUserCard({
-    super.key,
-    required this.imageUrl,
-    required this.userName,
-    required this.userMail,
-    required this.description,
-    required this.userPhone,
-    required this.status,
-    required this.userType,
-    required this.paymentStatus,
-    required this.activeStatus,
-    this.onMenuAction,
-    required this.id,
-  });
+  const RegisteredUserCard(
+      {super.key,
+      required this.imageUrl,
+      required this.userName,
+      required this.userMail,
+      required this.description,
+      required this.userPhone,
+      required this.status,
+      required this.quizStatus,
+      required this.courseStatus,
+      required this.userType,
+      required this.paymentStatus,
+      required this.activeStatus,
+      this.onMenuAction,
+      required this.id,
+      required this.isCourseActive});
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +183,12 @@ class RegisteredUserCard extends StatelessWidget {
             ),
           ),
 
-          (status == "PENDING") ? _menuWidget(context) : SizedBox.shrink(),
+          (courseStatus != "EXPIRED" &&
+                  status != "EXPIRED" &&
+                  status != 'CANCELLED' &&
+                  quizStatus != 'COMPLETED')
+              ? _menuWidget(context)
+              : SizedBox.shrink(),
         ],
       ),
     );

@@ -4,6 +4,8 @@ import 'package:di360_flutter/feature/learning_hub/model_class/course_status_cou
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_by_id.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_promotions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_notification_campaign_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transaction_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transactions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/notification_campaign_detail_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
@@ -19,18 +21,27 @@ abstract class LearningHubRepository {
   Future<dynamic> updateCourseListing(dynamic variables);
   Future<dynamic> updateCourseStatus(String courseId, String status);
   Future<List<CoursesListingDetails>?> getCoursesListing(
-      String? listingStatus,String? activeStatus,String? userId, String? searchText,int limit, int offset);
+      String? listingStatus,
+      String? activeStatus,
+      String? userId,
+      String? searchText,
+      int limit,
+      int offset);
   Future<CourseStatusCountData> courseListingStatusCount(String? userId);
   Future<GetCourseTypes> getCourseType();
   Future<GetCourseCategories> getCourseCategory();
   Future<dynamic> deleteCourse(String? courseId);
   Future<RegisteredUsersData> getCourseRegisteredUsers(
-      String? courseId,String status);
-  Future<RegisterUserTabCountData> getRegisterUserTabCountData(dynamic variables);
+      String? courseId, String status);
+  Future<RegisterUserTabCountData> getRegisterUserTabCountData(
+      dynamic variables);
   Future<dynamic> updateRegUserStatus(dynamic variables);
   Future<NotificationCampaignData> getNotificationCampaigns(dynamic variables);
   Future<CoursePromotionData> getCoursePromotions(dynamic variables);
   Future<CourseByIdData> getCourseById(dynamic variables);
-  Future<NotificationCampaignDetailsData> getNotificationCampaignDetails(dynamic variables);
+  Future<NotificationCampaignDetailsData> getNotificationCampaignDetails(
+      dynamic variables);
   Future<PromotionDetailData> getCoursePromotionDetails(dynamic variables);
+  Future<GetTransactionsRes> getTransactions(dynamic variables);
+  Future<GetTransactionDetailRes> getTransactionDetail(String courseId);
 }

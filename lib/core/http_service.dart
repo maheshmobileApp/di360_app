@@ -23,19 +23,14 @@ class HttpService {
     _hasuraConnect.headers?["Authorization"] = "Bearer $token";
   }
 
-  Future<dynamic> query(
-    document, {
-    variables,
-    bool showLoading = true,
-    bool isTokenRequired = true
-  }) async {
+  Future<dynamic> query(document,
+      {variables, bool showLoading = true, bool isTokenRequired = true}) async {
     try {
       String? token = await LocalStorage.getStringVal(LocalStorageConst.token);
 
       final response = (await _hasuraConnect.query(
         document,
         variables: variables ?? {},
-        
         headers: {
           if (isTokenRequired) 'Authorization': 'Bearer $token',
           'x-client-type': 'mobile',
@@ -158,8 +153,19 @@ class HttpService {
 
   Future<dynamic> get(url) async {
     try {
-      final result = await _dio.get(url);
-      if (result.statusCode == 201 || result.statusCode == 200) {
+      final token = await LocalStorage.getStringVal(LocalStorageConst.token);
+
+      final result = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+            'x-client-type': 'mobile',
+          },
+        ),
+      );
+      if (result.statusCode == 201 ||
+          result.statusCode == 200 || result.statusCode == 304) {
         return Map<String, dynamic>.from(result.data);
       }
       print("Get request failed with status code: ${result.statusCode}");

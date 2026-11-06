@@ -8,6 +8,8 @@ import 'package:di360_flutter/feature/learning_hub/model_class/get_course_regist
     hide CourseRegisteredUsers;
 import 'package:di360_flutter/feature/learning_hub/model_class/get_notification_campaign_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transaction_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transactions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/notification_campaign_detail_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
@@ -49,6 +51,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   CourseByIdData? courseData;
   NotificationCampaignDetailsData? notificationCampaignDetailData;
   PromotionDetailData? promotionDetailData;
+  GetTransactionsRes? getTransactionsRes;
+  GetTransactionDetailRes? getTransactionDetailRes;
 
   // Notification pagination
   final int _notifLimit = 10;
@@ -76,6 +80,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       await notificationCampaigns(context, courseId);
     } else if (value == 'Promotion') {
       await coursePromotions(context, courseId);
+    } else if (value == 'Transaction') {
+      await getTransactions(context, courseId);
     }
 
     notifyListeners();
@@ -372,8 +378,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> notificationCampaigns(
-      BuildContext context, String courseId, {bool loadMore = false}) async {
+  Future<void> notificationCampaigns(BuildContext context, String courseId,
+      {bool loadMore = false}) async {
     if (loadMore) {
       if (isLoadingMoreNotifications || !hasMoreNotifications) return;
       isLoadingMoreNotifications = true;
@@ -386,10 +392,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
 
     final variables = {
-      "where": {"course_id": {"_eq": courseId}},
+      "where": {
+        "course_id": {"_eq": courseId}
+      },
       "limit": _notifLimit,
       "offset": _notifOffset,
-      "order_by": [{"created_at": "desc"}]
+      "order_by": [
+        {"created_at": "desc"}
+      ]
     };
     final res = await repo.getNotificationCampaigns(variables);
     final newItems = res.courseNotificationCampaigns ?? [];
@@ -407,7 +417,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> coursePromotions(BuildContext context, String courseId, {bool loadMore = false}) async {
+  Future<void> coursePromotions(BuildContext context, String courseId,
+      {bool loadMore = false}) async {
     if (loadMore) {
       if (isLoadingMorePromotions || !hasMorePromotions) return;
       isLoadingMorePromotions = true;
@@ -420,10 +431,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
 
     final variables = {
-      "where": {"course_id": {"_eq": courseId}},
+      "where": {
+        "course_id": {"_eq": courseId}
+      },
       "limit": _promoLimit,
       "offset": _promoOffset,
-      "order_by": [{"created_at": "desc"}]
+      "order_by": [
+        {"created_at": "desc"}
+      ]
     };
     final res = await repo.getCoursePromotions(variables);
     final newItems = res.coursePromotions ?? [];
@@ -454,11 +469,31 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> coursePromotionDetails(
       BuildContext context, String courseId) async {
-        print("courseId: $courseId");
+    print("courseId: $courseId");
     Loaders.circularShowLoader(context);
     final variables = {"id": courseId};
     final res = await repo.getCoursePromotionDetails(variables);
     promotionDetailData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> getTransactions(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"courseId": courseId};
+    final res = await repo.getTransactions(variables);
+    getTransactionsRes = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> getTransactionDetail(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    print("courseId: $courseId");
+    final res = await repo.getTransactionDetail(courseId);
+    getTransactionDetailRes = res;
     Loaders.circularHideLoader(context);
 
     notifyListeners();

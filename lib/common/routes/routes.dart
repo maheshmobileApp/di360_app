@@ -254,7 +254,7 @@ class Routes {
       RouteList.registeredUsersView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return RegisteredUsersView(courseId: args['course_id']);
+        return RegisteredUsersView(courseId: args['course_id'], courseStatus: args['course_status']);
       },
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
       RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),

@@ -54,6 +54,7 @@ class CourseRegisteredUsers {
   String? createdAt;
   dynamic webinarStatus;
   String? status;
+  String? quizStatus;
   String? type;
   String? paymentStatus;
   DirectoriesSupplier? directoriesPractice;
@@ -73,6 +74,7 @@ class CourseRegisteredUsers {
       this.createdAt,
       this.webinarStatus,
       this.status,
+      this.quizStatus,
       this.type,
       this.paymentStatus,
       this.directoriesPractice,
@@ -92,6 +94,7 @@ class CourseRegisteredUsers {
     createdAt = json['created_at'];
     webinarStatus = json['webinar_status'];
     status = json['status'];
+    quizStatus = json['quiz_status'];
     type = json['type'];
     paymentStatus = json['payment_status'];
     try {
@@ -134,6 +137,7 @@ class CourseRegisteredUsers {
     data['created_at'] = this.createdAt;
     data['webinar_status'] = this.webinarStatus;
     data['status'] = this.status;
+    data['quiz_status'] = this.quizStatus;
     data['type'] = this.type;
     data['payment_status'] = this.paymentStatus;
     data['directories_practice'] = this.directoriesPractice?.toJson();

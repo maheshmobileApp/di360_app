@@ -8,10 +8,12 @@ import 'package:provider/provider.dart';
 
 class RegisteredUsersView extends StatefulWidget {
   final String courseId;
+  final String? courseStatus;
 
   const RegisteredUsersView({
     super.key,
     required this.courseId,
+    required this.courseStatus,
   });
 
   @override
@@ -71,9 +73,12 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                                 "",
                             description: userData?.description ?? '',
                             status: userData?.status ?? '',
+                            quizStatus: userData?.quizStatus ?? "",
                             userType: userData?.type ?? "",
+                            courseStatus: widget.courseStatus ?? "",
                             paymentStatus: userData?.paymentStatus ?? "",
                             activeStatus: "",
+                            isCourseActive: false,
                             onMenuAction: (action, id) async {
                               switch (action) {
                                 case "Approve":
