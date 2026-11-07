@@ -54,6 +54,8 @@ import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_booking_details.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_preview_screen.dart';
+import 'package:di360_flutter/feature/learning_hub/view/notification_filter_view.dart';
+import 'package:di360_flutter/feature/learning_hub/view/promotion_filter_view.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_filter_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/new_course_screen.dart';
@@ -330,6 +332,8 @@ class Routes {
           discount: args['discount'],
         );
       },
+      RouteList.notificationFilterView: (context) => NotificationFilterView(),
+      RouteList.promotionFilterView: (context) => PromotionFilterView(),
     };
   }
 }

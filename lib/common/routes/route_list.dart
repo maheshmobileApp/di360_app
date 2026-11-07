@@ -106,4 +106,6 @@ class RouteList {
   static const String securePaymentView = '/securePaymentView';
   static const String registrationSuccessView = '/registrationSuccessView';
   static const String courseBookingDetails = '/courseBookingDetails';
+  static const String notificationFilterView = '/notificationFilterView';
+  static const String promotionFilterView = '/promotionFilterView';
 }

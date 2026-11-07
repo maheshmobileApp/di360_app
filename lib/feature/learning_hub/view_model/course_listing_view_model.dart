@@ -66,6 +66,68 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   bool hasMorePromotions = true;
   bool isLoadingMorePromotions = false;
 
+  String selectedFilterStatus = "All";
+  String selectedPromotionStatus = "All";
+  String selectedFilterType = "All";
+  String selectedDiscountType = "All";
+  String selectedCourseId = "";
+  bool notificationFilter = false;
+  bool promotionFilter = false;
+
+  List<String> filterStatus = ["All", "PENDING", "SENT", "FAILED"];
+  List<String> promotionStatus = ["All", "ACTIVE", "INACTIVE", "EXPIRED"];
+  List<String> filterType = [
+    "All",
+    "STATIC",
+    "DYNAMIC",
+  ];
+  List<String> discountType = [
+    "All",
+    "PERCENTAGE",
+    "FLAT",
+  ];
+
+  void setApplyFilter(bool value) {
+    notificationFilter = value;
+    notifyListeners();
+  }
+
+  void setPromotionApplyFilter(bool value) {
+    promotionFilter = value;
+    notifyListeners();
+  }
+
+  void setSelectedFilterStatus(String value) {
+    selectedFilterStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedPromotionStatus(String value) {
+    selectedPromotionStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedFilterContactType(String value) {
+    selectedFilterType = value;
+    notifyListeners();
+  }
+
+  void setSelectedDiscountType(String value) {
+    selectedDiscountType = value;
+    notifyListeners();
+  }
+
+  void setSelectedCourse(String value) {
+    selectedCourseId = value;
+    notifyListeners();
+  }
+
+  final TextEditingController scheduleFromController = TextEditingController();
+  final TextEditingController scheduleToController = TextEditingController();
+  final TextEditingController notificationSerachController =
+      TextEditingController();
+  final TextEditingController promoCodeController = TextEditingController();
+
   void setCourseStatus(String value) {
     courseStatus = value;
     notifyListeners();
@@ -77,6 +139,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     if (value == 'Course Bookings') {
       await getCourseRegisteredUsers(context, courseId);
     } else if (value == 'Notification') {
+      clearNotificationFilters();
       await notificationCampaigns(context, courseId);
     } else if (value == 'Promotion') {
       await coursePromotions(context, courseId);
@@ -378,6 +441,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  String formatToIso(String date) {
+    final parts = date.split('/');
+    return '${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}T00:00:00';
+  }
+
   Future<void> notificationCampaigns(BuildContext context, String courseId,
       {bool loadMore = false}) async {
     if (loadMore) {
@@ -391,9 +459,36 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     }
     notifyListeners();
 
+    setSelectedCourse(courseId);
+
     final variables = {
       "where": {
-        "course_id": {"_eq": courseId}
+        "course_id": {"_eq": courseId},
+        if (notificationSerachController.text.isNotEmpty)
+          "_or": [
+            {
+              "campaign_name": {
+                "_ilike": "%${notificationSerachController.text}%"
+              }
+            },
+            {
+              "email_subject": {
+                "_ilike": "%${notificationSerachController.text}%"
+              }
+            }
+          ],
+        if (selectedFilterStatus != "All")
+          "status": {"_eq": selectedFilterStatus},
+        if (selectedFilterType != "All")
+          "notification_type": {"_eq": selectedFilterType},
+        if (scheduleFromController.text != "" ||
+            scheduleToController.text != "")
+          "scheduled_at": {
+            if (scheduleFromController.text != "")
+              "_gte": formatToIso(scheduleFromController.text),
+            if (scheduleToController.text != "")
+              "_lte": formatToIso(scheduleToController.text),
+          }
       },
       "limit": _notifLimit,
       "offset": _notifOffset,
@@ -429,10 +524,24 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       Loaders.circularShowLoader(context);
     }
     notifyListeners();
+    setSelectedCourse(courseId);
 
     final variables = {
       "where": {
-        "course_id": {"_eq": courseId}
+        "course_id": {"_eq": courseId},
+        if (promoCodeController.text.isNotEmpty)
+          "_or": [
+            {
+              "promotion_name": {"_ilike": "%${promoCodeController.text}%"}
+            },
+            {
+              "promo_code": {"_ilike": "%${promoCodeController.text}%"}
+            }
+          ],
+        if (selectedPromotionStatus != "All")
+          "status": {"_eq": selectedPromotionStatus},
+        if (selectedDiscountType != "All")
+          "discount_type": {"_eq": selectedDiscountType}
       },
       "limit": _promoLimit,
       "offset": _promoOffset,
@@ -440,6 +549,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         {"created_at": "desc"}
       ]
     };
+    print("variables: $variables");
     final res = await repo.getCoursePromotions(variables);
     final newItems = res.coursePromotions ?? [];
 
@@ -489,7 +599,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getTransactionDetail(BuildContext context, String courseId) async {
+  Future<void> getTransactionDetail(
+      BuildContext context, String courseId) async {
     Loaders.circularShowLoader(context);
     print("courseId: $courseId");
     final res = await repo.getTransactionDetail(courseId);
@@ -497,5 +608,20 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularHideLoader(context);
 
     notifyListeners();
+  }
+
+  void clearNotificationFilters() {
+    scheduleFromController.clear();
+    scheduleToController.clear();
+    notificationSerachController.clear();
+    setSelectedFilterStatus("All");
+    setSelectedFilterContactType("All");
+    notifyListeners();
+  }
+
+  void clearPromotionFilters() {
+    promoCodeController.clear();
+    setSelectedPromotionStatus("All");
+    setSelectedDiscountType("All");
   }
 }
