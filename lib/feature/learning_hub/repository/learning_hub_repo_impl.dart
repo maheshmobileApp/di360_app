@@ -285,10 +285,25 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
   @override
   Future<GetTransactionsRes> getTransactions(variables) async {
-    print("variables: $variables");
-    final url =
-        "${AppConfig.serverBaseUrl}/api/v1/course-transaction/list?page=1&limit=10&view=COURSE&courseId=${variables['courseId']}";
-    final res = await http.get(url);
+    final queryParams = <String, String>{
+      'page': '1',
+      'limit': '10',
+    };
+
+    variables.forEach((key, value) {
+      if (value != null && value.toString().trim().isNotEmpty) {
+        queryParams[key] = value.toString();
+      }
+    });
+
+    final uri = Uri.parse(
+      "${AppConfig.serverBaseUrl}/api/v1/course-transaction/list",
+    ).replace(queryParameters: queryParams);
+
+    print("Transactions URL: $uri");
+
+    final res = await http.get(uri.toString());
+
     return GetTransactionsRes.fromJson(res);
   }
 

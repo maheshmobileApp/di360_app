@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -70,12 +71,22 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   String selectedPromotionStatus = "All";
   String selectedFilterType = "All";
   String selectedDiscountType = "All";
+  String selectedTransactionStatus = "All";
   String selectedCourseId = "";
   bool notificationFilter = false;
   bool promotionFilter = false;
+  bool transactionFilter = false;
 
   List<String> filterStatus = ["All", "PENDING", "SENT", "FAILED"];
   List<String> promotionStatus = ["All", "ACTIVE", "INACTIVE", "EXPIRED"];
+  List<String> transactionStatus = [
+    "All",
+    "PENDING",
+    "SUCCEEDED",
+    "FAILED",
+    "REFUNDED",
+    "FREE"
+  ];
   List<String> filterType = [
     "All",
     "STATIC",
@@ -97,8 +108,18 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  void setTransactionApplyFilter(bool value) {
+    transactionFilter = value;
+    notifyListeners();
+  }
+
   void setSelectedFilterStatus(String value) {
     selectedFilterStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedTransactionStatus(String value) {
+    selectedTransactionStatus = value;
     notifyListeners();
   }
 
@@ -126,7 +147,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final TextEditingController scheduleToController = TextEditingController();
   final TextEditingController notificationSerachController =
       TextEditingController();
+  final TextEditingController transactionSearchController =
+      TextEditingController();
   final TextEditingController promoCodeController = TextEditingController();
+  final TextEditingController dateFromController = TextEditingController();
+  final TextEditingController dateToController = TextEditingController();
 
   void setCourseStatus(String value) {
     courseStatus = value;
@@ -591,11 +616,19 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> getTransactions(BuildContext context, String courseId) async {
     Loaders.circularShowLoader(context);
-    final variables = {"courseId": courseId};
+    setSelectedCourse(courseId);
+    final variables = {
+      "view": "COURSE",
+      "courseId": courseId,
+      "search": transactionSearchController.text,
+      "status":
+          selectedTransactionStatus != "All" ? selectedTransactionStatus : '',
+      "dateFrom": DateFormatUtils.formatDateYear(dateFromController.text),
+      "dateTo": DateFormatUtils.formatDateYear(dateToController.text)
+    };
     final res = await repo.getTransactions(variables);
     getTransactionsRes = res;
     Loaders.circularHideLoader(context);
-
     notifyListeners();
   }
 
@@ -606,7 +639,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.getTransactionDetail(courseId);
     getTransactionDetailRes = res;
     Loaders.circularHideLoader(context);
-
     notifyListeners();
   }
 
@@ -623,5 +655,12 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     promoCodeController.clear();
     setSelectedPromotionStatus("All");
     setSelectedDiscountType("All");
+  }
+
+  void clearTransactionFilters() {
+    transactionSearchController.clear();
+    dateFromController.clear();
+    dateToController.clear();
+    setSelectedTransactionStatus("All");
   }
 }

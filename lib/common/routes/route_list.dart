@@ -108,4 +108,5 @@ class RouteList {
   static const String courseBookingDetails = '/courseBookingDetails';
   static const String notificationFilterView = '/notificationFilterView';
   static const String promotionFilterView = '/promotionFilterView';
+  static const String transactionFilterView = '/transactionFilterView';
 }
