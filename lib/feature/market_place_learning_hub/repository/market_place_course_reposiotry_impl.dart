@@ -192,6 +192,7 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
   Future<CourseBookingRes> courseBooking(variables) async {
     final url = '${AppConfig.serverBaseUrl}${ApiConst.courseBooking}';
     final res = await http.post(url, variables, showLoading: true);
+    if (res == null) return CourseBookingRes(message: 'Something went wrong');
     return CourseBookingRes.fromJson(res);
   }
 

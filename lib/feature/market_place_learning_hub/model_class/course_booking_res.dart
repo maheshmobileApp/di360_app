@@ -3,12 +3,16 @@ class CourseBookingRes {
   bool? requiresPayment;
   Transaction? transaction;
   String? clientSecret;
+  int? statusCode;
+  String? message;
 
   CourseBookingRes(
       {this.registered,
       this.requiresPayment,
       this.transaction,
-      this.clientSecret});
+      this.clientSecret,
+      this.statusCode,
+      this.message});
 
   CourseBookingRes.fromJson(Map<String, dynamic> json) {
     registered = json['registered'];
@@ -17,6 +21,8 @@ class CourseBookingRes {
         ? new Transaction.fromJson(json['transaction'])
         : null;
     clientSecret = json['clientSecret'];
+    statusCode = json['statusCode'];
+    message = json['message'];
   }
 
   Map<String, dynamic> toJson() {

@@ -304,8 +304,18 @@ class Routes {
       RouteList.suppliesMarketPlace: (context) => SuppliesMarketplaceView(),
       RouteList.suppliesDetailsView: (context) => SuppliesDetailsView(),
       RouteList.suppliesCartView: (context) => SuppliesCartView(),
-      RouteList.securePaymentView: (context) => SecurePaymentView(),
-      RouteList.registrationSuccessView: (context) => RegistrationSuccessView(),
+      RouteList.securePaymentView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return SecurePaymentView(
+            courseId: args['course_id'] ?? "");
+      },
+      RouteList.registrationSuccessView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return RegistrationSuccessView(
+            courseId: args['course_id'] ?? "");
+      },
       RouteList.courseBookingDetails:  (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

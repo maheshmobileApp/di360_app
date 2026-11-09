@@ -3,7 +3,7 @@ class CheckCourseRes {
   int? price;
   bool? isFree;
   bool? isExpired;
-  Null? registeredCourseId;
+  String? registeredCourseId;
   Null? autoAppliedPromo;
   bool? requiresManualPromoInput;
   Null? resumablePayment;

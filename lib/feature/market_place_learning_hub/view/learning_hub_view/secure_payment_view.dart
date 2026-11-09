@@ -9,7 +9,8 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 class SecurePaymentView extends StatelessWidget {
-  const SecurePaymentView({super.key});
+  final String? courseId;
+  const SecurePaymentView({super.key, required this.courseId});
 
   static const Color primaryColor = AppColors.primaryColor;
   static const Color textColor = Color(0xFF192235);
@@ -33,7 +34,10 @@ class SecurePaymentView extends StatelessWidget {
       await Stripe.instance.presentPaymentSheet();
 
       if (context.mounted) {
-        navigationService.navigateTo(RouteList.registrationSuccessView);
+        navigationService
+            .navigateToWithParams(RouteList.registrationSuccessView, params: {
+          'course_id': courseId,
+        });
       }
     } on StripeException catch (e) {
       if (context.mounted) {

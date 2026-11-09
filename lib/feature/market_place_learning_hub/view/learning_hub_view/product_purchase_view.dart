@@ -402,10 +402,7 @@ class _ReviewPurchaseViewState extends State<ReviewPurchaseView> {
       child: GestureDetector(
         onTap: () async {
           await vm.courseBooking(courseId, context);
-          vm.courseBookingRes?.registered == true
-              ? navigationService.navigateTo(RouteList.registrationSuccessView)
-              :
-          navigationService.navigateTo(RouteList.securePaymentView);
+          
         },
         child: SizedBox(
             height: 50,

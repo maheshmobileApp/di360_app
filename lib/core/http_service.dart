@@ -125,6 +125,11 @@ class HttpService {
       print("Upload failed with status code: ${result.statusCode}");
       return null;
     } catch (e, s) {
+      if (e is DioException && e.response != null) {
+        final data = e.response!.data;
+        if (data is Map) return Map<String, dynamic>.from(data);
+        return data;
+      }
       print("Post request error: $e, $s");
       return null;
     }

@@ -326,7 +326,22 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         "promoCode": promoCodeController.text
     };
     final res = await repo.courseBooking(variables);
+    if (res.statusCode != null && res.statusCode! >= 400) {
+      scaffoldMessenger("Unable to Register !!! \n ${res.message}");
+      Loaders.circularHideLoader(context);
+
+      return;
+    }
     courseBookingRes = res;
+    courseBookingRes?.registered == true
+        ? navigationService
+            .navigateToWithParams(RouteList.registrationSuccessView, params: {
+            "course_id": courseId,
+          })
+        : navigationService
+            .navigateToWithParams(RouteList.securePaymentView, params: {
+            "course_id": courseId,
+          });
     Loaders.circularHideLoader(context);
     notifyListeners();
   }

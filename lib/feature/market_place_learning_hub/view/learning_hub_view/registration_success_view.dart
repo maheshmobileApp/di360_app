@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationSuccessView extends StatelessWidget {
+  final String? courseId;
+
+  const RegistrationSuccessView({super.key, required this.courseId});
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<MarketPlaceLearningHubViewModel>(context);
@@ -34,8 +37,11 @@ class RegistrationSuccessView extends StatelessWidget {
                 onTap: () async {
                   await vm.getAllLearningHubData(context,
                       isCommunityLearningHub: false);
+                  await vm.getCourseDetails(
+                                  context, courseId ?? "");
+                              await vm.getProfile();
                   navigationService
-                      .pushNamedAndRemoveUntil(RouteList.dashBoard);
+                      .pushNamedAndRemoveUntil(RouteList.courseDetailScreen);
                 },
                 text: 'Done',
               ),
