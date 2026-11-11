@@ -10,8 +10,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class PromotionView extends StatelessWidget {
+class PromotionView extends StatefulWidget {
   const PromotionView({super.key});
+
+  @override
+  State<PromotionView> createState() => _PromotionViewState();
+}
+
+class _PromotionViewState extends State<PromotionView> {
+  late CourseListingViewModel _vm;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _vm = Provider.of<CourseListingViewModel>(context, listen: false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _vm.scrollController.addListener(_onScroll);
+    });
+  }
+
+  @override
+  void dispose() {
+    _vm.scrollController.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final vm = _vm;
+    if (vm.isLoadingMorePromotions || !vm.hasMorePromotions) return; // guard
+    if (vm.scrollController.position.pixels >=
+        vm.scrollController.position.maxScrollExtent - 200) {
+      vm.coursePromotions(context, vm.selectedCourseId, loadMore: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,15 +88,22 @@ class PromotionView extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           child: PromotionCard(
-                            serialNo: index + 1,
-                            promotionName: userData?.promotionName ?? '',
-                            promoCode: userData?.promoCode ?? '',
-                            discount: userData?.discountValue.toString() ?? '',
-                            validFrom: userData?.validFrom ?? '',
-                            validUntil: userData?.validUntil ?? '',
-                            status: userData?.status ?? '',
-                            courseId: userData?.id ?? '',
-                          ),
+                              serialNo: index + 1,
+                              promotionName: userData?.promotionName ?? '',
+                              promoCode: userData?.promoCode ?? '',
+                              discount:
+                                  userData?.discountValue.toStringAsFixed(0) ??
+                                      '',
+                              validFrom: userData?.validFrom ?? '',
+                              validUntil: userData?.validUntil ?? '',
+                              status: userData?.status ?? '',
+                              courseId: userData?.id ?? '',
+                              discountType: userData?.discountType ?? '',
+                              maxDiscountPrice:
+                                  userData?.maxDiscountAmount != null
+                                      ? userData?.maxDiscountAmount
+                                          .toStringAsFixed(0)
+                                      : ""),
                         );
                       },
                     ),

@@ -376,6 +376,11 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       "promoCode": promoCodeController.text,
     };
     final res = await repo.applyPromoCode(variables);
+    if (res.statusCode != null && res.statusCode! >= 400) {
+      scaffoldMessenger("${res.message}");
+      Loaders.circularHideLoader(context);
+      return;
+    }
     promoCodeRes = res;
     notifyListeners();
 
@@ -669,6 +674,12 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     if (userList.isEmpty) return null;
 
     return userList.last.status;
+  }
+
+  void removePromoCode() {
+    promoCodeRes = null;
+    promoCodeController.clear();
+    notifyListeners();
   }
 
   clearAll() {

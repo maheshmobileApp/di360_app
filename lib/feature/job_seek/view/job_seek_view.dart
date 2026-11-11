@@ -56,24 +56,27 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBarWidget(
+              isbackAction: false,
               searchWidget: false,
               filterWidget: Row(
                 children: [
                   GestureDetector(
                     onTap: () {
                       if (jobSeekViewModel.selectedTabIndex == 0) {
-                        navigationService.navigateTo(RouteList.JobSeekFilterScreen);
+                        navigationService
+                            .navigateTo(RouteList.JobSeekFilterScreen);
                       } else {
-                        navigationService.navigateTo(RouteList.TalentFliterScreen);
+                        navigationService
+                            .navigateTo(RouteList.TalentFliterScreen);
                       }
                     },
-                    child:
-                        SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+                    child: SvgPicture.asset(ImageConst.filter,
+                        color: AppColors.black),
                   ),
                   if (vm.jobSeekFilterApply == true)
-              GestureDetector(
-                  onTap: () => vm.clearSelections(context),
-                  child: Icon(Icons.close, color: AppColors.black))
+                    GestureDetector(
+                        onTap: () => vm.clearSelections(context),
+                        child: Icon(Icons.close, color: AppColors.black))
                 ],
               )),
           body: jobSeekViewModel.selectedTabIndex == 0
@@ -110,10 +113,10 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                       onTap: () async {
                         await vm.getJobDetails(jobId, context);
                         if (vm.jobDetailsById != [])
-                        navigationService.navigateToWithParams(
-                          RouteList.jobdetailsScreen,
-                          params: vm.jobDetailsById.first,
-                        );
+                          navigationService.navigateToWithParams(
+                            RouteList.jobdetailsScreen,
+                            params: vm.jobDetailsById.first,
+                          );
                       },
                       child: JobSeekCard(jobsData: jobData),
                     );

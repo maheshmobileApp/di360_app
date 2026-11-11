@@ -14,12 +14,14 @@ import 'package:provider/provider.dart';
 
 class CourseBookingDetails extends StatefulWidget {
   final String courseId;
+  final bool isSameUser;
   final String? courseStatus;
 
   const CourseBookingDetails({
     super.key,
     required this.courseId,
-    this.courseStatus,
+    required this.isSameUser,
+    required this.courseStatus,
   });
 
   @override
@@ -62,7 +64,8 @@ class _CourseBookingDetailsState extends State<CourseBookingDetails>
   Widget _tabContent(CourseListingViewModel vm) {
     switch (vm.selectedModuleType) {
       case 'Course Bookings':
-        return RegisteredUsersView(courseId: widget.courseId, courseStatus: widget.courseStatus);
+            
+        return RegisteredUsersView(courseId: widget.courseId, courseStatus: widget.courseStatus, isSameUser: widget.isSameUser,);
       case 'Notification':
         return NotificationView();
       case 'Promotion':

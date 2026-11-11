@@ -1,8 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PromotionDetailSheet extends StatelessWidget {
   final CoursePromotionsByPk? data;
@@ -28,6 +30,12 @@ class PromotionDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vm = Provider.of<CourseListingViewModel>(context);
+
+    final coursePrice = vm.courseData?.coursesByPk?.afterwardsPrice ?? 0.0;
+    final discountAmount = data?.discountType == "FLAT"? data?.discountValue: (coursePrice * (data?.discountValue ?? 0) / 100);
+    final finalPrice = coursePrice - discountAmount;
+
     return SafeArea(
       top: false,
       child: Container(
@@ -94,16 +102,16 @@ class PromotionDetailSheet extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFF3E0),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${data?.discountValue?.toStringAsFixed(0) ?? ''} % off (capped at  ${data?.maxDiscountAmount?.toStringAsFixed(0) ?? ''})",
+                      "${data?.discountValue?.toStringAsFixed(0) ?? ''} % ${data?.discountType == "FLAT" ? "flat off" : "off"} ${data?.maxDiscountAmount != null ?"(capped at ${data?.maxDiscountAmount.toStringAsFixed(0)}  )": ""}",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -130,7 +138,10 @@ class PromotionDetailSheet extends StatelessWidget {
                 ),
               ),
             ),
-            _discountCard(),
+            _discountCard(
+                coursePrice?.toStringAsFixed(0),
+                discountAmount?.toStringAsFixed(0),
+                finalPrice?.toStringAsFixed(0), data),
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
@@ -140,11 +151,17 @@ class PromotionDetailSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                            child: _detail('ELIGIBLE USERS',
-                                data?.eligibleUserType.toString() ?? '')),
+                            child: _detail(
+                                'ELIGIBLE USERS',
+                                data?.eligibleUserType ==
+                                        "DENTAL_INTERFACE_USERS"
+                                    ? "Dental Interface User"
+                                    : "")),
                         Expanded(
-                            child:
-                                _detail('VALID FROM', DateFormatUtils.formatDateTime(data?.validFrom ?? ''))),
+                            child: _detail(
+                                'VALID FROM',
+                                DateFormatUtils.formatDateToDmy(
+                                    data?.validFrom ?? ''))),
                       ],
                     ),
                     const SizedBox(height: 22),
@@ -152,8 +169,10 @@ class PromotionDetailSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                            child:
-                                _detail('VALID UNTIL', DateFormatUtils.formatDateTime(data?.validUntil ?? ''))),
+                            child: _detail(
+                                'VALID UNTIL',
+                                DateFormatUtils.formatDateToDmy(
+                                    data?.validUntil ?? ''))),
                         Expanded(
                           child: _detail(
                               'USAGE LIMIT',
@@ -185,8 +204,10 @@ class PromotionDetailSheet extends StatelessWidget {
                             child: _detail(
                                 'CREATED BY', data?.createdByRole ?? '')),
                         Expanded(
-                            child:
-                                _detail('CREATED AT', DateFormatUtils.formatDateTime(data?.createdAt ?? ''))),
+                            child: _detail(
+                                'CREATED AT',
+                                DateFormatUtils.formatDateTime(
+                                    data?.createdAt ?? ''))),
                       ],
                     ),
                     const SizedBox(height: 22),
@@ -194,8 +215,10 @@ class PromotionDetailSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                            child:
-                                _detail('LAST UPDATED', DateFormatUtils.formatDateTime(data?.updatedAt ?? ''))),
+                            child: _detail(
+                                'LAST UPDATED',
+                                DateFormatUtils.formatDateTime(
+                                    data?.updatedAt ?? ''))),
                         const Expanded(child: SizedBox()),
                       ],
                     ),
@@ -209,14 +232,15 @@ class PromotionDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _discountCard() {
+  Widget _discountCard(
+      String coursePrice, String discountAmount, String finalPrice, CoursePromotionsByPk? data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: const Color(0xFFFFF3E0),
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
           children: [
@@ -225,19 +249,29 @@ class PromotionDetailSheet extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    _detail("ORIGINAL PRICE", "₹ 41"),
+                    _detail("ORIGINAL PRICE", "₹ $coursePrice", cross: true),
                     SizedBox(width: 10),
-                    _detail("DISCOUNT", "- ₹ 4.1 (10%)"),
+                    _detail("DISCOUNT", data?.discountType == "FLAT" ? "- ₹ ${data?.discountValue?.toStringAsFixed(0) ?? '' } ":
+                        "-₹ $discountAmount (${data?.discountValue?.toStringAsFixed(0) ?? ''} %)",
+                        red: true),
                   ],
                 ),
-                _detail("FINAL PRICE", "₹ 36.9"),
+                _detail("FINAL PRICE", "₹ $finalPrice"),
               ],
+            ),
+            SizedBox(
+              height: 2,
             ),
             Divider(
               height: 1,
               color: const Color(0xFFEDF0F5),
             ),
-            Text("User saved 10% (4.1) on this course", style: TextStyles.medium2(color: AppColors.greenColor)),
+            SizedBox(
+              height: 2,
+            ),
+            Text(
+                "User saves ${data?.discountValue?.toStringAsFixed(0) ?? ''} % (₹${discountAmount})  on this course",
+                style: TextStyles.medium2(color: AppColors.greenColor)),
           ],
         ),
       ),
@@ -245,14 +279,14 @@ class PromotionDetailSheet extends StatelessWidget {
   }
 
   Widget _detail(String title, String value,
-      {bool isBadge = false, bool isActive = false}) {
+      {bool isBadge = false, bool isActive = false, bool red = false, bool cross = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
           style: const TextStyle(
-            fontSize: 11,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: Color(0xFF929BAD),
           ),
@@ -269,7 +303,8 @@ class PromotionDetailSheet extends StatelessWidget {
             child: Text(
               value,
               style: TextStyle(
-                fontSize: 12,
+                decoration:cross? TextDecoration.lineThrough : null,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: isActive
                     ? const Color(0xFF0BA75D)
@@ -280,10 +315,11 @@ class PromotionDetailSheet extends StatelessWidget {
         else
           Text(
             value.isEmpty ? '-' : value,
-            style: const TextStyle(
-              fontSize: 13,
+            style: TextStyle(
+              decoration:cross? TextDecoration.lineThrough : null,
+              fontSize: 14,
               height: 1.5,
-              color: Color(0xFF35435C),
+              color: red ? AppColors.redColor : AppColors.black,
             ),
           ),
       ],

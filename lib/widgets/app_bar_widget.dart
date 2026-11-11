@@ -18,6 +18,8 @@ class AppBarWidget extends StatelessWidget
   final bool logo;
   final Function()? searchAction;
   final bool searchBarOpen;
+  final Function()? backAction;
+  final bool isbackAction;
   const AppBarWidget(
       {super.key,
       this.filterWidget,
@@ -25,12 +27,19 @@ class AppBarWidget extends StatelessWidget
       this.searchAction,
       this.searchWidget = true,
       this.logo = true,
-      this.searchBarOpen = false});
+      this.searchBarOpen = false,
+      this.backAction,
+      this.isbackAction = true});
 
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
     return AppBar(
+      leading: isbackAction
+          ? GestureDetector(
+              onTap: backAction ?? () => navigationService.goBack(),
+              child: const Icon(Icons.arrow_back_ios, color: AppColors.black))
+          : null,
       elevation: 3,
       shadowColor: AppColors.black.withOpacity(0.2),
       backgroundColor: AppColors.whiteColor,
@@ -39,12 +48,15 @@ class AppBarWidget extends StatelessWidget
         clipBehavior: Clip.none,
         children: [
           Text(title ?? 'Dental Interface',
-              style: logo ?TextStyles.bold4(color: AppColors.black): TextStyles.bold3(color: AppColors.black)),
+              style: logo
+                  ? TextStyles.bold4(color: AppColors.black)
+                  : TextStyles.bold3(color: AppColors.black)),
           if (logo)
-          Positioned(
-              top: -9,
-              right: -18,
-              child: SvgPicture.asset(ImageConst.logo, height: 20, width: 20)),
+            Positioned(
+                top: -9,
+                right: -18,
+                child:
+                    SvgPicture.asset(ImageConst.logo, height: 20, width: 20)),
         ],
       ),
       actions: [
@@ -80,7 +92,7 @@ class AppBarWidget extends StatelessWidget
                 onTap: searchAction,
                 child: searchBarOpen
                     ? Icon(Icons.search_off, color: AppColors.black)
-                    :  Icon(Icons.search, color: AppColors.black))
+                    : Icon(Icons.search, color: AppColors.black))
             : SizedBox.shrink(),
         addHorizontal(15),
         if (filterWidget != null) filterWidget!,

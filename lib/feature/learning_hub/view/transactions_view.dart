@@ -10,22 +10,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class TransactionsView extends StatelessWidget {
+class TransactionsView extends StatefulWidget {
   const TransactionsView({super.key});
 
+  @override
+  State<TransactionsView> createState() => _TransactionsViewState();
+}
+
+class _TransactionsViewState extends State<TransactionsView> {
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<CourseListingViewModel>(context);
 
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: AppColors.primaryColor,
-          onPressed: () async {
-            scaffoldMessenger(
-                "Stay connected with your learners! Visit our Web Platform to send emails and keep everyone in the loop.");
-          },
-          child: SvgPicture.asset(ImageConst.addFeed),
-        ),
+        
         body: Column(children: [
           _filterWidget(vm, context),
           Expanded(

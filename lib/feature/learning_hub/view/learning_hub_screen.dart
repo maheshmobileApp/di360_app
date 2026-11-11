@@ -1,8 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
@@ -221,9 +223,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
                     navigationService.navigateTo(RouteList.courseDetailScreen);
                   },
                   onTapRegistered: () async {
+                    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
                     navigationService
                         .navigateToWithParams(RouteList.courseBookingDetails,
-                          params: {"course_id": course.id ?? "", "course_status": course.status ?? ""});
+                          params: {"course_id": course.id ?? "", "course_status": course.status ?? "", "is_same_user": userId == course.createdById });
                     /*await courseListingVM.getCourseRegisteredUsers(
                         context, course.id ?? "");
                     final count = course

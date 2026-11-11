@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/notification_campaign_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -10,8 +11,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class NotificationView extends StatelessWidget {
+class NotificationView extends StatefulWidget {
   const NotificationView({super.key});
+
+  @override
+  State<NotificationView> createState() => _NotificationViewState();
+}
+
+class _NotificationViewState extends State<NotificationView> {
+  late CourseListingViewModel _vm;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _vm = Provider.of<CourseListingViewModel>(context, listen: false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _vm.scrollController.addListener(_onScroll);
+    });
+  }
+
+  @override
+  void dispose() {
+    _vm.scrollController.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final vm = _vm;
+    if (vm.isLoadingMoreNotifications || !vm.hasMoreNotifications) return; // guard
+    if (vm.scrollController.position.pixels >=
+        vm.scrollController.position.maxScrollExtent - 200) {
+      vm.notificationCampaigns(context, vm.selectedCourseId, loadMore: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +79,7 @@ class NotificationView extends StatelessWidget {
                     ),
                   )
                 : ListView.builder(
+                    controller: vm.scrollController,
                     padding: const EdgeInsets.only(bottom: 80),
                     itemCount: vm.notificationCampaignData
                             ?.courseNotificationCampaigns?.length ??

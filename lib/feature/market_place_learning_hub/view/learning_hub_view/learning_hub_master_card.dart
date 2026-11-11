@@ -413,6 +413,7 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
                   ? SoldOutButton()
                   : RegisterButton(
                       courseStatus: widget.courseStatus ?? "",
+                      type : widget.type ?? "",
                       text: widget.isRegistered &&
                               widget.courseStatus != "EXPIRED"
                           ? (widget.type == "Online Academy")

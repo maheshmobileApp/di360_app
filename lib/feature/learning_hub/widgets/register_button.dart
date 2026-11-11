@@ -6,6 +6,7 @@ class RegisterButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isRegistered;
   final String courseStatus;
+  final String type;
 
   const RegisterButton({
     super.key,
@@ -13,6 +14,7 @@ class RegisterButton extends StatelessWidget {
     required this.onTap,
     required this.isRegistered,
     required this.courseStatus,
+    required this.type,
   });
 
   @override
@@ -25,7 +27,7 @@ class RegisterButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
             color: isRegistered
-                ? courseStatus == "PENDING"
+                ? (courseStatus == "PENDING" && type == "Online Academy")
                     ? AppColors.redColor
                     : AppColors.primaryColor
                 : AppColors.black,
@@ -44,8 +46,8 @@ class RegisterButton extends StatelessWidget {
             Container(
               width: 28,
               height: 28,
-              decoration:  BoxDecoration(
-                color: courseStatus == "PENDING"
+              decoration: BoxDecoration(
+                color: courseStatus == "PENDING" && type == "Online Academy"
                     ? AppColors.black
                     : AppColors.primaryColor,
                 shape: BoxShape.circle,

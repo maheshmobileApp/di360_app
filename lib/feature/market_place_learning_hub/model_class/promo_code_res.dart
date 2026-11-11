@@ -4,13 +4,17 @@ class PromoCodeRes {
   int? originalPrice;
   int? discountAmount;
   int? finalPrice;
+  int? statusCode;
+  String? message;
 
   PromoCodeRes(
       {this.promoId,
       this.promoCode,
       this.originalPrice,
       this.discountAmount,
-      this.finalPrice});
+      this.finalPrice,
+      this.statusCode,
+      this.message,});
 
   PromoCodeRes.fromJson(Map<String, dynamic> json) {
     promoId = json['promoId'];
@@ -18,6 +22,8 @@ class PromoCodeRes {
     originalPrice = json['originalPrice'];
     discountAmount = json['discountAmount'];
     finalPrice = json['finalPrice'];
+    statusCode = json['statusCode'];
+    message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
@@ -27,6 +33,8 @@ class PromoCodeRes {
     data['originalPrice'] = this.originalPrice;
     data['discountAmount'] = this.discountAmount;
     data['finalPrice'] = this.finalPrice;
+    data['statusCode'] = this.statusCode;
+    data['message'] = this.message;
     return data;
   }
 }

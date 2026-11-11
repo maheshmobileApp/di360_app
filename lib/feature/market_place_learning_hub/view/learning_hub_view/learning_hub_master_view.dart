@@ -35,7 +35,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
         Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false)
-            .getAllLearningHubData(context, loadMore: true);      }
+            .getAllLearningHubData(context, loadMore: true);
+      }
     });
   }
 
@@ -52,6 +53,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 249, 248, 248),
       appBar: AppBarWidget(
+          backAction: () {
+            navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+          },
           searchAction: () =>
               courseListingVM.setSearchBar(!courseListingVM.searchBarOpen),
           filterWidget: Row(
@@ -177,7 +181,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                     "")
                                 : "",
                             expiryDateCount: remainingDays,
-                            courseStatus: courseListingVM.getCourseStatus(course.courseRegisteredUsers??[]),
+                            courseStatus: courseListingVM.getCourseStatus(
+                                course.courseRegisteredUsers ?? []),
                             onTap: () async {
                               await courseListingVM.getCourseDetails(
                                   context, course.id ?? "");
@@ -194,8 +199,12 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                   context, course.id ?? "");
                               await courseListingVM.getProfile();
                               if (isRegistered &&
-                                  courseListingVM.getCourseStatus(course.courseRegisteredUsers??[]) !=
-                                      "EXPIRED" && courseListingVM.getCourseStatus(course.courseRegisteredUsers??[]) != "PENDING" &&
+                                  courseListingVM.getCourseStatus(
+                                          course.courseRegisteredUsers ?? []) !=
+                                      "EXPIRED" &&
+                                  courseListingVM.getCourseStatus(
+                                          course.courseRegisteredUsers ?? []) !=
+                                      "PENDING" &&
                                   course.type == "Online Academy") {
                                 navigationService.push(CourseDetailsView());
                               } else {

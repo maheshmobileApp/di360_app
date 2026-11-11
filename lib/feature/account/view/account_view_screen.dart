@@ -92,7 +92,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBarWidget(searchWidget: false),
+        appBar: AppBarWidget(isbackAction: false,searchWidget: false),
         body: Consumer<ProfileViewModel>(
           builder: (context, vm, _) {
             if (vm.error != null) {

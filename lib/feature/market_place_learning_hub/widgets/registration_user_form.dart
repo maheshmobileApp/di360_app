@@ -136,6 +136,7 @@ class RegistrationUserForm {
                                 if (formKey.currentState!.validate()) {
                                   formKey.currentState!.save();
                                   await courseVM.checkCourse(courseId, context);
+                                  courseVM.removePromoCode();
                                   print(
                                       "***************${courseVM.checkCourseRes?.price?.toStringAsFixed(2)}");
                                   navigationService.navigateToWithParams(
@@ -153,8 +154,8 @@ class RegistrationUserForm {
                                         "course_type": courseType,
                                         "course_id": courseId,
                                         "course_price": courseVM
-                                            .checkCourseRes?.price?.toDouble(),
-                                            
+                                            .checkCourseRes?.price
+                                            ?.toDouble(),
                                         "discount": 0.0,
                                       });
                                   /*showReviewPurchaseDialog(

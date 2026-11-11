@@ -286,8 +286,8 @@ class LearningHubRepoImpl extends LearningHubRepository {
   @override
   Future<GetTransactionsRes> getTransactions(variables) async {
     final queryParams = <String, String>{
-      'page': '1',
-      'limit': '10',
+      'page': variables["page"],
+      'limit': variables["limit"],
     };
 
     variables.forEach((key, value) {

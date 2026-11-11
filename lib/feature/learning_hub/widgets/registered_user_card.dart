@@ -19,6 +19,7 @@ class RegisteredUserCard extends StatelessWidget {
   final String paymentStatus;
   final String activeStatus;
   final bool isCourseActive;
+  final bool isSameUser;
   final Function(String action, String id)? onMenuAction;
 
   const RegisteredUserCard(
@@ -36,6 +37,7 @@ class RegisteredUserCard extends StatelessWidget {
       required this.activeStatus,
       this.onMenuAction,
       required this.id,
+      required this.isSameUser,
       required this.isCourseActive});
 
   @override
@@ -186,15 +188,16 @@ class RegisteredUserCard extends StatelessWidget {
           (courseStatus != "EXPIRED" &&
                   status != "EXPIRED" &&
                   status != 'CANCELLED' &&
-                  quizStatus != 'COMPLETED')
-              ? _menuWidget(context)
+                  quizStatus != 'COMPLETED' &&
+                  isSameUser)
+              ? _menuWidget(context, status)
               : SizedBox.shrink(),
         ],
       ),
     );
   }
 
-  Widget _menuWidget(BuildContext context) {
+  Widget _menuWidget(BuildContext context, String status) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
@@ -209,8 +212,17 @@ class RegisteredUserCard extends StatelessWidget {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        _popupItem("Approve", Icons.check_circle, AppColors.greenColor),
-        _popupItem("Cancel", Icons.cancel, AppColors.redColor),
+        if (status == "PENDING")
+          _popupItem("Approve", Icons.check_circle, AppColors.greenColor),
+        if (status == "PENDING")
+          _popupItem("Cancel", Icons.cancel, AppColors.redColor),
+        /*if (status == "APPROVED" || status == "COMPLETED")
+          _popupItem("Preview Certificate", Icons.preview_outlined,
+              AppColors.primaryColor),*/
+        if ((courseStatus == "EXPIRED" || quizStatus == 'COMPLETED') &&
+            (status == "APPROVED" || status == "COMPLETED"))
+          _popupItem("Issue Certificate", Icons.check_circle,
+              AppColors.greenColor),
       ],
     );
   }

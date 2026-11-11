@@ -9,11 +9,13 @@ import 'package:provider/provider.dart';
 class RegisteredUsersView extends StatefulWidget {
   final String courseId;
   final String? courseStatus;
+  final bool isSameUser;
 
   const RegisteredUsersView({
     super.key,
     required this.courseId,
     required this.courseStatus,
+    required this.isSameUser,
   });
 
   @override
@@ -63,6 +65,7 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         child: RegisteredUserCard(
+                            isSameUser: widget.isSameUser,
                             id: userData?.id ?? "",
                             userPhone: userData?.phoneNumber.toString() ?? "",
                             userName:
@@ -90,6 +93,15 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                                       context,
                                       id,
                                       "CANCELLED",
+                                      userData?.courseId ?? "");
+                                  break;
+                                case "Preview Certificate":
+                                  break;
+                                case "Issue Certificate":
+                                  courseListingVM.updateRegUserStatus(
+                                      context,
+                                      id,
+                                      "COMPLETED",
                                       userData?.courseId ?? "");
                                   break;
                               }

@@ -257,7 +257,11 @@ class Routes {
       RouteList.registeredUsersView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return RegisteredUsersView(courseId: args['course_id'], courseStatus: args['course_status']);
+        return RegisteredUsersView(
+          courseId: args['course_id'],
+          courseStatus: args['course_status'],
+          isSameUser: args['is_same_user'],
+        );
       },
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
       RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),
@@ -307,20 +311,21 @@ class Routes {
       RouteList.securePaymentView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return SecurePaymentView(
-            courseId: args['course_id'] ?? "");
+        return SecurePaymentView(courseId: args['course_id'] ?? "");
       },
       RouteList.registrationSuccessView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return RegistrationSuccessView(
-            courseId: args['course_id'] ?? "");
+        return RegistrationSuccessView(courseId: args['course_id'] ?? "");
       },
-      RouteList.courseBookingDetails:  (context) {
+      RouteList.courseBookingDetails: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return CourseBookingDetails(
-            courseId: args['course_id'] ?? "");
+          courseId: args['course_id'] ?? "",
+          courseStatus: args['course_status'],
+          isSameUser: args['is_same_user'],
+        );
       },
       RouteList.orderRequestReviewView: (context) {
         final args =
@@ -337,8 +342,8 @@ class Routes {
           mobile: args['mobile'],
           email: args['email'],
           courseName: args['course_name'],
-          courseType : args['course_type'],
-          courseId : args['course_id'],
+          courseType: args['course_type'],
+          courseId: args['course_id'],
           coursePrice: args['course_price'],
           discount: args['discount'],
         );

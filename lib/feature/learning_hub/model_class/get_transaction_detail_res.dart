@@ -1,12 +1,12 @@
 class GetTransactionDetailRes {
   String? id;
   String? courseId;
-  int? coursePrice;
+  dynamic? coursePrice;
   String? dentalSupplierId;
-  int? totalAmount;
-  int? adminCommission;
-  int? supplierAmount;
-  int? discountAmount;
+  dynamic? totalAmount;
+  dynamic? adminCommission;
+  dynamic? supplierAmount;
+  dynamic? discountAmount;
   String? currency;
   String? transactionStatus;
   String? stripePaymentIntentId;

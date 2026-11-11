@@ -16,6 +16,8 @@ class PromotionCard extends StatelessWidget {
   final VoidCallback? onMenuTap;
   final String courseId;
   final CoursePromotions? promotionData;
+  final String discountType;
+  final String maxDiscountPrice;
 
   const PromotionCard({
     super.key,
@@ -29,6 +31,8 @@ class PromotionCard extends StatelessWidget {
     required this.courseId,
     this.onMenuTap,
     this.promotionData,
+    required this.discountType,
+    required this.maxDiscountPrice,
   });
 
   @override
@@ -109,7 +113,11 @@ class PromotionCard extends StatelessWidget {
                   if (value == 'preview') {
                     await vm.coursePromotionDetails(context, courseId);
                     final data = vm.promotionDetailData?.coursePromotionsByPk;
-                    PromotionDetailSheet.show(context, data: data);
+
+                    PromotionDetailSheet.show(
+                      context,
+                      data: data,
+                    );
                   }
                 },
                 itemBuilder: (BuildContext context) => [
@@ -137,15 +145,13 @@ class PromotionCard extends StatelessWidget {
               Expanded(
                 child: _buildDetail(
                   'Discount',
-                  discount,
-                  Icons.percent,
+                  "${discountType == 'FLAT' ? '₹' : ''} $discount ${discountType == 'FLAT' ? '' : '%'} ${maxDiscountPrice != "" ? '( max ₹$maxDiscountPrice )' : ''} ",
                 ),
               ),
               Expanded(
                 child: _buildDetail(
                   'Status',
                   status,
-                  Icons.circle,
                   valueColor: isActive
                       ? const Color(0xFF0BA76B)
                       : const Color(0xFFFF9800),
@@ -167,14 +173,12 @@ class PromotionCard extends StatelessWidget {
                 child: _buildDetail(
                   'Valid From',
                   DateFormatUtils.formatDateOnly(validFrom),
-                  Icons.calendar_today_outlined,
                 ),
               ),
               Expanded(
                 child: _buildDetail(
                   'Valid Until',
                   DateFormatUtils.formatDateOnly(validUntil),
-                  Icons.event_outlined,
                 ),
               ),
             ],
@@ -186,8 +190,7 @@ class PromotionCard extends StatelessWidget {
 
   Widget _buildDetail(
     String title,
-    String value,
-    IconData icon, {
+    String value, {
     Color? valueColor,
     Color? backgroundColor,
     bool isBadge = false,
@@ -197,12 +200,6 @@ class PromotionCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              size: 14,
-              color: const Color(0xFF929AAA),
-            ),
-            const SizedBox(width: 5),
             Text(
               title,
               style: const TextStyle(

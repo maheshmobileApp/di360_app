@@ -55,6 +55,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   GetTransactionsRes? getTransactionsRes;
   GetTransactionDetailRes? getTransactionDetailRes;
 
+  final ScrollController scrollController = ScrollController();
+
   // Notification pagination
   final int _notifLimit = 10;
   int _notifOffset = 0;
@@ -63,9 +65,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   // Promotion pagination
   final int _promoLimit = 10;
+  final int _transLimit = 10;
   int _promoOffset = 0;
   bool hasMorePromotions = true;
   bool isLoadingMorePromotions = false;
+  int _transOffset = 1;
+  bool hasMoreTransactions = true;
+  bool isLoadingMoreTransactions = false;
+  
 
   String selectedFilterStatus = "All";
   String selectedPromotionStatus = "All";
@@ -614,10 +621,20 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getTransactions(BuildContext context, String courseId) async {
-    Loaders.circularShowLoader(context);
+  Future<void> getTransactions(BuildContext context, String courseId, {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreTransactions || !hasMoreTransactions) return;
+      isLoadingMoreTransactions = true;
+    } else {
+      _transOffset = 1;
+      hasMoreTransactions = true;
+      getTransactionsRes = null;
+      Loaders.circularShowLoader(context);
+    }
     setSelectedCourse(courseId);
     final variables = {
+      "page": _transOffset.toString(),
+      "limit": _transLimit.toString(),
       "view": "COURSE",
       "courseId": courseId,
       "search": transactionSearchController.text,
@@ -627,8 +644,18 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       "dateTo": DateFormatUtils.formatDateYear(dateToController.text)
     };
     final res = await repo.getTransactions(variables);
+     final newItems = res.data ?? [];
     getTransactionsRes = res;
-    Loaders.circularHideLoader(context);
+    if (loadMore) {
+      getTransactionsRes?.data?.addAll(newItems);
+      isLoadingMoreTransactions = false;
+    } else {
+      getTransactionsRes = res;
+      Loaders.circularHideLoader(context);
+    }
+
+    hasMoreTransactions = newItems.length >= _transLimit;
+    _transOffset += newItems.length;
     notifyListeners();
   }
 

@@ -1,5 +1,3 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/widgets/promo_code_field.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -47,8 +45,8 @@ class ReviewPurchaseView extends StatefulWidget {
 class _ReviewPurchaseViewState extends State<ReviewPurchaseView> {
   double get totalAmount => widget.coursePrice - widget.discount;
 
-  String formatPrice(double value) {
-    return value == 0 ? "Free" : "A\$${value.toStringAsFixed(2)}";
+  String formatPrice(double value,MarketPlaceLearningHubViewModel vm) {
+    return value == 0 ? "Free" : vm.promoCodeRes?.promoId != null? "A\$${vm.promoCodeRes?.finalPrice?.toStringAsFixed(2)}": "A\$${value.toStringAsFixed(2)}";
   }
 
   @override
@@ -305,13 +303,27 @@ class _ReviewPurchaseViewState extends State<ReviewPurchaseView> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    formatPrice(totalAmount),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: ReviewPurchaseView.textColor,
-                    ),
+                  Column(
+                    children: [
+                      if (vm.promoCodeRes?.promoId != null)
+                      Text(
+                        "A\$${totalAmount.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: ReviewPurchaseView.greyColor,
+                        ),
+                      ),
+                      Text(
+                        formatPrice(totalAmount, vm),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: ReviewPurchaseView.textColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -337,7 +349,7 @@ class _ReviewPurchaseViewState extends State<ReviewPurchaseView> {
                   ),
                   const SizedBox(height: 16),
                   _priceRow(
-                    "Discount",
+                    "Discount",vm.promoCodeRes?.promoId != null? "- A\$${vm.promoCodeRes?.discountAmount?.toStringAsFixed(2)}":
                     "- A\$${widget.discount.toStringAsFixed(2)}",
                     valueColor: const Color(0xFF15956C),
                   ),
@@ -348,7 +360,7 @@ class _ReviewPurchaseViewState extends State<ReviewPurchaseView> {
                   const SizedBox(height: 10),
                   _priceRow(
                     "Total Amount",
-                    formatPrice(totalAmount),
+                    formatPrice(totalAmount, vm),
                     isTotal: true,
                   ),
                 ],
@@ -407,7 +419,7 @@ class _ReviewPurchaseViewState extends State<ReviewPurchaseView> {
         child: SizedBox(
             height: 50,
             child: AppButton(
-              text: formatPrice(totalAmount) == "Free"
+              text: formatPrice(totalAmount, vm) == "Free"
                   ? "Complete Registration"
                   : "Buy now",
             )),
