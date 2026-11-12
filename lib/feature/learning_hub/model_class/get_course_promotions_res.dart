@@ -58,7 +58,7 @@ class CoursePromotions {
   dynamic? discountValue;
   dynamic? maxDiscountAmount;
   String? eligibleUserType;
-  Null? usageLimit;
+  dynamic? usageLimit;
   dynamic? usedCount;
   String? validFrom;
   String? validUntil;

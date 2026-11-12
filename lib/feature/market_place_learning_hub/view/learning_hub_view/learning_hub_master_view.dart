@@ -171,6 +171,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             description: course.description ?? '',
                             date: course.startDate ?? "",
                             isRegistered: isRegistered,
+                           
                             cpdHours: (course.cpdPoints ?? 0) % 1 == 0
                                 ? (course.cpdPoints ?? 0).toInt().toString()
                                 : (course.cpdPoints ?? 0).toString(),

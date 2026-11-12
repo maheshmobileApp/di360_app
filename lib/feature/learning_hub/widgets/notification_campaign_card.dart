@@ -67,7 +67,8 @@ class NotificationCampaignCard extends StatelessWidget {
                   if (value == 'preview') {
                     await vm.notificationCampaignDetails(
                         context, notificationData?.id ?? '');
-                        final data = vm.notificationCampaignDetailData?.courseNotificationCampaignsByPk;
+                    final data = vm.notificationCampaignDetailData
+                        ?.courseNotificationCampaignsByPk;
                     CampaignDetailsBottomSheet.show(
                       context,
                       campaignName: data?.campaignName ?? '',
@@ -77,8 +78,8 @@ class NotificationCampaignCard extends StatelessWidget {
                       sendMode: data?.sendMode ?? '',
                       scheduledAt: data?.scheduledAt ?? '',
                       status: data?.status ?? '',
-                      createdAt: DateFormatUtils.formatDateTime(
-                          data?.createdAt ?? ''),
+                      createdAt:
+                          DateFormatUtils.formatDateTime(data?.createdAt ?? ''),
                       subject: data?.emailSubject ?? '',
                       body: data?.messageBody ?? "",
                     );
@@ -102,8 +103,10 @@ class NotificationCampaignCard extends StatelessWidget {
                 child: _detail(
                   'TYPE',
                   notificationData?.notificationType ?? '',
-                  color: AppColors.primaryColor.withOpacity(0.1),
-                  textColor: AppColors.primaryColor,
+                  color: _getColor(notificationData?.notificationType ?? '')
+                      .withOpacity(0.1),
+                  textColor:
+                      _getColor(notificationData?.notificationType ?? ''),
                 ),
               ),
               Expanded(
@@ -129,14 +132,30 @@ class NotificationCampaignCard extends StatelessWidget {
               ),
               Expanded(
                 child: _detail('STATUS', notificationData?.status ?? '',
-                    color: AppColors.greenColor.withOpacity(0.1),
-                    textColor: AppColors.greenColor),
+                    color: _getColor(notificationData?.status ?? '')
+                        .withOpacity(0.1),
+                    textColor: _getColor(notificationData?.status ?? '')),
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  Color _getColor(String? status) {
+    switch (status) {
+      case 'DYNAMIC':
+        return AppColors.primaryColor;
+      case 'STATIC':
+        return AppColors.blueColor;
+      case 'PENDING':
+        return AppColors.primaryColor;
+      case 'SENT':
+        return AppColors.greenColor;
+      default:
+        return AppColors.primaryColor;
+    }
   }
 
   Widget _detail(

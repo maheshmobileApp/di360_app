@@ -1,7 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_transactions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/campaign_detail_sheet.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/transaction_detail_sheet.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
@@ -100,8 +99,8 @@ class TransactionCard extends StatelessWidget {
               Expanded(
                 child: _detail(
                     'Status', transactionData?.transactionStatus ?? '',
-                    color: AppColors.greenColor.withOpacity(0.1),
-                    textColor: AppColors.greenColor),
+                    color: _getColor(transactionData?.transactionStatus ?? '').withOpacity(0.1),
+                    textColor: _getColor(transactionData?.transactionStatus ?? '')),
               ),
               Expanded(
                   child: _detail(
@@ -116,6 +115,19 @@ class TransactionCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _getColor(String? status) {
+    switch (status) {
+      case 'SUCCEEDED':
+        return AppColors.greenColor;
+      case 'CANCELLED':
+        return AppColors.redColor;
+      case 'FREE':
+        return AppColors.blueColor;
+      default:
+        return AppColors.primaryColor;
+    }
   }
 
   Widget _detail(

@@ -4,7 +4,9 @@ class GetRegisterUserTabCountRes {
   GetRegisterUserTabCountRes({this.data});
 
   GetRegisterUserTabCountRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new RegisterUserTabCountData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new RegisterUserTabCountData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -22,8 +24,10 @@ class RegisterUserTabCountData {
   All? approved;
   All? cancelled;
   All? completed;
+  All? expired;
 
-  RegisterUserTabCountData({this.all, this.pending, this.approved, this.cancelled, this.completed});
+  RegisterUserTabCountData(
+      {this.all, this.pending, this.approved, this.cancelled, this.completed, this.expired});
 
   RegisterUserTabCountData.fromJson(Map<String, dynamic> json) {
     all = json['all'] != null ? new All.fromJson(json['all']) : null;
@@ -35,6 +39,8 @@ class RegisterUserTabCountData {
         json['cancelled'] != null ? new All.fromJson(json['cancelled']) : null;
     completed =
         json['completed'] != null ? new All.fromJson(json['completed']) : null;
+    expired =
+        json['expired'] != null ? new All.fromJson(json['expired']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -53,6 +59,9 @@ class RegisterUserTabCountData {
     }
     if (this.completed != null) {
       data['completed'] = this.completed!.toJson();
+    }
+    if (this.expired != null) {
+      data['expired'] = this.expired!.toJson();
     }
     return data;
   }

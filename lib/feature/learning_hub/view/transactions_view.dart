@@ -1,13 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/transaction_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsView extends StatefulWidget {
@@ -23,37 +20,36 @@ class _TransactionsViewState extends State<TransactionsView> {
     final vm = Provider.of<CourseListingViewModel>(context);
 
     return Scaffold(
-        
         body: Column(children: [
-          _filterWidget(vm, context),
-          Expanded(
-              child: vm.getTransactionsRes?.data?.isEmpty ?? true
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "No Transactions found",
-                            style: TextStyles.medium2(color: AppColors.black),
-                          ),
-                        ],
+        _filterWidget(vm, context),
+      Expanded(
+          child: vm.getTransactionsRes?.data?.isEmpty ?? true
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "No Transactions found",
+                        style: TextStyles.medium2(color: AppColors.black),
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: vm.getTransactionsRes?.data?.length,
-                      itemBuilder: (context, index) {
-                        final transactionsdata =
-                            vm.getTransactionsRes?.data?[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          child: TransactionCard(
-                            transactionData: transactionsdata,
-                          ),
-                        );
-                      },
-                    ))
-        ]));
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: vm.getTransactionsRes?.data?.length,
+                  itemBuilder: (context, index) {
+                    final transactionsdata =
+                        vm.getTransactionsRes?.data?[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      child: TransactionCard(
+                        transactionData: transactionsdata,
+                      ),
+                    );
+                  },
+                ))
+    ]));
   }
 
   Widget _filterWidget(CourseListingViewModel vm, BuildContext context) {

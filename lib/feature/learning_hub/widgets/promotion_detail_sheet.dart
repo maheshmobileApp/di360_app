@@ -155,8 +155,8 @@ class PromotionDetailSheet extends StatelessWidget {
                                 'ELIGIBLE USERS',
                                 data?.eligibleUserType ==
                                         "DENTAL_INTERFACE_USERS"
-                                    ? "Dental Interface User"
-                                    : "")),
+                                    ? "Dental Interface Users"
+                                    :  data?.eligibleUserType == "ALL_USERS" ? "All Users" : data?.eligibleUserType == "GUEST_USERS" ? "Guest Users":"")),
                         Expanded(
                             child: _detail(
                                 'VALID FROM',

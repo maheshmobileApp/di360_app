@@ -72,7 +72,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   int _transOffset = 1;
   bool hasMoreTransactions = true;
   bool isLoadingMoreTransactions = false;
-  
 
   String selectedFilterStatus = "All";
   String selectedPromotionStatus = "All";
@@ -174,8 +173,10 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       clearNotificationFilters();
       await notificationCampaigns(context, courseId);
     } else if (value == 'Promotion') {
+      clearPromotionFilters();
       await coursePromotions(context, courseId);
     } else if (value == 'Transaction') {
+      clearTransactionFilters();
       await getTransactions(context, courseId);
     }
 
@@ -212,7 +213,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     'Pending',
     'Approved',
     'Completed',
-    'Cancelled'
+    'Cancelled',
+    'Expired'
   ];
 
   final List<String> moduleTypes = [
@@ -239,6 +241,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       listingRegUsersStatus = 'COMPLETED';
     } else if (status == 'Cancelled') {
       listingRegUsersStatus = 'CANCELLED';
+    } else if (status == 'Expired') {
+      listingRegUsersStatus = 'EXPIRED';
     }
     //
     getCourseRegisteredUsers(context, courseId);
@@ -291,6 +295,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   int? approvedRegUsersCount = 0;
   int? completedRegUsersCount = 0;
   int? cancelledRegUsersCount = 0;
+  int? expiredRegUsersCount = 0;
 
   Map<String, int?> get statusCountMap => {
         'All': allJobTalentCount,
@@ -308,6 +313,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Approved': approvedRegUsersCount,
         'Completed': completedRegUsersCount,
         'Cancelled': cancelledRegUsersCount,
+        'Expired': expiredRegUsersCount
       };
 
   Future<void> getCoursesListingData(BuildContext context,
@@ -421,6 +427,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
           registerUserTabCount?.completed?.aggregate?.count ?? 0;
       cancelledRegUsersCount =
           registerUserTabCount?.cancelled?.aggregate?.count ?? 0;
+      expiredRegUsersCount =
+          registerUserTabCount?.expired?.aggregate?.count ?? 0;
     }
     notifyListeners();
   }
@@ -525,7 +533,12 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       "limit": _notifLimit,
       "offset": _notifOffset,
       "order_by": [
-        {"created_at": "desc"}
+        if (scheduleFromController.text != "" ||
+            scheduleToController.text != "")
+          {"scheduled_at": "desc_nulls_last"},
+        if (scheduleFromController.text == "" ||
+            scheduleToController.text == "")
+          {"created_at": "desc"}
       ]
     };
     final res = await repo.getNotificationCampaigns(variables);
@@ -621,7 +634,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getTransactions(BuildContext context, String courseId, {bool loadMore = false}) async {
+  Future<void> getTransactions(BuildContext context, String courseId,
+      {bool loadMore = false}) async {
     if (loadMore) {
       if (isLoadingMoreTransactions || !hasMoreTransactions) return;
       isLoadingMoreTransactions = true;
@@ -644,7 +658,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       "dateTo": DateFormatUtils.formatDateYear(dateToController.text)
     };
     final res = await repo.getTransactions(variables);
-     final newItems = res.data ?? [];
+    final newItems = res.data ?? [];
     getTransactionsRes = res;
     if (loadMore) {
       getTransactionsRes?.data?.addAll(newItems);
@@ -675,6 +689,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notificationSerachController.clear();
     setSelectedFilterStatus("All");
     setSelectedFilterContactType("All");
+    setApplyFilter(false);
     notifyListeners();
   }
 
@@ -682,6 +697,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     promoCodeController.clear();
     setSelectedPromotionStatus("All");
     setSelectedDiscountType("All");
+    setPromotionApplyFilter(false);
   }
 
   void clearTransactionFilters() {
@@ -689,5 +705,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     dateFromController.clear();
     dateToController.clear();
     setSelectedTransactionStatus("All");
+    setTransactionApplyFilter(false);
   }
 }

@@ -2,7 +2,6 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
-import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/notification_campaign_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -43,7 +42,8 @@ class _NotificationViewState extends State<NotificationView> {
 
   void _onScroll() {
     final vm = _vm;
-    if (vm.isLoadingMoreNotifications || !vm.hasMoreNotifications) return; // guard
+    if (vm.isLoadingMoreNotifications || !vm.hasMoreNotifications)
+      return; // guard
     if (vm.scrollController.position.pixels >=
         vm.scrollController.position.maxScrollExtent - 200) {
       vm.notificationCampaigns(context, vm.selectedCourseId, loadMore: true);
@@ -65,11 +65,11 @@ class _NotificationViewState extends State<NotificationView> {
       ),
       body: Column(
         children: [
-          _filterWidget(vm, context),
+            _filterWidget(vm, context),
           Expanded(
             child: vm.notificationCampaignData?.courseNotificationCampaigns
                         ?.isEmpty ??
-                    true
+                    false
                 ? Center(
                     child: Text(
                       "No notifications available at the moment",

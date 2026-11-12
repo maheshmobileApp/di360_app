@@ -184,14 +184,13 @@ class RegisteredUserCard extends StatelessWidget {
               ],
             ),
           ),
-
-          (courseStatus != "EXPIRED" &&
+          
+          /*courseStatus != "EXPIRED" &&
                   status != "EXPIRED" &&
                   status != 'CANCELLED' &&
-                  quizStatus != 'COMPLETED' &&
-                  isSameUser)
-              ? _menuWidget(context, status)
-              : SizedBox.shrink(),
+                  quizStatus != 'COMPLETED' &&*/
+
+          (isSameUser && status != 'CANCELLED') ? _menuWidget(context, status) : SizedBox.shrink(),
         ],
       ),
     );
@@ -220,9 +219,9 @@ class RegisteredUserCard extends StatelessWidget {
           _popupItem("Preview Certificate", Icons.preview_outlined,
               AppColors.primaryColor),*/
         if ((courseStatus == "EXPIRED" || quizStatus == 'COMPLETED') &&
-            (status == "APPROVED" || status == "COMPLETED"))
-          _popupItem("Issue Certificate", Icons.check_circle,
-              AppColors.greenColor),
+            (status == "APPROVED" || status != "COMPLETED"))
+          _popupItem(
+              "Issue Certificate", Icons.check_circle, AppColors.greenColor),
       ],
     );
   }

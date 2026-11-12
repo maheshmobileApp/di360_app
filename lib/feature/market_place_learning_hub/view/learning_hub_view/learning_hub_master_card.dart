@@ -29,6 +29,7 @@ class ListingHubMasterCard extends StatefulWidget {
   final VoidCallback registerTap;
   final dynamic afterWardsPrice;
   final bool isRegistered;
+  
   final String? type;
   final dynamic noOfSeats;
   final int? registerCount;
@@ -405,23 +406,14 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
                   ],
                 ),
               ),
-              (getSeatStatus(
+               RegisterButton(
+                      courseStatus: widget.courseStatus ?? "",
+                      type: widget.type ?? "",
+                      text: _buttonText(widget.type ?? "", widget.isRegistered,
+                          widget.courseStatus ?? "", getSeatStatus(
                           noOfSeats: widget.noOfSeats,
                           registerCount: widget.registerCount,
-                          afterWardsPrice: widget.afterWardsPrice) ==
-                      "SOLD OUT")
-                  ? SoldOutButton()
-                  : RegisterButton(
-                      courseStatus: widget.courseStatus ?? "",
-                      type : widget.type ?? "",
-                      text: widget.isRegistered &&
-                              widget.courseStatus != "EXPIRED"
-                          ? (widget.type == "Online Academy")
-                              ? widget.courseStatus == "PENDING"
-                                  ? "Awaiting Approval"
-                                  : "View Course Details"
-                              : "Already Registered"
-                          : 'Register Now',
+                          afterWardsPrice: widget.afterWardsPrice)),
                       onTap: widget.registerTap,
                       isRegistered: widget.isRegistered &&
                           widget.courseStatus != "EXPIRED")
@@ -430,6 +422,29 @@ class _ListingHubMasterCardState extends State<ListingHubMasterCard> {
         ),
       ),
     );
+  }
+
+  String _buttonText(String courseType, bool isRegistered, String status,
+      String seatStatusType) {
+    if (courseType == "Online Academy") {
+      if (isRegistered && (status == "APPROVED" || status == "COMPLETED")) {
+        return "VIEW COURSE DETAILS";
+      } else if (isRegistered) {
+        return "AWAITING APPROVAL";
+      } else {
+        return "REGISTER NOW";
+      }
+    } else {
+      if (isRegistered && (status == "APPROVED" || status == "COMPLETED")) {
+        return "ALREADY REGISTERED";
+      } else if (isRegistered) {
+        return "AWAITING APPROVAL";
+      } else if (seatStatusType == "SOLD OUT") {
+        return "SOLD OUT";
+      } else {
+        return "REGISTER NOW";
+      }
+    }
   }
 
   String getSeatStatus({

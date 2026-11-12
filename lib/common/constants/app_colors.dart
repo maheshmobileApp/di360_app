@@ -33,6 +33,7 @@ class AppColors {
   static const Color yellowColor = Colors.yellow;
   static const Color lightGreenColor = Color.fromARGB(255, 196, 238, 218);
   static const Color redColor = Color(0xffD71313);
+   static const Color brownColor = Colors.brown;
   static const Color cardcolor = Color(0xffF6F7F9);
   static const Color greysecond = Color.fromRGBO(220, 224, 228, 1);
   static const Color pendingprimary = Color.fromRGBO(225, 146, 0, 0.1);
