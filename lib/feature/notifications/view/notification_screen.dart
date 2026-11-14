@@ -24,7 +24,6 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen>
     with BaseContextHelpers {
   final ScrollController _scrollController = ScrollController();
-  String _selectedFilter = 'All';
 
   @override
   void initState() {
@@ -52,28 +51,6 @@ class _NotificationScreenState extends State<NotificationScreen>
     super.dispose();
   }
 
-  Widget _filterChip(String label) {
-    final isSelected = _selectedFilter == label;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedFilter = label),
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryColor : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.primaryColor),
-        ),
-        child: Text(
-          label,
-          style: TextStyles.medium2(
-            color: isSelected ? Colors.white : AppColors.primaryColor,
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
@@ -81,13 +58,6 @@ class _NotificationScreenState extends State<NotificationScreen>
     final newsFeedProvider = Provider.of<NewsFeedViewModel>(context);
     final talentEnqVM = Provider.of<TalentEnquiryViewModel>(context);
     final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
-
-    final filtered = notificationVM.notificationsList.where((n) {
-      if (_selectedFilter == 'Unread') return n.markAsRead != true;
-      if (_selectedFilter == 'Read') return n.markAsRead == true;
-      return true;
-    }).toList();
-
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
@@ -96,99 +66,80 @@ class _NotificationScreenState extends State<NotificationScreen>
           leading: InkWell(
               onTap: () => navigationService.goBack(),
               child: Icon(Icons.arrow_back, color: AppColors.black))),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              children: [
-                _filterChip('All'),
-                _filterChip('Unread'),
-                _filterChip('Read'),
-              ],
-            ),
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await notificationVM.getNotifications(context, isRefresh: true);
-              },
-              child: filtered.isEmpty && !notificationVM.isLoadingMore
-                  ? Center(
-                      child: Column(
-                        children: [
-                          addVertical(getSize(context).height * 0.4),
-                          Text('No Notifications',
-                              style: TextStyles.bold4(color: AppColors.black)),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: _scrollController,
-                      itemCount: filtered.length +
-                          (notificationVM.isLoadingMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == filtered.length) {
-                          return Center(
-                              child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: CircularProgressIndicator()));
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await notificationVM.getNotifications(context, isRefresh: true);
+        },
+        child: notificationVM.notificationsList.isEmpty &&
+                !notificationVM.isLoadingMore
+            ? Center(
+                child: Column(
+                  children: [
+                    addVertical(getSize(context).height * 0.4),
+                    Text('No Notifications',
+                        style: TextStyles.bold4(color: AppColors.black)),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                controller: _scrollController,
+                itemCount: notificationVM.notificationsList.length +
+                    (notificationVM.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == notificationVM.notificationsList.length) {
+                    return Center(
+                        child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator()));
+                  }
+                  final notification = notificationVM.notificationsList[index];
+                  return GestureDetector(
+                      onTap: () async {
+                        if (notification.type ==
+                            NotificationType.NEWS_FEED.name) {
+                          notificationVM.getNewsFeedData(
+                              context, notification.payload?.id ?? '');
+                        } else if (notification.type ==
+                            NotificationType.SUPPORT_REQUEST.name) {
+                          navigationService.navigateTo(RouteList.supportScreen);
+                        } else if (notification.type ==
+                            NotificationType.COMMUNITY.name) {
+                        } else if (notification.type ==
+                            NotificationType.CATALOGUE.name) {
+                          await catalogueVM.getCatalogDetails(
+                              context, notification.payload?.id ?? '');
+                          final id = catalogueVM
+                                  .cataloguesByIdData?.catalogueCategoryId ??
+                              '';
+                          await catalogueVM.getReletedCatalog(context, id);
+                          await navigationService
+                              .navigateTo(RouteList.catalogueDetails);
+                        } else if (notification.type ==
+                            NotificationType.COURSE.name) {
+                          await courseListingVM.getCourseDetails(
+                              context, notification.payload?.id ?? '');
+                          await navigationService
+                              .navigateTo(RouteList.courseDetailScreen);
+                        } else if (notification.type ==
+                            NotificationType.APPOINTMENT.name) {
+                          navigationService.navigateTo(RouteList.myAppointment);
+                        } else if (notification.type ==
+                            NotificationType.JOB.name) {
+                          newsFeedProvider.getJobDetailsByIds(
+                              context, notification.payload?.id ?? '');
+                        } else if (notification.type ==
+                            NotificationType.TALENT.name) {
+                          await talentEnqVM.getTalentEnqPreviewData(
+                              context, notification.payload?.id ?? '');
+                          if (talentEnqVM.talentEnqPreviewData.isNotEmpty)
+                            navigationService.navigateToWithParams(
+                                RouteList.talentPreview,
+                                params: talentEnqVM.talentEnqPreviewData.first);
                         }
-                        final notification = filtered[index];
-                        return GestureDetector(
-                            onTap: () async {
-                              if (notification.type ==
-                                  NotificationType.NEWS_FEED.name) {
-                                notificationVM.getNewsFeedData(
-                                    context, notification.payload?.id ?? '');
-                              } else if (notification.type ==
-                                  NotificationType.SUPPORT_REQUEST.name) {
-                                navigationService
-                                    .navigateTo(RouteList.supportScreen);
-                              } else if (notification.type ==
-                                  NotificationType.COMMUNITY.name) {
-                              } else if (notification.type ==
-                                  NotificationType.CATALOGUE.name) {
-                                await catalogueVM.getCatalogDetails(
-                                    context, notification.payload?.id ?? '');
-                                final id = catalogueVM
-                                        .cataloguesByIdData
-                                        ?.catalogueCategoryId ??
-                                    '';
-                                await catalogueVM.getReletedCatalog(context, id);
-                                await navigationService
-                                    .navigateTo(RouteList.catalogueDetails);
-                              } else if (notification.type ==
-                                  NotificationType.COURSE.name) {
-                                await courseListingVM.getCourseDetails(
-                                    context, notification.payload?.id ?? '');
-                                await navigationService
-                                    .navigateTo(RouteList.courseDetailScreen);
-                              } else if (notification.type ==
-                                  NotificationType.APPOINTMENT.name) {
-                                navigationService
-                                    .navigateTo(RouteList.myAppointment);
-                              } else if (notification.type ==
-                                  NotificationType.JOB.name) {
-                                newsFeedProvider.getJobDetailsByIds(
-                                    context, notification.payload?.id ?? '');
-                              } else if (notification.type ==
-                                  NotificationType.TALENT.name) {
-                                await talentEnqVM.getTalentEnqPreviewData(
-                                    context, notification.payload?.id ?? '');
-                                if (talentEnqVM.talentEnqPreviewData.isNotEmpty)
-                                  navigationService.navigateToWithParams(
-                                      RouteList.talentPreview,
-                                      params:
-                                          talentEnqVM.talentEnqPreviewData.first);
-                              }
-                            },
-                            child: _notificationCard(context, notification));
                       },
-                    ),
-            ),
-          ),
-        ],
+                      child: _notificationCard(context, notification));
+                },
+              ),
       ),
     );
   }
@@ -243,7 +194,16 @@ class _NotificationScreenState extends State<NotificationScreen>
                   alignment: Alignment.centerRight,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [],
+                    children: [
+                      // AppButton(
+                      //     text: AppLocalizations.of(context)!.viewAnalytics,
+                      //     width: 120,
+                      //     height: 35,
+                      //     radius: 8,
+                      //     btnColor: AppColors.whiteColor,
+                      //     txtColor: AppColors.brightGreenColor,
+                      //     borderColor: AppColors.brightGreenColor),
+                    ],
                   ),
                 ),
               ],

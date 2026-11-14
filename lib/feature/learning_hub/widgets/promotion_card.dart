@@ -145,7 +145,7 @@ class PromotionCard extends StatelessWidget {
               Expanded(
                 child: _buildDetail(
                   'Discount',
-                  "${discountType == 'FLAT' ? '₹' : ''} $discount ${discountType == 'FLAT' ? '' : '%'} ${maxDiscountPrice != "" ? '( max ₹$maxDiscountPrice )' : ''} ",
+                  "${discountType == 'FLAT' ? '\$' : ''} $discount ${discountType == 'FLAT' ? '' : '%'} ${maxDiscountPrice != "" ? '( max \$ $maxDiscountPrice )' : ''} ",
                 ),
               ),
               Expanded(

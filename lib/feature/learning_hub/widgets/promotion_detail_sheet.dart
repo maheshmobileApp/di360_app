@@ -113,7 +113,7 @@ class PromotionDetailSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${data?.discountType == "FLAT" ? "₹ " : ""}${data?.discountValue?.toStringAsFixed(0) ?? ''} ${data?.discountType == "FLAT" ? "flat off" : "% off"} ${data?.maxDiscountAmount != null ? "(capped at ${data?.maxDiscountAmount.toStringAsFixed(0)}  )" : ""}",
+                      "${data?.discountType == "FLAT" ? "\$ " : ""}${data?.discountValue?.toStringAsFixed(0) ?? ''} ${data?.discountType == "FLAT" ? "flat off" : "% off"} ${data?.maxDiscountAmount != null ? "(capped at ${data?.maxDiscountAmount.toStringAsFixed(0)}  )" : ""}",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -270,17 +270,17 @@ class PromotionDetailSheet extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    _detail("ORIGINAL PRICE", "₹ $coursePrice", cross: true),
+                    _detail("ORIGINAL PRICE", "\$ $coursePrice", cross: true),
                     SizedBox(width: 10),
                     _detail(
                         "DISCOUNT",
                         data?.discountType == "FLAT"
-                            ? "- ₹ ${data?.discountValue?.toStringAsFixed(0) ?? ''} "
-                            : "-₹ $discountAmount (${data?.discountValue?.toStringAsFixed(0) ?? ''} %)",
+                            ? "- \$ ${data?.discountValue?.toStringAsFixed(0) ?? ''} "
+                            : "-\$ $discountAmount (${data?.discountValue?.toStringAsFixed(0) ?? ''} %)",
                         red: true),
                   ],
                 ),
-                _detail("FINAL PRICE", "₹ $finalPrice"),
+                _detail("FINAL PRICE", "\$ $finalPrice"),
               ],
             ),
             SizedBox(
@@ -294,7 +294,7 @@ class PromotionDetailSheet extends StatelessWidget {
               height: 2,
             ),
             Text(
-                "User saves ${data?.discountValue?.toStringAsFixed(0) ?? ''} % (₹${discountAmount})  on this course",
+                "User saves ${data?.discountValue?.toStringAsFixed(0) ?? ''} % (\$ ${discountAmount})  on this course",
                 style: TextStyles.medium2(color: AppColors.greenColor)),
           ],
         ),

@@ -71,7 +71,7 @@ class LoginApi {
   String? expiresAt;
   Subscription? subscription;
   Navigation? navigation;
-
+  Payment? payment;
 
   LoginApi(
       {this.id,
@@ -105,7 +105,8 @@ class LoginApi {
       this.ownerId,
       this.expiresAt,
       this.subscription,
-      this.navigation});
+      this.navigation,
+      this.payment});
 
   LoginApi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -159,6 +160,8 @@ class LoginApi {
     navigation = json['navigation'] != null
         ? new Navigation.fromJson(json['navigation'])
         : null;
+    payment =
+        json['payment'] != null ? new Payment.fromJson(json['payment']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -204,11 +207,14 @@ class LoginApi {
       data['professionType'] = this.professiontype!.toJson();
     }
     data['expiresAt'] = this.expiresAt;
-     if (this.subscription != null) {
+    if (this.subscription != null) {
       data['subscription'] = this.subscription?.toJson();
     }
     if (this.navigation != null) {
       data['navigation'] = this.navigation?.toJson();
+    }
+    if (this.payment != null) {
+      data['payment'] = this.payment!.toJson();
     }
     return data;
   }
@@ -221,7 +227,12 @@ class Subscription {
   String? planName;
   String? planType;
 
-  Subscription({this.status, this.subscriptionPlanId, this.currentSubscriptionPlanId, this.planName, this.planType});
+  Subscription(
+      {this.status,
+      this.subscriptionPlanId,
+      this.currentSubscriptionPlanId,
+      this.planName,
+      this.planType});
 
   Subscription.fromJson(Map<String, dynamic> json) {
     status = json['status'];
@@ -480,6 +491,28 @@ class ProfileImage {
     data['size'] = this.size;
     data['status'] = this.status;
     data['url'] = this.url;
+    return data;
+  }
+}
+
+class Payment {
+  bool? initialPaymentRequired;
+  dynamic? amount;
+  String? billingType;
+
+  Payment({this.initialPaymentRequired, this.amount, this.billingType});
+
+  Payment.fromJson(Map<String, dynamic> json) {
+    initialPaymentRequired = json['initialPaymentRequired'];
+    amount = json['amount'];
+    billingType = json['billingType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['initialPaymentRequired'] = this.initialPaymentRequired;
+    data['amount'] = this.amount;
+    data['billingType'] = this.billingType;
     return data;
   }
 }

@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/login/model_class/my_community_data_respon
 import 'package:di360_flutter/feature/login/query/login_querys.dart';
 import 'package:di360_flutter/feature/login/repository/login_repo_impl.dart';
 import 'package:di360_flutter/feature/login/model_class/login_res.dart';
+import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/deep_link_service.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -114,6 +115,9 @@ class LoginViewModel extends ChangeNotifier {
               loginData.navigation?.permissions ?? []);*/
           await LocalStorage.setStringVal(LocalStorageConst.subscriptionStatus,
               loginData.subscription?.status ?? "");
+          await LocalStorage.setBoolValue(LocalStorageConst.isAuth, true);
+          await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
+              loginData.profileCompleted ?? false);
 
           /*if (loginData.type == UserRole.admin.name) {
             if (loginData.profileCompleted == true) {
@@ -125,10 +129,16 @@ class LoginViewModel extends ChangeNotifier {
             homeNavigation(context);
           }*/
 
+          final needsPayment = loginData.payment?.initialPaymentRequired == true &&
+              loginData.payment?.amount != null &&
+              loginData.payment?.billingType != null;
+
           if (loginData.profileCompleted == true) {
-            homeNavigation(context);
+            await homeNavigation(context);
+            if (needsPayment) _showPaymentPopup(context);
           } else {
-            viewProfileHandle(context);
+            if (needsPayment) _showPaymentPopup(context);
+            await viewProfileHandle(context);
           }
 
           // Background tasks (parallel)
@@ -160,11 +170,8 @@ class LoginViewModel extends ChangeNotifier {
                     LocalStorageConst.subType, loginData.subType ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
                     loginData.subscriptionId ?? ''),
-                LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
-                    loginData.profileCompleted ?? false),
                 LocalStorage.setStringVal(LocalStorageConst.profilePic,
                     loginData.logo?.url ?? loginData.profileImage?.url ?? ''),
-                LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
                 LocalStorage.setStringVal(LocalStorageConst.refreshToken,
                     loginData.refreshToken ?? ''),
               ]);
@@ -184,6 +191,13 @@ class LoginViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Login failed. Please try again.');
     }
+  }
+
+  void _showPaymentPopup(BuildContext context) {
+    PaymentRequiredPopup.show(
+      context,
+     
+    );
   }
 
   homeNavigation(BuildContext context) async {
