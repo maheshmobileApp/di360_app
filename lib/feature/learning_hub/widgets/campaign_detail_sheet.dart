@@ -1,4 +1,5 @@
-
+import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:flutter/material.dart';
 
 class CampaignDetailsBottomSheet extends StatelessWidget {
@@ -164,13 +165,13 @@ class CampaignDetailsBottomSheet extends StatelessWidget {
                         Expanded(
                           child: _detail(
                             'SCHEDULED AT',
-                            scheduledAt,
+                            DateFormatUtils.formatDateToDmy(scheduledAt),
                           ),
                         ),
                         Expanded(
                           child: _detail(
                             'CREATED',
-                            createdAt,
+                            DateFormatUtils.formatDateToDmy(createdAt),
                           ),
                         ),
                       ],
@@ -191,18 +192,12 @@ class CampaignDetailsBottomSheet extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _messageSection(
-                            'SUBJECT',
-                            subject,
-                          ),
+                          _messageSection('SUBJECT', subject, false),
                           const Divider(
                             height: 1,
                             color: Color(0xFFE7ECF3),
                           ),
-                          _messageSection(
-                            'BODY',
-                            body,
-                          ),
+                          _messageSection('BODY', body, true),
                         ],
                       ),
                     ),
@@ -234,7 +229,6 @@ class CampaignDetailsBottomSheet extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-
         if (isBadge)
           Container(
             padding: const EdgeInsets.symmetric(
@@ -242,9 +236,7 @@ class CampaignDetailsBottomSheet extends StatelessWidget {
               vertical: 6,
             ),
             decoration: BoxDecoration(
-              color: isSent
-                  ? const Color(0xFFE5F7EE)
-                  : const Color(0xFFFFF3E0),
+              color: isSent ? const Color(0xFFE5F7EE) : const Color(0xFFFFF3E0),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -252,9 +244,8 @@ class CampaignDetailsBottomSheet extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isSent
-                    ? const Color(0xFF0BA75D)
-                    : const Color(0xFFFF9800),
+                color:
+                    isSent ? const Color(0xFF0BA75D) : const Color(0xFFFF9800),
               ),
             ),
           )
@@ -271,7 +262,7 @@ class CampaignDetailsBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _messageSection(String title, String value) {
+  Widget _messageSection(String title, String value, bool html) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -286,14 +277,16 @@ class CampaignDetailsBottomSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 9),
-          Text(
-            value.isEmpty ? '-' : value,
-            style: const TextStyle(
-              fontSize: 14,
-              height: 1.5,
-              color: Color(0xFF26334A),
-            ),
-          ),
+          html
+              ? ExpandableHtmlText(htmlData: value)
+              : Text(
+                  value.isEmpty ? '-' : value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: Color(0xFF26334A),
+                  ),
+                ),
         ],
       ),
     );

@@ -68,7 +68,7 @@ class RegisteredUserCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(229, 244, 237, 1),
+                  color: StatusColors.getColor(status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
@@ -148,7 +148,8 @@ class RegisteredUserCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           vertical: 2, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(229, 244, 237, 1),
+                        color: StatusColors.getColor(userType)
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(30),
                         border:
                             Border.all(color: AppColors.whiteColor, width: 1),
@@ -166,13 +167,16 @@ class RegisteredUserCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           vertical: 2, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(229, 244, 237, 1),
+                        color: StatusColors.getColor(paymentStatus)
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(30),
                         border:
                             Border.all(color: AppColors.whiteColor, width: 1),
                       ),
                       child: Text(
-                        paymentStatus,
+                        paymentStatus == "NOT_APPLICABLE"
+                            ? "FREE"
+                            : paymentStatus,
                         style: TextStyles.bold4(
                           color: StatusColors.getColor(paymentStatus),
                           fontSize: 10,
@@ -184,19 +188,24 @@ class RegisteredUserCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           /*courseStatus != "EXPIRED" &&
                   status != "EXPIRED" &&
                   status != 'CANCELLED' &&
                   quizStatus != 'COMPLETED' &&*/
 
-          (isSameUser && status != 'CANCELLED') ? _menuWidget(context, status) : SizedBox.shrink(),
+          (isSameUser &&
+                  status != 'CANCELLED' &&
+                  courseStatus != "EXPIRED" &&
+                  status != "EXPIRED")
+              ? _menuWidget(context)
+              : SizedBox.shrink(),
         ],
       ),
     );
   }
 
-  Widget _menuWidget(BuildContext context, String status) {
+  Widget _menuWidget(BuildContext context) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding

@@ -43,6 +43,10 @@ class SecurePaymentView extends StatelessWidget {
       if (context.mounted) {
         scaffoldMessenger(e.error.localizedMessage ?? 'Payment failed');
       }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      scaffoldMessenger('Something went wrong. Please try again.');
     }
   }
 

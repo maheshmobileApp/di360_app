@@ -10,7 +10,7 @@ class GetTransactionDetailRes {
   String? currency;
   String? transactionStatus;
   String? stripePaymentIntentId;
-  Null? promoCodeId;
+  String? promoCodeId;
   String? createdById;
   String? createdByType;
   String? createdAt;
@@ -21,7 +21,7 @@ class GetTransactionDetailRes {
   String? buyerLastName;
   String? buyerEmail;
   String? buyerPhone;
-  Null? refund;
+  String? refund;
 
   GetTransactionDetailRes(
       {this.id,

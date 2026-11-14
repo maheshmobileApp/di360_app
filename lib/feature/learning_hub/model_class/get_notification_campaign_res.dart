@@ -61,8 +61,8 @@ class CourseNotificationCampaigns {
   String? recipientMode;
   String? sendMode;
   String? scheduledAt;
-  int? totalRecipients;
-  int? recipientsCount;
+  dynamic? totalRecipients;
+  dynamic? recipientsCount;
   String? status;
   String? createdAt;
   String? notificationType;
@@ -142,7 +142,7 @@ class CourseNotificationCampaignsAggregate {
 }
 
 class Aggregate {
-  int? count;
+  dynamic? count;
   String? sTypename;
 
   Aggregate({this.count, this.sTypename});

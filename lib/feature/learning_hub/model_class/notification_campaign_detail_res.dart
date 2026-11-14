@@ -50,7 +50,7 @@ class CourseNotificationCampaignsByPk {
   String? templateType;
   String? emailSubject;
   String? messageBody;
-  Null? attachments;
+  List<Attachments>? attachments;
   String? recipientMode;
   Null? customRecipient;
   List<String>? recipientStatusFilter;
@@ -94,7 +94,12 @@ class CourseNotificationCampaignsByPk {
     templateType = json['template_type'];
     emailSubject = json['email_subject'];
     messageBody = json['message_body'];
-    attachments = json['attachments'];
+    if (json['attachments'] != null) {
+      attachments = <Attachments>[];
+      json['attachments'].forEach((v) {
+        attachments!.add(new Attachments.fromJson(v));
+      });
+    }
     recipientMode = json['recipient_mode'];
     customRecipient = json['custom_recipient'];
     recipientStatusFilter = json['recipient_status_filter'].cast<String>();
@@ -118,7 +123,9 @@ class CourseNotificationCampaignsByPk {
     data['template_type'] = this.templateType;
     data['email_subject'] = this.emailSubject;
     data['message_body'] = this.messageBody;
-    data['attachments'] = this.attachments;
+    if (this.attachments != null) {
+      data['attachments'] = this.attachments!.map((v) => v.toJson()).toList();
+    }
     data['recipient_mode'] = this.recipientMode;
     data['custom_recipient'] = this.customRecipient;
     data['recipient_status_filter'] = this.recipientStatusFilter;
@@ -130,6 +137,28 @@ class CourseNotificationCampaignsByPk {
     data['reply_to_email'] = this.replyToEmail;
     data['created_at'] = this.createdAt;
     data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class Attachments {
+  String? url;
+  String? name;
+  String? mimeType;
+
+  Attachments({this.url, this.name, this.mimeType});
+
+  Attachments.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    mimeType = json['mimeType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['mimeType'] = this.mimeType;
     return data;
   }
 }

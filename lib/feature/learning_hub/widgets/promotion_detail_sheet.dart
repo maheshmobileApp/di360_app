@@ -33,7 +33,9 @@ class PromotionDetailSheet extends StatelessWidget {
     final vm = Provider.of<CourseListingViewModel>(context);
 
     final coursePrice = vm.courseData?.coursesByPk?.afterwardsPrice ?? 0.0;
-    final discountAmount = data?.discountType == "FLAT"? data?.discountValue: (coursePrice * (data?.discountValue ?? 0) / 100);
+    final discountAmount = data?.discountType == "FLAT"
+        ? data?.discountValue
+        : (coursePrice * (data?.discountValue ?? 0) / 100);
     final finalPrice = coursePrice - discountAmount;
 
     return SafeArea(
@@ -111,7 +113,7 @@ class PromotionDetailSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${data?.discountValue?.toStringAsFixed(0) ?? ''} % ${data?.discountType == "FLAT" ? "flat off" : "off"} ${data?.maxDiscountAmount != null ?"(capped at ${data?.maxDiscountAmount.toStringAsFixed(0)}  )": ""}",
+                      "${data?.discountType == "FLAT" ? "₹ " : ""}${data?.discountValue?.toStringAsFixed(0) ?? ''} ${data?.discountType == "FLAT" ? "flat off" : "% off"} ${data?.maxDiscountAmount != null ? "(capped at ${data?.maxDiscountAmount.toStringAsFixed(0)}  )" : ""}",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -122,7 +124,8 @@ class PromotionDetailSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 13, vertical: 6),
                       decoration: BoxDecoration(
-                        color: AppColors.greenColor.withOpacity(0.1),
+                        color: _getColor(data?.status?.toUpperCase())
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -130,7 +133,7 @@ class PromotionDetailSheet extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.greenColor,
+                          color: _getColor(data?.status?.toUpperCase()),
                         ),
                       ),
                     )
@@ -141,7 +144,8 @@ class PromotionDetailSheet extends StatelessWidget {
             _discountCard(
                 coursePrice?.toStringAsFixed(0),
                 discountAmount?.toStringAsFixed(0),
-                finalPrice?.toStringAsFixed(0), data),
+                finalPrice?.toStringAsFixed(0),
+                data),
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
@@ -156,7 +160,12 @@ class PromotionDetailSheet extends StatelessWidget {
                                 data?.eligibleUserType ==
                                         "DENTAL_INTERFACE_USERS"
                                     ? "Dental Interface Users"
-                                    :  data?.eligibleUserType == "ALL_USERS" ? "All Users" : data?.eligibleUserType == "GUEST_USERS" ? "Guest Users":"")),
+                                    : data?.eligibleUserType == "ALL_USERS"
+                                        ? "All Users"
+                                        : data?.eligibleUserType ==
+                                                "GUEST_USERS"
+                                            ? "Guest Users"
+                                            : "")),
                         Expanded(
                             child: _detail(
                                 'VALID FROM',
@@ -232,8 +241,20 @@ class PromotionDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _discountCard(
-      String coursePrice, String discountAmount, String finalPrice, CoursePromotionsByPk? data) {
+  Color _getColor(text) {
+    if (text == "EXPIRED") {
+      return AppColors.redColor;
+    } else if (text == "ACTIVE") {
+      return AppColors.greenColor;
+    } else if (text == "INACTIVE") {
+      return AppColors.blueColor;
+    } else {
+      return AppColors.primaryColor;
+    }
+  }
+
+  Widget _discountCard(String coursePrice, String discountAmount,
+      String finalPrice, CoursePromotionsByPk? data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
       child: Container(
@@ -251,8 +272,11 @@ class PromotionDetailSheet extends StatelessWidget {
                   children: [
                     _detail("ORIGINAL PRICE", "₹ $coursePrice", cross: true),
                     SizedBox(width: 10),
-                    _detail("DISCOUNT", data?.discountType == "FLAT" ? "- ₹ ${data?.discountValue?.toStringAsFixed(0) ?? '' } ":
-                        "-₹ $discountAmount (${data?.discountValue?.toStringAsFixed(0) ?? ''} %)",
+                    _detail(
+                        "DISCOUNT",
+                        data?.discountType == "FLAT"
+                            ? "- ₹ ${data?.discountValue?.toStringAsFixed(0) ?? ''} "
+                            : "-₹ $discountAmount (${data?.discountValue?.toStringAsFixed(0) ?? ''} %)",
                         red: true),
                   ],
                 ),
@@ -279,7 +303,10 @@ class PromotionDetailSheet extends StatelessWidget {
   }
 
   Widget _detail(String title, String value,
-      {bool isBadge = false, bool isActive = false, bool red = false, bool cross = false}) {
+      {bool isBadge = false,
+      bool isActive = false,
+      bool red = false,
+      bool cross = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -303,7 +330,7 @@ class PromotionDetailSheet extends StatelessWidget {
             child: Text(
               value,
               style: TextStyle(
-                decoration:cross? TextDecoration.lineThrough : null,
+                decoration: cross ? TextDecoration.lineThrough : null,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: isActive
@@ -316,7 +343,7 @@ class PromotionDetailSheet extends StatelessWidget {
           Text(
             value.isEmpty ? '-' : value,
             style: TextStyle(
-              decoration:cross? TextDecoration.lineThrough : null,
+              decoration: cross ? TextDecoration.lineThrough : null,
               fontSize: 14,
               height: 1.5,
               color: red ? AppColors.redColor : AppColors.black,
