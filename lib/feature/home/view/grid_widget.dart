@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/home_grid_model.dart';
 import 'package:di360_flutter/feature/dash_board/subscription_expired_dialog.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/main.dart';
@@ -66,57 +67,65 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
     final subscriptionStatus = await LocalStorage.getStringVal(
       LocalStorageConst.subscriptionStatus,
     );
-    if (title == 'News Feed') {
-      dashBoardVM.setIndex(1, navigatorKey.currentContext!);
-    } else if (title == 'Job Seek') {
-      dashBoardVM.setIndex(2, navigatorKey.currentContext!);
-    } else if (title == 'Catalogue') {
-      dashBoardVM.setIndex(type == UserRole.practice.value ? 3 : 4,
-          navigatorKey.currentContext!);
-    } else if (title == 'Support') {
-      navigationService.navigateTo(RouteList.supportScreen);
-    } else if (title == 'Directory') {
-      if (subscriptionStatus == "EXPIRED") {
-        _showInactivePopup(context);
-      } else {
-        await navigationService.navigateTo(RouteList.directory);
+    final needPayment = await LocalStorage.getBoolValue(
+      LocalStorageConst.needPayment,
+    );
+    if (!needPayment) {
+      if (title == 'News Feed') {
+        dashBoardVM.setIndex(1, navigatorKey.currentContext!);
+      } else if (title == 'Job Seek') {
+        dashBoardVM.setIndex(2, navigatorKey.currentContext!);
+      } else if (title == 'Catalogue') {
+        dashBoardVM.setIndex(type == UserRole.practice.value ? 3 : 4,
+            navigatorKey.currentContext!);
+      } else if (title == 'Support') {
+        navigationService.navigateTo(RouteList.supportScreen);
+      } else if (title == 'Directory') {
+        if (subscriptionStatus == "EXPIRED") {
+          _showInactivePopup(context);
+        } else {
+          await navigationService.navigateTo(RouteList.directory);
+        }
+      } else if (title == 'Learning Hub') {
+        if (subscriptionStatus == "EXPIRED") {
+          _showInactivePopup(context);
+        } else {
+          await navigationService.runOnce(RouteList.learningHubMasterView,
+              () async {
+            Loaders.circularShowLoader(context);
+            context.read<MarketPlaceLearningHubViewModel>().searchBarOpen =
+                false;
+            context
+                .read<MarketPlaceLearningHubViewModel>()
+                .searchController
+                .text = "";
+            context.read<NewCourseViewModel>().fetchCourseCategory();
+            context.read<NewCourseViewModel>().fetchCourseType();
+            await context
+                .read<MarketPlaceLearningHubViewModel>()
+                .getAllLearningHubData(context, isCommunityLearningHub: false);
+            Loaders.circularHideLoader(context);
+            await navigationService.navigateTo(RouteList.learningHubMasterView);
+          });
+        }
+      } else if (title == 'Clients') {
+        if (subscriptionStatus == "EXPIRED") {
+          _showInactivePopup(context);
+        } else {
+          navigationService.navigateTo(RouteList.clientScreen);
+        }
+      } else if (title == 'Supplies') {
+        if (subscriptionStatus == "EXPIRED") {
+          _showInactivePopup(context);
+        } else {
+          await context.read<SuppliesViewModel>().getSuppliers(context);
+          navigationService.navigateTo(RouteList.suppliesMarketPlace);
+        }
+      } else if (title == "Support") {
+        navigationService.navigateTo(RouteList.supportScreen);
       }
-    } else if (title == 'Learning Hub') {
-      if (subscriptionStatus == "EXPIRED") {
-        _showInactivePopup(context);
-      } else {
-        await navigationService.runOnce(RouteList.learningHubMasterView,
-            () async {
-          Loaders.circularShowLoader(context);
-          context.read<MarketPlaceLearningHubViewModel>().searchBarOpen = false;
-          context
-              .read<MarketPlaceLearningHubViewModel>()
-              .searchController
-              .text = "";
-          context.read<NewCourseViewModel>().fetchCourseCategory();
-          context.read<NewCourseViewModel>().fetchCourseType();
-          await context
-              .read<MarketPlaceLearningHubViewModel>()
-              .getAllLearningHubData(context, isCommunityLearningHub: false);
-          Loaders.circularHideLoader(context);
-          await navigationService.navigateTo(RouteList.learningHubMasterView);
-        });
-      }
-    } else if (title == 'Clients') {
-      if (subscriptionStatus == "EXPIRED") {
-        _showInactivePopup(context);
-      } else {
-        navigationService.navigateTo(RouteList.clientScreen);
-      }
-    } else if (title == 'Supplies') {
-      if (subscriptionStatus == "EXPIRED") {
-        _showInactivePopup(context);
-      } else {
-        await context.read<SuppliesViewModel>().getSuppliers(context);
-        navigationService.navigateTo(RouteList.suppliesMarketPlace);
-      }
-    } else if (title == "Support") {
-      navigationService.navigateTo(RouteList.supportScreen);
+    } else {
+      _showPaymentPopup(context);
     }
   }
 
@@ -129,6 +138,12 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
           "please log in through the web.",
         );
       },
+    );
+  }
+
+  void _showPaymentPopup(BuildContext context) {
+    PaymentRequiredPopup.show(
+      context,
     );
   }
 }

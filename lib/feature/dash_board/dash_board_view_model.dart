@@ -16,6 +16,7 @@ import 'package:di360_flutter/feature/dash_board/subscription_expired_dialog.dar
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
+import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
@@ -144,6 +145,15 @@ class DashBoardViewModel extends ChangeNotifier {
       }
     }
 
+    final needPayment = await LocalStorage.getBoolValue(
+      LocalStorageConst.needPayment,
+    );
+
+    if (needPayment && index != 0) {
+      _showPaymentPopup(context);
+      return;
+    }
+
     bool isSubscriptionExempt = false;
 
     if (userType == UserRole.supplier.value) {
@@ -218,6 +228,12 @@ class DashBoardViewModel extends ChangeNotifier {
           "please log in through the web.",
         );
       },
+    );
+  }
+
+  void _showPaymentPopup(BuildContext context) {
+    PaymentRequiredPopup.show(
+      context,
     );
   }
 

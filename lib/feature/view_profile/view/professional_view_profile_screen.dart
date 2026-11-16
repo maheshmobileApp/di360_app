@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/view_profile/view/professinoal_basic_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_contact_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_detail_info.dart';
@@ -86,6 +87,11 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                             text: 'Save & Update',
                             height: 45,
                             onTap: () async {
+                              final needPayment = await LocalStorage.getBoolValue(LocalStorageConst.needPayment);
+                              if (needPayment) {
+                                _showPaymentPopup(context);
+                                return;
+                              }
                               if (_formKey.currentState!.validate()) {
                                 if (provider.addressController.text.isEmpty) {
                                   scaffoldMessenger("Please enter address");
@@ -102,6 +108,12 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                 addVertical(10)
               ]),
             ))));
+  }
+
+  void _showPaymentPopup(BuildContext context) {
+    PaymentRequiredPopup.show(
+      context,
+    );
   }
 
   Widget _sectionTitle(String title, Widget? child) {

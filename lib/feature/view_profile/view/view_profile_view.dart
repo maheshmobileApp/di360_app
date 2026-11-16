@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/view_profile/view/basic_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/contact_info.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
@@ -81,6 +82,14 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                                   height: 45,
                                   width: 180,
                                   onTap: () async {
+                                    final needPayment =
+                                        await LocalStorage.getBoolValue(
+                                      LocalStorageConst.needPayment,
+                                    );
+                                    if (needPayment == true) {
+                                      _showPaymentPopup(context);
+                                      return;
+                                    }
                                     if (_formKey.currentState!.validate()) {
                                       if (provider
                                           .addressController.text.isEmpty) {
@@ -89,7 +98,8 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                                       } else {
                                         await provider
                                             .updateViewProfile(context);
-                                        await provider.getTheViewProfileData(context);
+                                        await provider
+                                            .getTheViewProfileData(context);
                                       }
                                     }
                                   })),
@@ -99,6 +109,12 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                 addVertical(10)
               ])),
             )));
+  }
+
+  void _showPaymentPopup(BuildContext context) {
+    PaymentRequiredPopup.show(
+      context,
+    );
   }
 
   Widget _sectionTitle(String title, Widget? child) {

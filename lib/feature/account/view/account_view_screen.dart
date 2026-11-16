@@ -18,6 +18,7 @@ import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
@@ -42,7 +43,7 @@ Future<bool> _checkSubscriptionStatus(BuildContext context) async {
   final subscriptionStatus = await LocalStorage.getStringVal(
     LocalStorageConst.subscriptionStatus,
   );
-
+  
   if (subscriptionStatus == "EXPIRED") {
     await SubscriptionExpiredDialog.show(
       context,
@@ -92,7 +93,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBarWidget(isbackAction: false,searchWidget: false),
+        appBar: AppBarWidget(isbackAction: false, searchWidget: false),
         body: Consumer<ProfileViewModel>(
           builder: (context, vm, _) {
             if (vm.error != null) {

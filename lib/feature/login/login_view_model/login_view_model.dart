@@ -118,26 +118,15 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setBoolValue(LocalStorageConst.isAuth, true);
           await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
               loginData.profileCompleted ?? false);
-
-          /*if (loginData.type == UserRole.admin.name) {
-            if (loginData.profileCompleted == true) {
-              homeNavigation(context);
-            } else {
-              viewProfileHandle(context);
-            }
-          } else {
-            homeNavigation(context);
-          }*/
-
           final needsPayment = loginData.payment?.initialPaymentRequired == true &&
               loginData.payment?.amount != null &&
               loginData.payment?.billingType != null;
+          await LocalStorage.setBoolValue(LocalStorageConst.needPayment, needsPayment);
+          await LocalStorage.setStringVal(LocalStorageConst.userId, userId);
 
           if (loginData.profileCompleted == true) {
             await homeNavigation(context);
-            if (needsPayment) _showPaymentPopup(context);
           } else {
-            if (needsPayment) _showPaymentPopup(context);
             await viewProfileHandle(context);
           }
 
@@ -156,7 +145,7 @@ class LoginViewModel extends ChangeNotifier {
                     LocalStorageConst.name, loginData.name ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.businessName,
                     loginData.businessName ?? ''),
-                LocalStorage.setStringVal(LocalStorageConst.userId, userId),
+
                 LocalStorage.setStringVal(
                     LocalStorageConst.emailId, loginData.email ?? ''),
                 LocalStorage.setStringVal(
@@ -191,13 +180,6 @@ class LoginViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Login failed. Please try again.');
     }
-  }
-
-  void _showPaymentPopup(BuildContext context) {
-    PaymentRequiredPopup.show(
-      context,
-     
-    );
   }
 
   homeNavigation(BuildContext context) async {
