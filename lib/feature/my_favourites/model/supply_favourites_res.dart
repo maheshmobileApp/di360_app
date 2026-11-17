@@ -101,7 +101,7 @@ class Supply {
   Null? details;
   List<Image>? image;
   bool? isFeatured;
-  Null? moreImages;
+  
   Null? pageTitle;
   SeoMetadata? seoMetadata;
   Null? shortId;
@@ -131,7 +131,6 @@ class Supply {
       this.details,
       this.image,
       this.isFeatured,
-      this.moreImages,
       this.pageTitle,
       this.seoMetadata,
       this.shortId,
@@ -166,7 +165,6 @@ class Supply {
       });
     }
     isFeatured = json['is_featured'];
-    moreImages = json['more_images'];
     pageTitle = json['page_title'];
     seoMetadata = json['seo_metadata'] != null
         ? new SeoMetadata.fromJson(json['seo_metadata'])
@@ -210,7 +208,6 @@ class Supply {
       data['image'] = this.image!.map((v) => v.toJson()).toList();
     }
     data['is_featured'] = this.isFeatured;
-    data['more_images'] = this.moreImages;
     data['page_title'] = this.pageTitle;
     if (this.seoMetadata != null) {
       data['seo_metadata'] = this.seoMetadata!.toJson();

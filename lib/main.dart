@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/favourites/view_model/my_favourites_view_model.dart';
+import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/no_internet/no_internet_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
@@ -44,6 +45,7 @@ import 'package:di360_flutter/feature/news_feed_community_comment/view_model/new
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
+import 'package:di360_flutter/feature/promotions/view_model/promotions_view_model.dart';
 import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
 import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
@@ -171,6 +173,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => JobProfileCreateViewModel()),
         ChangeNotifierProvider(create: (_) => SuppliesViewModel()),
+        ChangeNotifierProvider(create: (_) => FavouritesViewModel()),
         ChangeNotifierProvider(create: (_) => MyFavouritesViewModel()),
         ChangeNotifierProvider(create: (_) => MyOrdersViewModel()),
         ChangeNotifierProvider(create: (_) => AccountPayRequestsViewModel()),
@@ -178,6 +181,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OrdersViewModel()),
         ChangeNotifierProvider(create: (_) => SuppliesModuleViewModel()),
         ChangeNotifierProvider(create: (_) => ShippingChargesViewModel()),
+        ChangeNotifierProvider(create: (_) => PromotionsViewModel())
       ],
       child: MaterialApp(
         builder: (context, child) {

@@ -67,7 +67,8 @@ import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hu
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_view.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/favourites/view/favourite_filter_view.dart';
-import 'package:di360_flutter/feature/favourites/view/my_favourites_view.dart';
+import 'package:di360_flutter/feature/favourites/view/favourites_view.dart';
+import 'package:di360_flutter/feature/my_favourites/view/my_favourites_view.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/my_orders/view/my_orders_filter_view.dart';
 import 'package:di360_flutter/feature/my_orders/view/my_orders_view.dart';
@@ -80,6 +81,8 @@ import 'package:di360_flutter/feature/orders/view/orders_view.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
+import 'package:di360_flutter/feature/promotions/view/promotions_view.dart' as Routelist;
+import 'package:di360_flutter/feature/promotions/view/promotions_view.dart';
 import 'package:di360_flutter/feature/shipping_address/view/add_shipping_address_view.dart';
 import 'package:di360_flutter/feature/shipping_address/view/shipping_address_view.dart';
 import 'package:di360_flutter/feature/shipping_charges/view/shipping_charges_view.dart';
@@ -321,7 +324,7 @@ class Routes {
             selectedProducts: args['selected_products'] ?? {});
       },
       RouteList.addNewsAddressView: (context) => AddNewsAddressView(),
-      RouteList.favouritesView: (context) => MyFavouritesView(),
+      RouteList.favouritesView: (context) => FavouritesView(),
       RouteList.myOrdersView: (context) => MyOrdersView(),
       RouteList.myOrdersFilterView: (context) => MyOrdersFilterView(),
       RouteList.accountPayRequestsView: (context) => AccountPayRequestsView(),
@@ -334,6 +337,8 @@ class Routes {
       RouteList.suppliesModuleFilterView: (context) => SuppliesModuleFilterView(),
       RouteList.shippingChargesView: (context) => ShippingChargesView(),
       RouteList.suppliesDetailView: (context) => SuppliesDetailView(),
+      RouteList.myFavouritesView: (context) => MyFavouritesView(),
+      RouteList.promotionsView: (context) => PromotionsView()
     };
   }
 }

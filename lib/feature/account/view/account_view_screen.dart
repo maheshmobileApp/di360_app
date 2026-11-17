@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/favourites/view_model/my_favourites_view_model.dart';
+import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
@@ -504,14 +505,17 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .navigateTo(RouteList.clientScreen);
                           } else if (item.title == "Favourites") {
                             await context
-                                .read<MyFavouritesViewModel>()
+                                .read<FavouritesViewModel>()
                                 .getSupplyFavourites(context);
                             navigationService
                                 .navigateTo(RouteList.favouritesView);
                           } else if (item.title == "My Favourites") {
+                             await context
+                                .read<MyFavouritesViewModel>()
+                                .getSupplyFavourites(context);
                             
                             navigationService
-                                .navigateTo(RouteList.favouritesView);
+                                .navigateTo(RouteList.myFavouritesView);
                           }
                           
                           else if (item.title == "My Orders") {
@@ -553,6 +557,10 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .getShippingCharges(context);
                             navigationService
                                 .navigateTo(RouteList.shippingChargesView);
+                          } else if (item.title == "Promotions") {
+                            
+                            navigationService
+                                .navigateTo(RouteList.promotionsView);
                           }
                         },
                       ),

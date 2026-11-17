@@ -4,7 +4,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
-class MyFavouritesViewModel extends ChangeNotifier {
+class FavouritesViewModel extends ChangeNotifier {
   final MyFavouritesRepoImpl repo = MyFavouritesRepoImpl();
 
   SupplyFavouritesData? supplyFavouritesData;

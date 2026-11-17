@@ -11,12 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class MyFavouritesView extends StatelessWidget {
-  const MyFavouritesView({super.key});
+class FavouritesView extends StatelessWidget {
+  const FavouritesView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<MyFavouritesViewModel>(context);
+    final vm = Provider.of<FavouritesViewModel>(context);
     final supVM = context.watch<SuppliesViewModel>();
     final favourites = vm.supplyFavouritesData?.supplyFavorites;
 

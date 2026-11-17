@@ -100,10 +100,10 @@ class MyFavouritesView extends StatelessWidget {
                   price: '',
                   quantity: vm.quantityFor(item?.supply?.id ?? ''),
                   onDecrease: () {
-                    vm.decreaseQuantity(item?.supply?.id ?? '');
+                    //vm.decreaseQuantity(item?.supply?.id ?? '');
                   },
                   onIncrease: () {
-                    vm.increaseQuantity(item?.supply?.id ?? '');
+                    //vm.increaseQuantity(item?.supply?.id ?? '');
                   },
                   onFavourite: () {
                     vm.deleteFavourite(context, item?.supply?.id ?? '',
@@ -111,7 +111,7 @@ class MyFavouritesView extends StatelessWidget {
                   },
                   imageUrl: item?.supply?.image?.first.url ?? "",
                   onCartTap: () async {
-                    if ((item?.supplyVariant?.availableStock ?? 0) > 0) {
+                    /*if ((item?.supplyVariant?.availableStock ?? 0) > 0) {
                       final supplyId = item?.supply?.id ?? "";
                       final variantId = item?.supplyVariant?.id ?? "";
                       final quantity = vm.quantityFor(supplyId);
@@ -137,7 +137,7 @@ class MyFavouritesView extends StatelessWidget {
                       await supVM.getSuppliesCart(context);
                     } else {
                       scaffoldMessenger("Out of stock...");
-                    }
+                    }*/
                   },
                 );
               },

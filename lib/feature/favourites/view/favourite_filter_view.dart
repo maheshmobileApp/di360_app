@@ -13,7 +13,7 @@ class FavouriteFilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<MyFavouritesViewModel>();
+    final vm = context.watch<FavouritesViewModel>();
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -79,7 +79,7 @@ class FavouriteFilterView extends StatelessWidget {
   }
 }
 
-Widget _supplierName(MyFavouritesViewModel vm) {
+Widget _supplierName(FavouritesViewModel vm) {
   // Build unique supplier id->name map from favourites
   final Map<String, String> supplierMap = {};
   for (final a in vm.supplyFavouritesData?.supplyFavorites ?? []) {
@@ -106,7 +106,7 @@ Widget _supplierName(MyFavouritesViewModel vm) {
   );
 }
 
-Widget _availableStock(MyFavouritesViewModel vm) {
+Widget _availableStock(FavouritesViewModel vm) {
   final items = vm.stockOptions
       .map((e) => DropdownMenuItem<String>(value: e, child: Text(e)))
       .toList();
