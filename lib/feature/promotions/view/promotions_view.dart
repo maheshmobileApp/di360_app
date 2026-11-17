@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/promotions/view_model/promotions_view_model.dart';
 import 'package:di360_flutter/feature/promotions/widgets/promotion_card.dart';
+import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +24,9 @@ class _SuppliesModuleViewState extends State<PromotionsView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vm = context.read<PromotionsViewModel>();
-      
+      if (vm.getPromotionsData == null) {
         vm.getPromotions(context);
-      
+      }
     });
   }
 
@@ -34,7 +35,9 @@ class _SuppliesModuleViewState extends State<PromotionsView> {
 
     if (scrollController.position.pixels >=
         scrollController.position.maxScrollExtent - 200) {
-      //context.read<SuppliesModuleViewModel>().getSuppliesList(context);
+      context
+          .read<PromotionsViewModel>()
+          .getPromotions(context, isLoadMore: true);
     }
   }
 
@@ -52,11 +55,11 @@ class _SuppliesModuleViewState extends State<PromotionsView> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-          title: "Promotions",
-          notification: false,
-          logo: false,
-          searchWidget: false,
-          ),
+        title: "Promotions",
+        notification: false,
+        logo: false,
+        searchWidget: false,
+      ),
       body: Column(
         children: [
           promotionStatus(vm),
@@ -81,7 +84,6 @@ class _SuppliesModuleViewState extends State<PromotionsView> {
                       final item = promotions[index];
                       return PromotionCard(
                         item: item,
-                        
                       );
                     },
                   ),
