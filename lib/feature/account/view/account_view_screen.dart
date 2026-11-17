@@ -19,7 +19,7 @@ import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
-import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
+import 'package:di360_flutter/feature/favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
@@ -502,13 +502,19 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             }
                             navigationService
                                 .navigateTo(RouteList.clientScreen);
-                          } else if (item.title == "My Favourites") {
+                          } else if (item.title == "Favourites") {
                             await context
                                 .read<MyFavouritesViewModel>()
                                 .getSupplyFavourites(context);
                             navigationService
-                                .navigateTo(RouteList.myFavouritesView);
-                          } else if (item.title == "My Orders") {
+                                .navigateTo(RouteList.favouritesView);
+                          } else if (item.title == "My Favourites") {
+                            
+                            navigationService
+                                .navigateTo(RouteList.favouritesView);
+                          }
+                          
+                          else if (item.title == "My Orders") {
                             await context
                                 .read<MyOrdersViewModel>()
                                 .getSuppliesOrders(context);

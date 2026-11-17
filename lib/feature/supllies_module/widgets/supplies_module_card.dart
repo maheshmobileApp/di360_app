@@ -25,7 +25,7 @@ class SuppliesModuleCard extends StatelessWidget {
     final String productType = item?.productType == "simple"
         ? "Simple Product"
         : "Product with variant";
-    final double price = item?.supplyVariants?.firstOrNull?.sellingPrice;
+    final double price = item?.supplyVariants?.firstOrNull?.sellingPrice ?? 0.0;
     final int stock = item?.supplyVariants?.firstOrNull?.availableStock ?? 0;
     final String variants = "N/A";
     final String sohAlert =

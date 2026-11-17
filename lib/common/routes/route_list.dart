@@ -105,7 +105,7 @@ class RouteList {
   static const String orderRequestReviewView = '/orderRequestReviewView';
   static const String jobProfileTalentMessage = '/jobProfileTalentMessage';
   static const String addNewsAddressView = '/addNewsAddressView';
-  static const String myFavouritesView = '/myFavouritesView';
+  static const String favouritesView = '/favouritesView';
   static const String myOrdersView = '/myOrdersView';
   static const String myOrdersFilterView = '/myOrdersFilterView';
   static const String accountPayRequestsView = '/accountPayRequestsView';
@@ -117,4 +117,5 @@ class RouteList {
   static const String suppliesModuleView = '/suppliesModuleView';
   static const String suppliesModuleFilterView = '/SuppliesModuleFilterView';
   static const String shippingChargesView = '/shippingChargesView';
+  static const String suppliesDetailView = '/suppliesDetailView';
 }

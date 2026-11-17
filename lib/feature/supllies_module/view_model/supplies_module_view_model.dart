@@ -1,5 +1,9 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/supllies_module/model/all_supplies_count.dart';
+import 'package:di360_flutter/feature/supllies_module/model/approve_supplies_count.dart';
+import 'package:di360_flutter/feature/supllies_module/model/draft_suplies_count.dart';
+import 'package:di360_flutter/feature/supllies_module/model/supplies_detail_res.dart';
 import 'package:di360_flutter/feature/supllies_module/model/supply_brands_res.dart';
 import 'package:di360_flutter/feature/supllies_module/model/supply_categories_res.dart';
 import 'package:di360_flutter/feature/supllies_module/model/supply_sub_categories_res.dart';
@@ -21,6 +25,20 @@ class SuppliesModuleViewModel extends ChangeNotifier {
   String? selectedCategoryId;
   String? selectedSubCategoryId;
   String? selectedProductType;
+
+  String selectedSuppliesStatus = "All";
+
+  final List<String> suppliesStatus = [
+    'All',
+    'Draft',
+    'Approved',
+  ];
+
+  void changeSuppliesStatus(String value, BuildContext context) {
+    selectedSuppliesStatus = value;
+    getSuppliesList(context);
+    notifyListeners();
+  }
 
   void setSelectedBrand(String? id) {
     selectedBrandId = id;
@@ -58,9 +76,12 @@ class SuppliesModuleViewModel extends ChangeNotifier {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
       "andList": [
-        {
-          "status": {"_eq": "APPROVED"}
-        },
+        if (selectedSuppliesStatus != "All")
+          {
+            "status": {
+              "_eq": selectedSuppliesStatus == "Approved" ? "APPROVED" : "DRAFT"
+            }
+          },
         {
           "name": {"_ilike": "%${searchController.text}%"}
         },
@@ -81,7 +102,11 @@ class SuppliesModuleViewModel extends ChangeNotifier {
           },
         if (selectedProductType != null && selectedProductType!.isNotEmpty)
           {
-            "product_type": {"_eq": selectedProductType == "Simple Product" ? "simple": "with variant"}
+            "product_type": {
+              "_eq": selectedProductType == "Simple Product"
+                  ? "simple"
+                  : "with variant"
+            }
           },
       ],
       "sortList": [
@@ -91,6 +116,9 @@ class SuppliesModuleViewModel extends ChangeNotifier {
       "offset": 0
     };
     final res = await repo.getSuppliesList(variables);
+    await getAllSuppliesCount();
+    await getDraftSuppliesCount();
+    await getApproveSuppliesCount();
     getSupplyData = res;
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -111,6 +139,71 @@ class SuppliesModuleViewModel extends ChangeNotifier {
   Future<void> getSupplySubCategories() async {
     final res = await repo.getSupplySubCategories();
     supplySubCategoriesData = res;
+    notifyListeners();
+  }
+
+  AllSuppliesData? allSuppliesData;
+  DraftSuppliesData? draftSuppliesData;
+  ApproveSuppliesData? approveSuppliesData;
+  SuppliesDetailData? suppliesDetailData;
+
+  int allCount = 0;
+  int draftCount = 0;
+  int approvedCount = 0;
+
+  Map<String, int?> get statusSuppliersCountMap => {
+        'All': allCount,
+        'Draft': draftCount,
+        'Approved': approvedCount,
+      };
+
+  Future<void> getAllSuppliesCount() async {
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    final variables = {
+      "andList": [
+        {
+          "name": {"_ilike": "%%"}
+        },
+        {
+          "dental_suppliers_id": {"_eq": id}
+        }
+      ]
+    };
+    final res = await repo.getAllSuppliesCount(variables);
+    allSuppliesData = res;
+    allCount = res.suppliesAggregate?.aggregate?.count ?? 0;
+    notifyListeners();
+  }
+
+  Future<void> getDraftSuppliesCount() async {
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    final variables = {"dental_suppliers_id": id};
+    final res = await repo.getDraftSuppliesCount(variables);
+    draftSuppliesData = res;
+    draftCount = res.draft?.aggregate?.count ?? 0;
+    notifyListeners();
+  }
+
+  Future<void> getApproveSuppliesCount() async {
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    final variables = {"dental_suppliers_id": id};
+    final res = await repo.getApproveSuppliesCount(variables);
+    approveSuppliesData = res;
+    approvedCount = res.approved?.aggregate?.count ?? 0;
+    notifyListeners();
+  }
+
+  Future<void> getSuppliesDetails(String id, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final variables = {"id": id};
+    final res = await repo.getSuppliesDetails(variables);
+    suppliesDetailData = res;
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 

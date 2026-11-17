@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/my_favourites/queries/delete_favourite_query.dart';
+import 'package:di360_flutter/feature/favourites/queries/delete_favourite_query.dart';
 import 'package:di360_flutter/feature/supplies/model/dental_professional_address_res.dart';
 import 'package:di360_flutter/feature/supplies/model/favourites_keys_res.dart';
 import 'package:di360_flutter/feature/supplies/model/get_account_towards_supplier_res.dart';

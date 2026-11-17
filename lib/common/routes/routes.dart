@@ -66,8 +66,8 @@ import 'package:di360_flutter/feature/forgot_password/view/forgot_password_scree
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_view.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
-import 'package:di360_flutter/feature/my_favourites/view/favourite_filter_view.dart';
-import 'package:di360_flutter/feature/my_favourites/view/my_favourites_view.dart';
+import 'package:di360_flutter/feature/favourites/view/favourite_filter_view.dart';
+import 'package:di360_flutter/feature/favourites/view/my_favourites_view.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/my_orders/view/my_orders_filter_view.dart';
 import 'package:di360_flutter/feature/my_orders/view/my_orders_view.dart';
@@ -87,6 +87,7 @@ import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/supllies_module/view/supplies_detail_view.dart';
 import 'package:di360_flutter/feature/supllies_module/view/supplies_module_filter_view.dart';
 import 'package:di360_flutter/feature/supllies_module/view/supplies_module_view.dart';
 import 'package:di360_flutter/feature/supplies/view/add_news_address_view.dart';
@@ -320,7 +321,7 @@ class Routes {
             selectedProducts: args['selected_products'] ?? {});
       },
       RouteList.addNewsAddressView: (context) => AddNewsAddressView(),
-      RouteList.myFavouritesView: (context) => MyFavouritesView(),
+      RouteList.favouritesView: (context) => MyFavouritesView(),
       RouteList.myOrdersView: (context) => MyOrdersView(),
       RouteList.myOrdersFilterView: (context) => MyOrdersFilterView(),
       RouteList.accountPayRequestsView: (context) => AccountPayRequestsView(),
@@ -332,6 +333,7 @@ class Routes {
       RouteList.suppliesModuleView: (context) => SuppliesModuleView(),
       RouteList.suppliesModuleFilterView: (context) => SuppliesModuleFilterView(),
       RouteList.shippingChargesView: (context) => ShippingChargesView(),
+      RouteList.suppliesDetailView: (context) => SuppliesDetailView(),
     };
   }
 }

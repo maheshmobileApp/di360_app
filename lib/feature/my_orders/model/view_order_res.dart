@@ -296,7 +296,7 @@ class BillingAddress {
   String? type;
   String? state;
   String? line1;
-  Null? line2;
+  String? line2;
   String? country;
   String? landmark;
   double? latitude;
@@ -308,7 +308,7 @@ class BillingAddress {
   String? postalCode;
   bool? makeDefault;
   String? googlePlaceId;
-  Null? otherTypeName;
+  String? otherTypeName;
   String? dentalProfessionalId;
 
   BillingAddress(

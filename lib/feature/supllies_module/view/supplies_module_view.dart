@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
 import 'package:di360_flutter/feature/supllies_module/widgets/supplies_module_card.dart';
@@ -38,7 +39,7 @@ class _SuppliesModuleViewState extends State<SuppliesModuleView> {
 
     if (scrollController.position.pixels >=
         scrollController.position.maxScrollExtent - 200) {
-      context.read<SuppliesModuleViewModel>().getSuppliesList(context);
+      //context.read<SuppliesModuleViewModel>().getSuppliesList(context);
     }
   }
 
@@ -85,38 +86,104 @@ class _SuppliesModuleViewState extends State<SuppliesModuleView> {
                     child: Icon(Icons.close, color: AppColors.black))
             ],
           )),
-      body: orders.isEmpty
-          ? Center(
-              child: vm.isLoading
-                  ? const CircularProgressIndicator()
-                  : Text("No Supplies"),
-            )
-          : ListView.builder(
-              controller: scrollController,
-              padding: const EdgeInsets.all(8),
-              itemCount: orders.length + (vm.isLoadingMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == orders.length) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
+      body: Column(
+        children: [
+          suppliesStatus(vm),
+          Expanded(
+            child: orders.isEmpty
+                ? Center(
+                    child: vm.isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text("No Supplies"),
+                  )
+                : ListView.builder(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(8),
+                    itemCount: orders.length + (vm.isLoadingMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == orders.length) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      final item = orders[index];
+                      return SuppliesModuleCard(
+                        item: item,
+                        onMenuSelected: (value) async {
+                          switch (value) {
+                            case "view":
+                              await vm.getSuppliesDetails(
+                                  item.id ?? "", context);
+                              navigationService
+                                  .navigateTo(RouteList.suppliesDetailView);
 
-                final item = orders[index];
-                return SuppliesModuleCard(
-                  item: item,
-                  onMenuSelected: (value) async {
-                    switch (value) {
-                      case "view":
-                        //await vm.viewOrder(context, item.id ?? "");
-                        navigationService.navigateTo(RouteList.orderDetailView);
-                        break;
-                    }
-                  },
-                );
-              },
+                              break;
+                          }
+                        },
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  SizedBox suppliesStatus(SuppliesModuleViewModel vm) {
+    return SizedBox(
+      height: 60,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: vm.suppliesStatus.length,
+        itemBuilder: (context, index) {
+          String status = vm.suppliesStatus[index];
+          bool isSelected = vm.selectedSuppliesStatus == status;
+          return GestureDetector(
+            onTap: () {
+              vm.changeSuppliesStatus(status, context);
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color:
+                    isSelected ? AppColors.primaryColor : AppColors.whiteColor,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: AppColors.primaryColor),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    status,
+                    style: TextStyles.regular2(
+                      color:
+                          isSelected ? AppColors.whiteColor : AppColors.black,
+                    ),
+                  ),
+                  SizedBox(width: 6),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.whiteColor
+                          : AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      "${vm.statusSuppliersCountMap[status]}",
+                      style: TextStyles.regular2(
+                        color:
+                            isSelected ? AppColors.black : AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
+          );
+        },
+      ),
     );
   }
 }
