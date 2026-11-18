@@ -8,6 +8,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/account/account_model/account_model.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view_model/account_pay_requests_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
@@ -19,7 +20,15 @@ import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
+import 'package:di360_flutter/feature/favourites/view_model/my_favourites_view_model.dart';
+import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
+import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
+import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
+import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
+import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/widgets/view_model/supplies_enquiries_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -496,6 +505,67 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             }
                             navigationService
                                 .navigateTo(RouteList.clientScreen);
+                          } else if (item.title == "Favourites") {
+                            await context
+                                .read<FavouritesViewModel>()
+                                .getSupplyFavourites(context);
+                            navigationService
+                                .navigateTo(RouteList.favouritesView);
+                          } else if (item.title == "My Favourites") {
+                            await context
+                                .read<MyFavouritesViewModel>()
+                                .getSupplyFavourites(context);
+
+                            navigationService
+                                .navigateTo(RouteList.myFavouritesView);
+                          } else if (item.title == "My Orders") {
+                            await context
+                                .read<MyOrdersViewModel>()
+                                .getSuppliesOrders(context);
+                            navigationService
+                                .navigateTo(RouteList.myOrdersView);
+                          } else if (item.title == "Orders") {
+                            await context
+                                .read<OrdersViewModel>()
+                                .getIPSuppliesOrders(context);
+                            navigationService.navigateTo(RouteList.ordersView);
+                          } else if (item.title == "Account Pay Requests") {
+                            await context
+                                .read<AccountPayRequestsViewModel>()
+                                .getAccountPayRequests(context);
+                            await context
+                                .read<AccountPayRequestsViewModel>()
+                                .getSupplierAccounts(context);
+                            navigationService
+                                .navigateTo(RouteList.accountPayRequestsView);
+                          } else if (item.title == "Shipping Address") {
+                            await context
+                                .read<ShippingAddressViewModel>()
+                                .getShippingAddressesProfessional(context);
+                            navigationService
+                                .navigateTo(RouteList.shippingAddressView);
+                          } else if (item.title == "Supplies") {
+                            await context
+                                .read<SuppliesModuleViewModel>()
+                                .getSuppliesList(context);
+                            navigationService
+                                .navigateTo(RouteList.suppliesModuleView);
+                          } else if (item.title == "Shipping Charges") {
+                            await context
+                                .read<ShippingChargesViewModel>()
+                                .getShippingCharges(context);
+                            navigationService
+                                .navigateTo(RouteList.shippingChargesView);
+                          } else if (item.title == "Promotions") {
+                            navigationService
+                                .navigateTo(RouteList.promotionsView);
+                          } else if (item.title == "Enquiries" ||
+                              item.title == "My Enquiries") {
+                            context
+                                .read<SuppliesEnquiriesViewModel>()
+                                .suppliesEnquiriesData = null;
+                            navigationService
+                                .navigateTo(RouteList.suppliesEnquiriesView);
                           }
                         },
                       ),

@@ -7,12 +7,16 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view_model/account_pay_requests_view_model.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/clients/clients_provider/clients_provider.dart';
 import 'package:di360_flutter/feature/forgot_password/view_model/forgot_password_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/favourites/view_model/my_favourites_view_model.dart';
+import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
+import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/no_internet/no_internet_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -41,9 +45,15 @@ import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comme
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
+import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
+import 'package:di360_flutter/feature/promotions/view_model/promotions_view_model.dart';
+import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
+import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
+import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/widgets/view_model/supplies_enquiries_view_model.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
@@ -173,6 +183,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => JobProfileCreateViewModel()),
         ChangeNotifierProvider(create: (_) => SuppliesViewModel()),
+        ChangeNotifierProvider(create: (_) => FavouritesViewModel()),
+        ChangeNotifierProvider(create: (_) => MyFavouritesViewModel()),
+        ChangeNotifierProvider(create: (_) => MyOrdersViewModel()),
+        ChangeNotifierProvider(create: (_) => AccountPayRequestsViewModel()),
+        ChangeNotifierProvider(create: (_) => ShippingAddressViewModel()),
+        ChangeNotifierProvider(create: (_) => OrdersViewModel()),
+        ChangeNotifierProvider(create: (_) => SuppliesModuleViewModel()),
+        ChangeNotifierProvider(create: (_) => ShippingChargesViewModel()),
+        ChangeNotifierProvider(create: (_) => PromotionsViewModel()),
+        ChangeNotifierProvider(create: (_) => SuppliesEnquiriesViewModel())
       ],
       child: MaterialApp(
         builder: (context, child) {

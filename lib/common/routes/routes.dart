@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view/account_pay_requests_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/add_catalogue_screen.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
@@ -72,22 +73,43 @@ import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hu
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/registration_success_view.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/secure_payment_view.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
+import 'package:di360_flutter/feature/favourites/view/favourite_filter_view.dart';
+import 'package:di360_flutter/feature/favourites/view/favourites_view.dart';
+import 'package:di360_flutter/feature/my_favourites/view/my_favourites_view.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
+import 'package:di360_flutter/feature/my_orders/view/my_orders_filter_view.dart';
+import 'package:di360_flutter/feature/my_orders/view/my_orders_view.dart';
+import 'package:di360_flutter/feature/my_orders/view/order_detail_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/notifications/view/notification_screen.dart';
+import 'package:di360_flutter/feature/orders/view/order_detail_view.dart';
+import 'package:di360_flutter/feature/orders/view/order_filter_view.dart';
+import 'package:di360_flutter/feature/orders/view/orders_view.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
+import 'package:di360_flutter/feature/promotions/view/promotions_view.dart' as Routelist;
+import 'package:di360_flutter/feature/promotions/view/promotions_view.dart';
+import 'package:di360_flutter/feature/shipping_address/view/add_shipping_address_view.dart';
+import 'package:di360_flutter/feature/shipping_address/view/shipping_address_view.dart';
+import 'package:di360_flutter/feature/shipping_charges/view/shipping_charges_view.dart';
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/supllies_module/view/supplies_detail_view.dart';
+import 'package:di360_flutter/feature/supllies_module/view/supplies_module_filter_view.dart';
+import 'package:di360_flutter/feature/supllies_module/view/supplies_module_view.dart';
+import 'package:di360_flutter/feature/supplies/view/add_news_address_view.dart';
 import 'package:di360_flutter/feature/supplies/view/order_request_review_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_cart_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_details_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_marketplace_view.dart';
+import 'package:di360_flutter/feature/supplies/view/supplies_view_options_detail_view.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/view/supplies_enquiries_detail_view.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/view/supplies_enquiries_view.dart';
 import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
 import 'package:di360_flutter/feature/support/view/support_view.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view/talent_enquiries_view.dart';
@@ -307,6 +329,8 @@ class Routes {
       RouteList.interestedScreen: (context) => InterestedScreen(),
       RouteList.suppliesMarketPlace: (context) => SuppliesMarketplaceView(),
       RouteList.suppliesDetailsView: (context) => SuppliesDetailsView(),
+      RouteList.suppliesViewOptionsDetailsView: (context) =>
+          SuppliesViewOptionsDetailView(),
       RouteList.suppliesCartView: (context) => SuppliesCartView(),
       RouteList.securePaymentView: (context) {
         final args =
@@ -351,6 +375,26 @@ class Routes {
       RouteList.notificationFilterView: (context) => NotificationFilterView(),
       RouteList.promotionFilterView: (context) => PromotionFilterView(),
       RouteList.transactionFilterView: (context) => TransactionFilterView(),
+      RouteList.addNewsAddressView: (context) => AddNewsAddressView(),
+      RouteList.favouritesView: (context) => FavouritesView(),
+      RouteList.myOrdersView: (context) => MyOrdersView(),
+      RouteList.myOrdersFilterView: (context) => MyOrdersFilterView(),
+      RouteList.accountPayRequestsView: (context) => AccountPayRequestsView(),
+      RouteList.shippingAddressView: (context) => ShippingAddressView(),
+      RouteList.addShippingAddressView: (context) => AddShippingAddressView(),
+      RouteList.orderDetailView: (context) => OrderDetailView(),
+      RouteList.favouriteFilterView: (context) => FavouriteFilterView(),
+      RouteList.ordersView: (context) => OrdersView(),
+      RouteList.suppliesModuleView: (context) => SuppliesModuleView(),
+      RouteList.suppliesModuleFilterView: (context) => SuppliesModuleFilterView(),
+      RouteList.shippingChargesView: (context) => ShippingChargesView(),
+      RouteList.suppliesDetailView: (context) => SuppliesDetailView(),
+      RouteList.myFavouritesView: (context) => MyFavouritesView(),
+      RouteList.promotionsView: (context) => PromotionsView(),
+      RouteList.suppliesEnquiriesView: (context) => SuppliesEnquiriesView(), 
+      RouteList.suppliesEnquiriesDetailView: (context) => SuppliesEnquiriesDetailView(),
+      RouteList.supplierOrderDetailView: (context) => SupplierOrderDetailView(),
+      RouteList.orderFilterView: (context) => OrderFilterView()
     };
   }
 }

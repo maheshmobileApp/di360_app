@@ -20,6 +20,7 @@ class AppBarWidget extends StatelessWidget
   final bool searchBarOpen;
   final Function()? backAction;
   final bool isbackAction;
+  final bool notification;
   const AppBarWidget(
       {super.key,
       this.filterWidget,
@@ -29,7 +30,8 @@ class AppBarWidget extends StatelessWidget
       this.logo = true,
       this.searchBarOpen = false,
       this.backAction,
-      this.isbackAction = true});
+      this.isbackAction = true,
+      this.notification = true});
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +62,7 @@ class AppBarWidget extends StatelessWidget
         ],
       ),
       actions: [
+        if (notification)
         Builder(
           builder: (context) => GestureDetector(
               onTap: () async {

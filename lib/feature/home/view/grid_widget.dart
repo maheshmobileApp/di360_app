@@ -123,6 +123,58 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
         }
       } else if (title == "Support") {
         navigationService.navigateTo(RouteList.supportScreen);
+    if (title == 'News Feed') {
+      dashBoardVM.setIndex(1, navigatorKey.currentContext!);
+    } else if (title == 'Job Seek') {
+      dashBoardVM.setIndex(2, navigatorKey.currentContext!);
+    } else if (title == 'Catalogue') {
+      dashBoardVM.setIndex(type == UserRole.practice.value ? 3 : 4,
+          navigatorKey.currentContext!);
+    } else if (title == 'Support') {
+      navigationService.navigateTo(RouteList.supportScreen);
+    } else if (title == 'Directory') {
+      if (subscriptionStatus == "EXPIRED") {
+        _showInactivePopup(context);
+      } else {
+        await navigationService.navigateTo(RouteList.directory);
+      }
+    } else if (title == 'Learning Hub') {
+      if (subscriptionStatus == "EXPIRED") {
+        _showInactivePopup(context);
+      } else {
+        await navigationService.runOnce(RouteList.learningHubMasterView,
+            () async {
+          Loaders.circularShowLoader(context);
+          context.read<MarketPlaceLearningHubViewModel>().searchBarOpen = false;
+          context
+              .read<MarketPlaceLearningHubViewModel>()
+              .searchController
+              .text = "";
+          context.read<NewCourseViewModel>().fetchCourseCategory();
+          context.read<NewCourseViewModel>().fetchCourseType();
+          await context
+              .read<MarketPlaceLearningHubViewModel>()
+              .getAllLearningHubData(context, isCommunityLearningHub: false);
+          Loaders.circularHideLoader(context);
+          await navigationService.navigateTo(RouteList.learningHubMasterView);
+        });
+      }
+    } else if (title == 'Clients') {
+      if (subscriptionStatus == "EXPIRED") {
+        _showInactivePopup(context);
+      } else {
+        navigationService.navigateTo(RouteList.clientScreen);
+      }
+    } else if (title == 'Supplies') {
+      await context.read<SuppliesViewModel>().getFavouriteKeys();
+      await context.read<SuppliesViewModel>().getSuppliers(context);
+      await context.read<SuppliesViewModel>().getSuppliesCart(context);
+      navigationService.navigateTo(RouteList.suppliesMarketPlace);
+      if (subscriptionStatus == "EXPIRED") {
+        _showInactivePopup(context);
+      } else {
+        await context.read<SuppliesViewModel>().getSuppliers(context);
+        navigationService.navigateTo(RouteList.suppliesMarketPlace);
       }
     } else {
       _showPaymentPopup(context);

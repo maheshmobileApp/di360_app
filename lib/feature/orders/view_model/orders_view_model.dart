@@ -1,0 +1,200 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/orders/model/orders_res.dart';
+import 'package:di360_flutter/feature/orders/model/view_order_res.dart';
+import 'package:di360_flutter/feature/orders/repository/orders_repo_impl.dart';
+import 'package:di360_flutter/utils/loader.dart';
+import 'package:flutter/material.dart';
+
+class OrdersViewModel extends ChangeNotifier {
+  final OrdersRepoImpl repo = OrdersRepoImpl();
+
+  OrdersData? suppliesOrdersData;
+  ViewOrderData? viewOrderData;
+  static const int _ordersLimit = 10;
+  int _ordersOffset = 0;
+
+  bool isLoading = false;
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
+  bool isFilterApplied = false;
+
+  final TextEditingController searchController = TextEditingController();
+  String selectedOrderStatus = "";
+  String selectedSupplierName = "";
+  String selectedSupplierId = "";
+
+  String filterStatus = "";
+  String filterSupplierId = "";
+  String filterStartDate = "";
+  String filterEndDate = "";
+
+  void setFilterApply(bool value) {
+    isFilterApplied = value;
+    notifyListeners();
+  }
+
+  void setFilterDates(DateTime startDate, DateTime endDate) {
+    filterStartDate = startDate.timeZoneName;
+    filterEndDate = endDate.timeZoneName;
+    notifyListeners();
+  }
+
+  void setSelectedOrderStatus(String value) {
+    selectedOrderStatus = value;
+    filterStatus = value.toUpperCase();
+    notifyListeners();
+  }
+
+  void setSelectedSupplier(String id, String name) {
+    selectedSupplierId = id;
+    selectedSupplierName = name;
+    filterSupplierId = id;
+    notifyListeners();
+  }
+
+  List<String> orderStatuses = [
+    "All",
+    "New",
+    "Confirmed",
+    "Partially Shipped",
+    "Completed"
+  ];
+
+  List<Map<String, String>> buyerClinics = [];
+
+  Future<void> getIPSuppliesOrders(
+    BuildContext context, {
+    bool isLoadMore = false,
+  }) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    if (isLoading || isLoadingMore) return;
+    if (isLoadMore && !hasMoreData) return;
+
+    if (!isLoadMore) {
+      Loaders.circularShowLoader(context);
+    }
+
+    if (isLoadMore) {
+      isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _ordersOffset = 0;
+      hasMoreData = true;
+    }
+    notifyListeners();
+
+    try {
+      if (filterStatus.isNotEmpty ||
+          filterSupplierId.isNotEmpty ||
+          filterStartDate.isNotEmpty ||
+          filterEndDate.isNotEmpty) {
+        setFilterApply(true);
+      } else {
+        setFilterApply(false);
+      }
+
+      final variables = {
+        "sortList": [
+          {"order_number": "desc"}
+        ],
+        "andList": [
+          if (selectedOrderStatus != "" && selectedOrderStatus != "All")
+          {
+            "status": {"_eq": selectedOrderStatus == "New" ? "PENDING" : selectedOrderStatus.toUpperCase()}
+          },
+          {
+            "suppliers_id": {"_eq": userId}
+          },
+          if (selectedSupplierId != "")
+          {
+            "_or": [
+              {
+                "dental_practice_id": {
+                  "_eq": selectedSupplierId
+                }
+              },
+              {
+                "dental_professional_id": {
+                  "_eq": selectedSupplierId
+                }
+              },
+              {
+                "dental_supplier_id": {
+                  "_eq": selectedSupplierId
+                }
+              }
+            ]
+          },
+          if (filterStartDate != "")
+          {
+            "created_at": {"_gte": filterStartDate}
+          },
+          if (filterEndDate != "")
+          {
+            "created_at": {"_lte": filterEndDate}
+          }
+        ],
+        "limit": _ordersLimit,
+        "offset": _ordersOffset,
+      };
+
+      final res = await repo.getIPSuppliesOrders(variables);
+      final newOrders = res.suppliesOrders ?? [];
+
+      if (isLoadMore) {
+        final existingOrders = suppliesOrdersData?.suppliesOrders ?? [];
+        suppliesOrdersData = OrdersData(
+          suppliesOrders: [...existingOrders, ...newOrders],
+        );
+      } else {
+        suppliesOrdersData = res;
+      }
+
+      buyerClinics = (suppliesOrdersData?.suppliesOrders ?? [])
+          .where((o) =>
+              o.dentalPractice?.id != null && o.dentalPractice?.name != null ||
+              o.dentalProfessional?.id != null &&
+                  o.dentalProfessional?.name != null)
+          .map((o) => {
+                'id': o.dentalPractice?.id ?? o.dentalProfessional?.id ?? "",
+                'name':
+                    o.dentalPractice?.name ?? o.dentalProfessional?.name ?? ""
+              })
+          .toSet()
+          .toList();
+
+      _ordersOffset += newOrders.length;
+      hasMoreData = newOrders.length == _ordersLimit;
+    } finally {
+      isLoading = false;
+      isLoadingMore = false;
+      if (!isLoadMore) {
+        Loaders.circularHideLoader(context);
+      }
+      notifyListeners();
+    }
+  }
+
+  Future<void> viewOrderDetail(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+
+    final variables = {"id": id};
+    final res = await repo.viewOrderDetail(variables);
+    viewOrderData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  clearFilters() {
+    selectedOrderStatus = "";
+    selectedSupplierName = "";
+    selectedSupplierId = "";
+    filterStatus = "";
+    filterSupplierId = "";
+    filterStartDate = "";
+    filterEndDate = "";
+    notifyListeners();
+  }
+}

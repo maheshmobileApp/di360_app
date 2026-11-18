@@ -1,11 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/supplies/model/product_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/product_card.dart';
+import 'package:di360_flutter/feature/supplies/view/product_filter_result_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class SuppliesMarketplaceView extends StatefulWidget {
@@ -61,13 +65,54 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
                 navigationService.goBack();
               },
               icon: Icon(Icons.arrow_back_ios)),
-          actions : [
+          actions: [
+            GestureDetector(
+              onTap: () async {
+                await vm.getSupplyBrands(context);
+                await vm.getSupplyCategories(context);
+                await vm.getDentalSupplers(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProductFilterScreen(
+                      onApply: (result) {
+                       
+                      },
+                    ),
+                  ),
+                );
+              },
+              child:
+                  SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+            ),
             IconButton(
               onPressed: () async {
                 await vm.getSuppliesCart(context);
+                vm.clearSelectedSuppliersAndProducts();
                 navigationService.navigateTo(RouteList.suppliesCartView);
               },
-              icon: Icon(Icons.shopping_cart),
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.shopping_cart),
+                  Positioned(
+                    right: -6,
+                    top: -6,
+                    child: CircleAvatar(
+                      radius: 9,
+                      backgroundColor: AppColors.primaryColor,
+                      child: Text(
+                        '${vm.suppliesCartData?.supplyCarts?.length ?? 0}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
           title: Text(
@@ -93,42 +138,79 @@ class _SuppliesMarketplaceViewState extends State<SuppliesMarketplaceView> {
             final supply = supplies[index];
 
             return ProductCard(
-              product: Product(
-                id: supply.id ?? "",
-                image: supply.image?.firstOrNull?.url ?? "",
-                name: supply.name ?? "",
-                brand: supply.dentalSupplier?.businessName ?? "",
-                price: supply.supplyVariants?.firstOrNull?.sellingPrice
-                        ?.toString() ??
-                    "",
-                inStock:
-                    (supply.supplyVariants?.firstOrNull?.availableStock ?? 0) >
-                        0,
-                quantity: vm.getQuantity(supply.id ?? ""),
-                isSpotOn: true,
-                supplyBrand: supply.supplyBrand?.name ?? "",
-              ),
-              onFavorite: () {},
-              onIncrease: () {
-                vm.increaseQuantity(supply.id ?? "");
-              },
-              onDecrease: () {
-                vm.decreaseQuantity(supply.id ?? "");
-              },
-              onAddToCart: () async {
-                await vm.addToCart(
-                    context,
-                    supply.id ?? "",
-                    supply.supplyVariants?.firstOrNull?.id ?? "",
-                    vm.getQuantity(supply.id ?? ""));
-              },
-              onDetailView: () async {
-                print("Navigating to details view for supply ID: ${supply.id}");
-                await vm.getSuppliesDetails(context, supply.id ?? "");
-                navigationService.navigateTo(RouteList.suppliesDetailsView);
-              }
+                product: Product(
+                  id: supply.id ?? "",
+                  image: supply.image?.firstOrNull?.url ?? "",
+                  name: supply.name ?? "",
+                  brand: supply.dentalSupplier?.businessName ?? "",
+                  price: supply.priceType == "exclusive"
+                      ? supply.supplyVariants?.firstOrNull?.calaculatedPrice
+                              ?.toStringAsFixed(2) ??
+                          ""
+                      : supply.supplyVariants?.firstOrNull?.sellingPrice
+                              ?.toStringAsFixed(2) ??
+                          "",
+                  inStock:
+                      (supply.supplyVariants?.firstOrNull?.availableStock ??
+                              0) >
+                          0,
+                  quantity: vm.getQuantity(supply.id ?? ""),
+                  isSpotOn: true,
+                  supplyBrand: supply.supplyBrand?.name ?? "",
+                ),
+                viewOption: (supply.supplyVariants?.length ?? 0) > 1,
+                onFavorite: () {
+                  vm.checkFavouriteKey(supply.id ?? "")
+                      ? vm.deleteFavourites(supply.id ?? "",
+                          supply.supplyVariants?.first.id ?? "", context)
+                      : vm.addFavourites(supply.id ?? "",
+                          supply.supplyVariants?.first.id ?? "", context);
+                },
+                isFavourited: vm.checkFavouriteKey(supply.id ?? ""),
+                onIncrease: () {
+                  vm.increaseQuantity(supply.id ?? "");
+                },
+                onDecrease: () {
+                  vm.decreaseQuantity(supply.id ?? "");
+                },
+                onAddToCart: () async {
+                  final supplyId = supply.id ?? "";
+                  final variantId =
+                      supply.supplyVariants?.firstOrNull?.id ?? "";
+                  final quantity = vm.getQuantity(supplyId);
 
-            );
+                  final cartItem = vm.getCartItemBySupplyId(supplyId);
+
+                  if (cartItem != null) {
+                    await vm.increaseQuantityById(
+                      context,
+                      cartItem.id ?? "",
+                      quantity,
+                    );
+                  } else {
+                    await vm.addToCart(
+                      context,
+                      supplyId,
+                      variantId,
+                      quantity,
+                    );
+                  }
+
+                  scaffoldMessenger("Added to cart successfully");
+
+                  vm.resetQuantity(supplyId);
+                  vm.getSuppliesCart(context);
+                },
+                onDetailView: () async {
+                  print(
+                      "Navigating to details view for supply ID: ${supply.id}");
+                  await vm.getSuppliesDetails(context, supply.id ?? "");
+                  (supply.supplyVariants?.length ?? 0) > 1
+                      ? navigationService
+                          .navigateTo(RouteList.suppliesViewOptionsDetailsView)
+                      : navigationService
+                          .navigateTo(RouteList.suppliesDetailsView);
+                });
           },
         ),
       ),

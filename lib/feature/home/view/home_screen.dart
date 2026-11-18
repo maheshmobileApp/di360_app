@@ -29,14 +29,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
     final directorVM = Provider.of<DirectoryViewModel>(context);
-    final visibleItems = HomeGridData.items
-        .where(
-          (item) => permissions.contains(item.permission.value),
-        )
-        .toList();
-
-    return
-        Scaffold(
+    final visibleItems = HomeGridData.items.where(
+      (item) => permissions.contains(item.permission.value),
+    ).toList();
+    
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
         isbackAction: false,
@@ -53,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                   child: GridWidget(visibleItems: visibleItems)))
         ],
+      ),
       ),
     );
   }
