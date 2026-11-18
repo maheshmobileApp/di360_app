@@ -186,7 +186,7 @@ class PromotionsViewModel extends ChangeNotifier {
             }
           ]
         },
-        "limit": 20,
+        "limit": _promotionsLimit,
         "offset": _promotionsOffset
       };
       final res = await repo.getPromotions(variables);

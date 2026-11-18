@@ -296,10 +296,10 @@ class Image {
 
 class SeoMetadata {
   Null? image;
-  Null? title;
-  Null? keywords;
-  Null? description;
-  Null? altTextOfImage;
+  String? title;
+  String? keywords;
+  String? description;
+  String? altTextOfImage;
 
   SeoMetadata(
       {this.image,
@@ -434,19 +434,19 @@ class SupplyVariant {
   String? createdAt;
   String? updatedAt;
   Null? actualPrice;
-  Null? attributes;
+  List<dynamic>? attributes;
   String? skuCode;
   int? availableStock;
-  Null? color;
-  Null? details;
+  String? color;
+  String? details;
   Null? image;
   bool? makeDefault;
   Null? moreImages;
   String? priceUnit;
   dynamic? sellingPrice;
-  Null? specifications;
+  String? specifications;
   String? status;
-  Null? stockUnit;
+  dynamic? stockUnit;
   String? supplyId;
   String? title;
   Null? video;

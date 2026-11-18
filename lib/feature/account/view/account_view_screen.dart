@@ -27,6 +27,7 @@ import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
 import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
 import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
 import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/view_model/supplies_enquiries_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -510,15 +511,13 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.favouritesView);
                           } else if (item.title == "My Favourites") {
-                             await context
+                            await context
                                 .read<MyFavouritesViewModel>()
                                 .getSupplyFavourites(context);
-                            
+
                             navigationService
                                 .navigateTo(RouteList.myFavouritesView);
-                          }
-                          
-                          else if (item.title == "My Orders") {
+                          } else if (item.title == "My Orders") {
                             await context
                                 .read<MyOrdersViewModel>()
                                 .getSuppliesOrders(context);
@@ -528,8 +527,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             await context
                                 .read<OrdersViewModel>()
                                 .getIPSuppliesOrders(context);
-                            navigationService
-                                .navigateTo(RouteList.ordersView);
+                            navigationService.navigateTo(RouteList.ordersView);
                           } else if (item.title == "Account Pay Requests") {
                             await context
                                 .read<AccountPayRequestsViewModel>()
@@ -558,9 +556,15 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.shippingChargesView);
                           } else if (item.title == "Promotions") {
-                            
                             navigationService
                                 .navigateTo(RouteList.promotionsView);
+                          } else if (item.title == "Enquiries" ||
+                              item.title == "My Enquiries") {
+                            context
+                                .read<SuppliesEnquiriesViewModel>()
+                                .suppliesEnquiriesData = null;
+                            navigationService
+                                .navigateTo(RouteList.suppliesEnquiriesView);
                           }
                         },
                       ),

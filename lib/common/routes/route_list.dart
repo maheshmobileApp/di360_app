@@ -120,4 +120,7 @@ class RouteList {
   static const String suppliesDetailView = '/suppliesDetailView';
   static const String myFavouritesView = '/myFavouritesView';
   static const String promotionsView = '/promotionsView';
+  static const String suppliesEnquiriesView = '/suppliesEnquiriesView';
+  static const String suppliesEnquiriesDetailView =
+      '/suppliesEnquiriesDetailView';
 }

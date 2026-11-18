@@ -51,6 +51,7 @@ import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charg
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
 import 'package:di360_flutter/feature/supplies/view_model/supplies_view_model.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/view_model/supplies_enquiries_view_model.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
@@ -181,7 +182,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OrdersViewModel()),
         ChangeNotifierProvider(create: (_) => SuppliesModuleViewModel()),
         ChangeNotifierProvider(create: (_) => ShippingChargesViewModel()),
-        ChangeNotifierProvider(create: (_) => PromotionsViewModel())
+        ChangeNotifierProvider(create: (_) => PromotionsViewModel()),
+        ChangeNotifierProvider(create: (_) => SuppliesEnquiriesViewModel())
       ],
       child: MaterialApp(
         builder: (context, child) {

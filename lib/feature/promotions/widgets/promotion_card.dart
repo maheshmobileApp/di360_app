@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/promotions/model/get_promotions_res.dart';
-import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 

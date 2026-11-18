@@ -99,6 +99,8 @@ import 'package:di360_flutter/feature/supplies/view/supplies_cart_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_details_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_marketplace_view.dart';
 import 'package:di360_flutter/feature/supplies/view/supplies_view_options_detail_view.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/view/supplies_enquiries_detail_view.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/view/supplies_enquiries_view.dart';
 import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
 import 'package:di360_flutter/feature/support/view/support_view.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view/talent_enquiries_view.dart';
@@ -338,7 +340,9 @@ class Routes {
       RouteList.shippingChargesView: (context) => ShippingChargesView(),
       RouteList.suppliesDetailView: (context) => SuppliesDetailView(),
       RouteList.myFavouritesView: (context) => MyFavouritesView(),
-      RouteList.promotionsView: (context) => PromotionsView()
+      RouteList.promotionsView: (context) => PromotionsView(),
+      RouteList.suppliesEnquiriesView: (context) => SuppliesEnquiriesView(), 
+      RouteList.suppliesEnquiriesDetailView: (context) => SuppliesEnquiriesDetailView(),
     };
   }
 }
