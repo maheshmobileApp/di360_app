@@ -34,9 +34,9 @@ class OrdersViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setFilterDates(String startDate, String endDate) {
-    filterStartDate = startDate;
-    filterEndDate = endDate;
+  void setFilterDates(DateTime startDate, DateTime endDate) {
+    filterStartDate = startDate.timeZoneName;
+    filterEndDate = endDate.timeZoneName;
     notifyListeners();
   }
 
@@ -54,15 +54,14 @@ class OrdersViewModel extends ChangeNotifier {
   }
 
   List<String> orderStatuses = [
-    "Select Order Status",
-    "Pending",
-    "Approved",
+    "All",
+    "New",
+    "Confirmed",
     "Partially Shipped",
-    "Shipped",
-    "Delivered",
-    "Cancelled",
-    "Refunded"
+    "Completed"
   ];
+
+  List<Map<String, String>> buyerClinics = [];
 
   Future<void> getIPSuppliesOrders(
     BuildContext context, {
@@ -100,8 +99,40 @@ class OrdersViewModel extends ChangeNotifier {
           {"order_number": "desc"}
         ],
         "andList": [
+          if (selectedOrderStatus != "" && selectedOrderStatus != "All")
+          {
+            "status": {"_eq": selectedOrderStatus == "New" ? "PENDING" : selectedOrderStatus.toUpperCase()}
+          },
           {
             "suppliers_id": {"_eq": userId}
+          },
+          if (selectedSupplierId != "")
+          {
+            "_or": [
+              {
+                "dental_practice_id": {
+                  "_eq": selectedSupplierId
+                }
+              },
+              {
+                "dental_professional_id": {
+                  "_eq": selectedSupplierId
+                }
+              },
+              {
+                "dental_supplier_id": {
+                  "_eq": selectedSupplierId
+                }
+              }
+            ]
+          },
+          if (filterStartDate != "")
+          {
+            "created_at": {"_gte": filterStartDate}
+          },
+          if (filterEndDate != "")
+          {
+            "created_at": {"_lte": filterEndDate}
           }
         ],
         "limit": _ordersLimit,
@@ -120,6 +151,19 @@ class OrdersViewModel extends ChangeNotifier {
         suppliesOrdersData = res;
       }
 
+      buyerClinics = (suppliesOrdersData?.suppliesOrders ?? [])
+          .where((o) =>
+              o.dentalPractice?.id != null && o.dentalPractice?.name != null ||
+              o.dentalProfessional?.id != null &&
+                  o.dentalProfessional?.name != null)
+          .map((o) => {
+                'id': o.dentalPractice?.id ?? o.dentalProfessional?.id ?? "",
+                'name':
+                    o.dentalPractice?.name ?? o.dentalProfessional?.name ?? ""
+              })
+          .toSet()
+          .toList();
+
       _ordersOffset += newOrders.length;
       hasMoreData = newOrders.length == _ordersLimit;
     } finally {
@@ -132,9 +176,15 @@ class OrdersViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> viewOrderDetail() async {
-    final variables = {};
+  Future<void> viewOrderDetail(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+
+    final variables = {"id": id};
     final res = await repo.viewOrderDetail(variables);
+    viewOrderData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
   }
 
   clearFilters() {

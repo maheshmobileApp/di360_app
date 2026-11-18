@@ -77,6 +77,8 @@ import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/notifications/view/notification_screen.dart';
+import 'package:di360_flutter/feature/orders/view/order_detail_view.dart';
+import 'package:di360_flutter/feature/orders/view/order_filter_view.dart';
 import 'package:di360_flutter/feature/orders/view/orders_view.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
@@ -343,6 +345,8 @@ class Routes {
       RouteList.promotionsView: (context) => PromotionsView(),
       RouteList.suppliesEnquiriesView: (context) => SuppliesEnquiriesView(), 
       RouteList.suppliesEnquiriesDetailView: (context) => SuppliesEnquiriesDetailView(),
+      RouteList.supplierOrderDetailView: (context) => SupplierOrderDetailView(),
+      RouteList.orderFilterView: (context) => OrderFilterView()
     };
   }
 }

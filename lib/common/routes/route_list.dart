@@ -123,4 +123,6 @@ class RouteList {
   static const String suppliesEnquiriesView = '/suppliesEnquiriesView';
   static const String suppliesEnquiriesDetailView =
       '/suppliesEnquiriesDetailView';
+  static const String supplierOrderDetailView = '/supplierOrderDetailView';
+  static const String orderFilterView = '/orderFilterView';
 }

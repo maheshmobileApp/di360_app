@@ -27,7 +27,7 @@ import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
 import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
 import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
 import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
-import 'package:di360_flutter/feature/supplies_enquiries/view_model/supplies_enquiries_view_model.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/widgets/view_model/supplies_enquiries_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';

@@ -4,18 +4,19 @@ import 'package:di360_flutter/feature/my_orders/widgets/order_history_card.dart'
 import 'package:di360_flutter/feature/my_orders/widgets/order_item_card.dart';
 import 'package:di360_flutter/feature/orders/model/view_order_res.dart';
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class OrderDetailView extends StatelessWidget {
+class SupplierOrderDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<OrdersViewModel>();
     final data = vm.viewOrderData?.suppliesOrdersByPk;
     return Scaffold(
       appBar: AppBarWidget(
-        title: "Order View",
+        title: "View Order",
         notification: false,
         logo: false,
         searchWidget: false,
@@ -58,13 +59,71 @@ Widget _orderInformation(SuppliesOrdersByPk? data) {
         Text("1. Order Information",
             style: TextStyles.clashSemiBold(fontSize: 16)),
         const SizedBox(height: 10),
-        _textWidget("Buyer / Client Name", data?.dentalPractice?.businessName ?? data?.dentalProfessional?.businessName ?? "" ),
-        _textWidget("Contact Person", data?.dentalPractice?.name ?? data?.dentalProfessional?.name ?? "" ),
-        _textWidget("Order Date", data?.createdAt ?? ""),
-        
+        _textWidget(
+            "Buyer / Client Name",
+            data?.dentalPractice?.businessName ??
+                data?.dentalProfessional?.businessName ??
+                ""),
+        _textWidget("Contact Person",
+            data?.dentalPractice?.name ?? data?.dentalProfessional?.name ?? ""),
+        _textWidget("Order Date",
+            DateFormatUtils.formatDateOnly(data?.createdAt ?? "")),
+        _addressCard("DELIVERY ADDRESS", data?.shippingAddress),
+        SizedBox(height: 10,),
+        _businessAddressCard("BUSINESS ADDRESS", data?.dentalPractice)
       ],
     ),
   );
+}
+
+Widget _addressCard(String head, ShippingAddress? address) {
+  return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(head, style: TextStyles.semiBold(fontSize: 14)),
+          Text(
+            "${address?.shortName},\n${address?.line1}, ${address?.line2}\nnear ${address?.landmark} \n${address?.city},${address?.state} ${address?.postalCode} \n${address?.country}",
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF828181),
+            ),
+          ),
+        ],
+      ));
+}
+
+Widget _businessAddressCard(String head, DentalPractice? address) {
+  return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(head, style: TextStyles.semiBold(fontSize: 14)),
+          Text(
+            "${address?.addressLineOne}, ${address?.addressLineTwo},\n${address?.city}, ${address?.state} ${address?.zipcode}",
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF828181),
+            ),
+          ),
+        ],
+      ));
 }
 
 Widget _orderSummary(SuppliesOrdersByPk? data) {
@@ -85,8 +144,8 @@ Widget _orderSummary(SuppliesOrdersByPk? data) {
         const SizedBox(height: 4),
         _textWidget("Items subtotal (unit price x quantity)",
             "AUD ${data?.subTotal?.toStringAsFixed(2) ?? ""}"),
-        _textWidget(
-            "Order discount", "AUD ${data?.couponDiscount?.toStringAsFixed(2)}"),
+        _textWidget("Order discount",
+            "AUD ${data?.couponDiscount?.toStringAsFixed(2)}"),
         _textWidget("Shipping charges",
             "AUD ${data?.deliveryCharge?.toStringAsFixed(2) ?? ""}"),
         Divider(),
@@ -201,7 +260,7 @@ Widget _supplierNotes(String notes) {
   );
 }
 
-_buttonSection(BuildContext context,SuppliesOrdersByPk? supplier) {
+_buttonSection(BuildContext context, SuppliesOrdersByPk? supplier) {
   return Container(
     width: double.infinity,
     padding: const EdgeInsets.all(12),

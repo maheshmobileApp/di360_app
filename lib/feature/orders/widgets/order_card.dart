@@ -55,7 +55,11 @@ class OrderCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  tagWidget("Buyer Name", item?.dentalPractice?.name ?? item?.dentalProfessional?.name ?? "",
+                  tagWidget(
+                      "Buyer Name",
+                      item?.dentalPractice?.name ??
+                          item?.dentalProfessional?.name ??
+                          "",
                       true),
                   tagWidget(
                       "Order Date",
@@ -67,28 +71,35 @@ class OrderCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  tagWidget("Items",
-                      "Items", true),
-                  tagWidget("Order Value", "AUD ${item?.totalAmount.toString()}" ?? "", false),
+                  tagWidget("Items", "Items", true),
+                  tagWidget("Order Value",
+                      "AUD ${item?.totalAmount.toString()}" ?? "", false),
                 ],
               ),
               SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  
-                  tagWidget("Payment mode", item?.paymentMode == "ACCOUNT_PAY"?"Account pay": "" ?? "", true, chip : true),
-                  tagWidget("Billing type", item?.billingType ?? "", false, chip : true),
+                  tagWidget(
+                      "Payment mode",
+                      item?.paymentMode == "ACCOUNT_PAY"
+                          ? "Account pay"
+                          : "" ?? "",
+                      true,
+                      chip: true),
+                  tagWidget("Billing type", item?.billingType ?? "", false,
+                      chip: true),
                 ],
               ),
               SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  
-                  
-                  tagWidget("Order status", item?.status ?? "", true, chip : true),
-                  tagWidget("Last updated", DateFormatUtils.formatDateToDmy(item?.updatedAt ?? ""),
+                  tagWidget("Order status", item?.status ?? "", true,
+                      chip: true),
+                  tagWidget(
+                      "Last updated",
+                      DateFormatUtils.formatDateToDmy(item?.updatedAt ?? ""),
                       false),
                 ],
               ),
@@ -121,15 +132,27 @@ class OrderCard extends StatelessWidget {
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color:text == "PENDING" || text == "Account pay" ?AppColors.primaryColor.withOpacity(0.2): AppColors.black.withOpacity(0.2),
+        color: _getColor(text).withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
         style: TextStyles.medium2(
-          color: text == "PENDING" || text == "Account pay" ?AppColors.primaryColor: AppColors.black,
+          color: _getColor(text),
         ),
       ),
     );
+  }
+}
+
+Color _getColor(String text) {
+  if (text == "EXISTING" || text == "CONFIRMED" || text == "COMPLETED") {
+    return AppColors.greenColor;
+  } else if (text == "CONFIRMED") {
+    return AppColors.greenColor;
+  } else if (text == "NEW") {
+    return AppColors.blueColor;
+  } else {
+    return AppColors.primaryColor;
   }
 }

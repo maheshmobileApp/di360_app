@@ -639,11 +639,11 @@ class Supply {
 
 class SupplyVariant {
   String? id;
-  Null? title;
-  Null? actualPrice;
-  Null? attributes;
+  String? title;
+  dynamic? actualPrice;
+  dynamic? attributes;
   dynamic? availableStock;
-  Null? color;
+  String? color;
   String? createdAt;
   Null? details;
   Null? image;

@@ -66,8 +66,7 @@ class _OrdersViewState extends State<OrdersView> {
             children: [
               GestureDetector(
                 onTap: () async {
-                  //await vm.getAllDentalSuppliers(context);
-                  //navigationService.navigateTo(RouteList.myOrdersFilterView);
+                  navigationService.navigateTo(RouteList.orderFilterView);
                 },
                 child:
                     SvgPicture.asset(ImageConst.filter, color: AppColors.black),
@@ -76,7 +75,7 @@ class _OrdersViewState extends State<OrdersView> {
                 GestureDetector(
                     onTap: () async {
                       await vm.clearFilters();
-                      //vm.getSuppliesOrders(context);
+                      vm.getIPSuppliesOrders(context);
                     },
                     child: Icon(Icons.close, color: AppColors.black))
             ],
@@ -105,8 +104,8 @@ class _OrdersViewState extends State<OrdersView> {
                   onMenuSelected: (value) async {
                     switch (value) {
                       case "view":
-                        //await vm.viewOrder(context, item.id ?? "");
-                        navigationService.navigateTo(RouteList.orderDetailView);
+                        await vm.viewOrderDetail(context, item.id ?? "");
+                        navigationService.navigateTo(RouteList.supplierOrderDetailView);
                         break;
                     }
                   },

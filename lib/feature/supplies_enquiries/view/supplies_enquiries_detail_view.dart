@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
 import 'package:di360_flutter/feature/supplies_enquiries/model/supplies_enquiries_details_res.dart';
-import 'package:di360_flutter/feature/supplies_enquiries/view_model/supplies_enquiries_view_model.dart';
+import 'package:di360_flutter/feature/supplies_enquiries/widgets/view_model/supplies_enquiries_view_model.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

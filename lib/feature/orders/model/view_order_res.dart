@@ -41,15 +41,15 @@ class ViewOrderData {
 class SuppliesOrdersByPk {
   String? id;
   String? createdAt;
-  int? totalAmount;
-  int? subTotal;
-  int? couponDiscount;
-  int? deliveryCharge;
-  int? taxAmount;
-  int? taxPercentage;
+  dynamic? totalAmount;
+  dynamic? subTotal;
+  dynamic? couponDiscount;
+  dynamic? deliveryCharge;
+  dynamic? taxAmount;
+  dynamic? taxPercentage;
   String? status;
   bool? isConfirmed;
-  int? orderNumber;
+  dynamic? orderNumber;
   DentalPractice? dentalPractice;
   DentalPractice? dentalProfessional;
   ShippingAddress? shippingAddress;
@@ -200,7 +200,7 @@ class ShippingAddress {
   String? type;
   String? state;
   String? line1;
-  Null? line2;
+  String? line2;
   String? country;
   String? landmark;
   double? latitude;
