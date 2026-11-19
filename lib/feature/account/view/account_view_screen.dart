@@ -530,14 +530,26 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .getIPSuppliesOrders(context);
                             navigationService.navigateTo(RouteList.ordersView);
                           } else if (item.title == "Account Pay Requests") {
-                            await context
-                                .read<AccountPayRequestsViewModel>()
-                                .getAccountPayRequests(context);
-                            await context
-                                .read<AccountPayRequestsViewModel>()
-                                .getSupplierAccounts(context);
-                            navigationService
+                            final userType = await LocalStorage.getStringVal(
+                                LocalStorageConst.type);
+                            if (userType != UserRole.supplier.value) {
+                              await context
+                                  .read<AccountPayRequestsViewModel>()
+                                  .getAccountPayRequests(context);
+                              await context
+                                  .read<AccountPayRequestsViewModel>()
+                                  .getSupplierAccounts(context);
+                              navigationService
                                 .navigateTo(RouteList.accountPayRequestsView);
+                            } else {
+                              await context
+                                  .read<AccountPayRequestsViewModel>()
+                                  .getIpSupplierAccountsRequests(context);
+                              navigationService
+                                .navigateTo(RouteList.ipAccountPayRequestsView);
+                            }
+
+                            
                           } else if (item.title == "Shipping Address") {
                             await context
                                 .read<ShippingAddressViewModel>()

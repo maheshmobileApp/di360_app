@@ -45,7 +45,11 @@ class SupplierAccountRequests {
   String? createdAt;
   String? updatedAt;
   String? supplierId;
+  String? dentalPracticeId;
+  String? dentalProfessionalId;
+  String? dentalSupplierId;
   String? name;
+  String? practiceName;
   String? email;
   String? phone;
   String? abnNumber;
@@ -60,7 +64,11 @@ class SupplierAccountRequests {
       this.createdAt,
       this.updatedAt,
       this.supplierId,
+      this.dentalPracticeId,
+      this.dentalProfessionalId,
+      this.dentalSupplierId,
       this.name,
+       this.practiceName,
       this.email,
       this.phone,
       this.abnNumber,
@@ -75,7 +83,11 @@ class SupplierAccountRequests {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     supplierId = json['supplier_id'];
+    dentalPracticeId = json['dental_practice_id'];
+    dentalProfessionalId = json['dental_professional_id'];
+    dentalSupplierId = json['dental_supplier_id'];
     name = json['name'];
+    practiceName = json['practice_name'];
     email = json['email'];
     phone = json['phone'];
     abnNumber = json['abn_number'];
@@ -94,7 +106,11 @@ class SupplierAccountRequests {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['supplier_id'] = this.supplierId;
+    data['dental_practice_id'] = this.dentalPracticeId;
+    data['dental_professional_id'] = this.dentalProfessionalId;
+    data['dental_supplier_id'] = this.dentalSupplierId;
     data['name'] = this.name;
+    data['practice_name'] = this.practiceName;
     data['email'] = this.email;
     data['phone'] = this.phone;
     data['abn_number'] = this.abnNumber;

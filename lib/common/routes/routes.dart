@@ -1,5 +1,6 @@
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/account_pay_requests/view/account_pay_requests_view.dart';
+import 'package:di360_flutter/feature/account_pay_requests/view/ip_account_pay_requests_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/add_catalogue_screen.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
@@ -394,7 +395,8 @@ class Routes {
       RouteList.suppliesEnquiriesView: (context) => SuppliesEnquiriesView(), 
       RouteList.suppliesEnquiriesDetailView: (context) => SuppliesEnquiriesDetailView(),
       RouteList.supplierOrderDetailView: (context) => SupplierOrderDetailView(),
-      RouteList.orderFilterView: (context) => OrderFilterView()
+      RouteList.orderFilterView: (context) => OrderFilterView(),
+      RouteList.ipAccountPayRequestsView: (context) => IpAccountPayRequestsView()
     };
   }
 }

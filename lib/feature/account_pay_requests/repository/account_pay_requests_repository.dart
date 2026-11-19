@@ -7,4 +7,5 @@ abstract class AccountPayRequestsRepository {
   Future<SupplierAccountData> getSupplierAccount(dynamic variables);
   Future<DentalSuppliersData> getDentalSuppliers();
   Future<dynamic> addSupplierAccount(dynamic variables);
+  Future<AccountRequestsData> getIpSupplierAccountRequests(dynamic variables);
 }
