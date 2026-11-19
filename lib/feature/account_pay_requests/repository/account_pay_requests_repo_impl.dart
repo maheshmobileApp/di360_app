@@ -3,6 +3,7 @@ import 'package:di360_flutter/feature/account_pay_requests/model/account_request
 import 'package:di360_flutter/feature/account_pay_requests/model/supplier_accounts_res.dart';
 import 'package:di360_flutter/feature/account_pay_requests/querys/add_supplier_account_query.dart';
 import 'package:di360_flutter/feature/account_pay_requests/querys/get_supplier_accounts_query.dart';
+import 'package:di360_flutter/feature/account_pay_requests/querys/ip_supplier_account_requests_query.dart';
 import 'package:di360_flutter/feature/account_pay_requests/querys/supplier_account_requqest_query.dart';
 import 'package:di360_flutter/feature/account_pay_requests/repository/account_pay_requests_repository.dart';
 import 'package:di360_flutter/feature/supplies/model/get_dental_suppliers.dart';
@@ -32,8 +33,14 @@ class AccountPayRequestsRepoImpl implements AccountPayRequestsRepository {
 
   @override
   Future<dynamic> addSupplierAccount(variables) async {
-    
     final res = await http.mutation(addSupplierAccountQuery, variables);
     return res;
+  }
+
+  @override
+  Future<AccountRequestsData> getIpSupplierAccountRequests(variables) async {
+    final res =
+        await http.query(ipSupplierAccountRequestsQuery, variables: variables);
+    return AccountRequestsData.fromJson(res);
   }
 }

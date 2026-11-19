@@ -16,6 +16,7 @@ class AccountPayRequestsViewModel extends ChangeNotifier {
   AccountRequestsData? accountRequestsData;
   SupplierAccountData? supplierAccountData;
   DentalSuppliersData? dentalSuppliersData;
+  AccountRequestsData? ipAccountRequestsData;
 
   String? supplierValue;
   final accountNumberController = TextEditingController();
@@ -59,6 +60,23 @@ class AccountPayRequestsViewModel extends ChangeNotifier {
 
     final res = await repo.getDentalSuppliers();
     dentalSuppliersData = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> getIpSupplierAccountsRequests(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "limit": 50,
+      "offset": 0,
+      "where": {
+        "supplier_id": {"_eq": userId}
+      }
+    };
+    final res = await repo.getIpSupplierAccountRequests(variables);
+    ipAccountRequestsData = res;
     Loaders.circularHideLoader(context);
     notifyListeners();
   }

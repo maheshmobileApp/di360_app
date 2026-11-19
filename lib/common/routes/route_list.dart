@@ -125,4 +125,5 @@ class RouteList {
       '/suppliesEnquiriesDetailView';
   static const String supplierOrderDetailView = '/supplierOrderDetailView';
   static const String orderFilterView = '/orderFilterView';
+  static const String ipAccountPayRequestsView = '/ipAccountPayRequestsView';
 }
