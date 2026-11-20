@@ -50,14 +50,10 @@ class NotificationViewModel extends ChangeNotifier {
         }
       }
 
-      if (currentPage == 1) {
-        Loaders.circularHideLoader(context);
-      }
+      if (currentPage == 1) Loaders.circularHideLoader(context);
       isLoadingMore = false;
     } catch (e) {
-      if (currentPage == 1) {
-        Loaders.circularHideLoader(context);
-      }
+      if (currentPage == 1) Loaders.circularHideLoader(context);
       isLoadingMore = false;
       hasMoreData = false;
       print("Error loading notifications: $e");

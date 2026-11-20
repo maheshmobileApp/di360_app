@@ -13,21 +13,32 @@ class RegisteredUserCard extends StatelessWidget {
   final String description;
   final String userPhone;
   final String status;
+  final String quizStatus;
+  final String courseStatus;
+  final String userType;
+  final String paymentStatus;
   final String activeStatus;
+  final bool isCourseActive;
+  final bool isSameUser;
   final Function(String action, String id)? onMenuAction;
 
-  const RegisteredUserCard({
-    super.key,
-    required this.imageUrl,
-    required this.userName,
-    required this.userMail,
-    required this.description,
-    required this.userPhone,
-    required this.status,
-    required this.activeStatus,
-    this.onMenuAction,
-    required this.id,
-  });
+  const RegisteredUserCard(
+      {super.key,
+      required this.imageUrl,
+      required this.userName,
+      required this.userMail,
+      required this.description,
+      required this.userPhone,
+      required this.status,
+      required this.quizStatus,
+      required this.courseStatus,
+      required this.userType,
+      required this.paymentStatus,
+      required this.activeStatus,
+      this.onMenuAction,
+      required this.id,
+      required this.isSameUser,
+      required this.isCourseActive});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +68,7 @@ class RegisteredUserCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(229, 244, 237, 1),
+                  color: StatusColors.getColor(status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
@@ -130,12 +141,65 @@ class RegisteredUserCard extends StatelessWidget {
                       ),
                     ],
                   ],
-                )
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: StatusColors.getColor(userType)
+                            .withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(30),
+                        border:
+                            Border.all(color: AppColors.whiteColor, width: 1),
+                      ),
+                      child: Text(
+                        userType,
+                        style: TextStyles.bold4(
+                          color: StatusColors.getColor(userType),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: StatusColors.getColor(paymentStatus)
+                            .withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(30),
+                        border:
+                            Border.all(color: AppColors.whiteColor, width: 1),
+                      ),
+                      child: Text(
+                        paymentStatus == "NOT_APPLICABLE"
+                            ? "FREE"
+                            : paymentStatus,
+                        style: TextStyles.bold4(
+                          color: StatusColors.getColor(paymentStatus),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
 
-          (status == "PENDING" )? _menuWidget(context) : SizedBox.shrink(),
+          /*courseStatus != "EXPIRED" &&
+                  status != "EXPIRED" &&
+                  status != 'CANCELLED' &&
+                  quizStatus != 'COMPLETED' &&*/
+
+          (isSameUser &&
+                  status != 'CANCELLED' &&
+                  courseStatus != "EXPIRED" &&
+                  status != "EXPIRED")
+              ? _menuWidget(context)
+              : SizedBox.shrink(),
         ],
       ),
     );
@@ -156,8 +220,17 @@ class RegisteredUserCard extends StatelessWidget {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        _popupItem("Approve", Icons.check_circle, AppColors.greenColor),
-        _popupItem("Cancel", Icons.cancel, AppColors.redColor),
+        if (status == "PENDING")
+          _popupItem("Approve", Icons.check_circle, AppColors.greenColor),
+        if (status == "PENDING")
+          _popupItem("Cancel", Icons.cancel, AppColors.redColor),
+        /*if (status == "APPROVED" || status == "COMPLETED")
+          _popupItem("Preview Certificate", Icons.preview_outlined,
+              AppColors.primaryColor),*/
+        if ((courseStatus == "EXPIRED" || quizStatus == 'COMPLETED') &&
+            (status == "APPROVED" || status != "COMPLETED"))
+          _popupItem(
+              "Issue Certificate", Icons.check_circle, AppColors.greenColor),
       ],
     );
   }

@@ -8,5 +8,6 @@
   "NG_APP_HASURA_EXTERNAL_WSS_URL": "wss://dental-if360-pro.hasura.app/v1/graphql",
   "NG_APP_SITE_URL": "https://localhost:4200",
   "NG_APP_OTHER_ID": "666d85af-62a7-4c5d-9dba-c30f7c589b4d",
-  "NG_APP_FRONTEND_PATH": "https://dentalinterface360.com"
+  "NG_APP_FRONTEND_PATH": "https://dentalinterface360.com",
+  "NG_APP_STRIPE_KEY": "pk_live_51SuOdr27cPF2i6c4AqwQBnRo1N0g2PGcKZkejx0DwRFO1sa5XfM7hncMIxpLFVbkYtUso6Q9pH9JjSLqXX9ep7wz00xUSvcyAB"
 }

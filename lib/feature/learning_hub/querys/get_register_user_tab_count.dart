@@ -43,5 +43,14 @@ const String getRegisterUserTabCountQuery =
     }
     __typename
   }
+  expired: course_registered_users_aggregate(
+    where: {_and: [$where, {status: {_eq: "EXPIRED"}}]}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
 }
 ''';

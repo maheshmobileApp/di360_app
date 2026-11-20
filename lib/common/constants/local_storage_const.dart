@@ -32,4 +32,5 @@ class LocalStorageConst {
   static const String permissions = "permissions";
   static const String subscriptionStatus = "subscriptionStatus";
   static const String directoryId = "directoryId";
+  static const String needPayment = "needPayment";
 }

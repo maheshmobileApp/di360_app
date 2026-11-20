@@ -24,19 +24,22 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String type = '';
   List<String> permissions = [];
-  
 
   @override
   Widget build(BuildContext context) {
     final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
     final directorVM = Provider.of<DirectoryViewModel>(context);
-    final visibleItems = HomeGridData.items.where(
-      (item) => permissions.contains(item.permission.value),
-    ).toList();
-    
-    return Scaffold(
+    final visibleItems = HomeGridData.items
+        .where(
+          (item) => permissions.contains(item.permission.value),
+        )
+        .toList();
+
+    return
+        Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
+        isbackAction: false,
         searchWidget: true,
         searchAction: () {
           directorVM.setSearchBar(true);
@@ -46,7 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           UserData(type: type, gender: viewProfileVM.gender),
-          Expanded(child: SingleChildScrollView(child: GridWidget(visibleItems : visibleItems)))
+          Expanded(
+              child: SingleChildScrollView(
+                  child: GridWidget(visibleItems: visibleItems)))
         ],
       ),
     );
@@ -54,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    
     final viewModel = Provider.of<HomeViewModel>(context, listen: false);
     viewModel.getFollowersCount(context);
     context.read<NotificationViewModel>().getNotificationsCount();

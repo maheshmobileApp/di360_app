@@ -114,6 +114,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
             return Scaffold(
                 backgroundColor: AppColors.whiteColor,
                 appBar: AppBarWidget(
+                  isbackAction: false,
                   logo: false,
                   title: "Community",
                   searchAction: () =>

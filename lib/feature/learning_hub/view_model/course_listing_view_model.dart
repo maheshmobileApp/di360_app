@@ -1,24 +1,33 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_by_id.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_promotions_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
     hide CourseRegisteredUsers;
+import 'package:di360_flutter/feature/learning_hub/model_class/get_notification_campaign_res.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transaction_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transactions_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/notification_campaign_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepoImpl repo = LearningHubRepoImpl();
-  
+
   List<CoursesListingDetails> coursesListingList = [];
   List<CoursesListingDetails> marketPlaceCoursesList = [];
   RegisteredUsersData? registeredUsers;
   String selectedStatus = "All";
   String selectedRegUsersStatus = "All";
+  String? selectedModuleType = "Course Details";
   final searchController = TextEditingController();
   bool searchBarOpen = false;
   bool editOptionEnable = false;
@@ -27,9 +36,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedCategory;
   List<CourseCategories> courseCategoryList = [];
   String? selectedCategoryId;
-  
 
-  String? currentUserId;  
+  String? currentUserId;
 
   int _courseListingLimit = 10;
   int _courseListingOffset = 0;
@@ -39,8 +47,139 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   String courseStatus = "";
   String? userType;
 
+  NotificationCampaignData? notificationCampaignData;
+  CoursePromotionData? coursePromotionData;
+  CourseByIdData? courseData;
+  NotificationCampaignDetailsData? notificationCampaignDetailData;
+  PromotionDetailData? promotionDetailData;
+  GetTransactionsRes? getTransactionsRes;
+  GetTransactionDetailRes? getTransactionDetailRes;
+
+  final ScrollController scrollController = ScrollController();
+
+  // Notification pagination
+  final int _notifLimit = 10;
+  int _notifOffset = 0;
+  bool hasMoreNotifications = true;
+  bool isLoadingMoreNotifications = false;
+
+  // Promotion pagination
+  final int _promoLimit = 10;
+  final int _transLimit = 10;
+  int _promoOffset = 0;
+  bool hasMorePromotions = true;
+  bool isLoadingMorePromotions = false;
+  int _transOffset = 1;
+  bool hasMoreTransactions = true;
+  bool isLoadingMoreTransactions = false;
+
+  String selectedFilterStatus = "All";
+  String selectedPromotionStatus = "All";
+  String selectedFilterType = "All";
+  String selectedDiscountType = "All";
+  String selectedTransactionStatus = "All";
+  String selectedCourseId = "";
+  bool notificationFilter = false;
+  bool promotionFilter = false;
+  bool transactionFilter = false;
+
+  List<String> filterStatus = ["All", "PENDING", "SENT", "FAILED"];
+  List<String> promotionStatus = ["All", "ACTIVE", "INACTIVE", "EXPIRED"];
+  List<String> transactionStatus = [
+    "All",
+    "PENDING",
+    "SUCCEEDED",
+    "FAILED",
+    "REFUNDED",
+    "FREE"
+  ];
+  List<String> filterType = [
+    "All",
+    "STATIC",
+    "DYNAMIC",
+  ];
+  List<String> discountType = [
+    "All",
+    "PERCENTAGE",
+    "FLAT",
+  ];
+
+  void setApplyFilter(bool value) {
+    notificationFilter = value;
+    notifyListeners();
+  }
+
+  void setPromotionApplyFilter(bool value) {
+    promotionFilter = value;
+    notifyListeners();
+  }
+
+  void setTransactionApplyFilter(bool value) {
+    transactionFilter = value;
+    notifyListeners();
+  }
+
+  void setSelectedFilterStatus(String value) {
+    selectedFilterStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedTransactionStatus(String value) {
+    selectedTransactionStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedPromotionStatus(String value) {
+    selectedPromotionStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedFilterContactType(String value) {
+    selectedFilterType = value;
+    notifyListeners();
+  }
+
+  void setSelectedDiscountType(String value) {
+    selectedDiscountType = value;
+    notifyListeners();
+  }
+
+  void setSelectedCourse(String value) {
+    selectedCourseId = value;
+    notifyListeners();
+  }
+
+  final TextEditingController scheduleFromController = TextEditingController();
+  final TextEditingController scheduleToController = TextEditingController();
+  final TextEditingController notificationSerachController =
+      TextEditingController();
+  final TextEditingController transactionSearchController =
+      TextEditingController();
+  final TextEditingController promoCodeController = TextEditingController();
+  final TextEditingController dateFromController = TextEditingController();
+  final TextEditingController dateToController = TextEditingController();
+
   void setCourseStatus(String value) {
     courseStatus = value;
+    notifyListeners();
+  }
+
+  void setSelectedModuleType(
+      String value, BuildContext context, String courseId) async {
+    selectedModuleType = value;
+    if (value == 'Course Bookings') {
+      await getCourseRegisteredUsers(context, courseId);
+    } else if (value == 'Notification') {
+      clearNotificationFilters();
+      await notificationCampaigns(context, courseId);
+    } else if (value == 'Promotion') {
+      clearPromotionFilters();
+      await coursePromotions(context, courseId);
+    } else if (value == 'Transaction') {
+      clearTransactionFilters();
+      await getTransactions(context, courseId);
+    }
+
     notifyListeners();
   }
 
@@ -74,7 +213,16 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     'Pending',
     'Approved',
     'Completed',
-    'Cancelled'
+    'Cancelled',
+    'Expired'
+  ];
+
+  final List<String> moduleTypes = [
+    'Course Details',
+    'Course Bookings',
+    'Notification',
+    'Promotion',
+    'Transaction'
   ];
 
   String? listingRegUsersStatus = "";
@@ -93,6 +241,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       listingRegUsersStatus = 'COMPLETED';
     } else if (status == 'Cancelled') {
       listingRegUsersStatus = 'CANCELLED';
+    } else if (status == 'Expired') {
+      listingRegUsersStatus = 'EXPIRED';
     }
     //
     getCourseRegisteredUsers(context, courseId);
@@ -145,6 +295,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   int? approvedRegUsersCount = 0;
   int? completedRegUsersCount = 0;
   int? cancelledRegUsersCount = 0;
+  int? expiredRegUsersCount = 0;
 
   Map<String, int?> get statusCountMap => {
         'All': allJobTalentCount,
@@ -162,6 +313,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Approved': approvedRegUsersCount,
         'Completed': completedRegUsersCount,
         'Cancelled': cancelledRegUsersCount,
+        'Expired': expiredRegUsersCount
       };
 
   Future<void> getCoursesListingData(BuildContext context,
@@ -275,6 +427,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
           registerUserTabCount?.completed?.aggregate?.count ?? 0;
       cancelledRegUsersCount =
           registerUserTabCount?.cancelled?.aggregate?.count ?? 0;
+      expiredRegUsersCount =
+          registerUserTabCount?.expired?.aggregate?.count ?? 0;
     }
     notifyListeners();
   }
@@ -317,4 +471,240 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> courseById(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": courseId};
+    final res = await repo.getCourseById(variables);
+    courseData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  String formatToIso(String date) {
+    final parts = date.split('/');
+    return '${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}T00:00:00';
+  }
+
+  Future<void> notificationCampaigns(BuildContext context, String courseId,
+      {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreNotifications || !hasMoreNotifications) return;
+      isLoadingMoreNotifications = true;
+    } else {
+      _notifOffset = 0;
+      hasMoreNotifications = true;
+      notificationCampaignData = null;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
+    setSelectedCourse(courseId);
+
+    final variables = {
+      "where": {
+        "course_id": {"_eq": courseId},
+        if (notificationSerachController.text.isNotEmpty)
+          "_or": [
+            {
+              "campaign_name": {
+                "_ilike": "%${notificationSerachController.text}%"
+              }
+            },
+            {
+              "email_subject": {
+                "_ilike": "%${notificationSerachController.text}%"
+              }
+            }
+          ],
+        if (selectedFilterStatus != "All")
+          "status": {"_eq": selectedFilterStatus},
+        if (selectedFilterType != "All")
+          "notification_type": {"_eq": selectedFilterType},
+        if (scheduleFromController.text != "" ||
+            scheduleToController.text != "")
+          "scheduled_at": {
+            if (scheduleFromController.text != "")
+              "_gte": formatToIso(scheduleFromController.text),
+            if (scheduleToController.text != "")
+              "_lte": formatToIso(scheduleToController.text),
+          }
+      },
+      "limit": _notifLimit,
+      "offset": _notifOffset,
+      "order_by": [
+        if (scheduleFromController.text != "" ||
+            scheduleToController.text != "")
+          {"scheduled_at": "desc_nulls_last"},
+        if (scheduleFromController.text == "" ||
+            scheduleToController.text == "")
+          {"created_at": "desc"}
+      ]
+    };
+    final res = await repo.getNotificationCampaigns(variables);
+    final newItems = res.courseNotificationCampaigns ?? [];
+
+    if (loadMore) {
+      notificationCampaignData?.courseNotificationCampaigns?.addAll(newItems);
+      isLoadingMoreNotifications = false;
+    } else {
+      notificationCampaignData = res;
+      Loaders.circularHideLoader(context);
+    }
+
+    hasMoreNotifications = newItems.length >= _notifLimit;
+    _notifOffset += newItems.length;
+    notifyListeners();
+  }
+
+  Future<void> coursePromotions(BuildContext context, String courseId,
+      {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMorePromotions || !hasMorePromotions) return;
+      isLoadingMorePromotions = true;
+    } else {
+      _promoOffset = 0;
+      hasMorePromotions = true;
+      coursePromotionData = null;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+    setSelectedCourse(courseId);
+
+    final variables = {
+      "where": {
+        "course_id": {"_eq": courseId},
+        if (promoCodeController.text.isNotEmpty)
+          "_or": [
+            {
+              "promotion_name": {"_ilike": "%${promoCodeController.text}%"}
+            },
+            {
+              "promo_code": {"_ilike": "%${promoCodeController.text}%"}
+            }
+          ],
+        if (selectedPromotionStatus != "All")
+          "status": {"_eq": selectedPromotionStatus},
+        if (selectedDiscountType != "All")
+          "discount_type": {"_eq": selectedDiscountType}
+      },
+      "limit": _promoLimit,
+      "offset": _promoOffset,
+      "order_by": [
+        {"created_at": "desc"}
+      ]
+    };
+    print("variables: $variables");
+    final res = await repo.getCoursePromotions(variables);
+    final newItems = res.coursePromotions ?? [];
+
+    if (loadMore) {
+      coursePromotionData?.coursePromotions?.addAll(newItems);
+      isLoadingMorePromotions = false;
+    } else {
+      coursePromotionData = res;
+      Loaders.circularHideLoader(context);
+    }
+
+    hasMorePromotions = newItems.length >= _promoLimit;
+    _promoOffset += newItems.length;
+    notifyListeners();
+  }
+
+  Future<void> notificationCampaignDetails(
+      BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": courseId};
+    final res = await repo.getNotificationCampaignDetails(variables);
+    notificationCampaignDetailData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> coursePromotionDetails(
+      BuildContext context, String courseId) async {
+    print("courseId: $courseId");
+    Loaders.circularShowLoader(context);
+    final variables = {"id": courseId};
+    final res = await repo.getCoursePromotionDetails(variables);
+    promotionDetailData = res;
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  Future<void> getTransactions(BuildContext context, String courseId,
+      {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreTransactions || !hasMoreTransactions) return;
+      isLoadingMoreTransactions = true;
+    } else {
+      _transOffset = 1;
+      hasMoreTransactions = true;
+      getTransactionsRes = null;
+      Loaders.circularShowLoader(context);
+    }
+    setSelectedCourse(courseId);
+    final variables = {
+      "page": _transOffset.toString(),
+      "limit": _transLimit.toString(),
+      "view": "COURSE",
+      "courseId": courseId,
+      "search": transactionSearchController.text,
+      "status":
+          selectedTransactionStatus != "All" ? selectedTransactionStatus : '',
+      "dateFrom": DateFormatUtils.formatDateYear(dateFromController.text),
+      "dateTo": DateFormatUtils.formatDateYear(dateToController.text)
+    };
+    final res = await repo.getTransactions(variables);
+    final newItems = res.data ?? [];
+    getTransactionsRes = res;
+    if (loadMore) {
+      getTransactionsRes?.data?.addAll(newItems);
+      isLoadingMoreTransactions = false;
+    } else {
+      getTransactionsRes = res;
+      Loaders.circularHideLoader(context);
+    }
+
+    hasMoreTransactions = newItems.length >= _transLimit;
+    _transOffset += newItems.length;
+    notifyListeners();
+  }
+
+  Future<void> getTransactionDetail(
+      BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+    print("courseId: $courseId");
+    final res = await repo.getTransactionDetail(courseId);
+    getTransactionDetailRes = res;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  void clearNotificationFilters() {
+    scheduleFromController.clear();
+    scheduleToController.clear();
+    notificationSerachController.clear();
+    setSelectedFilterStatus("All");
+    setSelectedFilterContactType("All");
+    setApplyFilter(false);
+    notifyListeners();
+  }
+
+  void clearPromotionFilters() {
+    promoCodeController.clear();
+    setSelectedPromotionStatus("All");
+    setSelectedDiscountType("All");
+    setPromotionApplyFilter(false);
+  }
+
+  void clearTransactionFilters() {
+    transactionSearchController.clear();
+    dateFromController.clear();
+    dateToController.clear();
+    setSelectedTransactionStatus("All");
+    setTransactionApplyFilter(false);
+  }
 }

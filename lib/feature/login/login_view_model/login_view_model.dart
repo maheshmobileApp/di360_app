@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/login/model_class/my_community_data_respon
 import 'package:di360_flutter/feature/login/query/login_querys.dart';
 import 'package:di360_flutter/feature/login/repository/login_repo_impl.dart';
 import 'package:di360_flutter/feature/login/model_class/login_res.dart';
+import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/deep_link_service.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -114,21 +115,19 @@ class LoginViewModel extends ChangeNotifier {
               loginData.navigation?.permissions ?? []);*/
           await LocalStorage.setStringVal(LocalStorageConst.subscriptionStatus,
               loginData.subscription?.status ?? "");
-
-          /*if (loginData.type == UserRole.admin.name) {
-            if (loginData.profileCompleted == true) {
-              homeNavigation(context);
-            } else {
-              viewProfileHandle(context);
-            }
-          } else {
-            homeNavigation(context);
-          }*/
+          await LocalStorage.setBoolValue(LocalStorageConst.isAuth, true);
+          await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
+              loginData.profileCompleted ?? false);
+          final needsPayment = loginData.payment?.initialPaymentRequired == true &&
+              loginData.payment?.amount != null &&
+              loginData.payment?.billingType != null;
+          await LocalStorage.setBoolValue(LocalStorageConst.needPayment, needsPayment);
+          await LocalStorage.setStringVal(LocalStorageConst.userId, userId);
 
           if (loginData.profileCompleted == true) {
-            homeNavigation(context);
+            await homeNavigation(context);
           } else {
-            viewProfileHandle(context);
+            await viewProfileHandle(context);
           }
 
           // Background tasks (parallel)
@@ -146,7 +145,7 @@ class LoginViewModel extends ChangeNotifier {
                     LocalStorageConst.name, loginData.name ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.businessName,
                     loginData.businessName ?? ''),
-                LocalStorage.setStringVal(LocalStorageConst.userId, userId),
+
                 LocalStorage.setStringVal(
                     LocalStorageConst.emailId, loginData.email ?? ''),
                 LocalStorage.setStringVal(
@@ -160,11 +159,8 @@ class LoginViewModel extends ChangeNotifier {
                     LocalStorageConst.subType, loginData.subType ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
                     loginData.subscriptionId ?? ''),
-                LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
-                    loginData.profileCompleted ?? false),
                 LocalStorage.setStringVal(LocalStorageConst.profilePic,
                     loginData.logo?.url ?? loginData.profileImage?.url ?? ''),
-                LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
                 LocalStorage.setStringVal(LocalStorageConst.refreshToken,
                     loginData.refreshToken ?? ''),
               ]);

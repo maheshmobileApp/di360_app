@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/contact_info_widget.dart';
@@ -36,18 +37,18 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final courseListingVM =
+    final vm =
         Provider.of<MarketPlaceLearningHubViewModel>(context);
 
-    if (courseListingVM.courseDetails == null) {
+    if (vm.courseDetails == null) {
       return const Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: Center(child: Text("No course details available")),
       );
     }
 
-    final courseDetails = courseListingVM.courseDetails != null
-        ? courseListingVM.courseDetails
+    final courseDetails = vm.courseDetails != null
+        ? vm.courseDetails
         : null;
 
     final bannerUrls = (courseDetails?.courseBannerImage ?? [])
@@ -73,7 +74,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         ? courseDetails?.courseBannerVideo?.first.name ?? ""
         : "";
 
-    final isRegistered = courseListingVM
+    final isRegistered = vm
         .isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
     final bool seats = (courseDetails?.numberOfSeats ?? 0) <=
         (courseDetails?.courseRegisteredUsersAggregate?.aggregate?.count ?? 0);
@@ -97,16 +98,16 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         oldPrice:
                             courseDetails?.afterwardsPrice?.toString() ?? "0",
                         courseRegisterStatus:
-                            courseListingVM.getCourseRegisterStatus(
+                            vm.getCourseRegisterStatus(
                                 courseDetails?.courseRegisteredUsers ?? []),
                         onPressed: isRegistered &&
-                                courseListingVM.getCourseRegisterStatus(
+                                vm.getCourseRegisterStatus(
                                         courseDetails?.courseRegisteredUsers ??
                                             []) !=
                                     "EXPIRED"
                             ? courseDetails?.type == 'Online Academy'
                                 ? () async {
-                                    courseListingVM.getCourseRegisterStatus(
+                                    vm.getCourseRegisterStatus(
                                                 courseDetails
                                                         ?.courseRegisteredUsers ??
                                                     []) ==
@@ -150,25 +151,27 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                   }
                             : courseDetails?.type == 'Online Academy'
                                 ? () {
-                                    courseListingVM
+                                    vm
                                         .setCourseId(courseDetails?.id ?? "");
                                     RegistrationUserForm.show(
                                         context,
                                         courseDetails?.courseName ?? "",
                                         courseDetails?.createdById ?? "",
                                         courseDetails?.id ?? "",
-                                        courseDetails?.registerLink ?? "");
+                                        courseDetails?.registerLink ?? "",
+                                        courseDetails?.type ?? "");
                                   }
                                 : () {
                                     if (!seats) {
-                                      courseListingVM
+                                      vm
                                           .setCourseId(courseDetails?.id ?? "");
                                       RegistrationUserForm.show(
                                           context,
                                           courseDetails?.courseName ?? "",
                                           courseDetails?.createdById ?? "",
                                           courseDetails?.id ?? "",
-                                          courseDetails?.registerLink ?? "");
+                                          courseDetails?.registerLink ?? "",
+                                          courseDetails?.type ?? "");
                                     } else {
                                       scaffoldMessenger('Registration is Full');
                                     }
@@ -223,7 +226,12 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 ),
                 child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () => navigationService.goBack())),
+                    onPressed: () async{
+                      await vm.getAllLearningHubData(context,
+                      isCommunityLearningHub: false);
+                      navigationService
+                          .pushNamedAndRemoveUntil(RouteList.learningHubMasterView);
+                    })),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -264,8 +272,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         .presentedByImage?.url ??
                                     ""
                                 : "",
-                        presenters:
-                            courseDetails?.presenters ?? [],
+                        presenters: courseDetails?.presenters ?? [],
                         cpdHours:
                             courseDetails?.cpdPoints?.toInt().toString() ?? "0",
                         platform: courseDetails?.type ?? "",
@@ -278,7 +285,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         bannerName: bannerName,
                         creatAt: courseDetails?.updatedAt,
                         registerStatus: isRegistered,
-                        courseStatus: courseListingVM.getCourseRegisterStatus(
+                        courseStatus: vm.getCourseRegisterStatus(
                                 courseDetails?.courseRegisteredUsers ?? []) ??
                             "",
                       ),

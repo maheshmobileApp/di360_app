@@ -8,5 +8,6 @@
   "NG_APP_OTHER_ID": "666d85af-62a7-4c5d-9dba-c30f7c589b4d",
   "NG_APP_FRONTEND_PATH": "https://qabeta.dentalinterface360.com.au",
   "NG_APP_SERVER_PATH": "https://qa-api.dentalinterface360.com",
-  "NG_APP_HASURA_INTERNAL_URL": "https://dental-interface-dev.hasura.app/v1/graphql"
+  "NG_APP_HASURA_INTERNAL_URL": "https://dental-interface-dev.hasura.app/v1/graphql",
+  "NG_APP_STRIPE_KEY": "pk_test_51RmSGiCNynLHNwUVxEamTgRvnHlWfwroQsuHXJl5fHC6orUGmOWOOrBtCKYjh9Bfy9RIYSnRiTTywpvmpDWeF1zw00NYDpvTui"
 }

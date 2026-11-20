@@ -61,6 +61,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
       appBar: AppBarWidget(
+        isbackAction: false,
           title: "Catalogue",
           searchAction: () =>
               navigationService.navigateTo(RouteList.catalogueFilterScreen),

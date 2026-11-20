@@ -56,8 +56,10 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final addNewsFeedVM = Provider.of<AddNewsFeedViewModel>(context);
     return Scaffold(
+      
         backgroundColor: AppColors.screenBgColor,
         appBar: AppBarWidget(
+          isbackAction: false,
           searchBarOpen: newsFeedVM.searchBarOpen,
           searchAction: () {
             final isOpening = !newsFeedVM.searchBarOpen;

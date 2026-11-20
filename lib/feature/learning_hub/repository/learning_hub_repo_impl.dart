@@ -1,10 +1,23 @@
 import 'dart:convert';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_by_id.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_promotions_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_notification_campaign_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transaction_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_transactions_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/notification_campaign_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/promotion_detail_res.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/get_course_by_id_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/get_course_promotions_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/get_notification_campaigns.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/notification_campaign_detail.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/promotion_detail_query.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
@@ -234,6 +247,72 @@ class LearningHubRepoImpl extends LearningHubRepository {
   Future updateRegUserStatus(variables) async {
     final res = await http.mutation(updateRegUserStatusQuery, variables);
     return res;
+  }
+
+  @override
+  Future<NotificationCampaignData> getNotificationCampaigns(variables) async {
+    final res =
+        await http.query(getNotificationCampaignQuery, variables: variables);
+    return NotificationCampaignData.fromJson(res);
+  }
+
+  @override
+  Future<CoursePromotionData> getCoursePromotions(variables) async {
+    final res =
+        await http.query(getCoursePromotionsQuery, variables: variables);
+    return CoursePromotionData.fromJson(res);
+  }
+
+  @override
+  Future<CourseByIdData> getCourseById(variables) async {
+    final res = await http.query(getCousreByIdQuery, variables: variables);
+    return CourseByIdData.fromJson(res);
+  }
+
+  @override
+  Future<NotificationCampaignDetailsData> getNotificationCampaignDetails(
+      variables) async {
+    final res =
+        await http.query(notificationCampaignDetailQuery, variables: variables);
+    return NotificationCampaignDetailsData.fromJson(res);
+  }
+
+  @override
+  Future<PromotionDetailData> getCoursePromotionDetails(variables) async {
+    final res = await http.query(getPromotionDetailQuery, variables: variables);
+    return PromotionDetailData.fromJson(res);
+  }
+
+  @override
+  Future<GetTransactionsRes> getTransactions(variables) async {
+    final queryParams = <String, String>{
+      'page': variables["page"],
+      'limit': variables["limit"],
+    };
+
+    variables.forEach((key, value) {
+      if (value != null && value.toString().trim().isNotEmpty) {
+        queryParams[key] = value.toString();
+      }
+    });
+
+    final uri = Uri.parse(
+      "${AppConfig.serverBaseUrl}/api/v1/course-transaction/list",
+    ).replace(queryParameters: queryParams);
+
+    print("Transactions URL: $uri");
+
+    final res = await http.get(uri.toString());
+
+    return GetTransactionsRes.fromJson(res);
+  }
+
+  @override
+  Future<GetTransactionDetailRes> getTransactionDetail(courseId) async {
+    final url =
+        "${AppConfig.serverBaseUrl}/api/v1/course-transaction/${courseId}/detail";
+    final res = await http.get(url);
+    return GetTransactionDetailRes.fromJson(res);
   }
 
   /*@override

@@ -6,6 +6,7 @@ class RegisterButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isRegistered;
   final String courseStatus;
+  final String type;
 
   const RegisterButton({
     super.key,
@@ -13,6 +14,7 @@ class RegisterButton extends StatelessWidget {
     required this.onTap,
     required this.isRegistered,
     required this.courseStatus,
+    required this.type,
   });
 
   @override
@@ -24,12 +26,7 @@ class RegisterButton extends StatelessWidget {
         height: 40,
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-            color: isRegistered
-                ? courseStatus == "PENDING"
-                    ? AppColors.redColor
-                    : AppColors.primaryColor
-                : AppColors.black,
-            borderRadius: BorderRadius.circular(8)),
+            color: _getColor(text), borderRadius: BorderRadius.circular(8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -41,24 +38,26 @@ class RegisterButton extends StatelessWidget {
                   fontWeight: FontWeight.w500),
             ),
             const SizedBox(width: 10),
-            Container(
-              width: 28,
-              height: 28,
-              decoration:  BoxDecoration(
-                color: courseStatus == "PENDING"
-                    ? AppColors.black
-                    : AppColors.primaryColor,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 16,
-              ),
+            const Icon(
+              Icons.arrow_forward,
+              color: Colors.white,
+              size: 16,
             ),
           ],
         ),
       ),
     );
+  }
+
+  Color _getColor(String text) {
+    if (text == "REGISTER NOW") {
+      return AppColors.black;
+    } else if (text == "AWAITING APPROVAL") {
+      return AppColors.redColor;
+    } else if (text == "SOLD OUT") {
+      return AppColors.brownColor;
+    } else {
+      return AppColors.primaryColor;
+    }
   }
 }

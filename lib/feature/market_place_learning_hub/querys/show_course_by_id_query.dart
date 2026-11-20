@@ -102,6 +102,7 @@ const String showCourseById = r'''query getSelectedCourse($id: uuid!, $userId: u
     }
     course_registered_users(
       where: {from_id: {_eq: $userId}, status: {_neq: "CANCELLED"}}
+      order_by: {created_at: desc}
     ) {
       id
       course_id
