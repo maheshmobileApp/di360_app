@@ -46,6 +46,7 @@ Future<bool> _requestPermission() async {
 
 Future<void> downloadFile(BuildContext context, String url,
     {String? fileName}) async {
+      print("downloadFile url: $url");
   try {
     if (!await _requestPermission()) {
       showTopMessage(context, "Storage permission denied");

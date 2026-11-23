@@ -99,6 +99,8 @@ class RouteList {
   static const String interestedScreen = '/interestedScreen';
   static const String suppliesMarketPlace = '/suppliesMarketPlace';
   static const String suppliesDetailsView = '/suppliesDetailsView';
+  static const String suppliesViewOptionsDetailsView =
+      '/suppliesViewOptionsDetailsView';
   static const String suppliesCartView = '/suppliesCartView';
   static const String orderRequestReviewView = '/orderRequestReviewView';
   static const String jobProfileTalentMessage = '/jobProfileTalentMessage';
@@ -109,4 +111,26 @@ class RouteList {
   static const String notificationFilterView = '/notificationFilterView';
   static const String promotionFilterView = '/promotionFilterView';
   static const String transactionFilterView = '/transactionFilterView';
+  static const String addNewsAddressView = '/addNewsAddressView';
+  static const String favouritesView = '/favouritesView';
+  static const String myOrdersView = '/myOrdersView';
+  static const String myOrdersFilterView = '/myOrdersFilterView';
+  static const String accountPayRequestsView = '/accountPayRequestsView';
+  static const String shippingAddressView = '/shippingAddressView';
+  static const String addShippingAddressView = '/addShippingAddressView';
+  static const String orderDetailView = '/orderDetailView';
+  static const String favouriteFilterView = '/favouriteFilterView';
+  static const String ordersView = '/ordersView';
+  static const String suppliesModuleView = '/suppliesModuleView';
+  static const String suppliesModuleFilterView = '/SuppliesModuleFilterView';
+  static const String shippingChargesView = '/shippingChargesView';
+  static const String suppliesDetailView = '/suppliesDetailView';
+  static const String myFavouritesView = '/myFavouritesView';
+  static const String promotionsView = '/promotionsView';
+  static const String suppliesEnquiriesView = '/suppliesEnquiriesView';
+  static const String suppliesEnquiriesDetailView =
+      '/suppliesEnquiriesDetailView';
+  static const String supplierOrderDetailView = '/supplierOrderDetailView';
+  static const String orderFilterView = '/orderFilterView';
+  static const String ipAccountPayRequestsView = '/ipAccountPayRequestsView';
 }

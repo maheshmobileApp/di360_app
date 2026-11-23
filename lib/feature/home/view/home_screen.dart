@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: GridWidget(visibleItems: visibleItems)))
         ],
       ),
+      ),
     );
   }
 

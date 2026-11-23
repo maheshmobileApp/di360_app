@@ -4,7 +4,8 @@ class GetSupplyCarts {
   GetSupplyCarts({this.data});
 
   GetSupplyCarts.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new SupplyCartData.fromJson(json['data']) : null;
+    data =
+        json['data'] != null ? new SupplyCartData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +109,7 @@ class Supply {
   String? name;
   String? dentalSuppliersId;
   List<Image>? image;
+  String? priceType;
   DentalSupplier? dentalSupplier;
   List<Image>? jSupplyDealsSupplies;
   String? sTypename;
@@ -118,12 +120,14 @@ class Supply {
       this.dentalSuppliersId,
       this.image,
       this.dentalSupplier,
+      this.priceType,
       this.jSupplyDealsSupplies,
       this.sTypename});
 
   Supply.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    priceType = json['price_type'];
     dentalSuppliersId = json['dental_suppliers_id'];
     if (json['image'] != null) {
       image = [];
@@ -147,6 +151,7 @@ class Supply {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    data['price_type'] = this.priceType;
     data['dental_suppliers_id'] = this.dentalSuppliersId;
     if (this.image != null) {
       data['image'] = this.image?.map((v) => v.toJson()).toList();
@@ -248,6 +253,7 @@ class SupplyVariant {
   dynamic? actualPrice;
   String? skuCode;
   dynamic? sellingPrice;
+  dynamic calaculatedPrice;
   Null? image;
   int? availableStock;
   String? sTypename;
@@ -259,6 +265,7 @@ class SupplyVariant {
       this.actualPrice,
       this.skuCode,
       this.sellingPrice,
+      this.calaculatedPrice,
       this.image,
       this.availableStock,
       this.sTypename});
@@ -273,6 +280,7 @@ class SupplyVariant {
     image = json['image'];
     availableStock = json['available_stock'];
     sTypename = json['__typename'];
+    calaculatedPrice = json['calculated_price'];
   }
 
   Map<String, dynamic> toJson() {
@@ -286,6 +294,8 @@ class SupplyVariant {
     data['image'] = this.image;
     data['available_stock'] = this.availableStock;
     data['__typename'] = this.sTypename;
+    data['calculated_price'] = this.calaculatedPrice;
+
     return data;
   }
 }

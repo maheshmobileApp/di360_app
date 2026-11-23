@@ -10,6 +10,7 @@ const String getSuppliesCartQuery = r'''query supply_carts {
       name
       dental_suppliers_id
       image
+      price_type
       dental_supplier {
         id
         name
@@ -48,6 +49,7 @@ const String getSuppliesCartQuery = r'''query supply_carts {
       actual_price
       sku_code
       selling_price
+      calculated_price
       image
       available_stock
       __typename

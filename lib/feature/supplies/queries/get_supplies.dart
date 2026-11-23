@@ -2,7 +2,7 @@ const String getSupplies =
     r'''query supplies($andList: [supplies_bool_exp!], $limit: Int, $offset: Int) {
   supplies(
     where: {_and: $andList}
-    order_by: {updated_at: desc}
+    order_by: [{updated_at: desc}, {id: desc}]
     limit: $limit
     offset: $offset
   ) {
@@ -23,6 +23,9 @@ const String getSupplies =
     specifications
     status
     product_status
+    price_type
+    gst_rate
+    gst_applicable
     supply_brand_id
     supply_brand {
       id
@@ -31,6 +34,16 @@ const String getSupplies =
     }
     supply_category_id
     supply_sub_category_id
+    supply_category {
+      id
+      name
+      __typename
+    }
+    supply_sub_category {
+      id
+      name
+      __typename
+    }
     video
     supply_variants {
       id
@@ -46,13 +59,15 @@ const String getSupplies =
       more_images
       price_unit
       selling_price
+      calculated_price
+      sku_code
       specifications
       status
       stock_unit
       supply_id
       title
       video
-      supply_reviews_aggregate {
+      supply_reviews_aggregate(where: {status: {_eq: true}}) {
         aggregate {
           count
           sum {
@@ -85,6 +100,25 @@ const String getSupplies =
         name
         image
         type
+        __typename
+      }
+      __typename
+    }
+    supply_promotion_items(
+      where: {item_role: {_eq: "APPLIES"}, supply_promotion: {is_active: {_eq: true}, start_date: {_lte: "now()"}, end_date: {_gte: "now()"}}}
+    ) {
+      id
+      supply_id
+      promotion_id
+      item_role
+      supply_promotion {
+        id
+        name
+        type
+        is_active
+        start_date
+        end_date
+        config
         __typename
       }
       __typename

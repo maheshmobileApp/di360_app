@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/supplies/model/product_model.dart';
 import 'package:di360_flutter/feature/supplies/widgets/network_image_widget.dart';
 import 'package:di360_flutter/feature/supplies/widgets/quantity_stepper.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -12,6 +13,8 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onIncrease;
   final VoidCallback? onDecrease;
   final VoidCallback? onDetailView;
+  final bool viewOption;
+  final bool isFavourited;
 
   const ProductCard(
       {super.key,
@@ -20,7 +23,9 @@ class ProductCard extends StatelessWidget {
       this.onAddToCart,
       this.onIncrease,
       this.onDecrease,
-      this.onDetailView});
+      this.onDetailView,
+      this.viewOption = false,
+      this.isFavourited = false});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +36,7 @@ class ProductCard extends StatelessWidget {
         surfaceTintColor: AppColors.whiteColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: AppColors.greyLight),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Stack(children: [
           Padding(
@@ -57,70 +62,112 @@ class ProductCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        product.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyles.medium2(),
-                      ),
-                      Text(
                         product.brand,
-                        style: TextStyles.bold3(color: AppColors.primaryColor),
+                        style:
+                            TextStyles.medium2(color: AppColors.primaryColor),
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "AUD ",
-                            style: TextStyles.medium2(),
-                          ),
-                          Text(
-                            "${product.price}",
-                            style: TextStyles.bold3(),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        product.inStock ? "In Stock" : "Out of Stock",
-                        style: TextStyle(
-                          color: product.inStock ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.w600,
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyles.medium2(),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "\$ ${product.price} ",
+                                  style: TextStyles.regular4(
+                                      color: const Color.fromARGB(
+                                          255, 251, 14, 1)),
+                                ),
+                                Text(
+                                  "INC GST",
+                                  style: TextStyles.medium1(fontSize: 10),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              product.inStock ? "In Stock" : "Out of Stock",
+                              style: TextStyle(
+                                color:
+                                    product.inStock ? Colors.green : Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                        child: QuantityStepper(
-                      quantity: product.quantity,
-                      onIncrease: onIncrease,
-                      onDecrease: onDecrease,
-                    )),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: product.quantity == 0 ? () {} : onAddToCart,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          color: product.quantity == 0
-                              ? const Color.fromARGB(255, 235, 184, 145)
-                              : AppColors.primaryColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.shopping_cart,
-                            color: AppColors.whiteColor,
+                viewOption
+                    ? GestureDetector(
+                        onTap: onDetailView,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: AppColors.primaryColor,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.visibility,
+                                  color: AppColors.whiteColor,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text("View Options",
+                                    style: TextStyles.medium2(
+                                        color: AppColors.whiteColor))
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                              child: QuantityStepper(
+                            quantity: product.quantity,
+                            onIncrease: product.inStock ? onIncrease : null,
+                            onDecrease: product.inStock ? onDecrease : null,
+                          )),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: product.quantity == 0
+                                ? () {
+                                    scaffoldMessenger("Please Add A Quantity");
+                                  }
+                                : onAddToCart,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                color: product.quantity == 0
+                                    ? const Color.fromARGB(255, 235, 184, 145)
+                                    : AppColors.primaryColor,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.shopping_cart,
+                                  color: AppColors.whiteColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
               ],
             ),
           ),
@@ -140,6 +187,18 @@ class ProductCard extends StatelessWidget {
                     style: TextStyles.bold1(
                         color: AppColors.whiteColor, fontSize: 10),
                   ),
+                ),
+              )),
+          Positioned(
+              top: 10,
+              right: 10,
+              child: GestureDetector(
+                onTap: onFavorite,
+                child: Icon(
+                  isFavourited ? Icons.favorite : Icons.favorite_border,
+                  color:
+                      isFavourited ? AppColors.primaryColor : AppColors.black,
+                  size: 22,
                 ),
               )),
         ]),

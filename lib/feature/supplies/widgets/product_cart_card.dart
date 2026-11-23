@@ -19,6 +19,7 @@ class ProductCartCard extends StatelessWidget {
   final VoidCallback? onIncrease;
   final VoidCallback? onDecrease;
   final bool checkbox;
+  final bool menuOptions;
 
   const ProductCartCard({
     super.key,
@@ -34,6 +35,7 @@ class ProductCartCard extends StatelessWidget {
     this.onIncrease,
     this.onDecrease,
     this.checkbox = true,
+    this.menuOptions = true,
   });
 
   @override
@@ -58,14 +60,14 @@ class ProductCartCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if(checkbox)
-                Checkbox(
-                  activeColor: AppColors.primaryColor,
-                  value: isSelected,
-                  onChanged: (value) {
-                    onChecked?.call(value);
-                  },
-                ),
+                if (checkbox)
+                  Checkbox(
+                    activeColor: AppColors.primaryColor,
+                    value: isSelected,
+                    onChanged: (value) {
+                      onChecked?.call(value);
+                    },
+                  ),
 
                 /// Image
                 Container(
@@ -117,8 +119,9 @@ class ProductCartCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
+                if (menuOptions)
                 PopupMenuButton<String>(
+                  color: AppColors.whiteColor,
                   onSelected: onMenuSelected,
                   itemBuilder: (_) => const [
                     PopupMenuItem(
@@ -127,12 +130,12 @@ class ProductCartCard extends StatelessWidget {
                         children: [
                           Icon(Icons.favorite_border),
                           SizedBox(width: 10),
-                          Text("Save for Later"),
+                          Text("Move to Wishlist"),
                         ],
                       ),
                     ),
                     PopupMenuItem(
-                      value: "remove",
+                      value: "delete",
                       child: Row(
                         children: [
                           Icon(
@@ -140,7 +143,7 @@ class ProductCartCard extends StatelessWidget {
                             color: Colors.red,
                           ),
                           SizedBox(width: 10),
-                          Text("Remove"),
+                          Text("Delete"),
                         ],
                       ),
                     ),
@@ -164,7 +167,7 @@ class ProductCartCard extends StatelessWidget {
                   child: QuantityStepper(
                     quantity: quantity,
                     onIncrease: onIncrease,
-                    onDecrease: onDecrease,
+                    onDecrease: quantity > 1 ? onDecrease : null,
                   ),
                 ),
                 const Spacer(),
