@@ -133,4 +133,7 @@ class RouteList {
   static const String supplierOrderDetailView = '/supplierOrderDetailView';
   static const String orderFilterView = '/orderFilterView';
   static const String ipAccountPayRequestsView = '/ipAccountPayRequestsView';
+  static const String purchasedOrderItemsView = '/purchasedOrderItemsView';
+  static const String purchasedOrderItemsFilterView =
+      '/purchasedOrderItemsFilterView';
 }

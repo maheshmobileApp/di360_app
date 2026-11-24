@@ -578,7 +578,11 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .suppliesEnquiriesData = null;
                             navigationService
                                 .navigateTo(RouteList.suppliesEnquiriesView);
-                          }
+                          } else if (item.title == "Purchased Products") {
+                            
+                            navigationService
+                                .navigateTo(RouteList.purchasedOrderItemsView);
+                          } 
                         },
                       ),
                       if (!isLast)

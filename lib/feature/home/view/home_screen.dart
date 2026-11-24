@@ -35,8 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
         )
         .toList();
 
-    return
-        Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
         isbackAction: false,
@@ -53,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                   child: GridWidget(visibleItems: visibleItems)))
         ],
-      ),
       ),
     );
   }

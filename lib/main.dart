@@ -1,5 +1,6 @@
 import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/purchased_products/view_model/purchased_order_tems_view_model.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
@@ -192,7 +193,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SuppliesModuleViewModel()),
         ChangeNotifierProvider(create: (_) => ShippingChargesViewModel()),
         ChangeNotifierProvider(create: (_) => PromotionsViewModel()),
-        ChangeNotifierProvider(create: (_) => SuppliesEnquiriesViewModel())
+        ChangeNotifierProvider(create: (_) => SuppliesEnquiriesViewModel()),
+        ChangeNotifierProvider(create: (_) => PurchasedOrderTemsViewModel()),
       ],
       child: MaterialApp(
         builder: (context, child) {

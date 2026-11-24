@@ -93,6 +93,8 @@ import 'package:di360_flutter/feature/professional_add_director/view/add_profess
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
 import 'package:di360_flutter/feature/promotions/view/promotions_view.dart' as Routelist;
 import 'package:di360_flutter/feature/promotions/view/promotions_view.dart';
+import 'package:di360_flutter/feature/purchased_products/view/purchased_order_items_filter_view.dart';
+import 'package:di360_flutter/feature/purchased_products/view/purchased_order_items_view.dart';
 import 'package:di360_flutter/feature/shipping_address/view/add_shipping_address_view.dart';
 import 'package:di360_flutter/feature/shipping_address/view/shipping_address_view.dart';
 import 'package:di360_flutter/feature/shipping_charges/view/shipping_charges_view.dart';
@@ -396,7 +398,9 @@ class Routes {
       RouteList.suppliesEnquiriesDetailView: (context) => SuppliesEnquiriesDetailView(),
       RouteList.supplierOrderDetailView: (context) => SupplierOrderDetailView(),
       RouteList.orderFilterView: (context) => OrderFilterView(),
-      RouteList.ipAccountPayRequestsView: (context) => IpAccountPayRequestsView()
+      RouteList.ipAccountPayRequestsView: (context) => IpAccountPayRequestsView(),
+      RouteList.purchasedOrderItemsView: (context) => PurchasedOrderItemsView(),
+      RouteList.purchasedOrderItemsFilterView: (context) => PurchasedOrderItemsFilterView()
     };
   }
 }
