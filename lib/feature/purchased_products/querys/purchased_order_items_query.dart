@@ -1,9 +1,6 @@
 const String purchasedOrderItemsQuery =
-    r'''query purchased_order_items($buyer: supplies_orders_bool_exp!) {
-  supplies_order_items(
-    order_by: {created_at: desc}
-    where: {status: {_neq: "CANCELLED"}, supplies_order: $buyer}
-  ) {
+    r'''query purchased_order_items($where: supplies_order_items_bool_exp!) {
+  supplies_order_items(where: $where, order_by: {created_at: desc}) {
     id
     created_at
     quantity

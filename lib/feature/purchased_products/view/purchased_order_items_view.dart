@@ -76,7 +76,7 @@ class _PurchasedOrderItemsViewState extends State<PurchasedOrderItemsView> {
                   if (vm.isFilterApplied)
                     GestureDetector(
                         onTap: () async {
-                          vm.clearFilters();
+                          await vm.clearFilters();
                           vm.getPurchasedOrderItems(context);
                         },
                         child: Icon(Icons.close, color: AppColors.black))
@@ -186,10 +186,6 @@ class _PurchasedOrderItemsViewState extends State<PurchasedOrderItemsView> {
                     },
                   );
                 }),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: AppColors.primaryColor,
-          onPressed: () async {},
-          child: SvgPicture.asset(ImageConst.addFeed),
-        ));
+        );
   }
 }

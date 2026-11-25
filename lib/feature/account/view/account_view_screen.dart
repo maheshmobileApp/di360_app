@@ -19,12 +19,12 @@ import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
-import 'package:di360_flutter/feature/login/widgets/payment_required_popup.dart';
 import 'package:di360_flutter/feature/favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_favourites/view_model/my_favourites_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_orders/view_model/my_orders_view_model.dart';
 import 'package:di360_flutter/feature/orders/view_model/orders_view_model.dart';
+import 'package:di360_flutter/feature/purchased_products/view_model/purchased_order_tems_view_model.dart';
 import 'package:di360_flutter/feature/shipping_address/view_model/shipping_address_view_model.dart';
 import 'package:di360_flutter/feature/shipping_charges/view_model/shipping_charges_view_model.dart';
 import 'package:di360_flutter/feature/supllies_module/view_model/supplies_module_view_model.dart';
@@ -52,7 +52,7 @@ Future<bool> _checkSubscriptionStatus(BuildContext context) async {
   final subscriptionStatus = await LocalStorage.getStringVal(
     LocalStorageConst.subscriptionStatus,
   );
-  
+
   if (subscriptionStatus == "EXPIRED") {
     await SubscriptionExpiredDialog.show(
       context,
@@ -540,16 +540,14 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                   .read<AccountPayRequestsViewModel>()
                                   .getSupplierAccounts(context);
                               navigationService
-                                .navigateTo(RouteList.accountPayRequestsView);
+                                  .navigateTo(RouteList.accountPayRequestsView);
                             } else {
                               await context
                                   .read<AccountPayRequestsViewModel>()
                                   .getIpSupplierAccountsRequests(context);
-                              navigationService
-                                .navigateTo(RouteList.ipAccountPayRequestsView);
+                              navigationService.navigateTo(
+                                  RouteList.ipAccountPayRequestsView);
                             }
-
-                            
                           } else if (item.title == "Shipping Address") {
                             await context
                                 .read<ShippingAddressViewModel>()
@@ -579,10 +577,13 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.suppliesEnquiriesView);
                           } else if (item.title == "Purchased Products") {
-                            
+                            await context
+                                .read<PurchasedOrderTemsViewModel>()
+                                .clearFilters();
+
                             navigationService
                                 .navigateTo(RouteList.purchasedOrderItemsView);
-                          } 
+                          }
                         },
                       ),
                       if (!isLast)

@@ -23,96 +23,100 @@ class PurchasedOrderItemsFilterView extends StatelessWidget {
         logo: false,
         searchWidget: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            SearchWidget(
-              controller: vm.searchController,
-              hintText: "Search product name etc...",
-              searchButton: false,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              SearchWidget(
+                controller: vm.searchController,
+                hintText: "Search product name etc...",
+                searchButton: false,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  children: [
+                    SizedBox(height: 8),
+                    _supplierName(vm),
+                    SizedBox(height: 8),
+                    _brandName(vm),
+                    SizedBox(height: 8),
+                    _categoryName(vm),
+                    SizedBox(height: 8),
+                    _availableStock(vm),
+                    SizedBox(height: 8),
+                    CustomDatePicker(
+                      controller: vm.startDateController,
+                      title: "Start Date",
+                      hintText: "Select start date",
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          vm.setStartDate(picked);
+                        } else {
+                          vm.clearDates();
+                        }
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    CustomDatePicker(
+                      controller: vm.startDateController,
+                      title: "End Date",
+                      hintText: "Select end date",
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          vm.setEndDate(picked);
+                        } else {
+                          vm.clearDates();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SizedBox(height: 8),
-                  _supplierName(vm),
-                  SizedBox(height: 8),
-                  _brandName(vm),
-                  SizedBox(height: 8),
-                  _categoryName(vm),
-                  SizedBox(height: 8),
-                  _availableStock(vm),
-                  SizedBox(height: 8),
-                  CustomDatePicker(
-                    controller: vm.startDateController,
-                    title: "Start Date",
-                    hintText: "Select start date",
+                  AppButton(
+                    text: 'Clear',
+                    btnColor: AppColors.whiteColor,
+                    btnTextColor: AppColors.primaryColor,
+                    height: 40,
+                    width: 150,
                     onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) {
-                        vm.setStartDate(picked);
-                      } else {
-                        vm.clearDates();
-                      }
+                      await vm.clearFilters();
+                      vm.setFilterApply(false);
+                      await vm.getPurchasedOrderItems(context);
+                      navigationService.goBack();
                     },
                   ),
-                  CustomDatePicker(
-                    controller: vm.startDateController,
-                    title: "Start End Date",
-                    hintText: "Select end date",
+                  AppButton(
+                    text: 'Apply',
+                    height: 40,
+                    width: 150,
                     onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) {
-                        vm.setEndDate(picked);
-                      } else {
-                        vm.clearDates();
-                      }
+                      await vm.getPurchasedOrderItems(context);
+                      vm.setFilterApply(true);
+                      navigationService.goBack();
                     },
                   ),
                 ],
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                AppButton(
-                  text: 'Clear',
-                  btnColor: AppColors.whiteColor,
-                  btnTextColor: AppColors.primaryColor,
-                  height: 40,
-                  width: 150,
-                  onTap: () async {
-                    vm.clearFilters();
-                    vm.setFilterApply(false);
-                    await vm.getPurchasedOrderItems(context);
-                    navigationService.goBack();
-                  },
-                ),
-                AppButton(
-                  text: 'Apply',
-                  height: 40,
-                  width: 150,
-                  onTap: () async {
-                    await vm.getPurchasedOrderItems(context);
-                    vm.setFilterApply(true);
-                    navigationService.goBack();
-                  },
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
